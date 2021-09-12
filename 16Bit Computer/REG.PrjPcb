@@ -31,7 +31,7 @@ ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
 IsProjectConflictPreventionWarningsEnabled=0
-OutputPath=Project Outputs for REG
+OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -93,7 +93,7 @@ DocumentUniqueId=MISFZTMA
 
 [Document4]
 DocumentPath=Memory_Address_Register.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -110,7 +110,7 @@ DocumentUniqueId=AIVIQDNJ
 
 [Document5]
 DocumentPath=Memory_SRAM.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -306,7 +306,7 @@ ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
 ConfigurationType=Source
 
 [Generic_EDE]
-OutputDir=Project Outputs for REG
+OutputDir=
 
 [OutputGroup1]
 Name=Netlist Outputs
@@ -1209,7 +1209,7 @@ Type125=1
 
 [ERC Connection Matrix]
 L1=NNNNNNNNNNNWNNNWW
-L2=NNWNNNNWWWNWNWNWN
+L2=NNWNNNNWWNNWNWNWN
 L3=NWEENEEEENEWNEEWN
 L4=NNENNNWEENNWNENWN
 L5=NNNNNNNNNNNNNNNNN
@@ -1217,8 +1217,8 @@ L6=NNENNNNEENNWNENWN
 L7=NNEWNNWEENNWNENWN
 L8=NWEENEENEEENNEENN
 L9=NWEENEEEENEWNEEWW
-L10=NWNNNNNENNENNNEWN
-L11=NNENNNNEEENWNENWN
+L10=NNNNNNNENNWNNNEWN
+L11=NNENNNNEEWNWNENWN
 L12=WWWWNWWNWNWNWWWNN
 L13=NNNNNNNNNNNWNNNWW
 L14=NWEENEEEENEWNWWWW
