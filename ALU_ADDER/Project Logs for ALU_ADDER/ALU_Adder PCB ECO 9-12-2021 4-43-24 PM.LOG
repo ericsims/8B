@@ -1,0 +1,9 @@
+Added Pin To Net: NetName=VCC Pin=P1-1
+Added Pin To Net: NetName=GND Pin=P1-24
+Added Pin To Net: NetName=VCC Pin=P2-1
+Added Pin To Net: NetName=GND Pin=P2-24
+Added Pin To Net: NetName=VCC Pin=P3-1
+Added Pin To Net: NetName=GND Pin=P3-24
+Added Member To Class: ClassName=Connectors Member=Component P2 Header 24H
+Added Room: Name=ALU_Adder
+Added Room: Name=Connectors
