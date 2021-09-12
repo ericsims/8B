@@ -1,0 +1,284 @@
+Removed Pin From Net: NetName=VCC Pin=U27-1
+Removed Pin From Net: NetName=REG_0 Pin=U27-2
+Removed Pin From Net: NetName=REG_1 Pin=U27-3
+Removed Pin From Net: NetName=REG_2 Pin=U27-4
+Removed Pin From Net: NetName=REG_3 Pin=U27-5
+Removed Pin From Net: NetName=REG_4 Pin=U27-6
+Removed Pin From Net: NetName=REG_5 Pin=U27-7
+Removed Pin From Net: NetName=REG_6 Pin=U27-8
+Removed Pin From Net: NetName=REG_7 Pin=U27-9
+Removed Pin From Net: NetName=GND Pin=U27-10
+Removed Pin From Net: NetName=OUT_7 Pin=U27-11
+Removed Pin From Net: NetName=OUT_6 Pin=U27-12
+Removed Pin From Net: NetName=OUT_5 Pin=U27-13
+Removed Pin From Net: NetName=OUT_4 Pin=U27-14
+Removed Pin From Net: NetName=OUT_3 Pin=U27-15
+Removed Pin From Net: NetName=OUT_2 Pin=U27-16
+Removed Pin From Net: NetName=OUT_1 Pin=U27-17
+Removed Pin From Net: NetName=OUT_0 Pin=U27-18
+Removed Pin From Net: NetName=A\D\D\_\O\U\T\ Pin=U27-19
+Removed Pin From Net: NetName=VCC Pin=U27-20
+Removed Pin From Net: NetName=VCC Pin=U28-1
+Removed Pin From Net: NetName=REG_8 Pin=U28-2
+Removed Pin From Net: NetName=REG_9 Pin=U28-3
+Removed Pin From Net: NetName=REG_10 Pin=U28-4
+Removed Pin From Net: NetName=REG_11 Pin=U28-5
+Removed Pin From Net: NetName=REG_12 Pin=U28-6
+Removed Pin From Net: NetName=REG_13 Pin=U28-7
+Removed Pin From Net: NetName=REG_14 Pin=U28-8
+Removed Pin From Net: NetName=REG_15 Pin=U28-9
+Removed Pin From Net: NetName=GND Pin=U28-10
+Removed Pin From Net: NetName=OUT_15 Pin=U28-11
+Removed Pin From Net: NetName=OUT_14 Pin=U28-12
+Removed Pin From Net: NetName=OUT_13 Pin=U28-13
+Removed Pin From Net: NetName=OUT_12 Pin=U28-14
+Removed Pin From Net: NetName=OUT_11 Pin=U28-15
+Removed Pin From Net: NetName=OUT_10 Pin=U28-16
+Removed Pin From Net: NetName=OUT_9 Pin=U28-17
+Removed Pin From Net: NetName=OUT_8 Pin=U28-18
+Removed Pin From Net: NetName=A\D\D\_\O\U\T\ Pin=U28-19
+Removed Pin From Net: NetName=VCC Pin=U28-20
+Removed Pin From Net: NetName=REG_1 Pin=U29-1
+Removed Pin From Net: NetName=B_1 Pin=U29-2
+Removed Pin From Net: NetName=A_1 Pin=U29-3
+Removed Pin From Net: NetName=REG_0 Pin=U29-4
+Removed Pin From Net: NetName=A_0 Pin=U29-5
+Removed Pin From Net: NetName=B_0 Pin=U29-6
+Removed Pin From Net: NetName=SUB Pin=U29-7
+Removed Pin From Net: NetName=GND Pin=U29-8
+Removed Pin From Net: NetName=REG_3 Pin=U29-10
+Removed Pin From Net: NetName=B_3 Pin=U29-11
+Removed Pin From Net: NetName=A_3 Pin=U29-12
+Removed Pin From Net: NetName=REG_2 Pin=U29-13
+Removed Pin From Net: NetName=A_2 Pin=U29-14
+Removed Pin From Net: NetName=B_2 Pin=U29-15
+Removed Pin From Net: NetName=VCC Pin=U29-16
+Removed Pin From Net: NetName=REG_5 Pin=U30-1
+Removed Pin From Net: NetName=B_5 Pin=U30-2
+Removed Pin From Net: NetName=A_5 Pin=U30-3
+Removed Pin From Net: NetName=REG_4 Pin=U30-4
+Removed Pin From Net: NetName=A_4 Pin=U30-5
+Removed Pin From Net: NetName=B_4 Pin=U30-6
+Removed Pin From Net: NetName=GND Pin=U30-8
+Removed Pin From Net: NetName=REG_7 Pin=U30-10
+Removed Pin From Net: NetName=B_7 Pin=U30-11
+Removed Pin From Net: NetName=A_7 Pin=U30-12
+Removed Pin From Net: NetName=REG_6 Pin=U30-13
+Removed Pin From Net: NetName=A_6 Pin=U30-14
+Removed Pin From Net: NetName=B_6 Pin=U30-15
+Removed Pin From Net: NetName=VCC Pin=U30-16
+Removed Pin From Net: NetName=REG_9 Pin=U31-1
+Removed Pin From Net: NetName=B_9 Pin=U31-2
+Removed Pin From Net: NetName=A_9 Pin=U31-3
+Removed Pin From Net: NetName=REG_8 Pin=U31-4
+Removed Pin From Net: NetName=A_8 Pin=U31-5
+Removed Pin From Net: NetName=B_8 Pin=U31-6
+Removed Pin From Net: NetName=GND Pin=U31-8
+Removed Pin From Net: NetName=REG_11 Pin=U31-10
+Removed Pin From Net: NetName=B_11 Pin=U31-11
+Removed Pin From Net: NetName=A_11 Pin=U31-12
+Removed Pin From Net: NetName=REG_10 Pin=U31-13
+Removed Pin From Net: NetName=A_10 Pin=U31-14
+Removed Pin From Net: NetName=B_10 Pin=U31-15
+Removed Pin From Net: NetName=VCC Pin=U31-16
+Removed Pin From Net: NetName=REG_13 Pin=U32-1
+Removed Pin From Net: NetName=B_13 Pin=U32-2
+Removed Pin From Net: NetName=A_13 Pin=U32-3
+Removed Pin From Net: NetName=REG_12 Pin=U32-4
+Removed Pin From Net: NetName=A_12 Pin=U32-5
+Removed Pin From Net: NetName=B_12 Pin=U32-6
+Removed Pin From Net: NetName=GND Pin=U32-8
+Removed Pin From Net: NetName=CO Pin=U32-9
+Removed Pin From Net: NetName=REG_15 Pin=U32-10
+Removed Pin From Net: NetName=B_15 Pin=U32-11
+Removed Pin From Net: NetName=A_15 Pin=U32-12
+Removed Pin From Net: NetName=REG_14 Pin=U32-13
+Removed Pin From Net: NetName=A_14 Pin=U32-14
+Removed Pin From Net: NetName=B_14 Pin=U32-15
+Removed Pin From Net: NetName=VCC Pin=U32-16
+Removed Member From Class: ClassName=ALU_Adder Member=U27
+Removed Member From Class: ClassName=ALU_Adder Member=U28
+Removed Member From Class: ClassName=ALU_Adder Member=U29
+Removed Member From Class: ClassName=ALU_Adder Member=U30
+Removed Member From Class: ClassName=ALU_Adder Member=U31
+Removed Member From Class: ClassName=ALU_Adder Member=U32
+Added Component: Designator=U33(N020)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/sn74ls245.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 20 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N020"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=U34(N020)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/sn74ls245.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 20 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N020"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=U35(N014)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/SN74LS08.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 14 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N014"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=U36(N014)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/SN74LS08.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 14 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N014"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=U37(N014)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/SN74LS08.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 14 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N014"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Component: Designator=U38(N014)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/SN74LS08.pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "DIP; 14 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "N014"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=VCC Pin=U33-1
+Added Pin To Net: NetName=REG_0 Pin=U33-2
+Added Pin To Net: NetName=REG_1 Pin=U33-3
+Added Pin To Net: NetName=REG_2 Pin=U33-4
+Added Pin To Net: NetName=REG_3 Pin=U33-5
+Added Pin To Net: NetName=REG_4 Pin=U33-6
+Added Pin To Net: NetName=REG_5 Pin=U33-7
+Added Pin To Net: NetName=REG_6 Pin=U33-8
+Added Pin To Net: NetName=REG_7 Pin=U33-9
+Added Pin To Net: NetName=GND Pin=U33-10
+Added Pin To Net: NetName=OUT_7 Pin=U33-11
+Added Pin To Net: NetName=OUT_6 Pin=U33-12
+Added Pin To Net: NetName=OUT_5 Pin=U33-13
+Added Pin To Net: NetName=OUT_4 Pin=U33-14
+Added Pin To Net: NetName=OUT_3 Pin=U33-15
+Added Pin To Net: NetName=OUT_2 Pin=U33-16
+Added Pin To Net: NetName=OUT_1 Pin=U33-17
+Added Pin To Net: NetName=OUT_0 Pin=U33-18
+Added Pin To Net: NetName=A\N\D\_\O\U\T\ Pin=U33-19
+Added Pin To Net: NetName=VCC Pin=U33-20
+Added Pin To Net: NetName=VCC Pin=U34-1
+Added Pin To Net: NetName=REG_8 Pin=U34-2
+Added Pin To Net: NetName=REG_9 Pin=U34-3
+Added Pin To Net: NetName=REG_10 Pin=U34-4
+Added Pin To Net: NetName=REG_11 Pin=U34-5
+Added Pin To Net: NetName=REG_12 Pin=U34-6
+Added Pin To Net: NetName=REG_13 Pin=U34-7
+Added Pin To Net: NetName=REG_14 Pin=U34-8
+Added Pin To Net: NetName=REG_15 Pin=U34-9
+Added Pin To Net: NetName=GND Pin=U34-10
+Added Pin To Net: NetName=OUT_15 Pin=U34-11
+Added Pin To Net: NetName=OUT_14 Pin=U34-12
+Added Pin To Net: NetName=OUT_13 Pin=U34-13
+Added Pin To Net: NetName=OUT_12 Pin=U34-14
+Added Pin To Net: NetName=OUT_11 Pin=U34-15
+Added Pin To Net: NetName=OUT_10 Pin=U34-16
+Added Pin To Net: NetName=OUT_9 Pin=U34-17
+Added Pin To Net: NetName=OUT_8 Pin=U34-18
+Added Pin To Net: NetName=A\N\D\_\O\U\T\ Pin=U34-19
+Added Pin To Net: NetName=VCC Pin=U34-20
+Added Pin To Net: NetName=A_0 Pin=U35-1
+Added Pin To Net: NetName=B_0 Pin=U35-2
+Added Pin To Net: NetName=REG_0 Pin=U35-3
+Added Pin To Net: NetName=A_1 Pin=U35-4
+Added Pin To Net: NetName=B_1 Pin=U35-5
+Added Pin To Net: NetName=REG_1 Pin=U35-6
+Added Pin To Net: NetName=GND Pin=U35-7
+Added Pin To Net: NetName=REG_2 Pin=U35-8
+Added Pin To Net: NetName=A_2 Pin=U35-9
+Added Pin To Net: NetName=B_2 Pin=U35-10
+Added Pin To Net: NetName=REG_3 Pin=U35-11
+Added Pin To Net: NetName=A_3 Pin=U35-12
+Added Pin To Net: NetName=B_3 Pin=U35-13
+Added Pin To Net: NetName=VCC Pin=U35-14
+Added Pin To Net: NetName=A_4 Pin=U36-1
+Added Pin To Net: NetName=B_4 Pin=U36-2
+Added Pin To Net: NetName=REG_4 Pin=U36-3
+Added Pin To Net: NetName=A_5 Pin=U36-4
+Added Pin To Net: NetName=B_5 Pin=U36-5
+Added Pin To Net: NetName=REG_5 Pin=U36-6
+Added Pin To Net: NetName=GND Pin=U36-7
+Added Pin To Net: NetName=REG_6 Pin=U36-8
+Added Pin To Net: NetName=A_6 Pin=U36-9
+Added Pin To Net: NetName=B_6 Pin=U36-10
+Added Pin To Net: NetName=REG_7 Pin=U36-11
+Added Pin To Net: NetName=A_7 Pin=U36-12
+Added Pin To Net: NetName=B_7 Pin=U36-13
+Added Pin To Net: NetName=VCC Pin=U36-14
+Added Pin To Net: NetName=A_8 Pin=U37-1
+Added Pin To Net: NetName=B_8 Pin=U37-2
+Added Pin To Net: NetName=REG_8 Pin=U37-3
+Added Pin To Net: NetName=A_9 Pin=U37-4
+Added Pin To Net: NetName=B_9 Pin=U37-5
+Added Pin To Net: NetName=REG_9 Pin=U37-6
+Added Pin To Net: NetName=GND Pin=U37-7
+Added Pin To Net: NetName=REG_10 Pin=U37-8
+Added Pin To Net: NetName=A_10 Pin=U37-9
+Added Pin To Net: NetName=B_10 Pin=U37-10
+Added Pin To Net: NetName=REG_11 Pin=U37-11
+Added Pin To Net: NetName=A_11 Pin=U37-12
+Added Pin To Net: NetName=B_11 Pin=U37-13
+Added Pin To Net: NetName=VCC Pin=U37-14
+Added Pin To Net: NetName=A_12 Pin=U38-1
+Added Pin To Net: NetName=B_12 Pin=U38-2
+Added Pin To Net: NetName=REG_12 Pin=U38-3
+Added Pin To Net: NetName=A_13 Pin=U38-4
+Added Pin To Net: NetName=B_13 Pin=U38-5
+Added Pin To Net: NetName=REG_13 Pin=U38-6
+Added Pin To Net: NetName=GND Pin=U38-7
+Added Pin To Net: NetName=REG_14 Pin=U38-8
+Added Pin To Net: NetName=A_14 Pin=U38-9
+Added Pin To Net: NetName=B_14 Pin=U38-10
+Added Pin To Net: NetName=REG_15 Pin=U38-11
+Added Pin To Net: NetName=A_15 Pin=U38-12
+Added Pin To Net: NetName=B_15 Pin=U38-13
+Added Pin To Net: NetName=VCC Pin=U38-14
+Added Member To Class: ClassName=ALU_Adder Member=Component U33 SN74LS245N
+Added Member To Class: ClassName=ALU_Adder Member=Component U34 SN74LS245N
+Added Member To Class: ClassName=ALU_Adder Member=Component U35 SN74LS08N
+Added Member To Class: ClassName=ALU_Adder Member=Component U36 SN74LS08N
+Added Member To Class: ClassName=ALU_Adder Member=Component U37 SN74LS08N
+Added Member To Class: ClassName=ALU_Adder Member=Component U38 SN74LS08N
