@@ -1,0 +1,82 @@
+Protel Design System Design Rule Check
+PCB File : D:\Users\erics\Documents\16B\Memory_EEPROM\Memory_EEPROM.PcbDoc
+Date     : 10/2/2021
+Time     : 10:27:30 AM
+
+Processing Rule : Clearance Constraint (Gap=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
+Rule Violations :0
+
+Processing Rule : Un-Routed Net Constraint ( (All) )
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad P1-3(1100mil,2900mil) on Multi-Layer And Pad P1-1(1100mil,3000mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad P1-4(1200mil,2900mil) on Multi-Layer And Pad P1-2(1200mil,3000mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad P1-3(1100mil,2900mil) on Multi-Layer And Pad P1-4(1200mil,2900mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad P1-39(1100mil,1100mil) on Multi-Layer And Pad P1-37(1100mil,1200mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad P1-40(1200mil,1100mil) on Multi-Layer And Pad P1-38(1200mil,1200mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad P1-38(1200mil,1200mil) on Multi-Layer And Pad U3-7(2250mil,1300mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad P1-39(1100mil,1100mil) on Multi-Layer And Pad P1-40(1200mil,1100mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad P1-4(1200mil,2900mil) on Multi-Layer And Pad U4-20(1450mil,1950mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_0 Between Pad U4-2(1750mil,2050mil) on Multi-Layer And Pad U?-11(3460mil,2390mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_1 Between Pad U4-3(1750mil,2150mil) on Multi-Layer And Pad U?-12(3360mil,2390mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_2 Between Pad U4-4(1750mil,2250mil) on Multi-Layer And Pad U?-13(3260mil,2390mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad U?-14(3160mil,2390mil) on Multi-Layer And Pad U?-20(3660mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad U2-7(2250mil,2200mil) on Multi-Layer And Pad U?-14(3160mil,2390mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_3 Between Pad U4-5(1750mil,2350mil) on Multi-Layer And Pad U?-15(3160mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_4 Between Pad U4-6(1750mil,2450mil) on Multi-Layer And Pad U?-16(3260mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_5 Between Pad U4-7(1750mil,2550mil) on Multi-Layer And Pad U?-17(3360mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_6 Between Pad U4-8(1750mil,2650mil) on Multi-Layer And Pad U?-18(3460mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net REG_7 Between Pad U4-9(1750mil,2750mil) on Multi-Layer And Pad U?-19(3560mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad U?-20(3660mil,1790mil) on Multi-Layer And Pad U?-22(3860mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net W\E\ Between Pad U3-10(2550mil,1500mil) on Multi-Layer And Pad U?-27(4360mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad U3-14(2550mil,1900mil) on Multi-Layer And Pad U?-28(4460mil,1790mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU2_10 Between Pad U3-8(2550mil,1300mil) on Multi-Layer And Pad U2-10(2550mil,2400mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad U3-14(2550mil,1900mil) on Multi-Layer And Pad U2-14(2550mil,2800mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net EN Between Pad U2-4(2250mil,2500mil) on Multi-Layer And Pad U2-2(2250mil,2700mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU2_3 Between Pad U2-3(2250mil,2600mil) on Multi-Layer And Pad U2-9(2550mil,2300mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net EN Between Pad U3-1(2250mil,1900mil) on Multi-Layer And Pad U2-4(2250mil,2500mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU2_5 Between Pad U3-4(2250mil,1600mil) on Multi-Layer And Pad U2-5(2250mil,2400mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU2_6 Between Pad U4-1(1750mil,1950mil) on Multi-Layer And Pad U2-6(2250mil,2300mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad U3-7(2250mil,1300mil) on Multi-Layer And Pad U2-7(2250mil,2200mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net GND Between Pad U4-10(1750mil,2850mil) on Multi-Layer And Pad U2-7(2250mil,2200mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU2_8 Between Pad U3-11(2550mil,1600mil) on Multi-Layer And Pad U2-8(2550mil,2200mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net VCC Between Pad U4-20(1450mil,1950mil) on Multi-Layer And Pad U3-14(2550mil,1900mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU3_2 Between Pad U4-19(1450mil,2050mil) on Multi-Layer And Pad U3-2(2250mil,1800mil) on Multi-Layer 
+   Violation between Un-Routed Net Constraint: Net NetU3_6 Between Pad U3-6(2250mil,1400mil) on Multi-Layer And Pad U3-9(2550mil,1400mil) on Multi-Layer 
+Rule Violations :34
+
+Processing Rule : Modified Polygon (Allow modified: No), (Allow shelved: No)
+Rule Violations :0
+
+Processing Rule : Width Constraint (Min=10mil) (Max=10mil) (Preferred=10mil) (All)
+Rule Violations :0
+
+Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)
+Rule Violations :0
+
+Processing Rule : Hole Size Constraint (Min=1mil) (Max=100mil) (All)
+Rule Violations :0
+
+Processing Rule : Hole To Hole Clearance (Gap=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Minimum Solder Mask Sliver (Gap=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Silk To Solder Mask (Clearance=10mil) (IsPad),(All)
+Rule Violations :0
+
+Processing Rule : Silk to Silk (Clearance=10mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Net Antennae (Tolerance=0mil) (All)
+Rule Violations :0
+
+Processing Rule : Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)
+Rule Violations :0
+
+
+Violations Detected : 34
+Waived Violations : 0
+Time Elapsed        : 00:00:02

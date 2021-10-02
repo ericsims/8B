@@ -1,0 +1,54 @@
+Removed Pin From Net: NetName=VCC Pin=P1-1
+Removed Pin From Net: NetName=VCC Pin=P1-2
+Removed Pin From Net: NetName=VCC Pin=P1-3
+Removed Pin From Net: NetName=VCC Pin=P1-4
+Removed Pin From Net: NetName=ADDR_4 Pin=P1-14
+Removed Pin From Net: NetName=BUS_5 Pin=P1-15
+Removed Pin From Net: NetName=ADDR_5 Pin=P1-16
+Removed Pin From Net: NetName=BUS_6 Pin=P1-17
+Removed Pin From Net: NetName=ADDR_6 Pin=P1-18
+Removed Pin From Net: NetName=ADDR_7 Pin=P1-20
+Removed Pin From Net: NetName=ADDR_8 Pin=P1-22
+Removed Pin From Net: NetName=LSB_MSB Pin=P1-25
+Removed Pin From Net: NetName=LOAD Pin=P1-29
+Removed Pin From Net: NetName=RST Pin=P1-31
+Removed Pin From Net: NetName=ADDR_13 Pin=P1-32
+Removed Pin From Net: NetName=ADDR_14 Pin=P1-34
+Removed Pin From Net: NetName=ADDR_15 Pin=P1-36
+Removed Pin From Net: NetName=GND Pin=P1-37
+Removed Pin From Net: NetName=GND Pin=P1-38
+Removed Pin From Net: NetName=GND Pin=P1-39
+Removed Pin From Net: NetName=GND Pin=P1-40
+Removed Member From Class: ClassName=Top Member=P1
+Added Component: Designator=P?(HDR2X22H)
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=VCC Pin=P?-9
+Added Pin To Net: NetName=VCC Pin=P?-10
+Added Pin To Net: NetName=GND Pin=P?-11
+Added Pin To Net: NetName=GND Pin=P?-12
+Added Pin To Net: NetName=LSB_MSB Pin=P?-33
+Added Pin To Net: NetName=RST Pin=P?-39
+Added Pin To Net: NetName=ADDR_15 Pin=P?-44
+Added Pin To Net: NetName=LOAD Pin=U2-1
+Added Pin To Net: NetName=BUS_6 Pin=U4-12
+Added Pin To Net: NetName=BUS_5 Pin=U4-13
+Added Pin To Net: NetName=ADDR_14 Pin=U?-1
+Added Pin To Net: NetName=ADDR_7 Pin=U?-3
+Added Pin To Net: NetName=ADDR_6 Pin=U?-4
+Added Pin To Net: NetName=ADDR_5 Pin=U?-5
+Added Pin To Net: NetName=ADDR_4 Pin=U?-6
+Added Pin To Net: NetName=ADDR_8 Pin=U?-25
+Added Pin To Net: NetName=ADDR_13 Pin=U?-26
+Added Pin To Net: NetName=+12VDC Pin=P?-1
+Added Pin To Net: NetName=+12VDC Pin=P?-2
+Added Pin To Net: NetName=+12VDC Pin=P?-3
+Added Pin To Net: NetName=+12VDC Pin=P?-4
+Added Net: Name=+12VDC
+Added Pin To Net: NetName=PGND Pin=P?-5
+Added Pin To Net: NetName=PGND Pin=P?-6
+Added Pin To Net: NetName=PGND Pin=P?-7
+Added Pin To Net: NetName=PGND Pin=P?-8
+Added Net: Name=PGND
+Added Member To Class: ClassName=Top Member=Component P? Header 22X2H

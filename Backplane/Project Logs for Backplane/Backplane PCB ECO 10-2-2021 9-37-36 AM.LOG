@@ -1,0 +1,28 @@
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM1-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM2-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM3-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM4-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM5-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM6-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM7-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM8-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM9-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM10-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM11-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM12-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM13-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM14-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM15-33
+Added Pin To Net: NetName=LSB_MSB_MEM1 Pin=J1_MEM16-33
+Change Net Name : Old Net Name=BUS_0_MEM1 New Net Name=BUS_0
+Change Net Name : Old Net Name=BUS_1_MEM1 New Net Name=BUS_1
+Change Net Name : Old Net Name=BUS_2_MEM1 New Net Name=BUS_2
+Change Net Name : Old Net Name=BUS_3_MEM1 New Net Name=BUS_3
+Change Net Name : Old Net Name=BUS_4_MEM1 New Net Name=BUS_4
+Change Net Name : Old Net Name=BUS_5_MEM1 New Net Name=BUS_5
+Change Net Name : Old Net Name=BUS_6_MEM1 New Net Name=BUS_6
+Change Net Name : Old Net Name=BUS_7_MEM1 New Net Name=BUS_7
+Change Net Name : Old Net Name=LSB_MSB_MEM1 New Net Name=CLK
+Change Net Name : Old Net Name=O\U\T\_MEM1 New Net Name=MO
+Change Net Name : Old Net Name=RST_MEM1 New Net Name=RST
+Added Class: Name=BUS_[7..0]

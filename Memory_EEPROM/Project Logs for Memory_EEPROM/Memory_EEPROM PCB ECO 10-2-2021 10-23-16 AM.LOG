@@ -1,0 +1,54 @@
+Removed Pin From Net: NetName=GND Pin=R1-1
+Removed Pin From Net: NetName=GND Pin=U1-1
+Removed Pin From Net: NetName=ADDR_12 Pin=U1-2
+Removed Pin From Net: NetName=ADDR_3 Pin=U1-7
+Removed Pin From Net: NetName=ADDR_2 Pin=U1-8
+Removed Pin From Net: NetName=ADDR_1 Pin=U1-9
+Removed Pin From Net: NetName=ADDR_0 Pin=U1-10
+Removed Pin From Net: NetName=REG_0 Pin=U1-11
+Removed Pin From Net: NetName=REG_1 Pin=U1-12
+Removed Pin From Net: NetName=REG_2 Pin=U1-13
+Removed Pin From Net: NetName=GND Pin=U1-14
+Removed Pin From Net: NetName=REG_3 Pin=U1-15
+Removed Pin From Net: NetName=REG_4 Pin=U1-16
+Removed Pin From Net: NetName=REG_5 Pin=U1-17
+Removed Pin From Net: NetName=REG_6 Pin=U1-18
+Removed Pin From Net: NetName=REG_7 Pin=U1-19
+Removed Pin From Net: NetName=GND Pin=U1-20
+Removed Pin From Net: NetName=ADDR_10 Pin=U1-21
+Removed Pin From Net: NetName=GND Pin=U1-22
+Removed Pin From Net: NetName=ADDR_11 Pin=U1-23
+Removed Pin From Net: NetName=ADDR_9 Pin=U1-24
+Removed Pin From Net: NetName=W\E\ Pin=U1-27
+Removed Pin From Net: NetName=VCC Pin=U1-28
+Removed Member From Class: ClassName=Designator Member=C1
+Removed Member From Class: ClassName=Designator Member=R1
+Removed Member From Class: ClassName=Designator Member=U1
+Added Component: Designator=U?(J028)
+Added Pin To Net: NetName=ADDR_12 Pin=U?-2
+Added Pin To Net: NetName=ADDR_3 Pin=U?-7
+Added Pin To Net: NetName=ADDR_2 Pin=U?-8
+Added Pin To Net: NetName=ADDR_1 Pin=U?-9
+Added Pin To Net: NetName=ADDR_0 Pin=U?-10
+Added Pin To Net: NetName=REG_0 Pin=U?-11
+Added Pin To Net: NetName=REG_1 Pin=U?-12
+Added Pin To Net: NetName=REG_2 Pin=U?-13
+Added Pin To Net: NetName=GND Pin=U?-14
+Added Pin To Net: NetName=REG_3 Pin=U?-15
+Added Pin To Net: NetName=REG_4 Pin=U?-16
+Added Pin To Net: NetName=REG_5 Pin=U?-17
+Added Pin To Net: NetName=REG_6 Pin=U?-18
+Added Pin To Net: NetName=REG_7 Pin=U?-19
+Added Pin To Net: NetName=GND Pin=U?-20
+Added Pin To Net: NetName=ADDR_10 Pin=U?-21
+Added Pin To Net: NetName=GND Pin=U?-22
+Added Pin To Net: NetName=ADDR_11 Pin=U?-23
+Added Pin To Net: NetName=ADDR_9 Pin=U?-24
+Added Pin To Net: NetName=W\E\ Pin=U?-27
+Added Pin To Net: NetName=VCC Pin=U?-28
+Added Pin To Net: NetName=NetU2_10 Pin=U2-10
+Added Pin To Net: NetName=NetU2_10 Pin=U3-8
+Added Net: Name=NetU2_10
+Added Member To Class: ClassName=Designator Member=Component U? AT28C256-15PU
+Added Room: Name=Designator
+Added Room: Name=Top

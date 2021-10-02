@@ -1,0 +1,4 @@
+Change Component DesignItemId : Designator=P1 Old DesignItemId=Header 10X2H New DesignItemId=Header 20H
+Change Component Footprint: Designator=P1 Old Footprint=HDR2X10H New Footprint=HDR1X20H
+Change Component Comment : Designator=P1 Old Comment=Header 10X2H New Comment=Header 20H
+Change Component Description : Designator=P1 Old Description=Header, 10-Pin, Dual row, Right Angle New Description=Header, 20-Pin, Right Angle
