@@ -1,0 +1,48 @@
+Removed Pin From Net: NetName=EN Pin=U?-1
+Removed Pin From Net: NetName=EN Pin=U?-2
+Removed Pin From Net: NetName=O\U\T\ Pin=U?-3
+Removed Pin From Net: NetName=EN Pin=U?-4
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=GND Pin=U?-7
+Removed Pin From Net: NetName=NetC1_1 Pin=U?-10
+Removed Pin From Net: NetName=W\E\ Pin=U?-10
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Removed Pin From Net: NetName=VCC Pin=U?-14
+Change Component Designator: OldDesignator=R? NewDesignator=R1
+Change Component Designator: OldDesignator=U66 NewDesignator=U1
+Change Component Designator: OldDesignator=U? NewDesignator=U2
+Change Component Designator: OldDesignator=U? NewDesignator=U3
+Change Component Designator: OldDesignator=U? NewDesignator=U4
+Added Pin To Net: NetName=EN Pin=U2-2
+Added Pin To Net: NetName=EN Pin=U2-4
+Added Pin To Net: NetName=NetC1_1 Pin=U2-10
+Added Pin To Net: NetName=EN Pin=U3-1
+Added Pin To Net: NetName=O\U\T\ Pin=U3-3
+Added Pin To Net: NetName=W\E\ Pin=U3-10
+Added Pin To Net: NetName=NetU2_3 Pin=U2-3
+Added Pin To Net: NetName=NetU2_3 Pin=U2-9
+Added Net: Name=NetU2_3
+Added Pin To Net: NetName=NetU2_5 Pin=U2-5
+Added Pin To Net: NetName=NetU2_5 Pin=U3-4
+Added Net: Name=NetU2_5
+Added Pin To Net: NetName=NetU2_6 Pin=U2-6
+Added Pin To Net: NetName=NetU2_6 Pin=U4-1
+Added Net: Name=NetU2_6
+Added Pin To Net: NetName=NetU2_8 Pin=U2-8
+Added Pin To Net: NetName=NetU2_8 Pin=U3-11
+Added Net: Name=NetU2_8
+Added Pin To Net: NetName=NetU3_2 Pin=U3-2
+Added Pin To Net: NetName=NetU3_2 Pin=U4-19
+Added Net: Name=NetU3_2
+Added Member To Class: ClassName=Designator Member=Component U3 SN74LS04N
+Added Member To Class: ClassName=Designator Member=Component U4 SN74LS245N
+Added Room: Name=Designator
+Added Room: Name=Top

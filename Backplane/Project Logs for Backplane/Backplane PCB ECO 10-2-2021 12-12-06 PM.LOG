@@ -1,0 +1,168 @@
+Removed Pin From Net: NetName=A_0 Pin=J1-6
+Removed Pin From Net: NetName=A_1 Pin=J1-8
+Removed Pin From Net: NetName=A_2 Pin=J1-10
+Removed Pin From Net: NetName=A_3 Pin=J1-12
+Removed Pin From Net: NetName=A_4 Pin=J1-14
+Removed Pin From Net: NetName=A_5 Pin=J1-16
+Removed Pin From Net: NetName=A_6 Pin=J1-18
+Removed Pin From Net: NetName=A_7 Pin=J1-20
+Removed Pin From Net: NetName=A_8 Pin=J1-22
+Removed Pin From Net: NetName=A_9 Pin=J1-24
+Removed Pin From Net: NetName=A_10 Pin=J1-26
+Removed Pin From Net: NetName=A_11 Pin=J1-28
+Removed Pin From Net: NetName=A_12 Pin=J1-30
+Removed Pin From Net: NetName=A_13 Pin=J1-32
+Removed Pin From Net: NetName=A_14 Pin=J1-34
+Removed Pin From Net: NetName=A_15 Pin=J1-36
+Change Component Footprint: Designator=J1_ALU1 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J1_ALU2 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J1_ALU3 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J1_ALU4 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J1_ALU5 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J2_ALU1 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J2_ALU2 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J2_ALU3 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J2_ALU4 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J2_ALU5 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J3_ALU1 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J3_ALU2 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J3_ALU3 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J3_ALU4 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Footprint: Designator=J3_ALU5 Old Footprint=HDR1X22 New Footprint=HDR1X24
+Change Component Comment : Designator=J1_ALU1 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J1_ALU2 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J1_ALU3 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J1_ALU4 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J1_ALU5 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J2_ALU1 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J2_ALU2 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J2_ALU3 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J2_ALU4 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J2_ALU5 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J3_ALU1 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J3_ALU2 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J3_ALU3 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J3_ALU4 Old Comment=Header 22 New Comment=Header 24
+Change Component Comment : Designator=J3_ALU5 Old Comment=Header 22 New Comment=Header 24
+Added Pin To Net: NetName=A_2 Pin=J1-6
+Added Pin To Net: NetName=A_3 Pin=J1-8
+Added Pin To Net: NetName=A_4 Pin=J1-10
+Added Pin To Net: NetName=A_5 Pin=J1-12
+Added Pin To Net: NetName=A_6 Pin=J1-14
+Added Pin To Net: NetName=A_7 Pin=J1-16
+Added Pin To Net: NetName=A_8 Pin=J1-18
+Added Pin To Net: NetName=A_9 Pin=J1-20
+Added Pin To Net: NetName=A_10 Pin=J1-22
+Added Pin To Net: NetName=A_11 Pin=J1-24
+Added Pin To Net: NetName=A_12 Pin=J1-26
+Added Pin To Net: NetName=A_13 Pin=J1-28
+Added Pin To Net: NetName=A_14 Pin=J1-30
+Added Pin To Net: NetName=A_15 Pin=J1-32
+Added Pin To Net: NetName=VCC Pin=J1_ALU1-1
+Added Pin To Net: NetName=GND Pin=J1_ALU1-2
+Added Pin To Net: NetName=VCC Pin=J1_ALU2-1
+Added Pin To Net: NetName=GND Pin=J1_ALU2-2
+Added Pin To Net: NetName=VCC Pin=J1_ALU3-1
+Added Pin To Net: NetName=GND Pin=J1_ALU3-2
+Added Pin To Net: NetName=VCC Pin=J1_ALU4-1
+Added Pin To Net: NetName=GND Pin=J1_ALU4-2
+Added Pin To Net: NetName=VCC Pin=J1_ALU5-1
+Added Pin To Net: NetName=GND Pin=J1_ALU5-2
+Change Net Name : Old Net Name=A\N\D\_\O\U\T\_ALU1 New Net Name=A\D\D\_\O\U\T\_ALU1
+Change Net Name : Old Net Name=A_0 New Net Name=X\O\R\_\O\U\T\_ALU1
+Change Net Name : Old Net Name=A_1 New Net Name=S\H\I\F\T\_\O\U\T\_ALU1
+Change Net Name : Old Net Name=A_2 New Net Name=A_0
+Change Net Name : Old Net Name=A_3 New Net Name=A_1
+Change Net Name : Old Net Name=A_4 New Net Name=A_2
+Change Net Name : Old Net Name=A_5 New Net Name=A_3
+Change Net Name : Old Net Name=A_6 New Net Name=A_4
+Change Net Name : Old Net Name=A_7 New Net Name=A_5
+Change Net Name : Old Net Name=A_8 New Net Name=A_6
+Change Net Name : Old Net Name=A_9 New Net Name=A_7
+Change Net Name : Old Net Name=A_10 New Net Name=A_8
+Change Net Name : Old Net Name=A_11 New Net Name=A_9
+Change Net Name : Old Net Name=A_12 New Net Name=A_10
+Change Net Name : Old Net Name=A_13 New Net Name=A_11
+Change Net Name : Old Net Name=A_14 New Net Name=A_12
+Change Net Name : Old Net Name=A_15 New Net Name=A_13
+Change Net Name : Old Net Name=ALU_0_ALU1 New Net Name=ALU_2_ALU1
+Change Net Name : Old Net Name=ALU_1_ALU1 New Net Name=ALU_3_ALU1
+Change Net Name : Old Net Name=ALU_2_ALU1 New Net Name=ALU_4_ALU1
+Change Net Name : Old Net Name=ALU_3_ALU1 New Net Name=ALU_5_ALU1
+Change Net Name : Old Net Name=ALU_4_ALU1 New Net Name=ALU_6_ALU1
+Change Net Name : Old Net Name=ALU_5_ALU1 New Net Name=ALU_7_ALU1
+Change Net Name : Old Net Name=ALU_6_ALU1 New Net Name=ALU_8_ALU1
+Change Net Name : Old Net Name=ALU_7_ALU1 New Net Name=ALU_9_ALU1
+Change Net Name : Old Net Name=ALU_8_ALU1 New Net Name=ALU_10_ALU1
+Change Net Name : Old Net Name=ALU_9_ALU1 New Net Name=ALU_11_ALU1
+Change Net Name : Old Net Name=ALU_10_ALU1 New Net Name=ALU_12_ALU1
+Change Net Name : Old Net Name=ALU_11_ALU1 New Net Name=ALU_13_ALU1
+Change Net Name : Old Net Name=ALU_12_ALU1 New Net Name=ALU_14_ALU1
+Change Net Name : Old Net Name=ALU_13_ALU1 New Net Name=ALU_15_ALU1
+Change Net Name : Old Net Name=B_2_ALU1 New Net Name=B_0_ALU1
+Change Net Name : Old Net Name=B_3_ALU1 New Net Name=B_1_ALU1
+Change Net Name : Old Net Name=B_4_ALU1 New Net Name=B_2_ALU1
+Change Net Name : Old Net Name=B_5_ALU1 New Net Name=B_3_ALU1
+Change Net Name : Old Net Name=B_6_ALU1 New Net Name=B_4_ALU1
+Change Net Name : Old Net Name=B_7_ALU1 New Net Name=B_5_ALU1
+Change Net Name : Old Net Name=B_8_ALU1 New Net Name=B_6_ALU1
+Change Net Name : Old Net Name=B_9_ALU1 New Net Name=B_7_ALU1
+Change Net Name : Old Net Name=B_10_ALU1 New Net Name=B_8_ALU1
+Change Net Name : Old Net Name=B_11_ALU1 New Net Name=B_9_ALU1
+Change Net Name : Old Net Name=B_12_ALU1 New Net Name=B_10_ALU1
+Change Net Name : Old Net Name=B_13_ALU1 New Net Name=B_11_ALU1
+Change Net Name : Old Net Name=B_14_ALU1 New Net Name=B_12_ALU1
+Change Net Name : Old Net Name=B_15_ALU1 New Net Name=B_13_ALU1
+Change Net Name : Old Net Name=O\R\_\O\U\T\_ALU1 New Net Name=SUB_ALU1
+Change Net Name : Old Net Name=S\H\I\F\T\_\O\U\T\_ALU1 New Net Name=O\R\_\O\U\T\_ALU1
+Change Net Name : Old Net Name=X\O\R\_\O\U\T\_ALU1 New Net Name=A\N\D\_\O\U\T\_ALU1
+Added Pin To Net: NetName=A_14 Pin=J1-34
+Added Pin To Net: NetName=A_14 Pin=J1_ALU1-23
+Added Pin To Net: NetName=A_14 Pin=J1_ALU2-23
+Added Pin To Net: NetName=A_14 Pin=J1_ALU3-23
+Added Pin To Net: NetName=A_14 Pin=J1_ALU4-23
+Added Pin To Net: NetName=A_14 Pin=J1_ALU5-23
+Added Net: Name=A_14
+Added Pin To Net: NetName=A_15 Pin=J1-36
+Added Pin To Net: NetName=A_15 Pin=J1_ALU1-24
+Added Pin To Net: NetName=A_15 Pin=J1_ALU2-24
+Added Pin To Net: NetName=A_15 Pin=J1_ALU3-24
+Added Pin To Net: NetName=A_15 Pin=J1_ALU4-24
+Added Pin To Net: NetName=A_15 Pin=J1_ALU5-24
+Added Net: Name=A_15
+Added Pin To Net: NetName=ALU_0_ALU1 Pin=J3_ALU1-24
+Added Pin To Net: NetName=ALU_0_ALU1 Pin=J3_ALU2-24
+Added Pin To Net: NetName=ALU_0_ALU1 Pin=J3_ALU3-24
+Added Pin To Net: NetName=ALU_0_ALU1 Pin=J3_ALU4-24
+Added Pin To Net: NetName=ALU_0_ALU1 Pin=J3_ALU5-24
+Added Net: Name=ALU_0_ALU1
+Added Pin To Net: NetName=ALU_1_ALU1 Pin=J3_ALU1-23
+Added Pin To Net: NetName=ALU_1_ALU1 Pin=J3_ALU2-23
+Added Pin To Net: NetName=ALU_1_ALU1 Pin=J3_ALU3-23
+Added Pin To Net: NetName=ALU_1_ALU1 Pin=J3_ALU4-23
+Added Pin To Net: NetName=ALU_1_ALU1 Pin=J3_ALU5-23
+Added Net: Name=ALU_1_ALU1
+Added Pin To Net: NetName=B_14_ALU1 Pin=J2_ALU1-23
+Added Pin To Net: NetName=B_14_ALU1 Pin=J2_ALU2-23
+Added Pin To Net: NetName=B_14_ALU1 Pin=J2_ALU3-23
+Added Pin To Net: NetName=B_14_ALU1 Pin=J2_ALU4-23
+Added Pin To Net: NetName=B_14_ALU1 Pin=J2_ALU5-23
+Added Net: Name=B_14_ALU1
+Added Pin To Net: NetName=B_15_ALU1 Pin=J2_ALU1-24
+Added Pin To Net: NetName=B_15_ALU1 Pin=J2_ALU2-24
+Added Pin To Net: NetName=B_15_ALU1 Pin=J2_ALU3-24
+Added Pin To Net: NetName=B_15_ALU1 Pin=J2_ALU4-24
+Added Pin To Net: NetName=B_15_ALU1 Pin=J2_ALU5-24
+Added Net: Name=B_15_ALU1
+Added Member To Class: ClassName=A_[15..0] Member=Element[15]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[14]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[11]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[10]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[9]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[7]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[6]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[5]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[4]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[2]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[1]: A_
+Added Member To Class: ClassName=A_[15..0] Member=Element[0]: A_

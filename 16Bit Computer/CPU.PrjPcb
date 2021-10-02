@@ -75,23 +75,6 @@ GenerateClassCluster=0
 DocumentUniqueId=IMYOLDYZ
 
 [Document3]
-DocumentPath=Program_Counter.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=2
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=MISFZTMA
-
-[Document4]
 DocumentPath=Memory_Address_Register.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -108,24 +91,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=AIVIQDNJ
 
-[Document5]
-DocumentPath=Memory_SRAM.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=4
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=EIHHJUEG
-
-[Document6]
+[Document4]
 DocumentPath=PcbLib1.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -142,7 +108,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=FCOSULEU
 
-[Document7]
+[Document5]
 DocumentPath=Schlib1.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -159,24 +125,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XFMAKIOF
 
-[Document8]
-DocumentPath=Memory_EEPROM.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=5
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=XSPPXESU
-
-[Document9]
+[Document6]
 DocumentPath=Instruction Register.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -193,24 +142,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=HBCZRICA
 
-[Document10]
-DocumentPath=Output_Register.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=14
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=YMPLUSTQ
-
-[Document11]
+[Document7]
 DocumentPath=Timer_Register.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -227,7 +159,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OJSMBJTX
 
-[Document12]
+[Document8]
 DocumentPath=Microcode.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -244,7 +176,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=PWYWLNFV
 
-[Document13]
+[Document9]
 DocumentPath=ALU.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -261,7 +193,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SCNRLRJX
 
-[Document14]
+[Document10]
 DocumentPath=ALU_AND.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -278,7 +210,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MQCQABIF
 
-[Document15]
+[Document11]
 DocumentPath=ALU_OR.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -295,7 +227,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=FDDTZJDG
 
-[Document16]
+[Document12]
 DocumentPath=ALU_XOR.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -312,7 +244,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=PQBMDMKB
 
-[Document17]
+[Document13]
 DocumentPath=ALU_Shifter.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -329,7 +261,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CJMODTLT
 
-[Document18]
+[Document14]
 DocumentPath=Job1.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -346,7 +278,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document19]
+[Document15]
 DocumentPath=ALU_ONES.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -363,7 +295,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CEORYZOH
 
-[Document20]
+[Document16]
 DocumentPath=ALU_ZF.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -380,7 +312,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CYLHXBCP
 
-[Document21]
+[Document17]
 DocumentPath=PCB1.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -396,6 +328,23 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OOEMJMDB
+
+[Document18]
+DocumentPath=ALU_Adder.SchDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=PJXKBVZZ
 
 [Configuration1]
 Name=Sources

@@ -1,0 +1,81 @@
+Removed Member From Class: ClassName=REG_A Member=J1
+Removed Member From Class: ClassName=A_[15..0] Member=A_8
+Removed Member From Class: ClassName=A_[15..0] Member=A_9
+Removed Member From Class: ClassName=A_[15..0] Member=A_10
+Removed Member From Class: ClassName=A_[15..0] Member=A_11
+Removed Member From Class: ClassName=A_[15..0] Member=A_12
+Removed Member From Class: ClassName=A_[15..0] Member=A_13
+Removed Member From Class: ClassName=A_[15..0] Member=A_14
+Removed Member From Class: ClassName=A_[15..0] Member=A_15
+Change Component Designator: OldDesignator=J1 NewDesignator=J1_REG_A
+Added Component: Designator=J1_REG_B(HDR2X18)
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=VCC Pin=J1_REG_B-1
+Added Pin To Net: NetName=VCC Pin=J1_REG_B-2
+Added Pin To Net: NetName=GND Pin=J1_REG_B-3
+Added Pin To Net: NetName=GND Pin=J1_REG_B-4
+Added Pin To Net: NetName=BUS_0 Pin=J1_REG_B-5
+Added Pin To Net: NetName=B_0_ALU1 Pin=J1_REG_B-6
+Added Pin To Net: NetName=BUS_1 Pin=J1_REG_B-7
+Added Pin To Net: NetName=B_1_ALU1 Pin=J1_REG_B-8
+Added Pin To Net: NetName=BUS_2 Pin=J1_REG_B-9
+Added Pin To Net: NetName=B_2_ALU1 Pin=J1_REG_B-10
+Added Pin To Net: NetName=BUS_3 Pin=J1_REG_B-11
+Added Pin To Net: NetName=B_3_ALU1 Pin=J1_REG_B-12
+Added Pin To Net: NetName=BUS_4 Pin=J1_REG_B-13
+Added Pin To Net: NetName=B_4_ALU1 Pin=J1_REG_B-14
+Added Pin To Net: NetName=BUS_5 Pin=J1_REG_B-15
+Added Pin To Net: NetName=B_5_ALU1 Pin=J1_REG_B-16
+Added Pin To Net: NetName=BUS_6 Pin=J1_REG_B-17
+Added Pin To Net: NetName=B_6_ALU1 Pin=J1_REG_B-18
+Added Pin To Net: NetName=BUS_7 Pin=J1_REG_B-19
+Added Pin To Net: NetName=B_7_ALU1 Pin=J1_REG_B-20
+Added Pin To Net: NetName=B_8_ALU1 Pin=J1_REG_B-22
+Added Pin To Net: NetName=B_9_ALU1 Pin=J1_REG_B-24
+Added Pin To Net: NetName=B_10_ALU1 Pin=J1_REG_B-26
+Added Pin To Net: NetName=LSB_MSB Pin=J1_REG_B-27
+Added Pin To Net: NetName=B_11_ALU1 Pin=J1_REG_B-28
+Added Pin To Net: NetName=B_12_ALU1 Pin=J1_REG_B-30
+Added Pin To Net: NetName=B_13_ALU1 Pin=J1_REG_B-32
+Added Pin To Net: NetName=RST Pin=J1_REG_B-33
+Added Pin To Net: NetName=B_14_ALU1 Pin=J1_REG_B-34
+Added Pin To Net: NetName=CLK Pin=J1_REG_B-35
+Added Pin To Net: NetName=B_15_ALU1 Pin=J1_REG_B-36
+Change Net Name : Old Net Name=A_0 New Net Name=A_0_ALU1
+Change Net Name : Old Net Name=A_1 New Net Name=A_1_ALU1
+Change Net Name : Old Net Name=A_2 New Net Name=A_2_ALU1
+Change Net Name : Old Net Name=A_3 New Net Name=A_3_ALU1
+Change Net Name : Old Net Name=A_4 New Net Name=A_4_ALU1
+Change Net Name : Old Net Name=A_5 New Net Name=A_5_ALU1
+Change Net Name : Old Net Name=A_6 New Net Name=A_6_ALU1
+Change Net Name : Old Net Name=A_7 New Net Name=A_7_ALU1
+Change Net Name : Old Net Name=A_8 New Net Name=A_0
+Change Net Name : Old Net Name=A_9 New Net Name=A_1
+Change Net Name : Old Net Name=A_10 New Net Name=A_2
+Change Net Name : Old Net Name=A_11 New Net Name=A_3
+Change Net Name : Old Net Name=A_12 New Net Name=A_4
+Change Net Name : Old Net Name=A_13 New Net Name=A_5
+Change Net Name : Old Net Name=A_14 New Net Name=A_6
+Change Net Name : Old Net Name=A_15 New Net Name=A_7
+Change Net Name : Old Net Name=B_8_ALU1 New Net Name=B_0
+Change Net Name : Old Net Name=B_9_ALU1 New Net Name=B_1
+Change Net Name : Old Net Name=B_10_ALU1 New Net Name=B_2
+Change Net Name : Old Net Name=B_11_ALU1 New Net Name=B_3
+Change Net Name : Old Net Name=B_12_ALU1 New Net Name=B_4
+Change Net Name : Old Net Name=B_13_ALU1 New Net Name=B_5
+Change Net Name : Old Net Name=B_14_ALU1 New Net Name=B_6
+Change Net Name : Old Net Name=B_15_ALU1 New Net Name=B_7
+Change Net Name : Old Net Name=L\O\A\D\ New Net Name=L\O\A\D\_REG_A
+Added Pin To Net: NetName=L\O\A\D\_REG_B Pin=J1_REG_B-31
+Added Net: Name=L\O\A\D\_REG_B
+Added Pin To Net: NetName=O\U\T\_REG_A Pin=J1_REG_A-29
+Added Net: Name=O\U\T\_REG_A
+Added Pin To Net: NetName=O\U\T\_REG_B Pin=J1_REG_B-29
+Added Net: Name=O\U\T\_REG_B
+Change Class Name : Old Net Name=A_[15..0] New Net Name=A_[7..0]
+Added Class: Name=REG_B
+Added Class: Name=B_[7..0]
+Added Class: Name=Register Connector
+Added Member To Class: ClassName=REG_A Member=Component J1_REG_A (J1) Header 18X2

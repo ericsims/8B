@@ -1,0 +1,38 @@
+Added Component: Designator=J1(HDR2X18)
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=VCC Pin=J1-1
+Added Pin To Net: NetName=VCC Pin=J1-2
+Added Pin To Net: NetName=GND Pin=J1-3
+Added Pin To Net: NetName=GND Pin=J1-4
+Added Pin To Net: NetName=BUS_0 Pin=J1-5
+Added Pin To Net: NetName=ADDR_0 Pin=J1-6
+Added Pin To Net: NetName=BUS_1 Pin=J1-7
+Added Pin To Net: NetName=ADDR_1 Pin=J1-8
+Added Pin To Net: NetName=BUS_2 Pin=J1-9
+Added Pin To Net: NetName=ADDR_2 Pin=J1-10
+Added Pin To Net: NetName=BUS_3 Pin=J1-11
+Added Pin To Net: NetName=ADDR_3 Pin=J1-12
+Added Pin To Net: NetName=BUS_4 Pin=J1-13
+Added Pin To Net: NetName=ADDR_4 Pin=J1-14
+Added Pin To Net: NetName=BUS_5 Pin=J1-15
+Added Pin To Net: NetName=ADDR_5 Pin=J1-16
+Added Pin To Net: NetName=BUS_6 Pin=J1-17
+Added Pin To Net: NetName=ADDR_6 Pin=J1-18
+Added Pin To Net: NetName=BUS_7 Pin=J1-19
+Added Pin To Net: NetName=ADDR_7 Pin=J1-20
+Added Pin To Net: NetName=ADDR_8 Pin=J1-22
+Added Pin To Net: NetName=ADDR_9 Pin=J1-24
+Added Pin To Net: NetName=ADDR_10 Pin=J1-26
+Added Pin To Net: NetName=ADDR_11 Pin=J1-28
+Added Pin To Net: NetName=LSB_MSB Pin=J1-29
+Added Pin To Net: NetName=ADDR_12 Pin=J1-30
+Added Pin To Net: NetName=ADDR_13 Pin=J1-32
+Added Pin To Net: NetName=RST Pin=J1-33
+Added Pin To Net: NetName=ADDR_14 Pin=J1-34
+Added Pin To Net: NetName=CLK Pin=J1-35
+Added Pin To Net: NetName=ADDR_15 Pin=J1-36
+Added Pin To Net: NetName=LOAD Pin=J1-31
+Added Net: Name=LOAD
+Added Class: Name=MAR

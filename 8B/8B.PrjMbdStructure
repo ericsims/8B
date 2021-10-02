@@ -1,0 +1,4 @@
+Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Module|Designator=Backplane|Source=..\Backplane\Backplane.PrjPcb
+Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Backplane\Backplane.PrjPcb
+Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Module|Designator=SDRAM|Source=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
+Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Memory_SDRAM\Memory_SDRAM.PrjPcb

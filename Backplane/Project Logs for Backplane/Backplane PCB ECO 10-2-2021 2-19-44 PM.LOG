@@ -1,0 +1,44 @@
+Removed Member From Class: ClassName=PC Member=J1_REG_A
+Removed Member From Class: ClassName=A_[7..0] Member=A_0_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_1_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_2_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_3_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_4_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_5_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_6_ALU1
+Removed Member From Class: ClassName=A_[7..0] Member=A_7_ALU1
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M0-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M1-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M2-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M3-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M4-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M5-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M6-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M7-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M8-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M9-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M10-29
+Added Pin To Net: NetName=RFU_M29_M0 Pin=J1_M11-29
+Added Net: Name=RFU_M29_M0
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M0-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M1-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M2-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M3-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M4-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M5-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M6-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M7-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M8-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M9-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M10-31
+Added Pin To Net: NetName=RFU_M31_M0 Pin=J1_M11-31
+Added Net: Name=RFU_M31_M0
+Added Member To Class: ClassName=PC Member=Component J1 Header 20
+Added Member To Class: ClassName=A_[7..0] Member=Element[7]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[6]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[5]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[4]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[3]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[2]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[1]: A_
+Added Member To Class: ClassName=A_[7..0] Member=Element[0]: A_

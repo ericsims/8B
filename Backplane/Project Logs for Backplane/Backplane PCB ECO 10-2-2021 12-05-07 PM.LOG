@@ -1,0 +1,85 @@
+Change Component DesignItemId : Designator=P?_ALU1 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU1 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU1 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU2 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU2 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU2 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU3 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU3 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU3 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU4 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU4 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU4 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU5 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU5 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component DesignItemId : Designator=P?_ALU5 Old DesignItemId=Header 24H New DesignItemId=Header 24
+Change Component Footprint: Designator=P?_ALU1 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU1 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU1 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU2 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU2 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU2 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU3 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU3 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU3 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU4 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU4 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU4 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU5 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU5 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Footprint: Designator=P?_ALU5 Old Footprint=HDR1X24H New Footprint=HDR1X24
+Change Component Comment : Designator=P?_ALU1 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU1 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU1 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU2 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU2 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU2 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU3 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU3 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU3 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU4 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU4 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU4 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU5 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU5 Old Comment=Header 24H New Comment=Header 24
+Change Component Comment : Designator=P?_ALU5 Old Comment=Header 24H New Comment=Header 24
+Change Component Designator: OldDesignator=P?_ALU1 NewDesignator=J1_ALU1
+Change Component Designator: OldDesignator=P?_ALU1 NewDesignator=J2_ALU1
+Change Component Designator: OldDesignator=P?_ALU1 NewDesignator=J3_ALU1
+Change Component Designator: OldDesignator=P?_ALU2 NewDesignator=J1_ALU2
+Change Component Designator: OldDesignator=P?_ALU2 NewDesignator=J2_ALU2
+Change Component Designator: OldDesignator=P?_ALU2 NewDesignator=J3_ALU2
+Change Component Designator: OldDesignator=P?_ALU3 NewDesignator=J1_ALU3
+Change Component Designator: OldDesignator=P?_ALU3 NewDesignator=J2_ALU3
+Change Component Designator: OldDesignator=P?_ALU3 NewDesignator=J3_ALU3
+Change Component Designator: OldDesignator=P?_ALU4 NewDesignator=J1_ALU4
+Change Component Designator: OldDesignator=P?_ALU4 NewDesignator=J2_ALU4
+Change Component Designator: OldDesignator=P?_ALU4 NewDesignator=J3_ALU4
+Change Component Designator: OldDesignator=P?_ALU5 NewDesignator=J1_ALU5
+Change Component Designator: OldDesignator=P?_ALU5 NewDesignator=J2_ALU5
+Change Component Designator: OldDesignator=P?_ALU5 NewDesignator=J3_ALU5
+Change Component Description : Designator=J3_ALU1 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J2_ALU1 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J1_ALU1 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J3_ALU2 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J2_ALU2 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J1_ALU2 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J3_ALU3 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J2_ALU3 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J1_ALU3 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J3_ALU4 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J2_ALU4 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J1_ALU4 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J3_ALU5 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J2_ALU5 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Change Component Description : Designator=J1_ALU5 Old Description=Header, 24-Pin, Right Angle New Description=Header, 24-Pin
+Added Member To Class: ClassName=ALU4 Member=Component J1_ALU4 (J1) Header 24
+Added Member To Class: ClassName=ALU5 Member=Component J1_ALU5 (J1) Header 24
+Added Member To Class: ClassName=ALU1 Member=Component J2_ALU1 (J2) Header 24
+Added Member To Class: ClassName=ALU2 Member=Component J2_ALU2 (J2) Header 24
+Added Member To Class: ClassName=ALU3 Member=Component J2_ALU3 (J2) Header 24
+Added Member To Class: ClassName=ALU5 Member=Component J2_ALU5 (J2) Header 24
+Added Member To Class: ClassName=ALU1 Member=Component J3_ALU1 (J3) Header 24
+Added Member To Class: ClassName=ALU2 Member=Component J3_ALU2 (J3) Header 24
+Added Member To Class: ClassName=ALU3 Member=Component J3_ALU3 (J3) Header 24
+Added Member To Class: ClassName=ALU4 Member=Component J3_ALU4 (J3) Header 24
