@@ -1,0 +1,211 @@
+Removed Pin From Net: NetName=CE Pin=U1-10
+Removed Pin From Net: NetName=VCC Pin=U1-16
+Removed Pin From Net: NetName=VCC Pin=U2-16
+Removed Pin From Net: NetName=VCC Pin=U3-16
+Removed Pin From Net: NetName=CLK Pin=U4-2
+Removed Pin From Net: NetName=CE Pin=U4-7
+Removed Pin From Net: NetName=GND Pin=U4-8
+Removed Pin From Net: NetName=GND Pin=U5-7
+Removed Pin From Net: NetName=VCC Pin=U5-14
+Removed Pin From Net: NetName=GND Pin=U6-7
+Removed Pin From Net: NetName=VCC Pin=U6-14
+Removed Pin From Net: NetName=VCC Pin=U7-1
+Removed Pin From Net: NetName=GND Pin=U7-10
+Removed Pin From Net: NetName=VCC Pin=U7-20
+Removed Pin From Net: NetName=VCC Pin=U8-1
+Removed Pin From Net: NetName=GND Pin=U8-10
+Removed Pin From Net: NetName=VCC Pin=U8-20
+Removed Member From Class: ClassName=PC Member=U8
+Change Component Footprint: Designator=U5 Old Footprint=N014 New Footprint=N016
+Change Component Footprint: Designator=U6 Old Footprint=N014 New Footprint=N016
+Change Component Footprint: Designator=U1 Old Footprint=N016 New Footprint=J028
+Change Component Footprint: Designator=U2 Old Footprint=N016 New Footprint=J028
+Change Component Footprint: Designator=U3 Old Footprint=N016 New Footprint=J028
+Change Component Footprint: Designator=U7 Old Footprint=N020 New Footprint=N014
+Change Component Comment : Designator=U5 Old Comment=SN74LS00N New Comment=SN74LS138N
+Change Component Comment : Designator=U6 Old Comment=SN74LS00N New Comment=SN74LS138N
+Change Component Comment : Designator=U1 Old Comment=SN74LS161AN New Comment=AT28C256-15PU
+Change Component Comment : Designator=U2 Old Comment=SN74LS161AN New Comment=AT28C256-15PU
+Change Component Comment : Designator=U3 Old Comment=SN74LS161AN New Comment=AT28C256-15PU
+Change Component Comment : Designator=U7 Old Comment=SN74LS245N New Comment=SN74LS04N
+Change component parameters: Designator = "U7" ("U7"); Footprint = "N020"; UniqueID = "\UTIOIHGX" ("\UTIOIHGX")
+Change component parameters (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/sn74ls04.pdf"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageDescription"; Value = "DIP; 14 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageReference"; Value = "N014"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Change component parameters: Designator = "U5" ("U5"); Footprint = "N014"; UniqueID = "\FACGWTRE" ("\FACGWTRE")
+Change component parameters (AddParameter): Name = "Code_JEDEC"; Value = "MS-001-BB"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/sn74ls138.pdf"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageDescription"; Value = "DIP; 16 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageReference"; Value = "N016"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Change component parameters: Designator = "U6" ("U6"); Footprint = "N014"; UniqueID = "\RGTEGDUF" ("\RGTEGDUF")
+Change component parameters (AddParameter): Name = "Code_JEDEC"; Value = "MS-001-BB"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink1Description"; Value = "Manufacturer Link"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "ComponentLink2URL"; Value = "http://www-s.ti.com/sc/ds/sn74ls138.pdf"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "DatasheetVersion"; Value = "Mar-1988"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionDate"; Value = "04-Mar-2005"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "LatestRevisionNote"; Value = "Stylized 3D Model Added."; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageDescription"; Value = "DIP; 16 Leads; Row Spacing 7.62 mm; Pitch 2.54 mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageReference"; Value = "N016"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "PackageVersion"; Value = "Oct-1995"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Change component parameters: Designator = "U1" ("U1"); Footprint = "N016"; UniqueID = "\NEDOWVIB" ("\NEDOWVIB")
+Change component parameters: Designator = "U2" ("U2"); Footprint = "N016"; UniqueID = "\UYRPDWCI" ("\UYRPDWCI")
+Change component parameters: Designator = "U3" ("U3"); Footprint = "N016"; UniqueID = "\BOULSOOA" ("\BOULSOOA")
+Added Pin To Net: NetName=VCC Pin=U1-27
+Added Pin To Net: NetName=VCC Pin=U1-28
+Added Pin To Net: NetName=VCC Pin=U2-27
+Added Pin To Net: NetName=VCC Pin=U2-28
+Added Pin To Net: NetName=VCC Pin=U3-27
+Added Pin To Net: NetName=VCC Pin=U3-28
+Added Pin To Net: NetName=VCC Pin=U4-7
+Added Pin To Net: NetName=VCC Pin=U4-9
+Added Pin To Net: NetName=VCC Pin=U4-10
+Added Pin To Net: NetName=VCC Pin=U5-6
+Added Pin To Net: NetName=VCC Pin=U5-16
+Added Pin To Net: NetName=VCC Pin=U6-16
+Added Pin To Net: NetName=VCC Pin=U7-14
+Change Net Name : Old Net Name=CE New Net Name=INST_3
+Change Net Name : Old Net Name=CLK New Net Name=CO
+Change Net Name : Old Net Name=GND New Net Name=INST_2
+Added Pin To Net: NetName=A\I\ Pin=U1-16
+Added Net: Name=A\I\
+Added Pin To Net: NetName=A\O\ Pin=U1-17
+Added Net: Name=A\O\
+Added Pin To Net: NetName=B\I\ Pin=U1-18
+Added Net: Name=B\I\
+Added Pin To Net: NetName=C\E\ Pin=U1-13
+Added Net: Name=C\E\
+Added Pin To Net: NetName=F\I\ Pin=U1-19
+Added Net: Name=F\I\
+Added Pin To Net: NetName=GND Pin=U1-20
+Added Pin To Net: NetName=GND Pin=U1-22
+Added Pin To Net: NetName=GND Pin=U2-20
+Added Pin To Net: NetName=GND Pin=U2-22
+Added Pin To Net: NetName=GND Pin=U3-20
+Added Pin To Net: NetName=GND Pin=U3-22
+Added Pin To Net: NetName=GND Pin=U4-3
+Added Pin To Net: NetName=GND Pin=U4-4
+Added Pin To Net: NetName=GND Pin=U4-5
+Added Pin To Net: NetName=GND Pin=U4-6
+Added Pin To Net: NetName=GND Pin=U4-8
+Added Pin To Net: NetName=GND Pin=U5-5
+Added Pin To Net: NetName=GND Pin=U5-8
+Added Pin To Net: NetName=GND Pin=U6-4
+Added Pin To Net: NetName=GND Pin=U6-5
+Added Pin To Net: NetName=GND Pin=U6-8
+Added Pin To Net: NetName=GND Pin=U7-7
+Added Net: Name=GND
+Added Pin To Net: NetName=I\I\ Pin=U1-15
+Added Net: Name=I\I\
+Added Pin To Net: NetName=INST_0 Pin=U1-10
+Added Pin To Net: NetName=INST_0 Pin=U2-10
+Added Pin To Net: NetName=INST_0 Pin=U3-10
+Added Net: Name=INST_0
+Added Pin To Net: NetName=INST_1 Pin=U1-9
+Added Pin To Net: NetName=INST_1 Pin=U2-9
+Added Pin To Net: NetName=INST_1 Pin=U3-9
+Added Net: Name=INST_1
+Added Pin To Net: NetName=INST_4 Pin=U1-6
+Added Pin To Net: NetName=INST_4 Pin=U2-6
+Added Pin To Net: NetName=INST_4 Pin=U3-6
+Added Net: Name=INST_4
+Added Pin To Net: NetName=INST_5 Pin=U1-5
+Added Pin To Net: NetName=INST_5 Pin=U2-5
+Added Pin To Net: NetName=INST_5 Pin=U3-5
+Added Net: Name=INST_5
+Added Pin To Net: NetName=INST_6 Pin=U1-4
+Added Pin To Net: NetName=INST_6 Pin=U2-4
+Added Pin To Net: NetName=INST_6 Pin=U3-4
+Added Net: Name=INST_6
+Added Pin To Net: NetName=INST_7 Pin=U1-3
+Added Pin To Net: NetName=INST_7 Pin=U2-3
+Added Pin To Net: NetName=INST_7 Pin=U3-3
+Added Net: Name=INST_7
+Added Pin To Net: NetName=IS Pin=U7-2
+Added Net: Name=IS
+Added Pin To Net: NetName=LM Pin=U2-19
+Added Net: Name=LM
+Added Pin To Net: NetName=M0 Pin=U2-11
+Added Net: Name=M0
+Added Pin To Net: NetName=M1 Pin=U2-12
+Added Net: Name=M1
+Added Pin To Net: NetName=M2 Pin=U2-13
+Added Net: Name=M2
+Added Pin To Net: NetName=M3 Pin=U2-15
+Added Net: Name=M3
+Added Pin To Net: NetName=M\A\ Pin=U2-16
+Added Net: Name=M\A\
+Added Pin To Net: NetName=M\O\ Pin=U2-18
+Added Net: Name=M\O\
+Added Pin To Net: NetName=MI Pin=U2-17
+Added Net: Name=MI
+Added Pin To Net: NetName=NetU4_2 Pin=U4-2
+Added Net: Name=NetU4_2
+Added Pin To Net: NetName=NetU5_15 Pin=U5-15
+Added Pin To Net: NetName=NetU5_15 Pin=U7-1
+Added Net: Name=NetU5_15
+Added Pin To Net: NetName=P\I\ Pin=U1-12
+Added Net: Name=P\I\
+Added Pin To Net: NetName=P\O\ Pin=U1-11
+Added Net: Name=P\O\
+Added Pin To Net: NetName=RU Pin=U3-19
+Added Net: Name=RU
+Added Pin To Net: NetName=T\O\ Pin=U3-11
+Added Net: Name=T\O\
+Added Pin To Net: NetName=UC_0 Pin=U1-25
+Added Pin To Net: NetName=UC_0 Pin=U2-25
+Added Pin To Net: NetName=UC_0 Pin=U3-25
+Added Pin To Net: NetName=UC_0 Pin=U4-14
+Added Pin To Net: NetName=UC_0 Pin=U5-1
+Added Pin To Net: NetName=UC_0 Pin=U6-1
+Added Net: Name=UC_0
+Added Pin To Net: NetName=UC_1 Pin=U1-24
+Added Pin To Net: NetName=UC_1 Pin=U2-24
+Added Pin To Net: NetName=UC_1 Pin=U3-24
+Added Pin To Net: NetName=UC_1 Pin=U4-13
+Added Pin To Net: NetName=UC_1 Pin=U5-2
+Added Pin To Net: NetName=UC_1 Pin=U6-2
+Added Net: Name=UC_1
+Added Pin To Net: NetName=UC_2 Pin=U1-21
+Added Pin To Net: NetName=UC_2 Pin=U2-21
+Added Pin To Net: NetName=UC_2 Pin=U3-21
+Added Pin To Net: NetName=UC_2 Pin=U4-12
+Added Pin To Net: NetName=UC_2 Pin=U5-3
+Added Pin To Net: NetName=UC_2 Pin=U6-3
+Added Net: Name=UC_2
+Added Pin To Net: NetName=UC_3 Pin=U1-23
+Added Pin To Net: NetName=UC_3 Pin=U2-23
+Added Pin To Net: NetName=UC_3 Pin=U3-23
+Added Pin To Net: NetName=UC_3 Pin=U4-11
+Added Pin To Net: NetName=UC_3 Pin=U5-4
+Added Pin To Net: NetName=UC_3 Pin=U6-6
+Added Net: Name=UC_3
+Added Pin To Net: NetName=ZF Pin=U1-26
+Added Pin To Net: NetName=ZF Pin=U2-26
+Added Pin To Net: NetName=ZF Pin=U3-26
+Added Net: Name=ZF
+Change Class Name : Old Net Name=PC New Net Name=Microcode
+Added Class: Name=N000-1_[3..0]
+Added Class: Name=N000-2_[7..0]
+Added Room: Name=Microcode

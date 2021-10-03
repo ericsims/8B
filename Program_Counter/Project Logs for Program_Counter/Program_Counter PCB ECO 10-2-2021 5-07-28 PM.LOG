@@ -1,0 +1,16 @@
+Removed Pin From Net: NetName=REG_7 Pin=U3-11
+Removed Pin From Net: NetName=REG_6 Pin=U3-12
+Removed Pin From Net: NetName=REG_5 Pin=U3-13
+Removed Pin From Net: NetName=REG_4 Pin=U3-14
+Removed Pin From Net: NetName=REG_7 Pin=U4-11
+Removed Pin From Net: NetName=REG_6 Pin=U4-12
+Removed Pin From Net: NetName=REG_5 Pin=U4-13
+Removed Pin From Net: NetName=REG_4 Pin=U4-14
+Added Pin To Net: NetName=REG_11 Pin=U3-11
+Added Pin To Net: NetName=REG_10 Pin=U3-12
+Added Pin To Net: NetName=REG_9 Pin=U3-13
+Added Pin To Net: NetName=REG_8 Pin=U3-14
+Added Pin To Net: NetName=REG_15 Pin=U4-11
+Added Pin To Net: NetName=REG_14 Pin=U4-12
+Added Pin To Net: NetName=REG_13 Pin=U4-13
+Added Pin To Net: NetName=REG_12 Pin=U4-14

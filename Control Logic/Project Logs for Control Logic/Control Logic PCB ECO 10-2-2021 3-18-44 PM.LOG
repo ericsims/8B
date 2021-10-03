@@ -1,0 +1,14 @@
+Removed Pin From Net: NetName=RFU18 Pin=P1-29
+Removed Pin From Net: NetName=RFU19 Pin=P1-31
+Removed Pin From Net: NetName=RFU20 Pin=P1-33
+Removed Pin From Net: NetName=RFU21 Pin=P1-35
+Removed Pin From Net: NetName=RFU22 Pin=P1-37
+Change Component Footprint: Designator=P1 Old Footprint=HDR2X19H New Footprint=HDR2X24H
+Change Component Comment : Designator=P1 Old Comment=Header 19X2H New Comment=Header 24X2H
+Added Pin To Net: NetName=RFU18 Pin=P1-42
+Added Pin To Net: NetName=RFU19 Pin=P1-44
+Added Pin To Net: NetName=RFU22 Pin=P1-45
+Added Pin To Net: NetName=RFU20 Pin=P1-46
+Added Pin To Net: NetName=RFU21 Pin=P1-48
+Added Pin To Net: NetName=HT Pin=P1-40
+Added Net: Name=HT
