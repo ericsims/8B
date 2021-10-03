@@ -1,0 +1,34 @@
+Added Pin To Net: NetName=GND Pin=U9-1
+Added Pin To Net: NetName=REG_0 Pin=U9-2
+Added Pin To Net: NetName=REG_1 Pin=U9-4
+Added Pin To Net: NetName=REG_2 Pin=U9-6
+Added Pin To Net: NetName=REG_3 Pin=U9-8
+Added Pin To Net: NetName=GND Pin=U9-10
+Added Pin To Net: NetName=REG_4 Pin=U9-11
+Added Pin To Net: NetName=REG_5 Pin=U9-13
+Added Pin To Net: NetName=REG_6 Pin=U9-15
+Added Pin To Net: NetName=REG_7 Pin=U9-17
+Added Pin To Net: NetName=GND Pin=U9-19
+Added Pin To Net: NetName=VCC Pin=U9-20
+Added Pin To Net: NetName=GND Pin=U10-1
+Added Pin To Net: NetName=REG_8 Pin=U10-2
+Added Pin To Net: NetName=REG_9 Pin=U10-4
+Added Pin To Net: NetName=REG_10 Pin=U10-6
+Added Pin To Net: NetName=REG_11 Pin=U10-8
+Added Pin To Net: NetName=GND Pin=U10-10
+Added Pin To Net: NetName=REG_12 Pin=U10-11
+Added Pin To Net: NetName=REG_13 Pin=U10-13
+Added Pin To Net: NetName=REG_14 Pin=U10-15
+Added Pin To Net: NetName=REG_15 Pin=U10-17
+Added Pin To Net: NetName=GND Pin=U10-19
+Added Pin To Net: NetName=VCC Pin=U10-20
+Change Class Name : Old Net Name=N000-1_[7..0] New Net Name=REG_[15..0]
+Change Class Name : Old Net Name=N000-2_[7..0] New Net Name=BUS_[7..0]
+Added Member To Class: ClassName=REG_[15..0] Member=Element[7]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[6]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[5]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[4]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[3]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[2]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[1]: REG_
+Added Member To Class: ClassName=REG_[15..0] Member=Element[0]: REG_
