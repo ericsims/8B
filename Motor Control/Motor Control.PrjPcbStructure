@@ -1,0 +1,3 @@
+Record=TopLevelDocument|FileName=Register.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Register.SchDoc|Designator=Encoder|SchDesignator=Encoder|FileName=Encoder.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Encoder.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=Register.SchDoc|Designator=ZF|SchDesignator=ZF|FileName=ZeroDetect.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=ZeroDetect.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
