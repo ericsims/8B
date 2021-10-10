@@ -1,0 +1,828 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 8em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD20\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">10/9/2021</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">9:56:52 PM</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:02</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc" class="file"><acronym title="D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc">D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">164</td></tr>
+</table>
+</td>
+</table><a name="IDFWQGFD2WLFOYCEMXKG4R1TVMNO2PTDF0ITR22TIVLOF3Q3STCEWG"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDCJDMEO0WNC2CLQYXR3IW3SVRQFHXUW1DHJ302UCHGPDBSIWNUP5G">Clearance Constraint (Gap=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGREUTXSVUTS0K3AJWENNI52VNGPKGDVQNRWNIVIZONDEMSIB1E0E">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID2JAWCMVXWRJ1IDESZ4HSMFFCKB3IFVPBPJIRMJOCFIK5DTIVRDJE">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">130</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID4BPFBKHUPPEJDCPQXYABMZDAXFIYQF0KCQGCBCG0JVGZLUCIHLUC">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDYUY30ZDGOFGMHCO05HPND2LKAO5YEJKQ2QGVQRCHRORL4NDNTLBM">Width Constraint (Min=10mil) (Max=10mil) (Preferred=10mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDCJSNUICI1LANHOWP34GF5FKK1JTPYINHWKYFIWMNX0O44ZQSYMWB">Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID3OAPDD353JXDPTU2SPALP5GITE5AGA321TTSWBJXEYOUIFEP3WTP">Hole Size Constraint (Min=1mil) (Max=100mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGO1Q4VGKMVEZKIAJRMPCLFP41KVNHSOUUJXNFBQX1IROTT0USII">Hole To Hole Clearance (Gap=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDMXRRXSQMIW0NECVDO2Y3Q3GHE3IKVEBBJPSKLBWFPPPDD51YMHN">Minimum Solder Mask Sliver (Gap=10mil) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDXEZ2H1GTRI5NJ35WIUZOZI5XUIP1O0PTYPEXG4KAXYHYHD2ESFTG">Silk To Solder Mask (Clearance=10mil) (IsPad),(All)</a></td>
+<td class="column2">23</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID0CVEVDVXLQ1HP55XZJVD5K5Y0DKSZFVZP0KS3WEW5CQ4AVJRZSXG">Silk to Silk (Clearance=10mil) (All),(All)</a></td>
+<td class="column2">11</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDTT5IX35BL5KKIHJSHU3ZUEN4HFKU3MTPT1HNUZF1DTSDXKWOSB3O">Net Antennae (Tolerance=0mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID5PCRJEWQM3QWPEE31QIG5TSA3FGSVPKCEQQK4YJ5Q1RXONRYFDYM">Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">164</td>
+</tr>
+</table><br><a name="ID2JAWCMVXWRJ1IDESZ4HSMFFCKB3IFVPBPJIRMJOCFIK5DTIVRDJE"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=8531.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=8531.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC1_1 Between Pad C1-1(8000mil,1550mil) on Multi-Layer And Pad R1-1(8500mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6572.378mil|Location2.X=8027.622mil|Location1.Y=1822.378mil|Location2.Y=1877.622mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6572.378mil|Location2.X=8027.622mil|Location1.Y=1822.378mil|Location2.Y=1877.622mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad C2-2(6600mil,1850mil) on Multi-Layer And Pad C1-2(8000mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=9127.622mil|Location1.Y=1822.378mil|Location2.Y=1877.622mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=9127.622mil|Location1.Y=1822.378mil|Location2.Y=1877.622mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad C1-2(8000mil,1850mil) on Multi-Layer And Pad C3-2(9100mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=8383.528mil|Location1.Y=1822.378mil|Location2.Y=2783.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7972.378mil|Location2.X=8383.528mil|Location1.Y=1822.378mil|Location2.Y=2783.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad C1-2(8000mil,1850mil) on Multi-Layer And Pad U2-4(8350mil,2750mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6572.378mil|Location2.X=6831.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6572.378mil|Location2.X=6831.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC2_1 Between Pad C2-1(6600mil,1550mil) on Multi-Layer And Pad R2-1(6800mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6627.622mil|Location1.Y=1816.473mil|Location2.Y=1883.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6627.622mil|Location1.Y=1816.473mil|Location2.Y=1883.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U5-8(6450mil,1850mil) on Multi-Layer And Pad C2-2(6600mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9072.378mil|Location2.X=9231.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9072.378mil|Location2.X=9231.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True">Un-Routed Net Constraint: Net VCC/2_REF Between Pad C3-1(9100mil,1550mil) on Multi-Layer And Pad R4-1(9200mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8616.472mil|Location2.X=9127.622mil|Location1.Y=1522.378mil|Location2.Y=2883.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8616.472mil|Location2.X=9127.622mil|Location1.Y=1522.378mil|Location2.Y=2883.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC/2_REF Between Pad U2-6(8650mil,2850mil) on Multi-Layer And Pad C3-1(9100mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9072.378mil|Location2.X=9231.559mil|Location1.Y=1818.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9072.378mil|Location2.X=9231.559mil|Location1.Y=1818.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad C3-2(9100mil,1850mil) on Multi-Layer And Pad R4-2(9200mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8231.559mil|Location1.Y=1818.441mil|Location2.Y=3027.622mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8231.559mil|Location1.Y=1818.441mil|Location2.Y=3027.622mil|Absolute=True">Un-Routed Net Constraint: Net A_FILT Between Pad R9-2(8200mil,1850mil) on Multi-Layer And Pad C4-1(8200mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8383.528mil|Location1.Y=2972.378mil|Location2.Y=3083.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8383.528mil|Location1.Y=2972.378mil|Location2.Y=3083.528mil|Absolute=True">Un-Routed Net Constraint: Net A_FILT Between Pad C4-1(8200mil,3000mil) on Multi-Layer And Pad U2-1(8350mil,3050mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=8227.622mil|Location1.Y=2866.472mil|Location2.Y=3027.622mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=8227.622mil|Location1.Y=2866.472mil|Location2.Y=3027.622mil|Absolute=True">Un-Routed Net Constraint: Net A_FILT Between Pad U3-3(2400mil,2900mil) on Multi-Layer And Pad C4-1(8200mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8931.559mil|Location1.Y=1818.441mil|Location2.Y=2727.622mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8931.559mil|Location1.Y=1818.441mil|Location2.Y=2727.622mil|Absolute=True">Un-Routed Net Constraint: Net NetC4_2 Between Pad C4-2(8200mil,2700mil) on Multi-Layer And Pad R7-2(8900mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8383.528mil|Location1.Y=2672.378mil|Location2.Y=2883.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8172.378mil|Location2.X=8383.528mil|Location1.Y=2672.378mil|Location2.Y=2883.528mil|Absolute=True">Un-Routed Net Constraint: Net NetC4_2 Between Pad C4-2(8200mil,2700mil) on Multi-Layer And Pad U2-3(8350mil,2850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7772.378mil|Location2.X=8431.559mil|Location1.Y=1522.378mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7772.378mil|Location2.X=8431.559mil|Location1.Y=1522.378mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net B_FILT Between Pad C5-1(7800mil,1550mil) on Multi-Layer And Pad R10-2(8400mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7568.441mil|Location2.X=7827.622mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7568.441mil|Location2.X=7827.622mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True">Un-Routed Net Constraint: Net B_FILT Between Pad R8-1(7600mil,1550mil) on Multi-Layer And Pad C5-1(7800mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7568.441mil|Location2.X=7827.622mil|Location1.Y=1818.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7568.441mil|Location2.X=7827.622mil|Location1.Y=1818.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC5_2 Between Pad R8-2(7600mil,1850mil) on Multi-Layer And Pad C5-2(7800mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7772.378mil|Location2.X=8683.528mil|Location1.Y=1822.378mil|Location2.Y=2783.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7772.378mil|Location2.X=8683.528mil|Location1.Y=1822.378mil|Location2.Y=2783.528mil|Absolute=True">Un-Routed Net Constraint: Net NetC5_2 Between Pad C5-2(7800mil,1850mil) on Multi-Layer And Pad U2-5(8650mil,2750mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1233.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1233.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad P1-1(1100mil,3100mil) on Multi-Layer And Pad P1-2(1200mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_3 Between Pad P1-11(1100mil,2600mil) on Multi-Layer And Pad U10-15(1700mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2466.472mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2466.472mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_4 Between Pad P1-13(1100mil,2500mil) on Multi-Layer And Pad U10-14(1700mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2366.472mil|Location2.Y=2433.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2366.472mil|Location2.Y=2433.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_5 Between Pad P1-15(1100mil,2400mil) on Multi-Layer And Pad U10-13(1700mil,2400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2266.472mil|Location2.Y=2333.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2266.472mil|Location2.Y=2333.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_6 Between Pad P1-17(1100mil,2300mil) on Multi-Layer And Pad U10-12(1700mil,2300mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2166.472mil|Location2.Y=2233.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2166.472mil|Location2.Y=2233.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_7 Between Pad P1-19(1100mil,2200mil) on Multi-Layer And Pad U10-11(1700mil,2200mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1166.473mil|Location2.X=1433.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1166.473mil|Location2.X=1433.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad P1-2(1200mil,3100mil) on Multi-Layer And Pad U10-1(1400mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1233.527mil|Location1.Y=2966.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1233.527mil|Location1.Y=2966.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad P1-3(1100mil,3000mil) on Multi-Layer And Pad P1-4(1200mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net RST Between Pad P1-35(1100mil,1400mil) on Multi-Layer And Pad U1-1(2900mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=2433.528mil|Location1.Y=1266.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=2433.528mil|Location1.Y=1266.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net CLK Between Pad P1-37(1100mil,1300mil) on Multi-Layer And Pad U6-2(2400mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1166.473mil|Location2.X=1433.527mil|Location1.Y=2166.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1166.473mil|Location2.X=1433.527mil|Location1.Y=2166.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad P1-4(1200mil,3000mil) on Multi-Layer And Pad U10-10(1400mil,2200mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2866.472mil|Location2.Y=2933.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2866.472mil|Location2.Y=2933.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_0 Between Pad P1-5(1100mil,2900mil) on Multi-Layer And Pad U10-18(1700mil,2900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_1 Between Pad P1-7(1100mil,2800mil) on Multi-Layer And Pad U10-17(1700mil,2800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1066.473mil|Location2.X=1733.527mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_2 Between Pad P1-9(1100mil,2700mil) on Multi-Layer And Pad U10-16(1700mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8431.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8431.559mil|Location1.Y=1518.441mil|Location2.Y=1581.559mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad R9-1(8200mil,1550mil) on Multi-Layer And Pad R10-1(8400mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8368.441mil|Location2.X=8683.528mil|Location1.Y=1518.441mil|Location2.Y=3083.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8368.441mil|Location2.X=8683.528mil|Location1.Y=1518.441mil|Location2.Y=3083.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad R10-1(8400mil,1550mil) on Multi-Layer And Pad U2-8(8650mil,3050mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8368.441mil|Location2.X=8683.528mil|Location1.Y=1818.441mil|Location2.Y=2983.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8368.441mil|Location2.X=8683.528mil|Location1.Y=1818.441mil|Location2.Y=2983.528mil|Absolute=True">Un-Routed Net Constraint: Net B_FILT Between Pad R10-2(8400mil,1850mil) on Multi-Layer And Pad U2-7(8650mil,2950mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8468.441mil|Location2.X=8731.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8468.441mil|Location2.X=8731.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC1_1 Between Pad R1-1(8500mil,1550mil) on Multi-Layer And Pad R5-2(8700mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6768.441mil|Location2.X=7031.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6768.441mil|Location2.X=7031.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC2_1 Between Pad R2-1(6800mil,1550mil) on Multi-Layer And Pad R6-2(7000mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7968.441mil|Location2.X=8683.528mil|Location1.Y=3016.472mil|Location2.Y=3181.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7968.441mil|Location2.X=8683.528mil|Location1.Y=3016.472mil|Location2.Y=3181.559mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad R3-1(8000mil,3150mil) on Multi-Layer And Pad U2-8(8650mil,3050mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7968.441mil|Location2.X=8383.528mil|Location1.Y=2818.441mil|Location2.Y=2983.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7968.441mil|Location2.X=8383.528mil|Location1.Y=2818.441mil|Location2.Y=2983.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC/2_REF Between Pad R3-2(8000mil,2850mil) on Multi-Layer And Pad U2-2(8350mil,2950mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8668.441mil|Location2.X=8931.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8668.441mil|Location2.X=8931.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC4_2 Between Pad R5-1(8700mil,1550mil) on Multi-Layer And Pad R7-2(8900mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6968.441mil|Location2.X=7631.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6968.441mil|Location2.X=7631.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net NetC5_2 Between Pad R6-1(7000mil,1550mil) on Multi-Layer And Pad R8-2(7600mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8931.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8168.441mil|Location2.X=8931.559mil|Location1.Y=1518.441mil|Location2.Y=1881.559mil|Absolute=True">Un-Routed Net Constraint: Net A_FILT Between Pad R9-2(8200mil,1850mil) on Multi-Layer And Pad R7-1(8900mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=8231.559mil|Location1.Y=1518.441mil|Location2.Y=1683.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=8231.559mil|Location1.Y=1518.441mil|Location2.Y=1683.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U5-6(6450mil,1650mil) on Multi-Layer And Pad R9-1(8200mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U10-1(1400mil,3100mil) on Multi-Layer And Pad U10-20(1700mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1433.527mil|Location1.Y=1366.473mil|Location2.Y=2233.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1433.527mil|Location1.Y=1366.473mil|Location2.Y=2233.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U11-7(1400mil,1400mil) on Multi-Layer And Pad U10-10(1400mil,2200mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2166.472mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2166.472mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U10-10(1400mil,2200mil) on Multi-Layer And Pad U8-7(1900mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_3 Between Pad U10-15(1700mil,2600mil) on Multi-Layer And Pad U9-11(3200mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_2 Between Pad U10-16(1700mil,2700mil) on Multi-Layer And Pad U9-12(3200mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_1 Between Pad U10-17(1700mil,2800mil) on Multi-Layer And Pad U9-13(3200mil,2800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2866.472mil|Location2.Y=2933.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3233.528mil|Location1.Y=2866.472mil|Location2.Y=2933.528mil|Absolute=True">Un-Routed Net Constraint: Net BUS_0 Between Pad U10-18(1700mil,2900mil) on Multi-Layer And Pad U9-14(3200mil,2900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2966.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2966.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_0 Between Pad U10-2(1400mil,3000mil) on Multi-Layer And Pad U8-1(1900mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2233.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2233.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U10-20(1700mil,3100mil) on Multi-Layer And Pad U8-14(2200mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2866.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2866.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_1 Between Pad U10-3(1400mil,2900mil) on Multi-Layer And Pad U8-2(1900mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2766.472mil|Location2.Y=2833.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_2 Between Pad U10-4(1400mil,2800mil) on Multi-Layer And Pad U8-4(1900mil,2800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=2666.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_3 Between Pad U10-5(1400mil,2700mil) on Multi-Layer And Pad U8-5(1900mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=2566.472mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_4 Between Pad U10-6(1400mil,2600mil) on Multi-Layer And Pad U8-9(2200mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=2466.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=2466.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_5 Between Pad U10-7(1400mil,2500mil) on Multi-Layer And Pad U8-10(2200mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1766.473mil|Location2.Y=2433.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1766.473mil|Location2.Y=2433.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_6 Between Pad U10-8(1400mil,2400mil) on Multi-Layer And Pad U11-12(1700mil,1800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1866.473mil|Location2.Y=2333.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1866.473mil|Location2.Y=2333.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_7 Between Pad U10-9(1400mil,2300mil) on Multi-Layer And Pad U11-13(1700mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1966.473mil|Location2.Y=2933.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1966.473mil|Location2.Y=2933.528mil|Absolute=True">Un-Routed Net Constraint: Net RST Between Pad U8-12(2200mil,2900mil) on Multi-Layer And Pad U1-1(2900mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1966.473mil|Location2.Y=2933.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1966.473mil|Location2.Y=2933.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU8_3 Between Pad U11-1(1400mil,2000mil) on Multi-Layer And Pad U8-3(1900mil,2900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1466.473mil|Location2.Y=1633.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1466.473mil|Location2.Y=1633.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU11_6 Between Pad U11-6(1400mil,1500mil) on Multi-Layer And Pad U11-10(1700mil,1600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1566.473mil|Location2.Y=1733.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1566.473mil|Location2.Y=1733.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU11_5 Between Pad U11-5(1400mil,1600mil) on Multi-Layer And Pad U11-11(1700mil,1700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3733.528mil|Location1.Y=1566.473mil|Location2.Y=1833.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3733.528mil|Location1.Y=1566.473mil|Location2.Y=1833.527mil|Absolute=True">Un-Routed Net Constraint: Net CNT_6 Between Pad U11-12(1700mil,1800mil) on Multi-Layer And Pad U7-12(3700mil,1600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3733.528mil|Location1.Y=1466.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=3733.528mil|Location1.Y=1466.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net CNT_7 Between Pad U11-13(1700mil,1900mil) on Multi-Layer And Pad U7-11(3700mil,1500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2233.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2233.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U11-14(1700mil,2000mil) on Multi-Layer And Pad U4-14(2200mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1866.473mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1866.473mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU8_6 Between Pad U11-2(1400mil,1900mil) on Multi-Layer And Pad U8-6(1900mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1466.473mil|Location2.Y=1833.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1733.527mil|Location1.Y=1466.473mil|Location2.Y=1833.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU11_3 Between Pad U11-3(1400mil,1800mil) on Multi-Layer And Pad U11-9(1700mil,1500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=1666.473mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=2233.528mil|Location1.Y=1666.473mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU8_8 Between Pad U11-4(1400mil,1700mil) on Multi-Layer And Pad U8-8(2200mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3233.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3233.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U6-16(2700mil,2000mil) on Multi-Layer And Pad U1-14(3200mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3733.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3733.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U1-14(3200mil,2000mil) on Multi-Layer And Pad U7-16(3700mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3233.528mil|Location1.Y=1966.473mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3233.528mil|Location1.Y=1966.473mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U1-14(3200mil,2000mil) on Multi-Layer And Pad U9-16(3200mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1366.473mil|Location2.X=1933.527mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U11-7(1400mil,1400mil) on Multi-Layer And Pad U4-7(1900mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=1633.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1666.473mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=1633.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU1_5 Between Pad U11-8(1700mil,1400mil) on Multi-Layer And Pad U1-5(2900mil,1600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=1866.473mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=1866.473mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net R\S\T\ Between Pad U3-1(2400mil,3100mil) on Multi-Layer And Pad U1-2(2900mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1666.473mil|Location2.Y=1833.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1666.473mil|Location2.Y=1833.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU1_3 Between Pad U4-11(2200mil,1700mil) on Multi-Layer And Pad U1-3(2900mil,1800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=6183.528mil|Location1.Y=1666.473mil|Location2.Y=1783.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=6183.528mil|Location1.Y=1666.473mil|Location2.Y=1783.527mil|Absolute=True">Un-Routed Net Constraint: Net Count Between Pad U1-4(2900mil,1700mil) on Multi-Layer And Pad U5-10(6150mil,1750mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1466.473mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2933.528mil|Location1.Y=1466.473mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net ZERO Between Pad U8-13(2200mil,3000mil) on Multi-Layer And Pad U1-6(2900mil,1500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U6-7(2400mil,1400mil) on Multi-Layer And Pad U1-7(2900mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=3433.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=3433.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U1-7(2900mil,1400mil) on Multi-Layer And Pad U7-7(3400mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8316.472mil|Location2.X=8683.528mil|Location1.Y=2816.472mil|Location2.Y=2983.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8316.472mil|Location2.X=8683.528mil|Location1.Y=2816.472mil|Location2.Y=2983.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC/2_REF Between Pad U2-2(8350mil,2950mil) on Multi-Layer And Pad U2-6(8650mil,2850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=8683.528mil|Location1.Y=2866.472mil|Location2.Y=2983.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=8683.528mil|Location1.Y=2866.472mil|Location2.Y=2983.528mil|Absolute=True">Un-Routed Net Constraint: Net B_FILT Between Pad U3-14(2700mil,2900mil) on Multi-Layer And Pad U2-7(8650mil,2950mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1966.473mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1966.473mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_B_DELAY Between Pad U4-1(1900mil,2000mil) on Multi-Layer And Pad U3-10(2700mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2733.528mil|Location1.Y=2566.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2733.528mil|Location1.Y=2566.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_B Between Pad U3-11(2700mil,2600mil) on Multi-Layer And Pad U3-12(2700mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=1566.473mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=1566.473mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_B Between Pad U4-10(2200mil,1600mil) on Multi-Layer And Pad U3-11(2700mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2733.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2733.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU3_13 Between Pad U3-13(2700mil,2800mil) on Multi-Layer And Pad U3-15(2700mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U8-14(2200mil,3100mil) on Multi-Layer And Pad U3-16(2700mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3233.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3233.528mil|Location1.Y=3066.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U3-16(2700mil,3100mil) on Multi-Layer And Pad U9-16(3200mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU3_2 Between Pad U3-4(2400mil,2800mil) on Multi-Layer And Pad U3-2(2400mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=2566.472mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=2566.472mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_A Between Pad U3-6(2400mil,2600mil) on Multi-Layer And Pad U3-5(2400mil,2700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1866.473mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1866.473mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_A Between Pad U4-2(1900mil,1900mil) on Multi-Layer And Pad U3-6(2400mil,2600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1566.473mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1566.473mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_A_DELAY Between Pad U4-5(1900mil,1600mil) on Multi-Layer And Pad U3-7(2400mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U8-7(1900mil,2500mil) on Multi-Layer And Pad U3-8(2400mil,2400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=2433.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=2433.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U3-8(2400mil,2400mil) on Multi-Layer And Pad U9-8(2900mil,2400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2733.528mil|Location1.Y=1866.473mil|Location2.Y=2433.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2733.528mil|Location1.Y=1866.473mil|Location2.Y=2433.528mil|Absolute=True">Un-Routed Net Constraint: Net CLK Between Pad U6-2(2400mil,1900mil) on Multi-Layer And Pad U3-9(2700mil,2400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net CLK Between Pad U3-9(2700mil,2400mil) on Multi-Layer And Pad U9-7(2900mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2233.528mil|Location1.Y=1466.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2233.528mil|Location1.Y=1466.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_B_DELAY Between Pad U4-1(1900mil,2000mil) on Multi-Layer And Pad U4-9(2200mil,1500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2233.528mil|Location1.Y=1466.473mil|Location2.Y=1833.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2233.528mil|Location1.Y=1466.473mil|Location2.Y=1833.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU4_6 Between Pad U4-6(1900mil,1500mil) on Multi-Layer And Pad U4-12(2200mil,1800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2233.528mil|Location1.Y=1366.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2233.528mil|Location1.Y=1366.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU4_8 Between Pad U4-8(2200mil,1400mil) on Multi-Layer And Pad U4-13(2200mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=2733.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U4-14(2200mil,2000mil) on Multi-Layer And Pad U6-16(2700mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=1933.527mil|Location1.Y=1666.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=1933.527mil|Location1.Y=1666.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net QUAD_A Between Pad U4-4(1900mil,1700mil) on Multi-Layer And Pad U4-2(1900mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1766.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1766.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net Direction Between Pad U4-3(1900mil,1800mil) on Multi-Layer And Pad U6-1(2400mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2433.528mil|Location1.Y=1366.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U4-7(1900mil,1400mil) on Multi-Layer And Pad U6-7(2400mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1116.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1116.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net Direction Between Pad U7-1(3400mil,2000mil) on Multi-Layer And Pad U5-1(6450mil,1150mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=6183.528mil|Location1.Y=1216.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=6183.528mil|Location1.Y=1216.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU5_15 Between Pad U6-10(2700mil,1400mil) on Multi-Layer And Pad U5-15(6150mil,1250mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6116.472mil|Location2.X=6483.528mil|Location1.Y=1116.473mil|Location2.Y=1683.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6116.472mil|Location2.X=6483.528mil|Location1.Y=1116.473mil|Location2.Y=1683.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U5-16(6150mil,1150mil) on Multi-Layer And Pad U5-6(6450mil,1650mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1216.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1216.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net CLK Between Pad U7-2(3400mil,1900mil) on Multi-Layer And Pad U5-2(6450mil,1250mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1316.473mil|Location2.Y=1483.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1316.473mil|Location2.Y=1483.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U5-3(6450mil,1350mil) on Multi-Layer And Pad U5-4(6450mil,1450mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1266.473mil|Location2.Y=1383.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=6483.528mil|Location1.Y=1266.473mil|Location2.Y=1383.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U7-8(3400mil,1300mil) on Multi-Layer And Pad U5-3(6450mil,1350mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1416.473mil|Location2.Y=1583.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1416.473mil|Location2.Y=1583.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U5-4(6450mil,1450mil) on Multi-Layer And Pad U5-5(6450mil,1550mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1516.473mil|Location2.Y=1783.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1516.473mil|Location2.Y=1783.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U5-5(6450mil,1550mil) on Multi-Layer And Pad U5-7(6450mil,1750mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3666.472mil|Location2.X=6483.528mil|Location1.Y=1616.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3666.472mil|Location2.X=6483.528mil|Location1.Y=1616.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net VCC Between Pad U7-16(3700mil,2000mil) on Multi-Layer And Pad U5-6(6450mil,1650mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1716.473mil|Location2.Y=1883.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6416.472mil|Location2.X=6483.528mil|Location1.Y=1716.473mil|Location2.Y=1883.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U5-7(6450mil,1750mil) on Multi-Layer And Pad U5-8(6450mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3666.472mil|Location2.X=6183.528mil|Location1.Y=1266.473mil|Location2.Y=1883.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3666.472mil|Location2.X=6183.528mil|Location1.Y=1266.473mil|Location2.Y=1883.527mil|Absolute=True">Un-Routed Net Constraint: Net L\O\A\D\ Between Pad U7-9(3700mil,1300mil) on Multi-Layer And Pad U5-9(6150mil,1850mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=3433.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=3433.528mil|Location1.Y=1966.473mil|Location2.Y=2033.527mil|Absolute=True">Un-Routed Net Constraint: Net Direction Between Pad U6-1(2400mil,2000mil) on Multi-Layer And Pad U7-1(3400mil,2000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1466.473mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1466.473mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_3 Between Pad U8-5(1900mil,2700mil) on Multi-Layer And Pad U6-11(2700mil,1500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1566.473mil|Location2.Y=2833.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1566.473mil|Location2.Y=2833.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_2 Between Pad U8-4(1900mil,2800mil) on Multi-Layer And Pad U6-12(2700mil,1600mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1666.473mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1666.473mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_1 Between Pad U8-2(1900mil,3000mil) on Multi-Layer And Pad U6-13(2700mil,1700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1766.473mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1866.473mil|Location2.X=2733.528mil|Location1.Y=1766.473mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_0 Between Pad U8-1(1900mil,3100mil) on Multi-Layer And Pad U6-14(2700mil,1800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3733.528mil|Location1.Y=1366.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3733.528mil|Location1.Y=1366.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net NetU6_15 Between Pad U6-15(2700mil,1900mil) on Multi-Layer And Pad U7-10(3700mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=3433.528mil|Location1.Y=1866.473mil|Location2.Y=1933.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=3433.528mil|Location1.Y=1866.473mil|Location2.Y=1933.527mil|Absolute=True">Un-Routed Net Constraint: Net CLK Between Pad U6-2(2400mil,1900mil) on Multi-Layer And Pad U7-2(3400mil,1900mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=1266.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2366.472mil|Location2.X=2433.528mil|Location1.Y=1266.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U6-8(2400mil,1300mil) on Multi-Layer And Pad U6-7(2400mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3733.528mil|Location1.Y=1266.473mil|Location2.Y=1333.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2666.472mil|Location2.X=3733.528mil|Location1.Y=1266.473mil|Location2.Y=1333.527mil|Absolute=True">Un-Routed Net Constraint: Net L\O\A\D\ Between Pad U6-9(2700mil,1300mil) on Multi-Layer And Pad U7-9(3700mil,1300mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3733.528mil|Location1.Y=1666.473mil|Location2.Y=2733.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3733.528mil|Location1.Y=1666.473mil|Location2.Y=2733.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_5 Between Pad U8-10(2200mil,2700mil) on Multi-Layer And Pad U7-13(3700mil,1700mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3733.528mil|Location1.Y=1766.473mil|Location2.Y=2633.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3733.528mil|Location1.Y=1766.473mil|Location2.Y=2633.528mil|Absolute=True">Un-Routed Net Constraint: Net CNT_4 Between Pad U8-9(2200mil,2600mil) on Multi-Layer And Pad U7-14(3700mil,1800mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=3433.528mil|Location1.Y=1266.473mil|Location2.Y=1433.527mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3366.472mil|Location2.X=3433.528mil|Location1.Y=1266.473mil|Location2.Y=1433.527mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U7-8(3400mil,1300mil) on Multi-Layer And Pad U7-7(3400mil,1400mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3233.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2166.472mil|Location2.X=3233.528mil|Location1.Y=2766.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net NetU8_11 Between Pad U8-11(2200mil,2800mil) on Multi-Layer And Pad U9-15(3200mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=2933.528mil|Location1.Y=2966.472mil|Location2.Y=3133.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=2933.528mil|Location1.Y=2966.472mil|Location2.Y=3133.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U9-2(2900mil,3000mil) on Multi-Layer And Pad U9-1(2900mil,3100mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3233.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3166.472mil|Location2.X=3233.528mil|Location1.Y=2366.472mil|Location2.Y=2533.528mil|Absolute=True">Un-Routed Net Constraint: Net L\O\A\D\_\C\T\R\L\ Between Pad U9-9(3200mil,2400mil) on Multi-Layer And Pad U9-10(3200mil,2500mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=3033.528mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2866.472mil|Location2.X=2933.528mil|Location1.Y=2366.472mil|Location2.Y=3033.528mil|Absolute=True">Un-Routed Net Constraint: Net GND Between Pad U9-8(2900mil,2400mil) on Multi-Layer And Pad U9-2(2900mil,3000mil) on Multi-Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDXEZ2H1GTRI5NJ35WIUZOZI5XUIP1O0PTYPEXG4KAXYHYHD2ESFTG"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk To Solder Mask (Clearance=10mil) (IsPad),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8394.375mil|Location2.X=8405.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8394.375mil|Location2.X=8405.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R10-1(8400mil,1550mil) on Multi-Layer And Track (8400mil,1591mil)(8400mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8394.375mil|Location2.X=8405.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8394.375mil|Location2.X=8405.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R10-2(8400mil,1850mil) on Multi-Layer And Track (8400mil,1800mil)(8400mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8494.375mil|Location2.X=8505.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8494.375mil|Location2.X=8505.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R1-1(8500mil,1550mil) on Multi-Layer And Track (8500mil,1591mil)(8500mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8494.375mil|Location2.X=8505.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8494.375mil|Location2.X=8505.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R1-2(8500mil,1850mil) on Multi-Layer And Track (8500mil,1800mil)(8500mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6794.375mil|Location2.X=6805.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6794.375mil|Location2.X=6805.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R2-1(6800mil,1550mil) on Multi-Layer And Track (6800mil,1591mil)(6800mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6794.375mil|Location2.X=6805.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6794.375mil|Location2.X=6805.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R2-2(6800mil,1850mil) on Multi-Layer And Track (6800mil,1800mil)(6800mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7994.375mil|Location2.X=8005.625mil|Location1.Y=3112.058mil|Location2.Y=3123.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7994.375mil|Location2.X=8005.625mil|Location1.Y=3112.058mil|Location2.Y=3123.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R3-1(8000mil,3150mil) on Multi-Layer And Track (8000mil,3100mil)(8000mil,3109mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7994.375mil|Location2.X=8005.625mil|Location1.Y=2876.692mil|Location2.Y=2887.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7994.375mil|Location2.X=8005.625mil|Location1.Y=2876.692mil|Location2.Y=2887.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R3-2(8000mil,2850mil) on Multi-Layer And Track (8000mil,2891mil)(8000mil,2900mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1544.502mil|Location2.Y=1552.169mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1544.502mil|Location2.Y=1552.169mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 10mil) Between Pad R4-1(9200mil,1550mil) on Multi-Layer And Track (9175mil,1475mil)(9175mil,1925mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9194.375mil|Location2.X=9205.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9194.375mil|Location2.X=9205.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R4-1(9200mil,1550mil) on Multi-Layer And Track (9200mil,1591mil)(9200mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1844.502mil|Location2.Y=1852.169mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1844.502mil|Location2.Y=1852.169mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 10mil) Between Pad R4-2(9200mil,1850mil) on Multi-Layer And Track (9175mil,1475mil)(9175mil,1925mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9194.375mil|Location2.X=9205.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9194.375mil|Location2.X=9205.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R4-2(9200mil,1850mil) on Multi-Layer And Track (9200mil,1800mil)(9200mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8694.375mil|Location2.X=8705.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8694.375mil|Location2.X=8705.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R5-1(8700mil,1550mil) on Multi-Layer And Track (8700mil,1591mil)(8700mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8694.375mil|Location2.X=8705.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8694.375mil|Location2.X=8705.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R5-2(8700mil,1850mil) on Multi-Layer And Track (8700mil,1800mil)(8700mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6994.375mil|Location2.X=7005.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6994.375mil|Location2.X=7005.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R6-1(7000mil,1550mil) on Multi-Layer And Track (7000mil,1591mil)(7000mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6994.375mil|Location2.X=7005.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=6994.375mil|Location2.X=7005.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R6-2(7000mil,1850mil) on Multi-Layer And Track (7000mil,1800mil)(7000mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8894.375mil|Location2.X=8905.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8894.375mil|Location2.X=8905.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R7-1(8900mil,1550mil) on Multi-Layer And Track (8900mil,1591mil)(8900mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8894.375mil|Location2.X=8905.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8894.375mil|Location2.X=8905.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R7-2(8900mil,1850mil) on Multi-Layer And Track (8900mil,1800mil)(8900mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7594.375mil|Location2.X=7605.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7594.375mil|Location2.X=7605.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R8-1(7600mil,1550mil) on Multi-Layer And Track (7600mil,1591mil)(7600mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7594.375mil|Location2.X=7605.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=7594.375mil|Location2.X=7605.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R8-2(7600mil,1850mil) on Multi-Layer And Track (7600mil,1800mil)(7600mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8194.375mil|Location2.X=8205.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8194.375mil|Location2.X=8205.625mil|Location1.Y=1576.692mil|Location2.Y=1587.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R9-1(8200mil,1550mil) on Multi-Layer And Track (8200mil,1591mil)(8200mil,1600mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8194.375mil|Location2.X=8205.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8194.375mil|Location2.X=8205.625mil|Location1.Y=1812.058mil|Location2.Y=1823.308mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (9.491mil &lt; 10mil) Between Pad R9-2(8200mil,1850mil) on Multi-Layer And Track (8200mil,1800mil)(8200mil,1809mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [9.491mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1396.154mil|Location2.X=1403.82mil|Location1.Y=2166.626mil|Location2.Y=2174.293mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1396.154mil|Location2.X=1403.82mil|Location1.Y=2166.626mil|Location2.Y=2174.293mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (Collision &lt; 10mil) Between Pad U10-10(1400mil,2200mil) on Multi-Layer And Text "U11" (1360mil,2122mil) on Top Overlay [Top Overlay] to [Top Solder] clearance [0mil]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="ID0CVEVDVXLQ1HP55XZJVD5K5Y0DKSZFVZP0KS3WEW5CQ4AVJRZSXG"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk to Silk (Clearance=10mil) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1176.167mil|Location2.X=1183.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1176.167mil|Location2.X=1183.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "2" (1180mil,3200mil) on Top Overlay And Track (1100mil,3200mil)(5950mil,3200mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1116.028mil|Location2.X=1127.278mil|Location1.Y=1096.964mil|Location2.Y=1108.214mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1116.028mil|Location2.X=1127.278mil|Location1.Y=1096.964mil|Location2.Y=1108.214mil|Absolute=True">Silk To Silk Clearance Constraint: (0.177mil &lt; 10mil) Between Text "39" (1080mil,1140mil) on Top Overlay And Track (1050mil,1100mil)(5950mil,1100mil) on Top Overlay Silk Text to Silk Clearance [0.177mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1199.367mil|Location2.X=1210.617mil|Location1.Y=1096.964mil|Location2.Y=1108.214mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1199.367mil|Location2.X=1210.617mil|Location1.Y=1096.964mil|Location2.Y=1108.214mil|Absolute=True">Silk To Silk Clearance Constraint: (0.177mil &lt; 10mil) Between Text "40" (1180mil,1140mil) on Top Overlay And Track (1050mil,1100mil)(5950mil,1100mil) on Top Overlay Silk Text to Silk Clearance [0.177mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8482.131mil|Location2.X=8489.798mil|Location1.Y=1958.15mil|Location2.Y=1965.817mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=8482.131mil|Location2.X=8489.798mil|Location1.Y=1958.15mil|Location2.Y=1965.817mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "R1" (8476mil,1912mil) on Top Overlay And Text "R10" (8376mil,1912mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1921.167mil|Location2.Y=1928.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1921.167mil|Location2.Y=1928.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "R4" (9176mil,1912mil) on Top Overlay And Track (9025mil,1925mil)(9175mil,1925mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1921.167mil|Location2.Y=1928.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=9171.167mil|Location2.X=9178.833mil|Location1.Y=1921.167mil|Location2.Y=1928.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "R4" (9176mil,1912mil) on Top Overlay And Track (9175mil,1475mil)(9175mil,1925mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1356.167mil|Location2.X=1363.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1356.167mil|Location2.X=1363.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "U10" (1360mil,3195mil) on Top Overlay And Track (1100mil,3200mil)(5950mil,3200mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1432.73mil|Location2.X=1443.98mil|Location1.Y=2152.249mil|Location2.Y=2163.499mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1432.73mil|Location2.X=1443.98mil|Location1.Y=2152.249mil|Location2.Y=2163.499mil|Absolute=True">Silk To Silk Clearance Constraint: (6.755mil &lt; 10mil) Between Text "U11" (1360mil,2122mil) on Top Overlay And Track (1445.669mil,2157.874mil)(1445.669mil,3142.126mil) on Top Overlay Silk Text to Silk Clearance [6.755mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.128mil|Location2.X=1483.794mil|Location1.Y=2154.041mil|Location2.Y=2161.707mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=1476.128mil|Location2.X=1483.794mil|Location1.Y=2154.041mil|Location2.Y=2161.707mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "U11" (1360mil,2122mil) on Top Overlay And Track (1445.669mil,2157.874mil)(1654.331mil,2157.874mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2372.167mil|Location2.X=2379.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2372.167mil|Location2.X=2379.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "U3" (2376mil,3172mil) on Top Overlay And Track (1100mil,3200mil)(5950mil,3200mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2872.167mil|Location2.X=2879.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=D:\Users\erics\Documents\16B\Motor Control\Motor Control.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2872.167mil|Location2.X=2879.833mil|Location1.Y=3196.166mil|Location2.Y=3203.833mil|Absolute=True">Silk To Silk Clearance Constraint: (Collision &lt; 10mil) Between Text "U9" (2876mil,3172mil) on Top Overlay And Track (1100mil,3200mil)(5950mil,3200mil) on Top Overlay Silk Text to Silk Clearance [0mil]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>

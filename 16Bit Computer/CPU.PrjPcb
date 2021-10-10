@@ -75,23 +75,6 @@ GenerateClassCluster=0
 DocumentUniqueId=IMYOLDYZ
 
 [Document3]
-DocumentPath=Memory_Address_Register.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=3
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=AIVIQDNJ
-
-[Document4]
 DocumentPath=PcbLib1.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -108,7 +91,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=FCOSULEU
 
-[Document5]
+[Document4]
 DocumentPath=Schlib1.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -125,24 +108,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=XFMAKIOF
 
-[Document6]
-DocumentPath=Instruction Register.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=13
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=HBCZRICA
-
-[Document7]
+[Document5]
 DocumentPath=Timer_Register.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -159,24 +125,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OJSMBJTX
 
-[Document8]
-DocumentPath=Microcode.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=16
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=1
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=PWYWLNFV
-
-[Document9]
+[Document6]
 DocumentPath=ALU.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -193,7 +142,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SCNRLRJX
 
-[Document10]
+[Document7]
 DocumentPath=ALU_AND.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -210,7 +159,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=MQCQABIF
 
-[Document11]
+[Document8]
 DocumentPath=ALU_OR.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -227,7 +176,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=FDDTZJDG
 
-[Document12]
+[Document9]
 DocumentPath=ALU_XOR.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -244,7 +193,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=PQBMDMKB
 
-[Document13]
+[Document10]
 DocumentPath=ALU_Shifter.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -261,7 +210,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CJMODTLT
 
-[Document14]
+[Document11]
 DocumentPath=Job1.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -278,7 +227,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document15]
+[Document12]
 DocumentPath=ALU_ONES.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -295,7 +244,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CEORYZOH
 
-[Document16]
+[Document13]
 DocumentPath=ALU_ZF.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -312,7 +261,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=CYLHXBCP
 
-[Document17]
+[Document14]
 DocumentPath=PCB1.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -329,7 +278,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OOEMJMDB
 
-[Document18]
+[Document15]
 DocumentPath=ALU_Adder.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
