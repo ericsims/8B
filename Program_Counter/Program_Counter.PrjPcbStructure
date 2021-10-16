@@ -1,2 +1,3 @@
 Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=IR|SchDesignator=IR|FileName=Instruction Register.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=Instruction Register.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=PC|SchDesignator=PC|FileName=Program_Counter.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Program_Counter.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
