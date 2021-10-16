@@ -42,7 +42,8 @@ inst = {
     'HLT' : 0x01,
     'LAI' : 0x02,
     'LBI' : 0x03,
-    'ADD' : 0x04
+    'ADD' : 0x04,
+    'JMP' : 0x05
 }
 
 
@@ -62,7 +63,10 @@ program = [
     inst['LAI'], 0xAB,
     inst['LBI'], 0xCD,
     inst['ADD'],
-    inst['HLT']]
+    inst['JMP'], 0x12, 0x34
+]
+
+eeprom.value[0x1234] = inst['HLT']
 
 for addr, byte in enumerate(program):
     eeprom.value[addr] = byte
@@ -164,6 +168,8 @@ while True:
             ctrl['Mn'] = 1
             ctrl['AI'] = 1
             ctrl['RU'] = 1
+        elif ii.value == inst['JMP']:
+            ctrl['MC'] = 1
     
  
     elif UCC == 4:
@@ -176,8 +182,32 @@ while True:
             ctrl['BI'] = 1
             ctrl['MO'] = 1
             ctrl['RU'] = 1
-
-    
+        elif ii.value == inst['JMP']:
+            ctrl['PI'] = 1
+            ctrl['Ln'] = 1
+            ctrl['MO'] = 1
+             
+    elif UCC == 5:
+        ctrl = dict.fromkeys(ctrl, 0)
+        if ii.value == inst['JMP']:
+            ctrl['MC'] = 1
+        
+    elif UCC == 6:
+        ctrl = dict.fromkeys(ctrl, 0)
+        if ii.value == inst['JMP']:
+            ctrl['PI'] = 1
+            ctrl['Ln'] = 0
+            ctrl['MO'] = 1
+            ctrl['RU'] = 1
+        
+    elif UCC == 7:
+        ctrl = dict.fromkeys(ctrl, 0)
+        
+    elif UCC == 8:
+        ctrl = dict.fromkeys(ctrl, 0)
+        
+    elif UCC == 9:
+        ctrl = dict.fromkeys(ctrl, 0)
 
 
 
