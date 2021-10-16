@@ -75,7 +75,7 @@ for addr, byte in enumerate(program):
 while True:
     print("loop")
     event, values = window.Read(timeout=0)
-    time.sleep(1)
+    time.sleep(0.1)
 
 
     #time.sleep(5)
@@ -134,19 +134,20 @@ while True:
 
 
     ## falling edge
+    
     if UCC == 0:
         # set MAR LSB
         ctrl = dict.fromkeys(ctrl, 0)
         ctrl['PO'] = 1
         ctrl['MA'] = 1
-        ctrl['Ln'] = 0
+        ctrl['Ln'] = 1
 
     elif UCC == 1:
         # set MAR MSB
         ctrl = dict.fromkeys(ctrl, 0)
         ctrl['PO'] = 1
         ctrl['MA'] = 1
-        ctrl['Ln'] = 1
+        ctrl['Ln'] = 0
 
     elif UCC == 2:
         ctrl = dict.fromkeys(ctrl, 0)
@@ -154,62 +155,51 @@ while True:
         ctrl['MO'] = 1
         ctrl['II'] = 1
 
-    elif UCC == 3:
+    elif UCC >= 3:
         ctrl = dict.fromkeys(ctrl, 0)
         if ii.value == inst['HLT']:
-            ctrl['HT'] = 1
-        elif ii.value == inst['LAI']:
-            ctrl['CE'] = 1
-            ctrl['MC'] = 1
-        elif ii.value == inst['LBI']:
-            ctrl['CE'] = 1
-            ctrl['MC'] = 1
-        elif ii.value == inst['ADD']:
-            ctrl['Mn'] = 1
-            ctrl['AI'] = 1
-            ctrl['RU'] = 1
-        elif ii.value == inst['JMP']:
-            ctrl['MC'] = 1
-    
- 
-    elif UCC == 4:
-        ctrl = dict.fromkeys(ctrl, 0)
+            if UCC == 3:
+                ctrl['HT'] = 1
+
         if ii.value == inst['LAI']:
-            ctrl['AI'] = 1
-            ctrl['MO'] = 1
-            ctrl['RU'] = 1
-        if ii.value == inst['LBI']:
-            ctrl['BI'] = 1
-            ctrl['MO'] = 1
-            ctrl['RU'] = 1
+            if UCC == 3:
+                ctrl['CE'] = 1
+                ctrl['MC'] = 1
+            elif UCC == 4:
+                ctrl['AI'] = 1
+                ctrl['MO'] = 1
+                ctrl['RU'] = 1
+
+        elif ii.value == inst['LBI']:
+            if UCC == 3:
+                ctrl['CE'] = 1
+                ctrl['MC'] = 1
+            elif UCC == 4:
+                ctrl['BI'] = 1
+                ctrl['MO'] = 1
+                ctrl['RU'] = 1
+
+        elif ii.value == inst['ADD']:
+            if UCC == 3:
+                ctrl['Mn'] = 1
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                
         elif ii.value == inst['JMP']:
-            ctrl['PI'] = 1
-            ctrl['Ln'] = 1
-            ctrl['MO'] = 1
-             
-    elif UCC == 5:
-        ctrl = dict.fromkeys(ctrl, 0)
-        if ii.value == inst['JMP']:
-            ctrl['MC'] = 1
-        
-    elif UCC == 6:
-        ctrl = dict.fromkeys(ctrl, 0)
-        if ii.value == inst['JMP']:
-            ctrl['PI'] = 1
-            ctrl['Ln'] = 0
-            ctrl['MO'] = 1
-            ctrl['RU'] = 1
-        
-    elif UCC == 7:
-        ctrl = dict.fromkeys(ctrl, 0)
-        
-    elif UCC == 8:
-        ctrl = dict.fromkeys(ctrl, 0)
-        
-    elif UCC == 9:
-        ctrl = dict.fromkeys(ctrl, 0)
-
-
+            if UCC == 3:
+                ctrl['MC'] = 1
+            elif UCC == 4:
+                ctrl['PI'] = 1
+                ctrl['Ln'] = 1
+                ctrl['MO'] = 1
+            elif UCC == 5:
+                ctrl['MC'] = 1
+            elif UCC == 6:
+                ctrl['PI'] = 1
+                ctrl['Ln'] = 0
+                ctrl['MO'] = 1
+                ctrl['RU'] = 1
+    
 
     
     
