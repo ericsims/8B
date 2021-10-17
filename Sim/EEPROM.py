@@ -5,5 +5,5 @@ class EEPROM:
     def get(self,addr):
         return self.value[addr & (0x7FFF)]
 
-    def set(self,L,V):
+    def set(self,addr,V):
         raise Exception("EEPROM write not supported")
