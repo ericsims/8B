@@ -14,7 +14,7 @@ ii = II()
 mems = MEMS()
 a = REG()
 b = REG()
-stack = STACK()
+stack = STACK(16)
 
 clk_counter = 0
 
@@ -70,7 +70,9 @@ inst = {
     'STI' : 0x0F,
     'CAL' : 0x10,
     'RET' : 0x11,
-    'JMN' : 0x12
+    'JMN' : 0x12,
+    'RLC' : 0x13,
+    'RRC' : 0x14
 }
 
 
@@ -84,7 +86,7 @@ layout_regs = [
     [sg.T('B   '), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_B_')],
     [sg.T('DATA'), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_DATA_')],
     [sg.T('ADDR'), sg.T('0x0000', size=(6,1), justification='left', text_color='black', background_color='white', key='_ADDR_')],
-    [sg.T('STCK'), sg.T('', size=(6,8), justification='left', text_color='black', background_color='white', key='_STCK_')],
+    [sg.T('STCK'), sg.T('', size=(6,stack.len), justification='left', text_color='black', background_color='white', key='_STCK_')],
     [sg.T('STPR'), sg.T('', size=(6,1), justification='left', text_color='black', background_color='white', key='_STPR_')]
 ]
 
@@ -108,7 +110,7 @@ for ctrl_ in ctrl.keys():
 
 layout_mem = [
     [sg.T('SRAM')],
-    [sg.T('', size=(11,16), justification='left', text_color='black', background_color='white', key='_SRAM_')]
+    [sg.T('', size=(4*3,32), justification='left', text_color='black', background_color='white', key='_SRAM_')]
 ]
 
 layout = [[
@@ -155,9 +157,13 @@ file.close()
 
 
 event, values = window.Read(timeout=0)
+
+update_rate = 100000
+
 while True:
+    if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
+            event, values = window.Read(timeout=0)
     clk_counter += 1
-    event, values = window.Read(timeout=0)
     if breakpt:
          event, values = window.Read()
     #time.sleep(0.01)
@@ -180,9 +186,17 @@ while True:
         #nop
         pass
     elif ctrl['Mn'] == 1:
+        # Add
         data = (a.value+b.value) & 0xFF
     elif ctrl['Mn'] == 2:
+        # Subtract
         data = (a.value+~(b.value)+1) & 0xFF
+    elif ctrl['Mn'] == 6:
+        # Left Shift 1
+        data = (a.value << 1) & 0xFF
+    elif ctrl['Mn'] == 7:
+        # Right Shift 1
+        data = (a.value >> 1) & 0xFF
     
     # CLK
     if ctrl['HT']:
@@ -235,9 +249,17 @@ while True:
         if ctrl['Mn'] == 0:
             raise Exception("should only update CF on ALU operation")
         elif ctrl['Mn'] == 1:
+            # Add
             flags['CF'] = (a.value+b.value) > 0xFF
         elif ctrl['Mn'] == 2:
+            # Subtract
             flags['CF'] = (a.value+~(b.value)+1) > 0xFF
+        elif ctrl['Mn'] == 6:
+            # Left Shift 1
+            data = (a.value << 1) > 0xFF
+        elif ctrl['Mn'] == 7:
+            # Right Shift 1
+            data = a.value & 0x01
 
     # U CODE
     UCC = (UCC + 1) & 0xF
@@ -305,7 +327,21 @@ while True:
                 ctrl['Mn'] = 2
                 ctrl['AI'] = 1
                 ctrl['RU'] = 1
-                ctrl['FI'] = 1                
+                ctrl['FI'] = 1
+                
+        elif ii.value == inst['RLC']:
+            if UCC == 3:
+                ctrl['Mn'] = 6
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                ctrl['FI'] = 1
+                
+        elif ii.value == inst['RRC']:
+            if UCC == 3:
+                ctrl['Mn'] = 7
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                ctrl['FI'] = 1
                 
         elif ii.value == inst['JMP']:
             if UCC == 3:
@@ -632,36 +668,37 @@ while True:
 
     
     
-    window['_PC_'].Update('0x{:04X}'.format(pc.value))
-    window['_MAR_'].Update('0x{:04X}'.format(mar.value))
-    window['_INST_'].Update('0x{:02X}'.format(ii.value))
-    window['_UCC_'].Update('0x{:01X}'.format(UCC))
-    window['_A_'].Update('0x{:02X}'.format(a.value))
-    window['_B_'].Update('0x{:02X}'.format(b.value))
-    window['_DATA_'].Update('0x{:02X}'.format(data))
-    window['_ADDR_'].Update('0x{:04X}'.format(addr))
+    if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
+        window['_PC_'].Update('0x{:04X}'.format(pc.value))
+        window['_MAR_'].Update('0x{:04X}'.format(mar.value))
+        window['_INST_'].Update('0x{:02X}'.format(ii.value))
+        window['_UCC_'].Update('0x{:01X}'.format(UCC))
+        window['_A_'].Update('0x{:02X}'.format(a.value))
+        window['_B_'].Update('0x{:02X}'.format(b.value))
+        window['_DATA_'].Update('0x{:02X}'.format(data))
+        window['_ADDR_'].Update('0x{:04X}'.format(addr))
 
-    window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
-    window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
-    window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
+        window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
+        window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
+        window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
 
 
-    for ctrl_ in ctrl.keys():
-        window['_{}_'.format(ctrl_)].Update(text_color=INDC_COLOR[ctrl[ctrl_]>0])
+        for ctrl_ in ctrl.keys():
+            window['_{}_'.format(ctrl_)].Update(text_color=INDC_COLOR[ctrl[ctrl_]>0])
 
-    stack_values = ''
-    if stack.pointer>0:
-        for n in range(stack.pointer)[::-1]:
-            stack_values += '0x{:02X}\n'.format(stack.value[n])
-    window['_STCK_'].Update(stack_values)
-    window['_STPR_'].Update('0x{:01X}'.format(stack.pointer))
-    
-    window['_CNT_'].Update(clk_counter)
-    
-    sram_values = ''
-    for n in range(32):
-        sram_values += '0x{:04X},0x{:02X}\n'.format(n+0x8000,mems.sram.value[n])
-    window['_SRAM_'].Update(sram_values)
+        stack_values = ''
+        if stack.pointer>0:
+            for n in range(stack.pointer)[::-1]:
+                stack_values += '0x{:02X}\n'.format(stack.value[n])
+        window['_STCK_'].Update(stack_values)
+        window['_STPR_'].Update('0x{:01X}'.format(stack.pointer))
+        
+        window['_CNT_'].Update('{:,}'.format(clk_counter))
+        
+        sram_values = ''
+        for n in range(128):
+            sram_values += '{:02X} '.format(mems.sram.value[n])
+        window['_SRAM_'].Update(sram_values)
         
 
 

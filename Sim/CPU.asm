@@ -20,6 +20,8 @@
     cal, {address}            => 0x10 @ address`16
     ret                       => 0x11
     jmn, {address}            => 0x12 @ address`16
+    rlc                       => 0x13
+    rrc                       => 0x14
 }
 
 UART    = 0xD008
