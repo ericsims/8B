@@ -16,15 +16,19 @@ a = REG()
 b = REG()
 stack = STACK()
 
+clk_counter = 0
+
 addr = 0
 data = 0
 UCC = 0
 
 flags = {
     'ZF' : 0,
-    'CF' : 0
+    'CF' : 0,
+    'NF' : 0
 }
 
+breakpt = 0
 
 ctrl = {
     'Ln' : 0, # bus byte indictor (2 bits)
@@ -65,7 +69,8 @@ inst = {
     'JNC' : 0x0E,
     'STI' : 0x0F,
     'CAL' : 0x10,
-    'RET' : 0x11
+    'RET' : 0x11,
+    'JMN' : 0x12
 }
 
 
@@ -87,18 +92,30 @@ layout_flags = [
     [sg.T('Flags')],
     [sg.T('ZF  '), sg.T('\u2B24', size=(2,1), justification='left', text_color='gray', key='_ZF_')],
     [sg.T('CF  '), sg.T('\u2B24', size=(2,1), justification='left', text_color='gray', key='_CF_')],
+    [sg.T('NF  '), sg.T('\u2B24', size=(2,1), justification='left', text_color='gray', key='_NF_')],
+    [],
+    [sg.Button('STEP')],
+    [sg.T('CNT '), sg.T('0x0000', size=(12,1), justification='left', text_color='black', background_color='white', key='_CNT_')]
 ]
 
 layout_ctrl = [
     [sg.T('Ctrl')]
 ]
+
 for ctrl_ in ctrl.keys():
     layout_ctrl.append([sg.T('{}  '.format(ctrl_)), sg.T('\u2B24', size=(2,1), justification='left', text_color='gray', key='_{}_'.format(ctrl_))])
+
+
+layout_mem = [
+    [sg.T('SRAM')],
+    [sg.T('', size=(11,16), justification='left', text_color='black', background_color='white', key='_SRAM_')]
+]
 
 layout = [[
     sg.Column(layout_regs, vertical_alignment='t'),
     sg.Column(layout_ctrl, vertical_alignment='t'),
-    sg.Column(layout_flags, vertical_alignment='t')
+    sg.Column(layout_flags, vertical_alignment='t'),
+    sg.Column(layout_mem, vertical_alignment='t')
 ]]
 
   
@@ -136,9 +153,13 @@ while 1:
  
 file.close()
 
-    
+
+event, values = window.Read(timeout=0)
 while True:
+    clk_counter += 1
     event, values = window.Read(timeout=0)
+    if breakpt:
+         event, values = window.Read()
     #time.sleep(0.01)
 
 
@@ -166,6 +187,7 @@ while True:
     # CLK
     if ctrl['HT']:
          event, values = window.Read()
+         breakpt = 1
     
     # PC
     if (ctrl['PO'] or ctrl['PI']) and ctrl['CE']:
@@ -209,6 +231,7 @@ while True:
     # FLAGS
     if ctrl['FI']:
         flags['ZF'] = ( (data & 0xFF) == 0 )
+        flags['NF'] = ( data & 0x80) > 0
         if ctrl['Mn'] == 0:
             raise Exception("should only update CF on ALU operation")
         elif ctrl['Mn'] == 1:
@@ -320,6 +343,35 @@ while True:
                     pass
             elif UCC == 6:
                 if flags['ZF']:
+                    ctrl['PI'] = 1
+                    ctrl['Ln'] = 0
+                    ctrl['MO'] = 1
+                    ctrl['RU'] = 1
+                else:
+                    pass
+
+                         
+        elif ii.value == inst['JMN']:
+            if UCC == 3:
+                if flags['NF']:
+                    ctrl['MC'] = 1
+                else:
+                    ctrl['CE'] = 1
+            elif UCC == 4:
+                if flags['NF']:
+                    ctrl['PI'] = 1
+                    ctrl['Ln'] = 1
+                    ctrl['MO'] = 1
+                else:
+                    ctrl['CE'] = 1
+                    ctrl['RU'] = 1
+            elif UCC == 5:
+                if flags['NF']:
+                    ctrl['MC'] = 1
+                else:
+                    pass
+            elif UCC == 6:
+                if flags['NF']:
                     ctrl['PI'] = 1
                     ctrl['Ln'] = 0
                     ctrl['MO'] = 1
@@ -535,21 +587,25 @@ while True:
 
         elif ii.value == inst['CAL']:
             if UCC == 3:
+                ctrl['CE'] = 1
+            elif UCC == 4:
+                ctrl['CE'] = 1
+            elif UCC == 5:
                 ctrl['PH'] = 1
                 ctrl['PO'] = 1
                 ctrl['Ln'] = 1
-            elif UCC == 4:
+            elif UCC == 6:
                 ctrl['PH'] = 1
                 ctrl['PO'] = 1
                 ctrl['Ln'] = 0
                 ctrl['MC'] = 1
-            elif UCC == 5:
+            elif UCC == 7:
                 ctrl['PI'] = 1
                 ctrl['MO'] = 1
                 ctrl['Ln'] = 1
-            elif UCC == 6:
+            elif UCC == 8:
                 ctrl['MC'] = 1                
-            elif UCC == 7:
+            elif UCC == 9:
                 ctrl['PI'] = 1
                 ctrl['MO'] = 1
                 ctrl['Ln'] = 0
@@ -587,18 +643,26 @@ while True:
 
     window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
     window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
+    window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
+
 
     for ctrl_ in ctrl.keys():
         window['_{}_'.format(ctrl_)].Update(text_color=INDC_COLOR[ctrl[ctrl_]>0])
 
     stack_values = ''
     if stack.pointer>0:
-        for n in range(stack.pointer):
+        for n in range(stack.pointer)[::-1]:
             stack_values += '0x{:02X}\n'.format(stack.value[n])
     window['_STCK_'].Update(stack_values)
     window['_STPR_'].Update('0x{:01X}'.format(stack.pointer))
     
-
+    window['_CNT_'].Update(clk_counter)
+    
+    sram_values = ''
+    for n in range(32):
+        sram_values += '0x{:04X},0x{:02X}\n'.format(n+0x8000,mems.sram.value[n])
+    window['_SRAM_'].Update(sram_values)
+        
 
 
 window.close()

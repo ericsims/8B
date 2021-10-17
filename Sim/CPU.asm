@@ -19,4 +19,7 @@
     sti, {value}, {address}   => 0x0F @ value`8 @ address`16
     cal, {address}            => 0x10 @ address`16
     ret                       => 0x11
+    jmn, {address}            => 0x12 @ address`16
 }
+
+UART    = 0xD008
