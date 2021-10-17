@@ -63,7 +63,9 @@ inst = {
     'LDB' : 0x0C,
     'JMC' : 0x0D,
     'JNC' : 0x0E,
-    'STI' : 0x0F
+    'STI' : 0x0F,
+    'CAL' : 0x10,
+    'RET' : 0x11
 }
 
 
@@ -77,7 +79,7 @@ layout_regs = [
     [sg.T('B   '), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_B_')],
     [sg.T('DATA'), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_DATA_')],
     [sg.T('ADDR'), sg.T('0x0000', size=(6,1), justification='left', text_color='black', background_color='white', key='_ADDR_')],
-    [sg.T('STCK'), sg.T('', size=(6,4), justification='left', text_color='black', background_color='white', key='_STCK_')],
+    [sg.T('STCK'), sg.T('', size=(6,8), justification='left', text_color='black', background_color='white', key='_STCK_')],
     [sg.T('STPR'), sg.T('', size=(6,1), justification='left', text_color='black', background_color='white', key='_STPR_')]
 ]
 
@@ -105,22 +107,34 @@ window = sg.Window('8B', layout, font=('courier new',11))
 INDC_COLOR = ['gray', 'green']
 
 # Fibonacci
-program = [
-    inst['STI'], 0x01, 0x80, 0x00,
-    inst['LAI'], 0x00,
-    inst['LDB'], 0x80, 0x00,
-    inst['STA'], 0xD0, 0x08,
-    inst['STA'], 0x80, 0x00,
-    inst['ADD'],
-    inst['LBA'],
-    inst['JNC'], 0x00, 0x06,
-    inst['HLT']
-]
+##program = [
+##    inst['STI'], 0x01, 0x80, 0x00,
+##    inst['LAI'], 0x00,
+##    inst['LDB'], 0x80, 0x00,
+##    inst['STA'], 0xD0, 0x08,
+##    inst['STA'], 0x80, 0x00,
+##    inst['ADD'],
+##    inst['LBA'],
+##    inst['JNC'], 0x00, 0x06,
+##    inst['HLT']
+##]
+##
+##
+##
+##for addr, byte in enumerate(program):
+##    mems.eeprom.value[addr] = byte
 
-
-
-for addr, byte in enumerate(program):
-    mems.eeprom.value[addr] = byte
+file = open('test.bin', 'rb')
+eepr = 0
+while 1:
+    byte = file.read(1)         
+    if not byte:
+        break
+    #print(byte)
+    mems.eeprom.value[eepr] = ord(byte) & 0xFF
+    eepr+=1
+ 
+file.close()
 
     
 while True:
@@ -517,6 +531,45 @@ while True:
                 ctrl['PP'] = 1
                 ctrl['MI'] = 1
                 ctrl['RU'] = 1
+
+
+        elif ii.value == inst['CAL']:
+            if UCC == 3:
+                ctrl['PH'] = 1
+                ctrl['PO'] = 1
+                ctrl['Ln'] = 1
+            elif UCC == 4:
+                ctrl['PH'] = 1
+                ctrl['PO'] = 1
+                ctrl['Ln'] = 0
+                ctrl['MC'] = 1
+            elif UCC == 5:
+                ctrl['PI'] = 1
+                ctrl['MO'] = 1
+                ctrl['Ln'] = 1
+            elif UCC == 6:
+                ctrl['MC'] = 1                
+            elif UCC == 7:
+                ctrl['PI'] = 1
+                ctrl['MO'] = 1
+                ctrl['Ln'] = 0
+                ctrl['RU'] = 1
+                
+
+
+        elif ii.value == inst['RET']:
+            if UCC == 3:
+                ctrl['PP'] = 1
+                ctrl['PI'] = 1
+                ctrl['Ln'] = 0
+            elif UCC == 4:
+                ctrl['PP'] = 1
+                ctrl['PI'] = 1
+                ctrl['Ln'] = 1
+                ctrl['RU'] = 1
+                
+
+
                 
     if event is None or event == 'Exit':
         break

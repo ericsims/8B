@@ -1,6 +1,6 @@
 class STACK:
     def __init__(self):
-        self.len = 4
+        self.len = 8
         self.value = [0]*self.len
         self.pointer = 0
         
