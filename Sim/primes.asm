@@ -21,7 +21,7 @@ testt:
     lbi, 0x00
     add
     jmz, nextn ; if divisor_ptr was a factor jump to next test number
-    jmp, nextt_nd ; otherwise, try the next divisor
+    ;jmp, nextt_nd ; otherwise, try the next divisor
 
 nextt_nd:
     lda, divisor_ptr
@@ -32,7 +32,7 @@ nextt_nd:
     jnz, testt ; if the divisor is >1 test it
     lda, testnum_ptr ; otherwise, we have checked all divisors and the number is prime!
     sta, UART ; print it to console
-    jmp, nextn ; then check the next test number
+    ;jmp, nextn ; then check the next test number
 
 nextn:
     lda, testnum_ptr ; incrmente test number by 2 (only odds >2 can be prime)
