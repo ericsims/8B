@@ -24,4 +24,6 @@
     rrc                       => 0x14
 }
 
-UART    = 0xD008
+MOT_ENC  = 0xD002
+MOT_CTRL = 0xD003
+UART     = 0xD008

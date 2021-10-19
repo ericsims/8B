@@ -158,11 +158,11 @@ file.close()
 
 event, values = window.Read(timeout=0)
 
-update_rate = 100000
+update_rate = 10
 
 while True:
     if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
-            event, values = window.Read(timeout=0)
+            event, values = window.Read(timeout=10)
     clk_counter += 1
     if breakpt:
          event, values = window.Read()

@@ -25,20 +25,21 @@ class RoboSim:
         self.motoron=0
         self.enccount=0
 
-        self.max_a=10 # px/s/s
+        self.max_a=5 # px/s/s
         self.max_v=10# px/sec
 
         self.x=100
         self.last_x=0
         self.y=100
         self.last_y=0
+        
     
 
     def setMotor(self, en): # en: 1/0 for on/off
         self.motoron=en
 
     def getEnc(self):
-        return int(self.enccount)
+        return int(self.enccount)&0xFF 
 
     def clrEnc(self):
         self.enccount=0
@@ -71,6 +72,12 @@ class RoboSim:
 
             d=self.c.root.get()
             self.motoron=d['motoron']
+            self.theta=d['theta']
+
+            if d['encsetpoint'] > 0:
+                self.enccount = d['encsetpoint']
+                self.c.root.update(encsetpoint_=0)
+                
             #print(d)
                     
             self.screen.fill(self.gray)
@@ -78,16 +85,34 @@ class RoboSim:
             self.robocolor=self.blue
 
             if self.motoron:
-                self.v=self.v+self.max_a/self.FRAME_RATE
+                if self.getEnc() > 0x7F:
+                    #back
+                    self.v = self.v-self.max_a/self.FRAME_RATE
+                    if self.v < -self.max_v*(2/5):
+                        self.v = -self.max_v*(2/5)
+                else:
+                    #fwd
+                    self.v = self.v+self.max_a/self.FRAME_RATE
+                    if self.v > self.max_v:
+                        self.v = self.max_v
             else:
-                self.v=self.v-self.max_a/self.FRAME_RATE
-                
-            if self.v>self.max_v:
-                self.v=self.max_v
-            elif self.v<0:
-                self.v=0
+                if self.v < 0:
+                    #back
+                    self.v = self.v+self.max_a/self.FRAME_RATE
+                    if self.v > 0:
+                        self.v = 0
+                elif self.v > 0:
+                    #fwd
+                    self.v = self.v-self.max_a/self.FRAME_RATE
+                    if self.v < 0:
+                        self.v = 0
 
-            self.enccount+=self.v/self.FRAME_RATE
+            self.enccount-=self.v/self.FRAME_RATE
+            if abs(self.getEnc()) < 1:
+                self.motoron = 0
+                self.c.root.update(motoron_=0)
+            if self.v!=0:
+                self.c.root.update(enccount_=self.getEnc())
         
             self.x=self.x+math.cos(self.theta)*self.v/self.FRAME_RATE
             self.y=self.y-math.sin(self.theta)*self.v/self.FRAME_RATE
@@ -110,7 +135,7 @@ class RoboSim:
             self.drawrobo((self.x,self.y,math.degrees(self.theta)))
 
 
-            self.c.root.update(v_=self.v,w_=self.w,theta_=self.theta)
+            self.c.root.update(v_=self.v,w_=self.w)#,theta_=self.theta)
     
             self.last_y = self.y
             self.last_x = self.x
@@ -129,11 +154,12 @@ data={
     'theta':0,
     'motoron':0,
     'enccount':0,
+    'encsetpoint':0,
 }
 
 class Service(rpyc.Service):
 
-    def exposed_update(self,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None):
+    def exposed_update(self,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None,encsetpoint_=None):
         if v_ is not None:
             data['v'] = v_
         if w_ is not None:
@@ -144,6 +170,8 @@ class Service(rpyc.Service):
             data['motoron'] = motoron_
         if enccount_ is not None:
             data['enccount'] = enccount_
+        if encsetpoint_ is not None:
+            data['encsetpoint'] = encsetpoint_
 
     def exposed_get(self):
         return data
