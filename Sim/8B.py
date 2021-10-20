@@ -72,7 +72,10 @@ inst = {
     'RET' : 0x11,
     'JMN' : 0x12,
     'RLC' : 0x13,
-    'RRC' : 0x14
+    'RRC' : 0x14,
+    'PHA' : 0x15,
+    'SSA' : 0x17,
+    'LSA' : 0x18
 }
 
 
@@ -158,11 +161,11 @@ file.close()
 
 event, values = window.Read(timeout=0)
 
-update_rate = 10
+update_rate = 1
 
 while True:
     if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
-            event, values = window.Read(timeout=10)
+            event, values = window.Read(timeout=0)
     clk_counter += 1
     if breakpt:
          event, values = window.Read()
@@ -662,6 +665,39 @@ while True:
                 
 
 
+        elif ii.value == inst['PHA']:
+            if UCC == 3:
+                ctrl['AO'] = 1
+                ctrl['PH'] = 1
+                ctrl['RU'] = 1
+
+        elif ii.value == inst['SSA']:
+            if UCC == 3:
+                ctrl['PP'] = 1
+                ctrl['MA'] = 1
+                ctrl['Ln'] = 1
+            elif UCC == 4:
+                ctrl['PP'] = 1
+                ctrl['MA'] = 1
+                ctrl['Ln'] = 0
+            elif UCC == 5:
+                ctrl['MI'] = 1
+                ctrl['AO'] = 1
+                ctrl['RU'] = 1
+                
+        elif ii.value == inst['LSA']:
+            if UCC == 3:
+                ctrl['PP'] = 1
+                ctrl['MA'] = 1
+                ctrl['Ln'] = 1
+            elif UCC == 4:
+                ctrl['PP'] = 1
+                ctrl['MA'] = 1
+                ctrl['Ln'] = 0
+            elif UCC == 5:
+                ctrl['MO'] = 1
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
                 
     if event is None or event == 'Exit':
         break

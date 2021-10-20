@@ -1,15 +1,18 @@
 #include "CPU.asm"
 
-LAST_RES_PTR = 0x8000
+#bank rom
 
-sti, 0x01, LAST_RES_PTR
-lai, 0x00
+sti 0x01, LAST_RES_PTR
+lai 0x00
 top:
-    ldb, LAST_RES_PTR
-    sta, UART
-    sta, LAST_RES_PTR
+    ldb LAST_RES_PTR
+    sta UART
+    sta LAST_RES_PTR
     add
     lba
-    jnc, top
+    jnc top
     hlt
 
+#bank ram
+LAST_RES_PTR:
+    #res 1

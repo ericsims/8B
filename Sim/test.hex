@@ -1,0 +1,145 @@
+  outp | addr | data
+
+  --:- | 8000 |             ; test_counter:
+  --:- | 8001 |             ; mult_A:
+  --:- | 8002 |             ; mult_B:
+  --:- | 8003 |             ; mult_res:
+  --:- | 8004 |             ; .input_byte:
+  --:- | 8005 |             ; .buffer:
+  --:- | 8009 |             ; .byte_counter:
+  --:- | 800a |             ; .shift_counter:
+   0:0 |    0 |             ; top:
+   0:0 |    0 | 0f 96 80 00 ; sti 150, test_counter
+   4:0 |    4 |             ; loop:
+   4:0 |    4 | 0b 80 00    ; lda test_counter
+   7:0 |    7 | 09 80 04    ; sta uitoa_b.input_byte
+   a:0 |    a | 10 00 8d    ; cal uitoa_b
+   d:0 |    d | 0b 80 05    ; lda uitoa_b.buffer+0
+  10:0 |   10 | 09 d0 08    ; sta UART
+  13:0 |   13 | 0b 80 06    ; lda uitoa_b.buffer+1
+  16:0 |   16 | 09 d0 08    ; sta UART
+  19:0 |   19 | 0b 80 07    ; lda uitoa_b.buffer+2
+  1c:0 |   1c | 09 d0 08    ; sta UART
+  1f:0 |   1f | 0b 80 08    ; lda uitoa_b.buffer+3
+  22:0 |   22 | 09 d0 08    ; sta UART
+  25:0 |   25 | 0f 0a d0 08 ; sti "\n", UART
+  29:0 |   29 | 0b 80 00    ; lda test_counter
+  2c:0 |   2c | 03 01       ; lbi 0x01
+  2e:0 |   2e | 04          ; add
+  2f:0 |   2f | 09 80 00    ; sta test_counter
+  32:0 |   32 | 05 00 04    ; jmp loop
+  35:0 |   35 | 01          ; hlt
+  36:0 |   36 |             ; multiply:
+  36:0 |   36 | 0f 00 80 03 ; sti 0x00, mult_res
+  3a:0 |   3a | 0b 80 02    ; lda mult_B
+  3d:0 |   3d | 07 00 62    ; jmz mult_done
+  40:0 |   40 | 0b 80 03    ; lda mult_res
+  43:0 |   43 | 09 80 03    ; sta mult_res
+  46:0 |   46 |             ; mult_run:
+  46:0 |   46 | 0b 80 02    ; lda mult_B
+  49:0 |   49 | 07 00 62    ; jmz mult_done
+  4c:0 |   4c | 0b 80 03    ; lda mult_res
+  4f:0 |   4f | 0c 80 01    ; ldb mult_A
+  52:0 |   52 | 04          ; add
+  53:0 |   53 | 09 80 03    ; sta mult_res
+  56:0 |   56 | 0b 80 02    ; lda mult_B
+  59:0 |   59 | 03 01       ; lbi 0x01
+  5b:0 |   5b | 06          ; sub
+  5c:0 |   5c | 09 80 02    ; sta mult_B
+  5f:0 |   5f | 05 00 46    ; jmp mult_run
+  62:0 |   62 |             ; mult_done:
+  62:0 |   62 | 11          ; ret
+  63:0 |   63 |             ; divide:
+  63:0 |   63 | 0f 00 80 03 ; sti 0x00, mult_res
+  67:0 |   67 | 0b 80 02    ; lda mult_B
+  6a:0 |   6a | 07 00 62    ; jmz mult_done
+  6d:0 |   6d | 0b 80 03    ; lda mult_res
+  70:0 |   70 | 09 80 03    ; sta mult_res
+  73:0 |   73 |             ; div_run:
+  73:0 |   73 | 0b 80 01    ; lda mult_A
+  76:0 |   76 | 0c 80 02    ; ldb mult_B
+  79:0 |   79 | 06          ; sub
+  7a:0 |   7a | 0d 00 8c    ; jmc div_done
+  7d:0 |   7d | 09 80 01    ; sta mult_A
+  80:0 |   80 | 0b 80 03    ; lda mult_res
+  83:0 |   83 | 03 01       ; lbi 0x01
+  85:0 |   85 | 04          ; add
+  86:0 |   86 | 09 80 03    ; sta mult_res
+  89:0 |   89 | 05 00 73    ; jmp div_run
+  8c:0 |   8c |             ; div_done:
+  8c:0 |   8c | 11          ; ret
+  8d:0 |   8d |             ; uitoa_b:
+  8d:0 |   8d | 0f 00 80 05 ; sti 0x00, .buffer+0
+  91:0 |   91 | 0f 00 80 06 ; sti 0x00, .buffer+1
+  95:0 |   95 | 0f 00 80 07 ; sti 0x00, .buffer+2
+  99:0 |   99 | 0f 00 80 08 ; sti 0x00, .buffer+3
+  9d:0 |   9d | 0f 00 80 09 ; sti 0x00, .byte_counter
+  a1:0 |   a1 |             ; .digit_loop:
+  a1:0 |   a1 | 0b 80 04    ; lda .input_byte
+  a4:0 |   a4 | 09 80 01    ; sta mult_A
+  a7:0 |   a7 | 0f 0a 80 02 ; sti 10, mult_B
+  ab:0 |   ab | 10 00 63    ; cal divide
+  ae:0 |   ae | 0b 80 01    ; lda mult_A
+  b1:0 |   b1 | 03 30       ; lbi 0x30
+  b3:0 |   b3 | 04          ; add
+  b4:0 |   b4 | 09 80 01    ; sta mult_A
+  b7:0 |   b7 | 02 08       ; lai .buffer[7:0]+3
+  b9:0 |   b9 | 0c 80 09    ; ldb .byte_counter
+  bc:0 |   bc | 06          ; sub
+  bd:0 |   bd | 15          ; pha
+  be:0 |   be | 02 80       ; lai 0x80
+  c0:0 |   c0 | 15          ; pha
+  c1:0 |   c1 | 0b 80 01    ; lda mult_A
+  c4:0 |   c4 | 17          ; ssa
+  c5:0 |   c5 | 0b 80 09    ; lda .byte_counter
+  c8:0 |   c8 | 03 01       ; lbi 0x01
+  ca:0 |   ca | 04          ; add
+  cb:0 |   cb | 09 80 09    ; sta .byte_counter
+  ce:0 |   ce | 0b 80 03    ; lda mult_res
+  d1:0 |   d1 | 09 80 04    ; sta .input_byte
+  d4:0 |   d4 | 0b 80 04    ; lda .input_byte
+  d7:0 |   d7 | 03 00       ; lbi 0x00
+  d9:0 |   d9 | 04          ; add
+  da:0 |   da | 07 00 e0    ; jmz .break_digit_loop
+  dd:0 |   dd | 05 00 a1    ; jmp .digit_loop
+  e0:0 |   e0 |             ; .break_digit_loop:
+  e0:0 |   e0 |             ; .shift_buffer:
+  e0:0 |   e0 | 0f 00 80 0a ; sti 0x00, .shift_counter
+  e4:0 |   e4 | 0b 80 05    ; lda .buffer+0
+  e7:0 |   e7 | 03 00       ; lbi 0x00
+  e9:0 |   e9 | 04          ; add
+  ea:0 |   ea | 08 01 25    ; jnz .done
+  ed:0 |   ed |             ; .shift_buffer_loop:
+  ed:0 |   ed | 02 05       ; lai .buffer[7:0]
+  ef:0 |   ef | 0c 80 0a    ; ldb .shift_counter
+  f2:0 |   f2 | 04          ; add
+  f3:0 |   f3 | 15          ; pha
+  f4:0 |   f4 | 02 80       ; lai 0x80
+  f6:0 |   f6 | 15          ; pha
+  f7:0 |   f7 | 0b 80 0a    ; lda .shift_counter
+  fa:0 |   fa | 03 01       ; lbi 0x01
+  fc:0 |   fc | 04          ; add
+  fd:0 |   fd | 09 80 0a    ; sta .shift_counter
+ 100:0 |  100 | 02 05       ; lai .buffer[7:0]
+ 102:0 |  102 | 0c 80 0a    ; ldb .shift_counter
+ 105:0 |  105 | 04          ; add
+ 106:0 |  106 | 15          ; pha
+ 107:0 |  107 | 02 80       ; lai 0x80
+ 109:0 |  109 | 15          ; pha
+ 10a:0 |  10a | 18          ; lsa
+ 10b:0 |  10b | 17          ; ssa
+ 10c:0 |  10c | 0b 80 0a    ; lda .shift_counter
+ 10f:0 |  10f | 03 03       ; lbi 0x03
+ 111:0 |  111 | 06          ; sub
+ 112:0 |  112 | 08 00 ed    ; jnz .shift_buffer_loop
+ 115:0 |  115 | 02 05       ; lai .buffer[7:0]
+ 117:0 |  117 | 0c 80 0a    ; ldb .shift_counter
+ 11a:0 |  11a | 04          ; add
+ 11b:0 |  11b | 15          ; pha
+ 11c:0 |  11c | 02 80       ; lai 0x80
+ 11e:0 |  11e | 15          ; pha
+ 11f:0 |  11f | 02 00       ; lai 0x00
+ 121:0 |  121 | 17          ; ssa
+ 122:0 |  122 | 05 00 e0    ; jmp .shift_buffer
+ 125:0 |  125 |             ; .done:
+ 125:0 |  125 | 11          ; ret
