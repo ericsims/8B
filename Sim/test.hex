@@ -10,19 +10,16 @@
   --:- | 800a |                ; .shift_counter:
   --:- | 800b |                ; .data_pointer:
    0:0 |    0 |                ; top:
-   0:0 |    0 | 0f 4f 80 0c    ; sti str_1[7:0], uart_print.data_pointer+1
-   4:0 |    4 | 0f 00 80 0b    ; sti str_1[15:8], uart_print.data_pointer
+   0:0 |    0 | 0f 00 80 0b 0f 4f 80 0c ; sti16 str_1, uart_print.data_pointer
    8:0 |    8 | 10 01 b2       ; cal uart_println
    b:0 |    b | 0f 00 80 00    ; sti 0x00, counter
    f:0 |    f |                ; loop:
    f:0 |    f | 0b 80 00       ; lda counter
   12:0 |   12 | 09 80 04       ; sta uitoa_b.input_byte
   15:0 |   15 | 10 00 f0       ; cal uitoa_b
-  18:0 |   18 | 0f 92 80 0c    ; sti loop_str[7:0], uart_print.data_pointer+1
-  1c:0 |   1c | 0f 00 80 0b    ; sti loop_str[15:8], uart_print.data_pointer
+  18:0 |   18 | 0f 00 80 0b 0f 92 80 0c ; sti16 loop_str, uart_print.data_pointer
   20:0 |   20 | 10 01 89       ; cal uart_print
-  23:0 |   23 | 0f 05 80 0c    ; sti uitoa_b.buffer[7:0], uart_print.data_pointer+1
-  27:0 |   27 | 0f 80 80 0b    ; sti uitoa_b.buffer[15:8], uart_print.data_pointer
+  23:0 |   23 | 0f 80 80 0b 0f 05 80 0c ; sti16 uitoa_b.buffer, uart_print.data_pointer
   2b:0 |   2b | 10 01 b2       ; cal uart_println
   2e:0 |   2e | 02 04          ; lai 0x04
   30:0 |   30 | 0c 80 00       ; ldb counter
@@ -34,8 +31,7 @@
   3d:0 |   3d | 09 80 00       ; sta counter
   40:0 |   40 | 05 00 0f       ; jmp loop
   43:0 |   43 |                ; done:
-  43:0 |   43 | 0f 8c 80 0c    ; sti str_done[7:0], uart_print.data_pointer+1
-  47:0 |   47 | 0f 00 80 0b    ; sti str_done[15:8], uart_print.data_pointer
+  43:0 |   43 | 0f 00 80 0b 0f 8c 80 0c ; sti16 str_done, uart_print.data_pointer
   4b:0 |   4b | 10 01 b2       ; cal uart_println
   4e:0 |   4e | ff             ; hlt
   4f:0 |   4f |                ; str_1:

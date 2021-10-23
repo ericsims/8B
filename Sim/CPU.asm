@@ -1,9 +1,26 @@
+#bits 8
+
 #cpudef
 {
 
-    nop			             => 0x00
-    lai {value}              => 0x02 @ value`8
-    lbi {value}              => 0x03 @ value`8
+    nop	=>
+    {
+        0x00
+    }
+    
+    lai {value} =>
+    {
+        assert(value >= 0)
+        assert(value <= 0xff)
+        0x02 @ value`8
+    }
+    
+    lbi {value} =>
+    {
+        assert(value >= 0)
+        assert(value <= 0xff)
+        0x03 @ value`8
+    }
     add                      => 0x04
     jmp {address}            => 0x05 @ address`16
     sub                      => 0x06
@@ -15,7 +32,25 @@
     ldb {address}            => 0x0C @ address`16
     jmc {address}            => 0x0D @ address`16
     jnc {address}            => 0x0E @ address`16
-    sti {value}, {address}   => 0x0F @ value`8 @ address`16
+    
+    sti {value}, {address} =>
+    {
+        assert(value >= 0)
+        assert(value <= 0xff)
+        0x0F @ value`8 @ address`16
+    }
+    
+    sti16 {value}, {address} =>
+    {
+        assert(value >= 0)
+        assert(value <= 0xffff)
+        asm
+        {
+           sti value[15:8], address
+           sti value[7:0], address+1
+        }
+    }
+    
     cal {address}            => 0x10 @ address`16
     ret                      => 0x11
     jmn {address}            => 0x12 @ address`16

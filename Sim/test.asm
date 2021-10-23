@@ -2,8 +2,7 @@
 
 #bank rom
 top:
-    sti str_1[7:0], uart_print.data_pointer+1
-    sti str_1[15:8], uart_print.data_pointer
+    sti16 str_1, uart_print.data_pointer
     cal uart_println
     
     sti 0x00, counter
@@ -12,12 +11,10 @@ loop: ; loop 5 times
     sta uitoa_b.input_byte
     cal uitoa_b
     
-    sti loop_str[7:0], uart_print.data_pointer+1  ; print "loop #"
-    sti loop_str[15:8], uart_print.data_pointer    
+    sti16 loop_str, uart_print.data_pointer  ; print "loop #" 
     cal uart_print
     
-    sti uitoa_b.buffer[7:0], uart_print.data_pointer+1 ; print "[x]\n"
-    sti uitoa_b.buffer[15:8], uart_print.data_pointer
+    sti16 uitoa_b.buffer, uart_print.data_pointer ; print "[x]\n"
     cal uart_println
     
     lai 0x04 ; check if counter has reached 4, jump to done
@@ -34,8 +31,7 @@ loop: ; loop 5 times
     
     
 done:
-    sti str_done[7:0], uart_print.data_pointer+1 ; print "done!\n"
-    sti str_done[15:8], uart_print.data_pointer
+    sti16 str_done, uart_print.data_pointer ; print "done!\n"
     cal uart_println
     
     hlt
