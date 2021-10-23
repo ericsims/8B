@@ -15,7 +15,7 @@ uitoa_b:
         lda mult_A ; remainder
         lbi 0x30 ; load '0' in ASCII
         add
-        sta mult_A ; use mult_A as scratch registor for ascii represnstion of remainder
+        sta mult_A ; use mult_A as scratch registor for ascii representation of remainder
         
         ;sta UART
         
@@ -113,11 +113,11 @@ uitoa_b:
         #res 1
     .shift_counter: ; internal counter for shifting buffer to be left justified
         #res 1
-        
+
 ; UART print until '\0'
 ; TODO: this funciton doesn't check if the UART is ready to send
 #bank rom
-print_uart:
+uart_print:
     lda .data_pointer+1
     pha
     lda .data_pointer
@@ -134,14 +134,14 @@ print_uart:
     lbi 0x01
     add
     sta .data_pointer+1
-    jnc .pass ; deal with carry for strings that cross address boundry of LSB
+    jnc .pass ; deal with carry for strings that crosses an 8bit address boundry
     lda .data_pointer
     add
     sta .data_pointer
     
     .pass:
         
-    jmp print_uart
+    jmp uart_print
     
     .done:
         ret
@@ -149,3 +149,11 @@ print_uart:
 #bank ram
     .data_pointer:  ; pointer to begining of string. MSB, LSB
         #res 2
+        
+; UART print until '\0', then print '\n'
+; TODO: this funciton doesn't check if the UART is ready to send      
+#bank rom
+uart_println:
+    cal uart_print
+    sti "\n", UART
+    ret

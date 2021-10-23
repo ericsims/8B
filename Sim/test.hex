@@ -1,166 +1,189 @@
   outp | addr | data
 
-  --:- | 8000 |                ; mult_A:
-  --:- | 8001 |                ; mult_B:
-  --:- | 8002 |                ; mult_res:
-  --:- | 8003 |                ; .input_byte:
-  --:- | 8004 |                ; .buffer:
-  --:- | 8008 |                ; .byte_counter:
-  --:- | 8009 |                ; .shift_counter:
-  --:- | 800a |                ; .data_pointer:
+  --:- | 8000 |                ; counter:
+  --:- | 8001 |                ; mult_A:
+  --:- | 8002 |                ; mult_B:
+  --:- | 8003 |                ; mult_res:
+  --:- | 8004 |                ; .input_byte:
+  --:- | 8005 |                ; .buffer:
+  --:- | 8009 |                ; .byte_counter:
+  --:- | 800a |                ; .shift_counter:
+  --:- | 800b |                ; .data_pointer:
    0:0 |    0 |                ; top:
-   0:0 |    0 | 0f 22 80 0b    ; sti string1[7:0], print_uart.data_pointer+1
-   4:0 |    4 | 0f 00 80 0a    ; sti string1[15:8], print_uart.data_pointer
-   8:0 |    8 | 10 01 52       ; cal print_uart
-   b:0 |    b | 0f 30 80 0b    ; sti string2[7:0], print_uart.data_pointer+1
-   f:0 |    f | 0f 00 80 0a    ; sti string2[15:8], print_uart.data_pointer
-  13:0 |   13 | 10 01 52       ; cal print_uart
-  16:0 |   16 | 0f 5c 80 0b    ; sti string3[7:0], print_uart.data_pointer+1
-  1a:0 |   1a | 0f 00 80 0a    ; sti string3[15:8], print_uart.data_pointer
-  1e:0 |   1e | 10 01 52       ; cal print_uart
-  21:0 |   21 | ff             ; hlt
-  22:0 |   22 |                ; string1:
-  22:0 |   22 | 68 65 6c 6c 6f 20 77 6f 72 6c 64 21 0a ; #d "hello world!\n"
-  2f:0 |   2f | 00             ; 0x00
-  30:0 |   30 |                ; string2:
-  30:0 |   30 | 54 68 69 73 20 61 73 73 65 6d 62 6c 79 20 74 68 69 6e 67 20 73 65 65 6d 73 20 74 6f 20 62 65 20 77 6f 72 6b 69 6e 67 21 21 21 0a ; #d "This assembly thing seems to be working!!!\n"
-  5b:0 |   5b | 00             ; 0x00
-  5c:0 |   5c |                ; string3:
-  5c:0 |   5c | 79 61 79 2e 0a ; #d "yay.\n"
-  61:0 |   61 | 00             ; 0x00
-  62:0 |   62 |                ; multiply:
-  62:0 |   62 | 0f 00 80 02    ; sti 0x00, mult_res
-  66:0 |   66 | 0b 80 01       ; lda mult_B
-  69:0 |   69 | 07 00 8e       ; jmz mult_done
-  6c:0 |   6c | 0b 80 02       ; lda mult_res
-  6f:0 |   6f | 09 80 02       ; sta mult_res
-  72:0 |   72 |                ; mult_run:
-  72:0 |   72 | 0b 80 01       ; lda mult_B
-  75:0 |   75 | 07 00 8e       ; jmz mult_done
-  78:0 |   78 | 0b 80 02       ; lda mult_res
-  7b:0 |   7b | 0c 80 00       ; ldb mult_A
-  7e:0 |   7e | 04             ; add
-  7f:0 |   7f | 09 80 02       ; sta mult_res
-  82:0 |   82 | 0b 80 01       ; lda mult_B
-  85:0 |   85 | 03 01          ; lbi 0x01
-  87:0 |   87 | 06             ; sub
-  88:0 |   88 | 09 80 01       ; sta mult_B
-  8b:0 |   8b | 05 00 72       ; jmp mult_run
-  8e:0 |   8e |                ; mult_done:
-  8e:0 |   8e | 11             ; ret
-  8f:0 |   8f |                ; divide:
-  8f:0 |   8f | 0f 00 80 02    ; sti 0x00, mult_res
-  93:0 |   93 | 0b 80 01       ; lda mult_B
-  96:0 |   96 | 07 00 8e       ; jmz mult_done
-  99:0 |   99 | 0b 80 02       ; lda mult_res
-  9c:0 |   9c | 09 80 02       ; sta mult_res
-  9f:0 |   9f |                ; div_run:
-  9f:0 |   9f | 0b 80 00       ; lda mult_A
-  a2:0 |   a2 | 0c 80 01       ; ldb mult_B
-  a5:0 |   a5 | 06             ; sub
-  a6:0 |   a6 | 0d 00 b8       ; jmc div_done
-  a9:0 |   a9 | 09 80 00       ; sta mult_A
-  ac:0 |   ac | 0b 80 02       ; lda mult_res
-  af:0 |   af | 03 01          ; lbi 0x01
-  b1:0 |   b1 | 04             ; add
-  b2:0 |   b2 | 09 80 02       ; sta mult_res
-  b5:0 |   b5 | 05 00 9f       ; jmp div_run
-  b8:0 |   b8 |                ; div_done:
-  b8:0 |   b8 | 11             ; ret
-  b9:0 |   b9 |                ; uitoa_b:
-  b9:0 |   b9 | 0f 00 80 04    ; sti 0x00, .buffer+0
-  bd:0 |   bd | 0f 00 80 05    ; sti 0x00, .buffer+1
-  c1:0 |   c1 | 0f 00 80 06    ; sti 0x00, .buffer+2
-  c5:0 |   c5 | 0f 00 80 07    ; sti 0x00, .buffer+3
-  c9:0 |   c9 | 0f 00 80 08    ; sti 0x00, .byte_counter
-  cd:0 |   cd |                ; .digit_loop:
-  cd:0 |   cd | 0b 80 03       ; lda .input_byte
-  d0:0 |   d0 | 09 80 00       ; sta mult_A
-  d3:0 |   d3 | 0f 0a 80 01    ; sti 10, mult_B
-  d7:0 |   d7 | 10 00 8f       ; cal divide
-  da:0 |   da | 0b 80 00       ; lda mult_A
-  dd:0 |   dd | 03 30          ; lbi 0x30
-  df:0 |   df | 04             ; add
-  e0:0 |   e0 | 09 80 00       ; sta mult_A
-  e3:0 |   e3 | 02 07          ; lai .buffer[7:0]+3
-  e5:0 |   e5 | 0c 80 08       ; ldb .byte_counter
-  e8:0 |   e8 | 06             ; sub
-  e9:0 |   e9 | 15             ; pha
-  ea:0 |   ea | 02 80          ; lai 0x80
-  ec:0 |   ec | 15             ; pha
-  ed:0 |   ed | 0b 80 00       ; lda mult_A
-  f0:0 |   f0 | 17             ; ssa
-  f1:0 |   f1 | 0b 80 08       ; lda .byte_counter
-  f4:0 |   f4 | 03 01          ; lbi 0x01
-  f6:0 |   f6 | 04             ; add
-  f7:0 |   f7 | 09 80 08       ; sta .byte_counter
-  fa:0 |   fa | 0b 80 02       ; lda mult_res
-  fd:0 |   fd | 09 80 03       ; sta .input_byte
- 100:0 |  100 | 0b 80 03       ; lda .input_byte
- 103:0 |  103 | 03 00          ; lbi 0x00
- 105:0 |  105 | 04             ; add
- 106:0 |  106 | 07 01 0c       ; jmz .break_digit_loop
- 109:0 |  109 | 05 00 cd       ; jmp .digit_loop
- 10c:0 |  10c |                ; .break_digit_loop:
- 10c:0 |  10c |                ; .shift_buffer:
- 10c:0 |  10c | 0f 00 80 09    ; sti 0x00, .shift_counter
- 110:0 |  110 | 0b 80 04       ; lda .buffer+0
- 113:0 |  113 | 03 00          ; lbi 0x00
- 115:0 |  115 | 04             ; add
- 116:0 |  116 | 08 01 51       ; jnz .done
- 119:0 |  119 |                ; .shift_buffer_loop:
- 119:0 |  119 | 02 04          ; lai .buffer[7:0]
- 11b:0 |  11b | 0c 80 09       ; ldb .shift_counter
- 11e:0 |  11e | 04             ; add
- 11f:0 |  11f | 15             ; pha
- 120:0 |  120 | 02 80          ; lai 0x80
- 122:0 |  122 | 15             ; pha
- 123:0 |  123 | 0b 80 09       ; lda .shift_counter
- 126:0 |  126 | 03 01          ; lbi 0x01
- 128:0 |  128 | 04             ; add
- 129:0 |  129 | 09 80 09       ; sta .shift_counter
- 12c:0 |  12c | 02 04          ; lai .buffer[7:0]
- 12e:0 |  12e | 0c 80 09       ; ldb .shift_counter
- 131:0 |  131 | 04             ; add
- 132:0 |  132 | 15             ; pha
- 133:0 |  133 | 02 80          ; lai 0x80
- 135:0 |  135 | 15             ; pha
- 136:0 |  136 | 18             ; lsa
- 137:0 |  137 | 17             ; ssa
- 138:0 |  138 | 0b 80 09       ; lda .shift_counter
- 13b:0 |  13b | 03 03          ; lbi 0x03
- 13d:0 |  13d | 06             ; sub
- 13e:0 |  13e | 08 01 19       ; jnz .shift_buffer_loop
- 141:0 |  141 | 02 04          ; lai .buffer[7:0]
- 143:0 |  143 | 0c 80 09       ; ldb .shift_counter
- 146:0 |  146 | 04             ; add
- 147:0 |  147 | 15             ; pha
- 148:0 |  148 | 02 80          ; lai 0x80
- 14a:0 |  14a | 15             ; pha
- 14b:0 |  14b | 02 00          ; lai 0x00
- 14d:0 |  14d | 17             ; ssa
- 14e:0 |  14e | 05 01 0c       ; jmp .shift_buffer
- 151:0 |  151 |                ; .done:
- 151:0 |  151 | 11             ; ret
- 152:0 |  152 |                ; print_uart:
- 152:0 |  152 | 0b 80 0b       ; lda .data_pointer+1
- 155:0 |  155 | 15             ; pha
- 156:0 |  156 | 0b 80 0a       ; lda .data_pointer
+   0:0 |    0 | 0f 4f 80 0c    ; sti str_1[7:0], uart_print.data_pointer+1
+   4:0 |    4 | 0f 00 80 0b    ; sti str_1[15:8], uart_print.data_pointer
+   8:0 |    8 | 10 01 b2       ; cal uart_println
+   b:0 |    b | 0f 00 80 00    ; sti 0x00, counter
+   f:0 |    f |                ; loop:
+   f:0 |    f | 0b 80 00       ; lda counter
+  12:0 |   12 | 09 80 04       ; sta uitoa_b.input_byte
+  15:0 |   15 | 10 00 f0       ; cal uitoa_b
+  18:0 |   18 | 0f 92 80 0c    ; sti loop_str[7:0], uart_print.data_pointer+1
+  1c:0 |   1c | 0f 00 80 0b    ; sti loop_str[15:8], uart_print.data_pointer
+  20:0 |   20 | 10 01 89       ; cal uart_print
+  23:0 |   23 | 0f 05 80 0c    ; sti uitoa_b.buffer[7:0], uart_print.data_pointer+1
+  27:0 |   27 | 0f 80 80 0b    ; sti uitoa_b.buffer[15:8], uart_print.data_pointer
+  2b:0 |   2b | 10 01 b2       ; cal uart_println
+  2e:0 |   2e | 02 04          ; lai 0x04
+  30:0 |   30 | 0c 80 00       ; ldb counter
+  33:0 |   33 | 06             ; sub
+  34:0 |   34 | 12 00 43       ; jmn done
+  37:0 |   37 | 0b 80 00       ; lda counter
+  3a:0 |   3a | 03 01          ; lbi 0x01
+  3c:0 |   3c | 04             ; add
+  3d:0 |   3d | 09 80 00       ; sta counter
+  40:0 |   40 | 05 00 0f       ; jmp loop
+  43:0 |   43 |                ; done:
+  43:0 |   43 | 0f 8c 80 0c    ; sti str_done[7:0], uart_print.data_pointer+1
+  47:0 |   47 | 0f 00 80 0b    ; sti str_done[15:8], uart_print.data_pointer
+  4b:0 |   4b | 10 01 b2       ; cal uart_println
+  4e:0 |   4e | ff             ; hlt
+  4f:0 |   4f |                ; str_1:
+  4f:0 |   4f | 68 65 6c 6c 6f 20 77 6f 72 6c 64 21 0a 54 68 69 73 20 61 73 73 65 6d 62 6c 79 20 74 68 69 6e 67 20 73 65 65 6d 73 20 74 6f 20 62 65 20 77 6f 72 6b 69 6e 67 21 21 21 0a 79 61 79 2e ; #d "hello world!\nThis assembly thing seems to be working!!!\nyay."
+  8b:0 |   8b | 00             ; 0x00
+  8c:0 |   8c |                ; str_done:
+  8c:0 |   8c | 64 6f 6e 65 21 ; #d "done!"
+  91:0 |   91 | 00             ; 0x00
+  92:0 |   92 |                ; loop_str:
+  92:0 |   92 | 6c 6f 6f 70 20 23 ; #d "loop #"
+  98:0 |   98 | 00             ; 0x00
+  99:0 |   99 |                ; multiply:
+  99:0 |   99 | 0f 00 80 03    ; sti 0x00, mult_res
+  9d:0 |   9d | 0b 80 02       ; lda mult_B
+  a0:0 |   a0 | 07 00 c5       ; jmz mult_done
+  a3:0 |   a3 | 0b 80 03       ; lda mult_res
+  a6:0 |   a6 | 09 80 03       ; sta mult_res
+  a9:0 |   a9 |                ; mult_run:
+  a9:0 |   a9 | 0b 80 02       ; lda mult_B
+  ac:0 |   ac | 07 00 c5       ; jmz mult_done
+  af:0 |   af | 0b 80 03       ; lda mult_res
+  b2:0 |   b2 | 0c 80 01       ; ldb mult_A
+  b5:0 |   b5 | 04             ; add
+  b6:0 |   b6 | 09 80 03       ; sta mult_res
+  b9:0 |   b9 | 0b 80 02       ; lda mult_B
+  bc:0 |   bc | 03 01          ; lbi 0x01
+  be:0 |   be | 06             ; sub
+  bf:0 |   bf | 09 80 02       ; sta mult_B
+  c2:0 |   c2 | 05 00 a9       ; jmp mult_run
+  c5:0 |   c5 |                ; mult_done:
+  c5:0 |   c5 | 11             ; ret
+  c6:0 |   c6 |                ; divide:
+  c6:0 |   c6 | 0f 00 80 03    ; sti 0x00, mult_res
+  ca:0 |   ca | 0b 80 02       ; lda mult_B
+  cd:0 |   cd | 07 00 c5       ; jmz mult_done
+  d0:0 |   d0 | 0b 80 03       ; lda mult_res
+  d3:0 |   d3 | 09 80 03       ; sta mult_res
+  d6:0 |   d6 |                ; div_run:
+  d6:0 |   d6 | 0b 80 01       ; lda mult_A
+  d9:0 |   d9 | 0c 80 02       ; ldb mult_B
+  dc:0 |   dc | 06             ; sub
+  dd:0 |   dd | 0d 00 ef       ; jmc div_done
+  e0:0 |   e0 | 09 80 01       ; sta mult_A
+  e3:0 |   e3 | 0b 80 03       ; lda mult_res
+  e6:0 |   e6 | 03 01          ; lbi 0x01
+  e8:0 |   e8 | 04             ; add
+  e9:0 |   e9 | 09 80 03       ; sta mult_res
+  ec:0 |   ec | 05 00 d6       ; jmp div_run
+  ef:0 |   ef |                ; div_done:
+  ef:0 |   ef | 11             ; ret
+  f0:0 |   f0 |                ; uitoa_b:
+  f0:0 |   f0 | 0f 00 80 05    ; sti 0x00, .buffer+0
+  f4:0 |   f4 | 0f 00 80 06    ; sti 0x00, .buffer+1
+  f8:0 |   f8 | 0f 00 80 07    ; sti 0x00, .buffer+2
+  fc:0 |   fc | 0f 00 80 08    ; sti 0x00, .buffer+3
+ 100:0 |  100 | 0f 00 80 09    ; sti 0x00, .byte_counter
+ 104:0 |  104 |                ; .digit_loop:
+ 104:0 |  104 | 0b 80 04       ; lda .input_byte
+ 107:0 |  107 | 09 80 01       ; sta mult_A
+ 10a:0 |  10a | 0f 0a 80 02    ; sti 10, mult_B
+ 10e:0 |  10e | 10 00 c6       ; cal divide
+ 111:0 |  111 | 0b 80 01       ; lda mult_A
+ 114:0 |  114 | 03 30          ; lbi 0x30
+ 116:0 |  116 | 04             ; add
+ 117:0 |  117 | 09 80 01       ; sta mult_A
+ 11a:0 |  11a | 02 08          ; lai .buffer[7:0]+3
+ 11c:0 |  11c | 0c 80 09       ; ldb .byte_counter
+ 11f:0 |  11f | 06             ; sub
+ 120:0 |  120 | 15             ; pha
+ 121:0 |  121 | 02 80          ; lai 0x80
+ 123:0 |  123 | 15             ; pha
+ 124:0 |  124 | 0b 80 01       ; lda mult_A
+ 127:0 |  127 | 17             ; ssa
+ 128:0 |  128 | 0b 80 09       ; lda .byte_counter
+ 12b:0 |  12b | 03 01          ; lbi 0x01
+ 12d:0 |  12d | 04             ; add
+ 12e:0 |  12e | 09 80 09       ; sta .byte_counter
+ 131:0 |  131 | 0b 80 03       ; lda mult_res
+ 134:0 |  134 | 09 80 04       ; sta .input_byte
+ 137:0 |  137 | 0b 80 04       ; lda .input_byte
+ 13a:0 |  13a | 03 00          ; lbi 0x00
+ 13c:0 |  13c | 04             ; add
+ 13d:0 |  13d | 07 01 43       ; jmz .break_digit_loop
+ 140:0 |  140 | 05 01 04       ; jmp .digit_loop
+ 143:0 |  143 |                ; .break_digit_loop:
+ 143:0 |  143 |                ; .shift_buffer:
+ 143:0 |  143 | 0f 00 80 0a    ; sti 0x00, .shift_counter
+ 147:0 |  147 | 0b 80 05       ; lda .buffer+0
+ 14a:0 |  14a | 03 00          ; lbi 0x00
+ 14c:0 |  14c | 04             ; add
+ 14d:0 |  14d | 08 01 88       ; jnz .done
+ 150:0 |  150 |                ; .shift_buffer_loop:
+ 150:0 |  150 | 02 05          ; lai .buffer[7:0]
+ 152:0 |  152 | 0c 80 0a       ; ldb .shift_counter
+ 155:0 |  155 | 04             ; add
+ 156:0 |  156 | 15             ; pha
+ 157:0 |  157 | 02 80          ; lai 0x80
  159:0 |  159 | 15             ; pha
- 15a:0 |  15a | 18             ; lsa
- 15b:0 |  15b | 03 00          ; lbi 0x00
- 15d:0 |  15d | 04             ; add
- 15e:0 |  15e | 07 01 7a       ; jmz .done
- 161:0 |  161 | 09 d0 08       ; sta UART
- 164:0 |  164 | 0b 80 0b       ; lda .data_pointer+1
- 167:0 |  167 | 03 01          ; lbi 0x01
- 169:0 |  169 | 04             ; add
- 16a:0 |  16a | 09 80 0b       ; sta .data_pointer+1
- 16d:0 |  16d | 0e 01 77       ; jnc .pass
- 170:0 |  170 | 0b 80 0a       ; lda .data_pointer
- 173:0 |  173 | 04             ; add
- 174:0 |  174 | 09 80 0a       ; sta .data_pointer
- 177:0 |  177 |                ; .pass:
- 177:0 |  177 | 05 01 52       ; jmp print_uart
- 17a:0 |  17a |                ; .done:
- 17a:0 |  17a | 11             ; ret
+ 15a:0 |  15a | 0b 80 0a       ; lda .shift_counter
+ 15d:0 |  15d | 03 01          ; lbi 0x01
+ 15f:0 |  15f | 04             ; add
+ 160:0 |  160 | 09 80 0a       ; sta .shift_counter
+ 163:0 |  163 | 02 05          ; lai .buffer[7:0]
+ 165:0 |  165 | 0c 80 0a       ; ldb .shift_counter
+ 168:0 |  168 | 04             ; add
+ 169:0 |  169 | 15             ; pha
+ 16a:0 |  16a | 02 80          ; lai 0x80
+ 16c:0 |  16c | 15             ; pha
+ 16d:0 |  16d | 18             ; lsa
+ 16e:0 |  16e | 17             ; ssa
+ 16f:0 |  16f | 0b 80 0a       ; lda .shift_counter
+ 172:0 |  172 | 03 03          ; lbi 0x03
+ 174:0 |  174 | 06             ; sub
+ 175:0 |  175 | 08 01 50       ; jnz .shift_buffer_loop
+ 178:0 |  178 | 02 05          ; lai .buffer[7:0]
+ 17a:0 |  17a | 0c 80 0a       ; ldb .shift_counter
+ 17d:0 |  17d | 04             ; add
+ 17e:0 |  17e | 15             ; pha
+ 17f:0 |  17f | 02 80          ; lai 0x80
+ 181:0 |  181 | 15             ; pha
+ 182:0 |  182 | 02 00          ; lai 0x00
+ 184:0 |  184 | 17             ; ssa
+ 185:0 |  185 | 05 01 43       ; jmp .shift_buffer
+ 188:0 |  188 |                ; .done:
+ 188:0 |  188 | 11             ; ret
+ 189:0 |  189 |                ; uart_print:
+ 189:0 |  189 | 0b 80 0c       ; lda .data_pointer+1
+ 18c:0 |  18c | 15             ; pha
+ 18d:0 |  18d | 0b 80 0b       ; lda .data_pointer
+ 190:0 |  190 | 15             ; pha
+ 191:0 |  191 | 18             ; lsa
+ 192:0 |  192 | 03 00          ; lbi 0x00
+ 194:0 |  194 | 04             ; add
+ 195:0 |  195 | 07 01 b1       ; jmz .done
+ 198:0 |  198 | 09 d0 08       ; sta UART
+ 19b:0 |  19b | 0b 80 0c       ; lda .data_pointer+1
+ 19e:0 |  19e | 03 01          ; lbi 0x01
+ 1a0:0 |  1a0 | 04             ; add
+ 1a1:0 |  1a1 | 09 80 0c       ; sta .data_pointer+1
+ 1a4:0 |  1a4 | 0e 01 ae       ; jnc .pass
+ 1a7:0 |  1a7 | 0b 80 0b       ; lda .data_pointer
+ 1aa:0 |  1aa | 04             ; add
+ 1ab:0 |  1ab | 09 80 0b       ; sta .data_pointer
+ 1ae:0 |  1ae |                ; .pass:
+ 1ae:0 |  1ae | 05 01 89       ; jmp uart_print
+ 1b1:0 |  1b1 |                ; .done:
+ 1b1:0 |  1b1 | 11             ; ret
+ 1b2:0 |  1b2 |                ; uart_println:
+ 1b2:0 |  1b2 | 10 01 89       ; cal uart_print
+ 1b5:0 |  1b5 | 0f 0a d0 08    ; sti "\n", UART
+ 1b9:0 |  1b9 | 11             ; ret
