@@ -5,7 +5,7 @@ from PC import PC
 from II import II
 from MAR import MAR
 from REG import REG
-from STACK import STACK
+from RAM_STACK import STACK
 from MEMS import MEMS
 
 pc = PC()
@@ -14,7 +14,7 @@ ii = II()
 mems = MEMS()
 a = REG()
 b = REG()
-stack = STACK(16)
+stack = STACK(16,mems.sram)
 
 clk_counter = 0
 
@@ -27,8 +27,6 @@ flags = {
     'CF' : 0,
     'NF' : 0
 }
-
-breakpt = 0
 
 ctrl = {
     'Ln' : 0, # bus byte indictor (2 bits)
@@ -83,6 +81,10 @@ inst = {
 }
 
 
+
+breakpt = 0
+
+
 layout_regs = [
     [sg.T('Regs')],
     [sg.T('PC  '), sg.T('0x0000', size=(6,1), justification='left', text_color='black', background_color='white', key='_PC_')],
@@ -117,7 +119,7 @@ for ctrl_ in ctrl.keys():
 
 layout_mem = [
     [sg.T('SRAM')],
-    [sg.T('', size=(4*3,32), justification='left', text_color='black', background_color='white', key='_SRAM_')]
+    [sg.T('', size=(16*3+1,64), font=('courier new',8), justification='left', text_color='black', background_color='white', key='_SRAM_')]
 ]
 
 layout = [[
@@ -165,7 +167,7 @@ file.close()
 
 event, values = window.Read(timeout=0)
 
-update_rate = 10000
+update_rate = 100
 
 while True:
     if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
@@ -772,20 +774,29 @@ while True:
             window['_{}_'.format(ctrl_)].Update(text_color=INDC_COLOR[ctrl[ctrl_]>0])
 
         stack_values = ''
-        if stack.pointer>0:
-            for n in range(stack.pointer)[::-1]:
-                stack_values += '0x{:02X}\n'.format(stack.value[n])
+        #if stack.pointer>0:
+        #    for n in range(stack.pointer)[::-1]:
+        #        stack_values += '0x{:02X}\n'.format(stack.value[n])
         window['_STCK_'].Update(stack_values)
         window['_STPR_'].Update('0x{:01X}'.format(stack.pointer))
         
         window['_CNT_'].Update('{:,}'.format(clk_counter))
         
         sram_values = ''
-        for n in range(128):
-            sram_values += '{:02X} '.format(mems.sram.value[n])
+        for n in range(2**10):
+            if mems.sram.value[n] is None:
+                sram_values += '--'
+            else:
+                sram_values += '{:02X}'.format(mems.sram.value[n])
+            if (n+1)%8 == 0:
+                sram_values += '  '
+            else:
+                sram_values += ' '
+                
         window['_SRAM_'].Update(sram_values)
         
 
+print("max stack usage {} bytes".format(stack.max_used))
 
 window.close()
     

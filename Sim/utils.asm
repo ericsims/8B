@@ -16,9 +16,7 @@ uitoa_b:
         lbi 0x30 ; load '0' in ASCII
         add
         sta mult_A ; use mult_A as scratch registor for ascii representation of remainder
-        
-        ;sta UART
-        
+                
         lai .buffer[7:0]+3 ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
         ldb .byte_counter
         sub
@@ -107,12 +105,27 @@ uitoa_b:
 #bank ram
     .input_byte:    ; input byte for itoa func
         #res 1
+#align 64 ; ensure that this buffer is aligned and wont cross an 8bit address boundry until the TODOs above are resolved
     .buffer:        ; return buffer from itoa. maximum length is 4: 3 digits + null term.
         #res 4
     .byte_counter:  ; counter for buffer length, desicribes buffer length including null term.
         #res 1
     .shift_counter: ; internal counter for shifting buffer to be left justified
         #res 1
+
+
+; UART print char
+#bank rom
+uart_putc:
+    ; TODO: check if UART is ready
+    lda .char
+    sta UART
+    ret
+    
+#bank ram
+    .char:      ; char to print to uart
+        #res 1
+
 
 ; UART print until '\0'
 ; TODO: this funciton doesn't check if the UART is ready to send
@@ -128,7 +141,9 @@ uart_print:
     add
     
     jmz .done
-    sta UART
+    
+    sta uart_putc.char
+    cal uart_putc
     
     lda .data_pointer+1 ; increment data_pointer
     lbi 0x01
@@ -155,5 +170,6 @@ uart_print:
 #bank rom
 uart_println:
     cal uart_print
-    sti "\n", UART
+    sti "\n", uart_putc.char
+    cal uart_putc
     ret
