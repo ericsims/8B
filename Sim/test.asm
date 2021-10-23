@@ -6,7 +6,7 @@ test_counter:
 
 #bank rom
 top:
-sti 150, test_counter
+sti 0, test_counter
 
 loop:
 
@@ -29,7 +29,7 @@ loop:
     add
     sta test_counter
 
-jmp loop
+jnc loop
 
 
 hlt

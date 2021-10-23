@@ -2,7 +2,6 @@
 {
 
     nop			             => 0x00
-    hlt                      => 0x01
     lai {value}              => 0x02 @ value`8
     lbi {value}              => 0x03 @ value`8
     add                      => 0x04
@@ -25,6 +24,11 @@
     pha                      => 0x15
     ssa                      => 0x17
     lsa                      => 0x18
+    ttn {value}              => 0xFB @ value`8
+    ttc {value}              => 0xFC @ value`8
+    ttz {value}              => 0xFD @ value`8
+    tta {value}              => 0xFE @ value`8
+    hlt                      => 0xFF
 }
 
 #bankdef ram

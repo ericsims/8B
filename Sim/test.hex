@@ -9,7 +9,7 @@
   --:- | 8009 |             ; .byte_counter:
   --:- | 800a |             ; .shift_counter:
    0:0 |    0 |             ; top:
-   0:0 |    0 | 0f 96 80 00 ; sti 150, test_counter
+   0:0 |    0 | 0f 00 80 00 ; sti 0, test_counter
    4:0 |    4 |             ; loop:
    4:0 |    4 | 0b 80 00    ; lda test_counter
    7:0 |    7 | 09 80 04    ; sta uitoa_b.input_byte
@@ -27,8 +27,8 @@
   2c:0 |   2c | 03 01       ; lbi 0x01
   2e:0 |   2e | 04          ; add
   2f:0 |   2f | 09 80 00    ; sta test_counter
-  32:0 |   32 | 05 00 04    ; jmp loop
-  35:0 |   35 | 01          ; hlt
+  32:0 |   32 | 0e 00 04    ; jnc loop
+  35:0 |   35 | ff          ; hlt
   36:0 |   36 |             ; multiply:
   36:0 |   36 | 0f 00 80 03 ; sti 0x00, mult_res
   3a:0 |   3a | 0b 80 02    ; lda mult_B

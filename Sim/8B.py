@@ -53,7 +53,6 @@ ctrl = {
 
 inst = {
     'NOP' : 0x00,
-    'HLT' : 0x01,
     'LAI' : 0x02,
     'LBI' : 0x03,
     'ADD' : 0x04,
@@ -75,7 +74,12 @@ inst = {
     'RRC' : 0x14,
     'PHA' : 0x15,
     'SSA' : 0x17,
-    'LSA' : 0x18
+    'LSA' : 0x18,
+    'TTN' : 0xFB, # special test instructions asserts that NF shall equal operand
+    'TTC' : 0xFC, # special test instructions asserts that CF shall equal operand
+    'TTZ' : 0xFD, # special test instructions asserts that ZF shall equal operand
+    'TTA' : 0xFE, # special test instructions asserts that A reg shall equal operand
+    'HLT' : 0xFF
 }
 
 
@@ -161,7 +165,7 @@ file.close()
 
 event, values = window.Read(timeout=0)
 
-update_rate = 1
+update_rate = 10000
 
 while True:
     if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
@@ -200,6 +204,26 @@ while True:
     elif ctrl['Mn'] == 7:
         # Right Shift 1
         data = (a.value >> 1) & 0xFF
+
+    # FLAGS
+    if ctrl['FI']:
+        flags['ZF'] = ( (data & 0xFF) == 0 )
+        flags['NF'] = ( data & 0x80) > 0
+        if ctrl['Mn'] == 0:
+            raise Exception("should only update CF on ALU operation")
+        elif ctrl['Mn'] == 1:
+            # Add
+            flags['CF'] = ( (a.value+b.value) > 0xFF ) or ( (a.value+b.value) < 0x00 )
+            #print('{} + {} = {}'.format(a.value,b.value,a.value+b.value))
+        elif ctrl['Mn'] == 2:
+            # Subtract
+            flags['CF'] = ( (a.value+(~b.value)+1) > 0xFF ) or ( (a.value+(~b.value)+1) < 0x00 )
+        elif ctrl['Mn'] == 6:
+            # Left Shift 1
+            data = (a.value << 1) > 0xFF
+        elif ctrl['Mn'] == 7:
+            # Right Shift 1
+            data = a.value & 0x01
     
     # CLK
     if ctrl['HT']:
@@ -245,24 +269,6 @@ while True:
     if ctrl['PH']:
         stack.push(data)
 
-    # FLAGS
-    if ctrl['FI']:
-        flags['ZF'] = ( (data & 0xFF) == 0 )
-        flags['NF'] = ( data & 0x80) > 0
-        if ctrl['Mn'] == 0:
-            raise Exception("should only update CF on ALU operation")
-        elif ctrl['Mn'] == 1:
-            # Add
-            flags['CF'] = (a.value+b.value) > 0xFF
-        elif ctrl['Mn'] == 2:
-            # Subtract
-            flags['CF'] = (a.value+~(b.value)+1) > 0xFF
-        elif ctrl['Mn'] == 6:
-            # Left Shift 1
-            data = (a.value << 1) > 0xFF
-        elif ctrl['Mn'] == 7:
-            # Right Shift 1
-            data = a.value & 0x01
 
     # U CODE
     UCC = (UCC + 1) & 0xF
@@ -296,9 +302,52 @@ while True:
 
     elif UCC >= 3:
         ctrl = dict.fromkeys(ctrl, 0)
+        
         if ii.value == inst['HLT']:
             if UCC == 3:
                 ctrl['HT'] = 1
+                
+        if ii.value == inst['TTA']: # specical test instuction
+            if UCC == 3:
+                ctrl['MC'] = 1
+                ctrl['CE'] = 1
+            elif UCC == 4:
+                if mems.get(addr) == a.value:
+                    print('pass, a = 0x{:02X}'.format(a.value))
+                else:
+                    raise Exception("test case failed, a = 0x{:02X}, expected 0x{:02X}".format(a.value, mems.get(addr)))
+                ctrl['RU'] = 1
+                
+        if ii.value == inst['TTZ']: # specical test instuction
+            if UCC == 3:
+                ctrl['MC'] = 1
+                ctrl['CE'] = 1
+            elif UCC == 4:
+                if mems.get(addr) == flags['ZF']:
+                    print('pass, ZF = {}'.format(flags['ZF']))
+                else:
+                    raise Exception("test case failed, ZF = {}, expected {}".format(flags['ZF'], mems.get(addr)))
+                ctrl['RU'] = 1
+        if ii.value == inst['TTC']: # specical test instuction
+            if UCC == 3:
+                ctrl['MC'] = 1
+                ctrl['CE'] = 1
+            elif UCC == 4:
+                if mems.get(addr) == flags['CF']:
+                    print('pass, CF = {}'.format(flags['CF']))
+                else:
+                    raise Exception("test case failed, CF = {}, expected {}".format(flags['CF'], mems.get(addr)))
+                ctrl['RU'] = 1
+        if ii.value == inst['TTN']: # specical test instuction
+            if UCC == 3:
+                ctrl['MC'] = 1
+                ctrl['CE'] = 1
+            elif UCC == 4:
+                if mems.get(addr) == flags['NF']:
+                    print('pass, NF = {}'.format(flags['NF']))
+                else:
+                    raise Exception("test case failed, NF = {}, expected {}".format(flags['NF'], mems.get(addr)))
+                ctrl['RU'] = 1
 
         if ii.value == inst['LAI']:
             if UCC == 3:
