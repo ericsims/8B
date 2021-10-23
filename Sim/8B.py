@@ -1,3 +1,4 @@
+from PIL import Image, ImageTk
 import PySimpleGUI as sg
 import time
 
@@ -18,6 +19,11 @@ stack = STACK(16,mems.sram)
 
 clk_counter = 0
 
+update_rate = 100
+
+IMG_HEI = 80
+IMG_WID = 101
+        
 addr = 0
 data = 0
 UCC = 0
@@ -73,6 +79,9 @@ inst = {
     'PHA' : 0x15,
     'SSA' : 0x17,
     'LSA' : 0x18,
+    'AND' : 0x19,
+    'OOR' : 0x20,
+    'XOR' : 0x21,
     'TTN' : 0xFB, # special test instructions asserts that NF shall equal operand
     'TTC' : 0xFC, # special test instructions asserts that CF shall equal operand
     'TTZ' : 0xFD, # special test instructions asserts that ZF shall equal operand
@@ -105,7 +114,8 @@ layout_flags = [
     [sg.T('NF  '), sg.T('\u2B24', size=(2,1), justification='left', text_color='gray', key='_NF_')],
     [],
     [sg.Button('STEP')],
-    [sg.T('CNT '), sg.T('0x0000', size=(12,1), justification='left', text_color='black', background_color='white', key='_CNT_')]
+    [sg.T('CNT '), sg.T('0x0000', size=(12,1), justification='left', text_color='black', background_color='white', key='_CNT_')],
+    [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))]
 ]
 
 layout_ctrl = [
@@ -166,7 +176,6 @@ file.close()
 
 event, values = window.Read(timeout=0)
 
-update_rate = 100
 
 while True:
     if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
@@ -199,6 +208,15 @@ while True:
     elif ctrl['Mn'] == 2:
         # Subtract
         data = (a.value+~(b.value)+1) & 0xFF
+    elif ctrl['Mn'] == 3:
+        # And
+        data = (a.value & b.value) & 0xFF
+    elif ctrl['Mn'] == 4:
+        # Or
+        data = (a.value | b.value) & 0xFF
+    elif ctrl['Mn'] == 5:
+        # Xor
+        data = (a.value ^ b.value) & 0xFF
     elif ctrl['Mn'] == 6:
         # Left Shift 1
         data = (a.value << 1) & 0xFF
@@ -215,16 +233,15 @@ while True:
         elif ctrl['Mn'] == 1:
             # Add
             flags['CF'] = ( (a.value+b.value) > 0xFF ) or ( (a.value+b.value) < 0x00 )
-            #print('{} + {} = {}'.format(a.value,b.value,a.value+b.value))
         elif ctrl['Mn'] == 2:
             # Subtract
             flags['CF'] = ( (a.value+(~b.value)+1) > 0xFF ) or ( (a.value+(~b.value)+1) < 0x00 )
         elif ctrl['Mn'] == 6:
             # Left Shift 1
-            data = (a.value << 1) > 0xFF
+            flags['CF'] = (a.value << 1) > 0xFF
         elif ctrl['Mn'] == 7:
             # Right Shift 1
-            data = a.value & 0x01
+            flags['CF'] = a.value & 0x01
     
     # CLK
     if ctrl['HT']:
@@ -392,6 +409,27 @@ while True:
         elif ii.value == inst['RRC']:
             if UCC == 3:
                 ctrl['Mn'] = 7
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                ctrl['FI'] = 1
+
+        elif ii.value == inst['AND']:
+            if UCC == 3:
+                ctrl['Mn'] = 3
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                ctrl['FI'] = 1
+
+        elif ii.value == inst['OOR']:
+            if UCC == 3:
+                ctrl['Mn'] = 4
+                ctrl['AI'] = 1
+                ctrl['RU'] = 1
+                ctrl['FI'] = 1
+
+        elif ii.value == inst['XOR']:
+            if UCC == 3:
+                ctrl['Mn'] = 5
                 ctrl['AI'] = 1
                 ctrl['RU'] = 1
                 ctrl['FI'] = 1
@@ -788,7 +826,21 @@ while True:
                 sram_values += ' '
                 
         window['_SRAM_'].Update(sram_values)
+
+
+        img = Image.new('L', [IMG_WID,IMG_HEI], 255)
+        pixels = img.load()
         
+        for row in range(IMG_HEI):
+            for col in range(IMG_WID):
+                dr_addr = int(row/8)+col*10
+                v = 100
+                if mems.dpram.value[dr_addr] is not None:
+                    v = ((mems.dpram.value[dr_addr] >> (row%8)) & 0x01) * 255
+                pixels[col,row] = v
+        window["-IMAGE-"].update(data=ImageTk.PhotoImage(image=img))
+                
+
 
 print("max stack usage {} bytes".format(stack.max_used))
 
