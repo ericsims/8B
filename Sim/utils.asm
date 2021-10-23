@@ -111,5 +111,34 @@ uitoa_b:
         #res 4
     .byte_counter:  ; counter for buffer length, desicribes buffer length including null term.
         #res 1
-    .shift_counter:  ; internal counter for shifting buffer to be left justified
+    .shift_counter: ; internal counter for shifting buffer to be left justified
         #res 1
+        
+;UART print
+#bank rom
+println:
+    lda .data_pointer+1
+    pha
+    lda .data_pointer
+    pha
+    
+    lsa
+    lbi 0x00
+    add
+    
+    jmz .done
+    sta UART
+    
+    lda .data_pointer+1
+    lbi 0x01
+    add
+    sta .data_pointer+1
+    
+    jmp println
+    
+    .done:
+        ret
+    
+#bank ram
+    .data_pointer:  ; pointer to begining of string. MSB, LSB
+        #res 2
