@@ -95,7 +95,6 @@ layout_regs = [
     [sg.T('B   '), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_B_')],
     [sg.T('DATA'), sg.T('0x00', size=(6,1), justification='left', text_color='black', background_color='white', key='_DATA_')],
     [sg.T('ADDR'), sg.T('0x0000', size=(6,1), justification='left', text_color='black', background_color='white', key='_ADDR_')],
-    [sg.T('STCK'), sg.T('', size=(6,stack.len), justification='left', text_color='black', background_color='white', key='_STCK_')],
     [sg.T('STPR'), sg.T('', size=(6,1), justification='left', text_color='black', background_color='white', key='_STPR_')]
 ]
 
@@ -773,11 +772,6 @@ while True:
         for ctrl_ in ctrl.keys():
             window['_{}_'.format(ctrl_)].Update(text_color=INDC_COLOR[ctrl[ctrl_]>0])
 
-        stack_values = ''
-        #if stack.pointer>0:
-        #    for n in range(stack.pointer)[::-1]:
-        #        stack_values += '0x{:02X}\n'.format(stack.value[n])
-        window['_STCK_'].Update(stack_values)
         window['_STPR_'].Update('0x{:01X}'.format(stack.pointer))
         
         window['_CNT_'].Update('{:,}'.format(clk_counter))
