@@ -114,7 +114,8 @@ uitoa_b:
     .shift_counter: ; internal counter for shifting buffer to be left justified
         #res 1
         
-;UART print until '\0'
+; UART print until '\0'
+; TODO: this funciton doesn't check if the UART is ready to send
 #bank rom
 print_uart:
     lda .data_pointer+1
