@@ -114,9 +114,9 @@ uitoa_b:
     .shift_counter: ; internal counter for shifting buffer to be left justified
         #res 1
         
-;UART print
+;UART print until '\0'
 #bank rom
-println:
+print_uart:
     lda .data_pointer+1
     pha
     lda .data_pointer
@@ -129,12 +129,18 @@ println:
     jmz .done
     sta UART
     
-    lda .data_pointer+1
+    lda .data_pointer+1 ; increment data_pointer
     lbi 0x01
     add
     sta .data_pointer+1
+    jnc .pass ; deal with carry for strings that cross address boundry of LSB
+    lda .data_pointer
+    add
+    sta .data_pointer
     
-    jmp println
+    .pass:
+        
+    jmp print_uart
     
     .done:
         ret
