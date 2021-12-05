@@ -1,0 +1,28 @@
+ outp | addr | data
+
+ --:- | 8000 |       ; cpu_temp:
+  0:0 |    0 | 02 00 ; lai 0x00
+  2:0 |    2 | 03 00 ; lbi 0x00
+  4:0 |    4 | 04    ; add
+  5:0 |    5 | fe 00 ; tta 0x00
+  7:0 |    7 | 02 00 ; lai 0x00
+  9:0 |    9 | 03 01 ; lbi 0x01
+  b:0 |    b | 04    ; add
+  c:0 |    c | fe 01 ; tta 0x01
+  e:0 |    e | 02 00 ; lai 0x00
+ 10:0 |   10 | 03 aa ; lbi 0xAA
+ 12:0 |   12 | 04    ; add
+ 13:0 |   13 | fe aa ; tta 0xAA
+ 15:0 |   15 | 02 00 ; lai 0x00
+ 17:0 |   17 | 03 55 ; lbi 0x55
+ 19:0 |   19 | 04    ; add
+ 1a:0 |   1a | fe 55 ; tta 0x55
+ 1c:0 |   1c | 02 00 ; lai 0x00
+ 1e:0 |   1e | 03 ff ; lbi 0xFF
+ 20:0 |   20 | 04    ; add
+ 21:0 |   21 | fe ff ; tta 0xFF
+ 23:0 |   23 | 02 00 ; lai 0x00
+ 25:0 |   25 | 03 00 ; lbi 0x00
+ 27:0 |   27 | 04    ; add
+ 28:0 |   28 | fe 00 ; tta 0x00
+ 2a:0 |   2a | ff    ; hlt

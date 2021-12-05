@@ -35,6 +35,12 @@ OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
+CrossRefSheetStyle=1
+CrossRefLocationStyle=1
+CrossRefPorts=3
+CrossRefCrossSheets=1
+CrossRefSheetEntries=0
+CrossRefFollowFromMainSettings=1
 
 [Preferences]
 PrefsVaultGUID=
@@ -177,7 +183,7 @@ GenerateClassCluster=0
 DocumentUniqueId=NQDJMNJP
 
 [Document9]
-DocumentPath=Scratch.SchDoc
+DocumentPath=Debugger.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -191,7 +197,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
-DocumentUniqueId=IQYSEPSD
+DocumentUniqueId=EATZMHBD
 
 [Configuration1]
 Name=Sources
@@ -1105,7 +1111,7 @@ Type125=1
 [ERC Connection Matrix]
 L1=NNNNNNNNNNNWNNNWW
 L2=NNWNNNNWWWNWNWNWN
-L3=NWEENEEEENEWNEEWN
+L3=NWEENEEEENWWNEEWN
 L4=NNENNNWEENNWNENWN
 L5=NNNNNNNNNNNNNNNNN
 L6=NNENNNNEENNWNENWN
@@ -1113,7 +1119,7 @@ L7=NNEWNNWEENNWNENWN
 L8=NWEENEENEEENNEENN
 L9=NWEENEEEENNWNEEWW
 L10=NWNNNNNENNNWNNEWN
-L11=NNENNNNENNNWNENWN
+L11=NNWNNNNENNNWNENWN
 L12=WWWWNWWNWWWNWWWNN
 L13=NNNNNNNNNNNWNNNWW
 L14=NWEENEEEENEWNEEWW

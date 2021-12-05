@@ -1,7 +1,98 @@
 #bits 8
 
-#cpudef
+#ruledef
 {
+
+
+    load a, {immediate: i8} =>
+    {
+        asm
+        {
+            lai immediate
+        }
+    }
+
+    load a, ({address: i16}) =>
+    {
+        asm
+        {
+            lda address
+        }
+    }
+
+    load b, {immediate: i8} =>
+    {
+        asm
+        {
+            lbi immediate
+        }
+    }
+
+    load b, ({address: i16}) =>
+    {
+        asm
+        {
+            ldb address
+        }
+    }
+
+    load a, [{address: i16}] =>
+    {
+        asm
+        {
+            lda address[7:0]
+            pha
+            lda address[15:8]
+            pha
+            lsa
+        }
+    }
+
+    store a, {address: i16} =>
+    {
+        asm
+        {
+            sta address
+        }
+    }
+
+    move [{dest: i16}], {sour: i16}  =>
+    {
+        asm
+        {
+            lda dest+1 ; load lsb
+            pha
+            lda dest ; load msb
+            pha
+            lda sour ; load data
+            ssa
+        }
+    }
+
+    move b, a =>
+    {
+        asm
+        {
+            lba
+        }
+    }
+
+    store {value: i8}, {address: i16} =>
+    {
+        asm
+        {
+            sti value, address
+        }
+    }
+
+    store {value: i16}, {address: i16} =>
+    {
+        asm
+        {
+            sti value[15:8], address
+            sti value[7:0], address+1
+        }
+    }
 
     ; imm operations
     lai {value} =>
@@ -23,19 +114,7 @@
         assert(value >= 0)
         assert(value <= 0xff)
         0x0F @ value`8 @ address`16
-    }
-    
-    sti16 {value}, {address} =>
-    {
-        assert(value >= 0)
-        assert(value <= 0xffff)
-        asm
-        {
-           sti value[15:8], address
-           sti value[7:0], address+1
-        }
-    }
-    
+    }    
     
     sta {address}            => 0x09 @ address`16
     lba                      => 0x0A
@@ -108,6 +187,12 @@
     #size 0x8000
     #outp 0x0000
 }
+
+#bank ram 
+cpu_temp:
+    #res 2
+
+#bank rom
 
 DPRAM    = 0xC000
 MOT_ENC  = 0xD002

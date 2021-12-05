@@ -1,0 +1,104 @@
+ outp | addr | data
+
+ --:- | 8000 |             ; .roww:
+ --:- | 8001 |             ; .coll:
+ --:- | 8002 |             ; .value:
+ --:- | 8003 |             ; .pixel_ptr:
+ --:- | 8005 |             ; mult_A:
+ --:- | 8006 |             ; mult_B:
+ --:- | 8007 |             ; mult_res:
+ --:- | a000 |             ; map_start:
+  0:0 |    0 |             ; start:
+  0:0 |    0 | 0f 1f 80 01 ; store 31, set_map_bit.coll
+  4:0 |    4 | 0f 00 80 00 ; store 0x00, set_map_bit.roww
+  8:0 |    8 | 0f 03 80 02 ; store 0x03, set_map_bit.value
+  c:0 |    c |             ; clear_map:
+  c:0 |    c | 0f a0 80 03 0f 00 80 04 ; store map_start, set_map_bit.pixel_ptr
+ 14:0 |   14 |             ; .loop:
+ 14:0 |   14 |             ; set_map_bit:
+ 14:0 |   14 | 0b 80 00    ; load a, (.roww)
+ 17:0 |   17 | 13          ; rlc
+ 18:0 |   18 | 13          ; rlc
+ 19:0 |   19 | 13          ; rlc
+ 1a:0 |   1a | 13          ; rlc
+ 1b:0 |   1b | 13          ; rlc
+ 1c:0 |   1c | 13          ; rlc
+ 1d:0 |   1d | 0a          ; lba
+ 1e:0 |   1e | 0b 80 01    ; load a, (.coll)
+ 21:0 |   21 | 14          ; rrc
+ 22:0 |   22 | 14          ; rrc
+ 23:0 |   23 | 20          ; oor
+ 24:0 |   24 | 09 80 04    ; store a, .pixel_ptr+1
+ 27:0 |   27 | 0b 80 00    ; load a, (.roww)
+ 2a:0 |   2a | 14          ; rrc
+ 2b:0 |   2b | 14          ; rrc
+ 2c:0 |   2c | 03 0f       ; load b, 0x0F
+ 2e:0 |   2e | 19          ; and
+ 2f:0 |   2f | 03 a0       ; load b, map_start[15:8]
+ 31:0 |   31 | 04          ; add
+ 32:0 |   32 | 09 80 03    ; store a, .pixel_ptr
+ 35:0 |   35 | 0b 80 04 15 0b 80 03 15 0b 80 02 17 ; move [.pixel_ptr], (.value)
+ 41:0 |   41 | ff          ; hlt
+ 42:0 |   42 |             ; multiply:
+ 42:0 |   42 | 0f 00 80 07 ; sti 0x00, mult_res
+ 46:0 |   46 |             ; .run:
+ 46:0 |   46 | 0b 80 06    ; lda mult_B
+ 49:0 |   49 | 03 00       ; lbi 0x00
+ 4b:0 |   4b | 04          ; add
+ 4c:0 |   4c | 07 00 65    ; jmz .done
+ 4f:0 |   4f | 0b 80 07    ; lda mult_res
+ 52:0 |   52 | 0c 80 05    ; ldb mult_A
+ 55:0 |   55 | 04          ; add
+ 56:0 |   56 | 09 80 07    ; sta mult_res
+ 59:0 |   59 | 0b 80 06    ; lda mult_B
+ 5c:0 |   5c | 03 01       ; lbi 0x01
+ 5e:0 |   5e | 06          ; sub
+ 5f:0 |   5f | 09 80 06    ; sta mult_B
+ 62:0 |   62 | 05 00 46    ; jmp .run
+ 65:0 |   65 |             ; .done:
+ 65:0 |   65 | 11          ; ret
+ 66:0 |   66 |             ; multiply16:
+ 66:0 |   66 | 0f 00 80 07 ; sti 0x00, mult_res
+ 6a:0 |   6a | 0f 00 80 08 ; sti 0x00, mult_res+1
+ 6e:0 |   6e |             ; .run:
+ 6e:0 |   6e | 0b 80 06    ; lda mult_B
+ 71:0 |   71 | 03 00       ; lbi 0x00
+ 73:0 |   73 | 04          ; add
+ 74:0 |   74 | 07 00 99    ; jmz .done
+ 77:0 |   77 | 0b 80 08    ; lda mult_res+1
+ 7a:0 |   7a | 0c 80 05    ; ldb mult_A
+ 7d:0 |   7d | 04          ; add
+ 7e:0 |   7e | 09 80 08    ; sta mult_res+1
+ 81:0 |   81 | 0e 00 8d    ; jnc .skip_carry
+ 84:0 |   84 | 0b 80 07    ; lda mult_res
+ 87:0 |   87 | 03 01       ; lbi 0x01
+ 89:0 |   89 | 04          ; add
+ 8a:0 |   8a | 09 80 07    ; sta mult_res
+ 8d:0 |   8d |             ; .skip_carry:
+ 8d:0 |   8d | 0b 80 06    ; lda mult_B
+ 90:0 |   90 | 03 01       ; lbi 0x01
+ 92:0 |   92 | 06          ; sub
+ 93:0 |   93 | 09 80 06    ; sta mult_B
+ 96:0 |   96 | 05 00 6e    ; jmp .run
+ 99:0 |   99 |             ; .done:
+ 99:0 |   99 | 11          ; ret
+ 9a:0 |   9a |             ; divide:
+ 9a:0 |   9a | 0f 00 80 07 ; sti 0x00, mult_res
+ 9e:0 |   9e | 0b 80 06    ; lda mult_B
+ a1:0 |   a1 | 03 00       ; lbi 0x00
+ a3:0 |   a3 | 04          ; add
+ a4:0 |   a4 | 07 00 c0    ; jmz .done
+ a7:0 |   a7 |             ; .run:
+ a7:0 |   a7 | 0b 80 05    ; lda mult_A
+ aa:0 |   aa | 0c 80 06    ; ldb mult_B
+ ad:0 |   ad | 06          ; sub
+ ae:0 |   ae | 0d 00 c0    ; jmc .done
+ b1:0 |   b1 | 09 80 05    ; sta mult_A
+ b4:0 |   b4 | 0b 80 07    ; lda mult_res
+ b7:0 |   b7 | 03 01       ; lbi 0x01
+ b9:0 |   b9 | 04          ; add
+ ba:0 |   ba | 09 80 07    ; sta mult_res
+ bd:0 |   bd | 05 00 a7    ; jmp .run
+ c0:0 |   c0 |             ; .done:
+ c0:0 |   c0 | 11          ; ret
+ c1:0 |   c1 | 00          ; #d8 0x00

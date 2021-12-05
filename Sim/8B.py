@@ -1,6 +1,9 @@
 from PIL import Image, ImageTk
 import PySimpleGUI as sg
-import time
+import sys
+import getopt
+import rpyc
+import warnings
 
 from PC import PC
 from II import II
@@ -9,17 +12,59 @@ from REG import REG
 from RAM_STACK import STACK
 from MEMS import MEMS
 
+
+file_name = 'test.bin' # default file
+exit_on_halt = False
+sim = True
+GUI = True
+
+# process flags
+
+options = "f:" # TODO: no abviated options.
+options_long = ['file =', 'exit-on-halt', 'no-gui', 'no-sim']
+
+try:
+    # grab flags
+    args, vals = getopt.getopt(sys.argv[1:], options, options_long)
+    for arg_, val_ in args:
+        arg_ = arg_.strip()
+
+        if arg_ in ("--file"):
+            file_name = val_
+        elif arg_ in ("--exit-on-halt"):
+            exit_on_halt = True
+        elif arg_ in ("--no-gui"):
+            GUI = False
+            exit_on_halt = True
+        elif arg_ in ("--no-sim"):
+            sim = False
+
+except getopt.error as err:
+    # output error, and return with an error code
+    print (str(err))
+
+if sim:
+    try:
+        conn = rpyc.connect('localhost', 18812, config={"allow_all_attrs": True})
+    except:
+        conn = None
+        warnings.warn("Warning. Sim not connected!")
+else:
+    conn = None
+
+print('running ${}'.format(file_name))
+
 pc = PC()
 mar = MAR()
 ii = II()
-mems = MEMS()
+mems = MEMS(sim=conn)
 a = REG()
 b = REG()
-stack = STACK(16,mems.sram)
+stack = STACK(mems.sram)
 
 clk_counter = 0
 
-update_rate = 100
+update_rate = 1
 
 IMG_HEI = 80
 IMG_WID = 101
@@ -115,7 +160,8 @@ layout_flags = [
     [],
     [sg.Button('STEP')],
     [sg.T('CNT '), sg.T('0x0000', size=(12,1), justification='left', text_color='black', background_color='white', key='_CNT_')],
-    [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))]
+    [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))],
+    [sg.Image(key="-MAP-", size=(128,128))]
 ]
 
 layout_ctrl = [
@@ -128,7 +174,7 @@ for ctrl_ in ctrl.keys():
 
 layout_mem = [
     [sg.T('SRAM')],
-    [sg.T('', size=(16*3+1,64), font=('courier new',8), justification='left', text_color='black', background_color='white', key='_SRAM_')]
+    [sg.T('', size=(128*3+16,128), font=('courier new',6), justification='left', text_color='black', background_color='white', key='_SRAM_')]
 ]
 
 layout = [[
@@ -138,8 +184,10 @@ layout = [[
     sg.Column(layout_mem, vertical_alignment='t')
 ]]
 
-  
-window = sg.Window('8B', layout, font=('courier new',11))
+if GUI:
+    window = sg.Window('8B', layout, font=('courier new',11))
+else:
+    window = None
 
 INDC_COLOR = ['gray', 'green']
 
@@ -161,7 +209,7 @@ INDC_COLOR = ['gray', 'green']
 ##for addr, byte in enumerate(program):
 ##    mems.eeprom.value[addr] = byte
 
-file = open('test.bin', 'rb')
+file = open(file_name, 'rb')
 eepr = 0
 while 1:
     byte = file.read(1)         
@@ -173,20 +221,23 @@ while 1:
  
 file.close()
 
-
-event, values = window.Read(timeout=0)
+if GUI:
+    event, values = window.Read(timeout=0)
+else:
+    event = None
+    values = None
 
 
 while True:
-    if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
-            event, values = window.Read(timeout=0)
+    if GUI:
+        if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
+                event, values = window.Read(timeout=0)
+    
+        if breakpt:
+            event, values = window.Read()
+
     clk_counter += 1
-    if breakpt:
-         event, values = window.Read()
-    #time.sleep(0.01)
 
-
-    #time.sleep(5)
     ## rising edge
     # outputs
     if ctrl['PO']+ctrl['MO']+ctrl['AO']+(ctrl['Mn']>0)+ctrl['PP'] > 1:
@@ -245,8 +296,11 @@ while True:
     
     # CLK
     if ctrl['HT']:
-         event, values = window.Read()
-         breakpt = 1
+        if exit_on_halt:
+            break
+        if GUI:
+            event, values = window.Read()
+        breakpt = 1
     
     # PC
     if (ctrl['PO'] or ctrl['PI']) and ctrl['CE']:
@@ -333,7 +387,7 @@ while True:
                 if mems.get(addr) == a.value:
                     print('pass, a = 0x{:02X}'.format(a.value))
                 else:
-                    raise Exception("test case failed, a = 0x{:02X}, expected 0x{:02X}".format(a.value, mems.get(addr)))
+                    raise Exception("test case failed, a = 0x{:02X}, expected 0x{:02X}\nPC=0x{:04X}".format(a.value, mems.get(addr), pc.value))
                 ctrl['RU'] = 1
                 
         if ii.value == inst['TTZ']: # specical test instuction
@@ -344,7 +398,7 @@ while True:
                 if mems.get(addr) == flags['ZF']:
                     print('pass, ZF = {}'.format(flags['ZF']))
                 else:
-                    raise Exception("test case failed, ZF = {}, expected {}".format(flags['ZF'], mems.get(addr)))
+                    raise Exception("test case failed, ZF = {}, expected {}\nPC=0x{:04X}".format(flags['ZF'], mems.get(addr), pc.value))
                 ctrl['RU'] = 1
         if ii.value == inst['TTC']: # specical test instuction
             if UCC == 3:
@@ -354,7 +408,7 @@ while True:
                 if mems.get(addr) == flags['CF']:
                     print('pass, CF = {}'.format(flags['CF']))
                 else:
-                    raise Exception("test case failed, CF = {}, expected {}".format(flags['CF'], mems.get(addr)))
+                    raise Exception("test case failed, CF = {}, expected {}\nPC=0x{:04X}".format(flags['CF'], mems.get(addr), pc.value))
                 ctrl['RU'] = 1
         if ii.value == inst['TTN']: # specical test instuction
             if UCC == 3:
@@ -364,7 +418,7 @@ while True:
                 if mems.get(addr) == flags['NF']:
                     print('pass, NF = {}'.format(flags['NF']))
                 else:
-                    raise Exception("test case failed, NF = {}, expected {}".format(flags['NF'], mems.get(addr)))
+                    raise Exception("test case failed, NF = {}, expected {}\nPC=0x{:04X}".format(flags['NF'], mems.get(addr), pc.get()))
                 ctrl['RU'] = 1
 
         if ii.value == inst['LAI']:
@@ -787,12 +841,12 @@ while True:
                 ctrl['AI'] = 1
                 ctrl['RU'] = 1
                 
-    if event is None or event == 'Exit':
+    if GUI and (event is None or event == 'Exit'):
         break
 
     
     
-    if clk_counter % update_rate == 0 or ctrl['HT'] or breakpt:
+    if GUI and (clk_counter % update_rate == 0 or ctrl['HT'] or breakpt):
         window['_PC_'].Update('0x{:04X}'.format(pc.value))
         window['_MAR_'].Update('0x{:04X}'.format(mar.value))
         window['_INST_'].Update('0x{:02X}'.format(ii.value))
@@ -815,7 +869,7 @@ while True:
         window['_CNT_'].Update('{:,}'.format(clk_counter))
         
         sram_values = ''
-        for n in range(2**10):
+        for n in range(2**14):
             if mems.sram.value[n] is None:
                 sram_values += '--'
             else:
@@ -839,12 +893,25 @@ while True:
                     v = ((mems.dpram.value[dr_addr] >> (row%8)) & 0x01) * 255
                 pixels[col,row] = v
         window["-IMAGE-"].update(data=ImageTk.PhotoImage(image=img))
+
+
+        
+        mp = Image.new('L', [128,128], 255)
+        mp_pixels = mp.load()
+        
+        for row in range(128):
+            for col in range(128):
+                dr_addr = int(col/4)+row*int(128/4)
+                v = 100
+                if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
+                    v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
+                    #print(row,col,dr_addr,(col%4)*2,v)
+                mp_pixels[col,row] = v
+        window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
                 
 
 
 print("max stack usage {} bytes".format(stack.max_used))
 
-window.close()
-    
-
-
+if GUI:
+    window.close()

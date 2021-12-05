@@ -1,0 +1,65 @@
+ outp | addr | data
+
+ --:- | 8000 |       ; cpu_temp:
+  0:0 |    0 |       ; top:
+  0:0 |    0 | 02 00 ; lai 0x00
+  2:0 |    2 | 03 00 ; lbi 0x00
+  4:0 |    4 | 19    ; and
+  5:0 |    5 | fe 00 ; tta 0x00
+  7:0 |    7 | 02 00 ; lai 0x00
+  9:0 |    9 | 03 ff ; lbi 0xFF
+  b:0 |    b | 19    ; and
+  c:0 |    c | fe 00 ; tta 0x00
+  e:0 |    e | 02 ff ; lai 0xFF
+ 10:0 |   10 | 03 ff ; lbi 0xFF
+ 12:0 |   12 | 19    ; and
+ 13:0 |   13 | fe ff ; tta 0xFF
+ 15:0 |   15 | 02 12 ; lai 0x12
+ 17:0 |   17 | 03 34 ; lbi 0x34
+ 19:0 |   19 | 19    ; and
+ 1a:0 |   1a | fe 10 ; tta 0x10
+ 1c:0 |   1c | 02 00 ; lai 0x00
+ 1e:0 |   1e | 03 00 ; lbi 0x00
+ 20:0 |   20 | 20    ; oor
+ 21:0 |   21 | fe 00 ; tta 0x00
+ 23:0 |   23 | 02 00 ; lai 0x00
+ 25:0 |   25 | 03 ff ; lbi 0xFF
+ 27:0 |   27 | 20    ; oor
+ 28:0 |   28 | fe ff ; tta 0xFF
+ 2a:0 |   2a | 02 ff ; lai 0xFF
+ 2c:0 |   2c | 03 ff ; lbi 0xFF
+ 2e:0 |   2e | 20    ; oor
+ 2f:0 |   2f | fe ff ; tta 0xFF
+ 31:0 |   31 | 02 12 ; lai 0x12
+ 33:0 |   33 | 03 34 ; lbi 0x34
+ 35:0 |   35 | 20    ; oor
+ 36:0 |   36 | fe 36 ; tta 0x36
+ 38:0 |   38 | 02 00 ; lai 0x00
+ 3a:0 |   3a | 03 00 ; lbi 0x00
+ 3c:0 |   3c | 21    ; xor
+ 3d:0 |   3d | fe 00 ; tta 0x00
+ 3f:0 |   3f | 02 00 ; lai 0x00
+ 41:0 |   41 | 03 ff ; lbi 0xFF
+ 43:0 |   43 | 21    ; xor
+ 44:0 |   44 | fe ff ; tta 0xFF
+ 46:0 |   46 | 02 ff ; lai 0xFF
+ 48:0 |   48 | 03 ff ; lbi 0xFF
+ 4a:0 |   4a | 21    ; xor
+ 4b:0 |   4b | fe 00 ; tta 0x00
+ 4d:0 |   4d | 02 12 ; lai 0x12
+ 4f:0 |   4f | 03 34 ; lbi 0x34
+ 51:0 |   51 | 21    ; xor
+ 52:0 |   52 | fe 26 ; tta 0x26
+ 54:0 |   54 | 02 00 ; lai 0x00
+ 56:0 |   56 | 13    ; rlc
+ 57:0 |   57 | fe 00 ; tta 0x00
+ 59:0 |   59 | 02 02 ; lai 0x02
+ 5b:0 |   5b | 13    ; rlc
+ 5c:0 |   5c | fe 04 ; tta 0x04
+ 5e:0 |   5e | 02 ff ; lai 0xFF
+ 60:0 |   60 | 13    ; rlc
+ 61:0 |   61 | fe fe ; tta 0xFE
+ 63:0 |   63 | 02 12 ; lai 0x12
+ 65:0 |   65 | 13    ; rlc
+ 66:0 |   66 | fe 24 ; tta 0x24
+ 68:0 |   68 | ff    ; hlt

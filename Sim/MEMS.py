@@ -5,12 +5,13 @@ from MOTOR import MOTOR
 
 
 class MEMS:
-    def __init__(self):
+    def __init__(self, sim=None):
+        self.sim = sim
         self.eeprom = EEPROM()
         self.sram = SRAM(2**14)
         self.dpram = SRAM(2**10)
         self.uart = UART()
-        self.motor = MOTOR()
+        self.motor = MOTOR(self.sim)
                
     def get(self,addr):
         addr = addr & 0xFFFF

@@ -105,7 +105,7 @@ uitoa_b:
 #bank ram
     .input_byte:    ; input byte for itoa func
         #res 1
-#align 64 ; ensure that this buffer is aligned and wont cross an 8bit address boundry until the TODOs above are resolved
+#align 0x800 ; ensure that this buffer is aligned and wont cross an 8bit address boundry until the TODOs above are resolved
     .buffer:        ; return buffer from itoa. maximum length is 4: 3 digits + null term.
         #res 4
     .byte_counter:  ; counter for buffer length, desicribes buffer length including null term.

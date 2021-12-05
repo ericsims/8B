@@ -1,7 +1,6 @@
 class STACK:
-    def __init__(self, len_, ram):
-        self.len = len_
-        self.starting_addr=0x03FF
+    def __init__(self, ram):
+        self.starting_addr=0x3FFF
         self.pointer = 0
         self.max_used = 0
         self.ram = ram.value
@@ -10,8 +9,6 @@ class STACK:
         return self.value
 
     def push(self,V):
-        if self.pointer >= self.len:
-            raise Exception("tried to push to stack when full")
         #self.value[self.pointer] = V & 0xFF
         self.ram[self.starting_addr-self.pointer] = V & 0xFF
         self.pointer += 1
