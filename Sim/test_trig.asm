@@ -4,7 +4,7 @@
 
 #bank rom
 #align 0x800
-#d inchexstr("sin_lut.dat")
+#d inchexstr("lut/sin_lut.dat")
 
 
 #bank rom
