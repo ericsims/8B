@@ -1,7 +1,6 @@
  outp | addr | data
 
  --:- | 8000 |       ; cpu_temp:
-  0:0 |    0 |       ; top:
   0:0 |    0 | 02 00 ; lai 0x00
   2:0 |    2 | 03 00 ; lbi 0x00
   4:0 |    4 | 19    ; and

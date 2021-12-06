@@ -1,5 +1,7 @@
 #include "../CPU.asm"
 
+#bank rom
+
 lai 0x00
 tta 0x00 ; check that a reg is correct
 

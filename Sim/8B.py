@@ -64,7 +64,7 @@ stack = STACK(mems.sram)
 
 clk_counter = 0
 
-update_rate = 1
+update_rate = 1e5
 
 IMG_HEI = 80
 IMG_WID = 101
@@ -912,6 +912,8 @@ while True:
 
 
 print("max stack usage {} bytes".format(stack.max_used))
+print("clk cylces {}".format(clk_counter))
+
 
 if GUI:
     window.close()

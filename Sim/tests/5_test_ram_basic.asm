@@ -1,5 +1,6 @@
 #include "../CPU.asm"
 
+#bank rom
 
 ; check frist address of ram
 lai 0x00

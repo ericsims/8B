@@ -1,5 +1,7 @@
 #include "../CPU.asm"
 
+#bank rom
+
 lai 0x20
 lbi 0x05
 add

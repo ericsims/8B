@@ -12,7 +12,7 @@
         }
     }
 
-    load a, ({address: i16}) =>
+    load a, {address: i16} =>
     {
         asm
         {
@@ -28,7 +28,7 @@
         }
     }
 
-    load b, ({address: i16}) =>
+    load b, {address: i16} =>
     {
         asm
         {
@@ -40,9 +40,9 @@
     {
         asm
         {
-            lda address[7:0]
+            lda address+1
             pha
-            lda address[15:8]
+            lda address
             pha
             lsa
         }
