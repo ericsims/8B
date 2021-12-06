@@ -6,13 +6,13 @@ TEST_BINS=$(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
 all-tests := $(addsuffix .test, $(basename $(TEST_BINS)))
 LUTS = "lut/sin_lut.dat"
 
-all: tests $(LUTS)
+all: $(LUTS) tests 
 
-"lut/sin_lut.dat": "lut/sin_lut.dat"
+"lut/sin_lut.dat":
 	@mkdir -p lut
 	jupyter nbconvert --execute sin_lut.ipynb --inplace	
 
-tests: $(TEST_BINS)
+tests: $(TEST_BINS) $(LUTS)
 
 $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(@D)
