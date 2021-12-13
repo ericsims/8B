@@ -4,49 +4,48 @@
 {
 
 
-    load a, {immediate: i8} =>
+    load a, #{imm: i8} =>
     {
-        asm
-        {
-            lai immediate
-        }
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        0x04 @ imm`8
     }
 
     load a, {address: i16} =>
     {
-        asm
-        {
-            lda address
-        }
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        0x05 @ imm`16
     }
 
-    load b, {immediate: i8} =>
+    load a, ({address: i16}) =>
     {
-        asm
-        {
-            lbi immediate
-        }
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        0x06 @ imm`16
+    }
+
+    load b, #{imm: i8} =>
+    {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        0x08 @ imm`8
     }
 
     load b, {address: i16} =>
     {
-        asm
-        {
-            ldb address
-        }
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        0x09 @ imm`16
     }
 
-    load a, [{address: i16}] =>
+    load b, ({address: i16}) =>
     {
-        asm
-        {
-            lda address+1
-            pha
-            lda address
-            pha
-            lsa
-        }
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        0x0A @ imm`16
     }
+
 
     store a, {address: i16} =>
     {
@@ -92,14 +91,6 @@
             sti value[15:8], address
             sti value[7:0], address+1
         }
-    }
-
-    ; imm operations
-    lai {value} =>
-    {
-        assert(value >= 0)
-        assert(value <= 0xff)
-        0x02 @ value`8
     }
     
     lbi {value} =>
@@ -188,13 +179,10 @@
     #outp 0x0000
 }
 
-#bank ram 
-cpu_temp:
-    #res 2
-
 #bank rom
 
-DPRAM    = 0xC000
-MOT_ENC  = 0xD002
-MOT_CTRL = 0xD003
-UART     = 0xD008
+DEFAULT_STACK   = 0xBFFF
+DPRAM           = 0xC000
+MOT_ENC         = 0xD002
+MOT_CTRL        = 0xD003
+UART            = 0xD008
