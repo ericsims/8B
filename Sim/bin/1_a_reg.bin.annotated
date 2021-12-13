@@ -1,16 +1,15 @@
  outp | addr | data
 
- --:- | 8000 |       ; cpu_temp:
-  0:0 |    0 | 02 00 ; lai 0x00
-  2:0 |    2 | fe 00 ; tta 0x00
-  4:0 |    4 | 02 01 ; lai 0x01
-  6:0 |    6 | fe 01 ; tta 0x01
-  8:0 |    8 | 02 aa ; lai 0xAA
-  a:0 |    a | fe aa ; tta 0xAA
-  c:0 |    c | 02 55 ; lai 0x55
-  e:0 |    e | fe 55 ; tta 0x55
- 10:0 |   10 | 02 ff ; lai 0xFF
- 12:0 |   12 | fe ff ; tta 0xFF
- 14:0 |   14 | 02 00 ; lai 0x00
- 16:0 |   16 | fe 00 ; tta 0x00
- 18:0 |   18 | ff    ; hlt
+  0:0 |    0 | 04 00 ; load a, #0x00
+  2:0 |    2 | 78 00 ; assert a, #0x00
+  4:0 |    4 | 04 01 ; load a, #0x01
+  6:0 |    6 | 78 01 ; assert a, #0x01
+  8:0 |    8 | 04 aa ; load a, #0xAA
+  a:0 |    a | 78 aa ; assert a, #0xAA
+  c:0 |    c | 04 55 ; load a, #0x55
+  e:0 |    e | 78 55 ; assert a, #0x55
+ 10:0 |   10 | 04 ff ; load a, #0xFF
+ 12:0 |   12 | 78 ff ; assert a, #0xFF
+ 14:0 |   14 | 04 00 ; load a, #0x00
+ 16:0 |   16 | 78 00 ; assert a, #0x00
+ 18:0 |   18 | 7f    ; halt

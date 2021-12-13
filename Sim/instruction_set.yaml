@@ -10,7 +10,7 @@ control_signals:
       description: 'B Register Out'
     - MO: # 4
       description: 'Memmory Out'
-    - PO: # 5
+    - NO: # 5
       description: 'Stack Pointer Out'
     - SO: # 6
       description: 'Stack Out'
@@ -55,12 +55,6 @@ control_signals:
       description: 'K Scratch Register In'
     - DI: # 14
       description: 'D Scratch Register In'
-  - CE:
-    desc  iption: 'Program Counter Enable'
-    active: low
-  - FI:
-    description: 'ALU Flag Refresh'
-    active: low
   - ALU: # 4 bits
     - NONE: # 0
       description: 'none'
@@ -75,13 +69,19 @@ control_signals:
     - XOR:  # 5
       description: 'Logical XOR'
     - SHL:  # 6
-      description: 'Shift Left'
+      description: 'Logical Shift Left'
     - SHR:  # 7
-      description: 'Shift Right'
+      description: 'Logical Shift Right'
     - ONES: # 8
       description: 'Output 0xFF'
     - INCR: # 9
       description: 'Increment'
+  - CE:
+    desc  iption: 'Program Counter Enable'
+    active: low
+  - FI:
+    description: 'ALU Flag Refresh'
+    active: low
   - MC:
     description: 'Memmory Address Increment'
     active: low
@@ -111,62 +111,63 @@ flags:
 
 instructions:
   nop:
-    description: 'no op'
+    description: 'no operation'
     duration: 32 # clock cycles
     operands: 0 # bytes
-    # usage: nop
+    usage: nop
     opcode: 0x00
+    asm_def: |
+      nop =>
+      {
+        {OPCODE}
+      }   
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-
-  add_a_b:
-    description: 'add a registor to b register and save to a'
-    duration: 6 # clk cycles
-    operands: 0 # bytes
-    # usage: add_a_b
-    opcode: 0x10
-    ucode:
-    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    - [AO, XI]             # load A reg into ALU X
-    - [BO, YI]             # load B reg into ALU Y
-    - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
-
-  add_a_imm:
-    description: 'add a registor to imm value and save to a'
-    duration: 6 # clk cycles
-    operands: 1 # byte (immediate data)
-    # usage: add_a_imm data[7:0]
-    opcode: 0x11
-    ucode:
-    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    - [AO, XI, MC, CE]     # load A reg into ALU X. increment MAR to point to data, and PC to keep up
-    - [MO, YI]             # load imm value into ALU Y
-    - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
-
-  addw_hl_a:
-    description: 'add H,L registor to b register and save to H,L'
-    duration: TBD # clock cycles
-    operands: 0 # bytes
-    # usage: add_hl_a
-    opcode: 0x14
-    ucode:
-    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    - [TBD]
-
+    # nops
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - []
+    - [RU]                 # Done
   load_a_imm:
-    description: 'load a register with immediate value'
+    description: 'Load a register with immediate value'
     duration: 5 # clock cycles
     operands: 1 # byte (immediate data)
-    # usage: load_a_imm data[7:0]
+    usage: 'load a, #data[7:0]'
     opcode: 0x04
+    asm_def: |
+      load a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -178,8 +179,15 @@ instructions:
     description: 'load a register from direct address'
     duration: 10 # clock cycles
     operands: 2 # bytes (direct address)
-    # usage: TBD
+    usage: 'load a, addresss[15:0]'
     opcode: 0x05
+    asm_def: |
+      load a, {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -199,8 +207,15 @@ instructions:
     description: 'load a register from indirect address'
     duration: 15 # clock cycles
     operands: 2 # bytes (indirect address)
-    # usage: TBD
+    usage: 'load a, (address[15:0])'
     opcode: 0x06
+    asm_def: |
+      load a, ({addr: i16}) =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -222,12 +237,456 @@ instructions:
       # load data
     - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
 
+  load_b_imm:
+    description: 'load b register with immediate value'
+    duration: 5 # clock cycles
+    operands: 1 # byte (immediate data)
+    usage: 'load b, #data[7:0]'
+    opcode: 0x08
+    asm_def: |
+      load b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # Increment MAR to point to data operand
+    - [MO, BI, RU]         # load data into a register. ucode counter reset
+
+  load_b_dir:
+    description: 'load b register from direct address'
+    duration: 10 # clock cycles
+    operands: 2 # bytes (direct address)
+    usage: 'load b, addresss[15:0]'
+    opcode: 0x09
+    asm_def: |
+      load b, {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # load data
+    - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
+
+  load_b_indir:
+    description: 'load a register from indirect address'
+    duration: 15 # clock cycles
+    operands: 2 # bytes (indirect address)
+    usage: 'load b, (address[15:0])'
+    opcode: 0x0A
+    asm_def: |
+      load b, ({addr: i16}) =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load indirect address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # load direct address
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC]                 # Increment MAR to point to LSB of address
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # load data
+    - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
+
+  add_a_b:
+    description: 'add a register to b register and save to a'
+    duration: 6 # clk cycles
+    operands: 0 # bytes
+    usage: 'add a, b'
+    opcode: 0x10
+    asm_def: |
+      add a, b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X
+    - [BO, YI]             # load B reg into ALU Y
+    - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
+
+  add_a_imm:
+    description: 'add a register to imm value and save to a'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'add a, #data[7:0]'
+    opcode: 0x11
+    asm_def: |
+      add a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI, MC, CE]     # load A reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
+
+  add_b_imm:
+    description: 'add b register to imm value and save to b'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'add b, #data[7:0]'
+    opcode: 0x12
+    asm_def: |
+      add b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI, MC, CE]     # load B reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [ADD, BI, FI, RU]    # ADD, save to B reg, update flags. ucode counter reset
+
+  addw_hl_a:
+    description: 'add H,L register to b register and save to H,L'
+    duration: TBD # clock cycles
+    operands: 0 # bytes
+    # usage: add_hl_a
+    opcode: 0x14
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [TBD]
+
+  and_a_b:
+    description: 'Logical AND a register with b register and save to a'
+    duration: 6 # clk cycles
+    operands: 0 # bytes
+    usage: 'and a, b'
+    opcode: 0x20
+    asm_def: |
+      and a, b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X.
+    - [BO, YI]             # load B reg into ALU Y.
+    - [AND, AI, FI, RU]    # AND, save to A reg, update flags. ucode counter reset
+
+  and_a_imm:
+    description: 'Logical AND a register with imm value and save to a'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'and a, #data[7:0]'
+    opcode: 0x21
+    asm_def: |
+      and a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI, MC, CE]     # load A reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [AND, AI, FI, RU]    # AND, save to A reg, update flags. ucode counter reset
+
+  and_b_imm:
+    description: 'Logical AND b register with imm value and save to b'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'and b, #data[7:0]'
+    opcode: 0x22
+    asm_def: |
+      and b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI, MC, CE]     # load B reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [AND, BI, FI, RU]    # AND, save to B reg, update flags. ucode counter reset
+      
+  or_a_b:
+    description: 'Logical OR baregister with b register and save to a'
+    duration: 6 # clk cycles
+    operands: 0 # bytes
+    usage: 'or a, b'
+    opcode: 0x24
+    asm_def: |
+      or a, b =>
+      {
+        {OPCODE}
+      }  
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X.
+    - [BO, YI]             # load B reg into ALU Y.
+    - [OR, AI, FI, RU]     # OR, save to A reg, update flags. ucode counter reset    
+
+  or_a_imm:
+    description: 'Logical OR a register with imm value and save to a'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'or a, #data[7:0]'
+    opcode: 0x25
+    asm_def: |
+      or a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI, MC, CE]     # load A reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [OR, AI, FI, RU]     # OR, save to A reg, update flags. ucode counter reset
+
+  or_b_imm:
+    description: 'Logical OR b register with imm value and save to b'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'or b, #data[7:0]'
+    opcode: 0x26
+    asm_def: |
+      or b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI, MC, CE]     # load B reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [OR, BI, FI, RU]     # OR, save to B reg, update flags. ucode counter reset
+
+      
+  xor_a_b:
+    description: 'Logical XOR a register with b register and save to a'
+    duration: 6 # clk cycles
+    operands: 0 # bytes
+    usage: 'xor a, b'
+    opcode: 0x28
+    asm_def: |
+      xor a, b =>
+      {
+        {OPCODE}
+      }      
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X.
+    - [BO, YI]             # load B reg into ALU Y.
+    - [XOR, AI, FI, RU]    # XOR, save to A reg, update flags. ucode counter reset
+
+  xor_a_imm:
+    description: 'Logical XOR a register with imm value and save to a'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'xor a, #data[7:0]'
+    opcode: 0x29
+    asm_def: |
+      xor a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI, MC, CE]     # load A reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [XOR, AI, FI, RU]     # XOR, save to A reg, update flags. ucode counter reset
+
+  xor_b_imm:
+    description: 'Logical XOR b register with imm value and save to b'
+    duration: 6 # clk cycles
+    operands: 1 # byte (immediate data)
+    usage: 'xor b, #data[7:0]'
+    opcode: 0x2A
+    asm_def: |
+      xor b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI, MC, CE]     # load B reg into ALU X. increment MAR to point to data, and PC to keep up
+    - [MO, YI]             # load imm value into ALU Y
+    - [XOR, BI, FI, RU]    # XOR, save to B reg, update flags. ucode counter reset
+
+  lshift_a:
+    description: 'Logical shift left a register by one and save to a'
+    duration: 5 # clk cycles
+    operands: 0 # bytes
+    usage: 'lshift a'
+    opcode: 0x2C
+    asm_def: |
+      lshift a =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X.
+    - [SHL, AI, FI, RU]    # SHL, save to A reg, update flags. ucode counter reset
+
+  lshift_b:
+    description: 'Logical shift left b register by one and save to b'
+    duration: 5 # clk cycles
+    operands: 0 # bytes
+    usage: 'lshift b'
+    opcode: 0x2D
+    asm_def: |
+      lshift b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI]             # load B reg into ALU X.
+    - [SHL, BI, FI, RU]    # SHL, save to B reg, update flags. ucode counter reset
+
+  rshift_a:
+    description: 'Logical shift right a register by one and save to a'
+    duration: 5 # clk cycles
+    operands: 0 # bytes
+    usage: 'rshift a'
+    opcode: 0x2E
+    asm_def: |
+      rshift a =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [AO, XI]             # load A reg into ALU X.
+    - [SHR, AI, FI, RU]    # SHR, save to A reg, update flags. ucode counter reset
+
+  rshift_b:
+    description: 'Logical shift right b register by one and save to b'
+    duration: 5 # clk cycles
+    operands: 0 # bytes
+    usage: 'rshift b'
+    opcode: 0x2F
+    asm_def: |
+      rshift b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [BO, XI]             # load B reg into ALU X.
+    - [SHR, BI, FI, RU]    # SHR, save to A reg, update flags. ucode counter reset
+
+  store_a_dir:
+    description: 'Store a register value to direct address'
+    duration: 10 # clock cycles
+    operands: 2 # byte (direct address)
+    usage: 'store a, address[15:0]'
+    opcode: 0x30
+    asm_def: |
+      store a, {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # save data
+    - [AO, MI, RU]         # store data from A reg to memory. ucode counter reset
+
   push_a:
     description: 'push a register value to stack'
     duration: 5 # clock cycles
     operands: 0 # bytes
-    # usage: push a
+    usage: 'push a'
     opcode: 0x38
+    asm_def: |
+      push a =>
+      {
+        {OPCODE}
+      }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -241,8 +700,13 @@ instructions:
     description: 'push b register value to stack'
     duration: 7 # clock cycles
     operands: 0 # bytes
-    # usage: push b
+    usage: 'push b'
     opcode: 0x39
+    asm_def: |
+     push b =>
+     {
+       {OPCODE}
+     }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -256,8 +720,15 @@ instructions:
     description: 'push immediate value to stack'
     duration: 7 # clock cycles
     operands: 1 # byte (immedate value)
-    # usage: push #data[7:0]
+    usage: 'push #data[7:0]'
     opcode: 0x3A
+    asm_def: |
+      push #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -274,8 +745,15 @@ instructions:
     description: 'push byte from source to stack'
     duration: 12 # clock cycles
     operands: 2 # bytes (direct source address)
-    # usage: push address[15:0]
+    usage: 'push address[15:0]'
     opcode: 0x3B
+    asm_def: |
+      push {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -293,13 +771,20 @@ instructions:
       # save data
     - [DO, SI]             # save data from D scratch register to stack
     - [DS, RU]             # decrement stack pointer. ucode counter reset
-    
+
   push_indir:
     description: 'push byte from indirect source to stack'
     duration: 17 # clock cycles
     operands: 2 # bytes (indirect source address)
-    # usage: push (address[15:0])
+    usage: 'push (address[15:0])'
     opcode: 0x3C
+    asm_def: |
+      push ({addr: i16}) =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      } 
     ucode:
       # fetch
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -323,13 +808,22 @@ instructions:
       # save data
     - [DO, SI]             # save data from D scratch register to stack
     - [DS, RU]             # decrement stack pointer. ucode counter reset
-  
+
   move_dir_dir:
     description: 'copy byte from source to destination'
     duration: 17 # clock cycles
     operands: 4 # bytes (direct source address, direct destination address)
-    # usage: TBD
+    usage: 'move src[15:0], dst[15:0]'
     opcode: 0x44
+    asm_def: |
+      move {src: i16}, {dst: i16} =>
+      {
+        assert(src >= 0)
+        assert(src <= 0xffff)
+        assert(dst >= 0)
+        assert(dst <= 0xffff)
+        {OPCODE} @ src`16 @ dst`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -357,8 +851,17 @@ instructions:
     description: 'copy byte from source to indirect destination'
     duration: 22 # clock cycles
     operands: 4 # bytes (direct source address, indirect destination address)
-    # usage: TBD
+    usage: move src[15:0], (dst[15:0])
     opcode: 0x45
+    asm_def: |
+      move {src: i16}, ({dst: i16}) =>
+      {
+        assert(src >= 0)
+        assert(src <= 0xffff)
+        assert(dst >= 0)
+        assert(dst <= 0xffff)
+        {OPCODE} @ src`16 @ dst`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -392,8 +895,17 @@ instructions:
     description: 'copy byte from indirect source to destination'
     duration: 22 # clock cycles
     operands: 4 # bytes (indirect source address, direct destination address)
-    # usage: TBD
+    usage: move (src[15:0]), dst[15:0]
     opcode: 0x46
+    asm_def: |
+      move ({src: i16}), {dst: i16} =>
+      {
+        assert(src >= 0)
+        assert(src <= 0xffff)
+        assert(dst >= 0)
+        assert(dst <= 0xffff)
+        {OPCODE} @ src`16 @ dst`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -423,12 +935,22 @@ instructions:
     - [KO, MA]             # load address out of scratch register into MAR
     - [DO, MI, RU]         # move data form D scratch register to memory. ucode counter reset
 
+
   move_indir_indir:
     description: 'copy byte from indirect source to indirect destination'
     duration: 27 # clock cycles
     operands: 4 # bytes (indirect source address, indirect destination address)
-    # usage: TBD
+    usage: move (src[15:0]), (dst[15:0])
     opcode: 0x47
+    asm_def: |
+      move ({src: i16}), ({dst: i16}) =>
+      {
+        assert(src >= 0)
+        assert(src <= 0xffff)
+        assert(dst >= 0)
+        assert(dst <= 0xffff)
+        {OPCODE} @ src`16 @ dst`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -469,8 +991,17 @@ instructions:
     description: 'copy 2 byte word from source to destination'
     duration: 21 # clock cycles
     operands: 4 # bytes (direct source address, direct destination address)
-    # usage: TBD
+    usage: movew src[15:0], dst[15:0]
     opcode: 0x48
+    asm_def: |
+      movew {src: i16}, {dst: i16} =>
+      {
+        assert(src >= 0)
+        assert(src <= 0xffff)
+        assert(dst >= 0)
+        assert(dst <= 0xffff)
+        {OPCODE} @ src`16 @ dst`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -498,13 +1029,19 @@ instructions:
     - [MC]                 # Increment MAR to point to LSB of data
     - [DO, MI, RU]         # move data LSB form D scratch register to memory. ucode counter reset
 
-
   jmp:
     description: 'Unconditional Jump'
     duration: 7 # clock cycles
     operands: 2 # bytes (destination address)
-    # usage: jmp address[15:0]
+    usage: 'jmp address[15:0]'
     opcode: 0x6C
+    asm_def: |
+      jmp {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -518,8 +1055,15 @@ instructions:
     description: 'Jump if Zero'
     duration: TBD # clock cycles
     operands: 2 # bytes (destination address)
-    # usage: jmz address[15:0]
+    usage: 'jmz address[15:0]'
     opcode: 0x6D
+    asm_def: |
+      jmz {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -539,8 +1083,15 @@ instructions:
     description: 'Jump if not Zero'
     duration: TBD # clock cycles
     operands: 2 # bytes (destination address)
-    # usage: jnz address[15:0]
+    usage: 'jnz address[15:0]'
     opcode: 0x6E
+    asm_def: |
+      jnz {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -560,8 +1111,15 @@ instructions:
     description: 'Jump if Carry'
     duration: TBD # clock cycles
     operands: 2 # bytes (destination address)
-    # usage: jnz address[15:0]
+    usage: 'jmc address[15:0]'
     opcode: 0x6F
+    asm_def: |
+      jmc {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -576,13 +1134,20 @@ instructions:
         false:
           - [CE]           # Increment PC to skip distation address
           - [CE, RU]       # Increment PC to skip distation address. ucode counter reset
-  
+
   call:
     description: 'Call Subroutine'
     duration: TBD # clock cycles
-    operands: 12 # bytes (destination address)
-    # usage: call address[15:0]
+    operands: 2 # bytes (destination address)
+    usage: 'call address[15:0]'
     opcode: 0x73
+    asm_def: |
+      call {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
@@ -600,12 +1165,77 @@ instructions:
     - [MC]                 # Increment MAR to point to LSB of destiation address
     - [PI, MO, RU]         # load PC with LSB of destination address. ucode counter reset
 
-  hlt:
+  assert_a:
+    description: 'Assert value of A register == imm value'
+    duration: 5 # clock cycles
+    operands: 1 # byte (imm data)
+    usage: 'assert a, #data[7:0]'
+    opcode: 0x78
+    asm_def: |
+      assert a, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up               
+    - [RU]                 # nop cycle for assert to take place
+
+  assert_b:
+    description: 'Assert value of b register == imm value'
+    duration: 5 # clock cycles
+    operands: 1 # byte (imm data)
+    usage: 'assert b, #data[7:0]'
+    opcode: 0x79
+    asm_def: |
+      assert b, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up               
+    - [RU]                 # nop cycle for assert to take place
+
+  assert_zf:
+    description: 'Assert value of ZF == imm value'
+    duration: 5 # clock cycles
+    operands: 1 # byte (imm data)
+    usage: 'assert zf, #data[7:0]'
+    opcode: 0x7C
+    asm_def: |
+      assert zf, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up               
+    - [RU]                 # nop cycle for assert to take place             
+
+  halt:
     description: 'Halts execution'
     duration: 4 # clk cycles (can't execute code after this anyways)
     operands: 0 # bytes
-    # usage: hlt
+    usage: 'halt'
     opcode: 0x7F
+    asm_def: |
+      halt =>
+      {
+        {OPCODE}
+      }
     ucode:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC

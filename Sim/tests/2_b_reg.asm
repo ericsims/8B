@@ -2,34 +2,22 @@
 
 #bank rom
 
-lai 0x00
-lbi 0x00
-add
-tta 0x00 ; check that a reg is correct
+load b, #0x00
+assert b, #0x00 ; check that a reg is correct
 
-lai 0x00
-lbi 0x01
-add
-tta 0x01 ; check that a reg is correct
+load b, #0x01
+assert b, #0x01 ; check that a reg is correct
 
-lai 0x00
-lbi 0xAA
-add
-tta 0xAA ; check that a reg is correct
+load b, #0xAA
+assert b, #0xAA ; check that a reg is correct
 
-lai 0x00
-lbi 0x55
-add
-tta 0x55 ; check that a reg is correct
+load b, #0x55
+assert b, #0x55 ; check that a reg is correct
 
-lai 0x00
-lbi 0xFF
-add
-tta 0xFF ; check that a reg is correct
+load b, #0xFF
+assert b, #0xFF ; check that a reg is correct
 
-lai 0x00
-lbi 0x00
-add
-tta 0x00 ; check that a reg is correct
+load b, #0x00
+assert b, #0x00 ; check that a reg is correct
 
-hlt
+halt

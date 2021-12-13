@@ -4,9 +4,10 @@ TEST_SRC_DIR=tests
 TEST_SRCS=$(wildcard $(TEST_SRC_DIR)/*.asm)
 TEST_BINS=$(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
 all-tests := $(addsuffix .test, $(basename $(TEST_BINS)))
-LUTS = "lut/sin_lut.dat"
+LUTS="lut/sin_lut.dat"
+INST_SET="instructions.asm"
 
-all: $(LUTS) tests 
+all: $(INST_SET) $(LUTS) tests 
 
 "lut/sin_lut.dat":
 	@mkdir -p lut
@@ -30,7 +31,14 @@ test:
 	done;\
 	echo "passed test cases..."
 	@echo ""
-	
+
+$(INST_SET):
+	@echo "***builing instruction set***"
+	python parse_instruction_set.py || exit 1
+	@echo "done building instruction set..."
+	@echo ""
+
+
 
 clean:
 	@echo "***cleaning up***"
