@@ -1,39 +1,50 @@
+"""parse instruction_set.yaml for errors
+Then generate the instructions.asm definitions for custom_asm
+"""
+
 import yaml
 from termcolor import colored
 from tabulate import tabulate
 
 
-# validate that the duration field matches the number of steps in the ucode
-def validate_length(op):
-    if op['duration'] != len(op['ucode']):
-        print(colored('\t\t***WARNING: Advertised duration do not match number of ucode steps, {} != {}'.format(op['duration'], len(op['ucode'])),'yellow'))
-    if len(op['ucode']) > 32:
-        print(colored('\t\t##ERROR: ucode is longer than 32 steps. It includes {} steps!!!'.format(len(op['ucode'])),'red'))
+def validate_length(inst):
+    """validate that the duration field matches the number of steps in the ucode"""
+    if inst['duration'] != len(inst['ucode']):
+        print(colored(f"\t\t***WARNING: Advertised duration do not match number of ucode steps, {inst['duration']} != {len(inst['ucode'])}",'yellow'))
+    if len(inst['ucode']) > 32:
+        print(colored(f"\t\t##ERROR: ucode is longer than 32 steps. It includes {len(inst['ucode'])} steps!!!",'red'))
 
 
-# validate that RU is asserted to reset the ucode counter at the end of the instruction
-def validate_ucodereset(op):
-    if 'RU' not in op['ucode'][-1]:
-        print(colored('\t\t***WARNING: ucode counter is not reset at end of instruction. RU not asserted.','yellow'))
-
-# validate that the PC is incremetned to keep up with the number of bytes in the opcode + operand
-def validate_programcounter(op):
-    ce_counts = 0
-    for step in op['ucode']:
-        if 'CE' in step:
-            ce_counts += 1
-    if op['operands']+1 != ce_counts:
-        print(colored('\t\t***WARNING: PC is not incremented properly. CE counts do not match number of bytes in instruction, {} != {}'. format(ce_counts, op['operands']+1),'yellow'))
-
-# validate that the opcode is in correct range
-def validate_opcode(op):
-    if op['opcode'] < int(0x00) or op['opcode'] > int(0x7F):
-        raise Exception('\t\t***ERROR: opcode 0x{:02X} is out of range 0x00 - 0x7F'. format(op['opcode']))
-        exit(-1)
+def validate_ucodereset(ucode):
+    """validate that RU is asserted to reset the ucode counter at the end of the instruction"""
+    # check conditional instructions true and false case
+    if isinstance(ucode, dict):
+        validate_ucodereset(ucode[False])
+        validate_ucodereset(ucode[True])
+    else:
+        if 'RU' not in ucode[-1]:
+            print(colored('\t\t***WARNING: ucode counter is not reset at end of instruction. RU not asserted.','yellow'))
 
 
-# validate that only control signals that make sense are asserted at the sametime
-def validate_control_signals(op):
+def validate_programcounter(inst):
+    """validate that the PC is incremetned to keep up with the number of bytes in the opcode + operand"""
+    if isinstance(inst['ucode'], dict):
+        print('\t\tskipping PC check for conditional instrucions')
+    else:
+        ce_counts = 0
+        for step in inst['ucode']:
+            if 'CE' in step:
+                ce_counts += 1
+        if inst['operands']+1 != ce_counts:
+            print(colored(f"\t\t***WARNING: PC is not incremented properly. CE counts do not match number of bytes in instruction, {ce_counts} != {inst['operands']+1}",'yellow'))
+
+def validate_opcode(inst):
+    """validate that the opcode is in correct range"""
+    if inst['opcode'] < int(0x00) or inst['opcode'] > int(0x7F):
+        raise Exception(f"\t\t***ERROR: opcode 0x{inst['opcode']:02X} is out of range 0x00 - 0x7F")
+
+def validate_control_signals(ucode):
+    """validate that only control signals that make sense are asserted at the sametime"""
     invalid_control_signals = [
         {'condition':{'PO', 'CE'}, 'error':'can not incremnt PC while PC out is asserted'},
         {'condition':{'PI', 'CE'}, 'error':'can not incremnt PC while PC in is asserted'},
@@ -63,16 +74,21 @@ def validate_control_signals(op):
         {'condition':{'MI', 'SI'}, 'error':'can not load memory while push to stack'}
     ]
 
+    # check conditional instructions true and false case
+    if isinstance(ucode, dict):
+        validate_control_signals(ucode[False])
+        validate_control_signals(ucode[True])
+    else:
     # check ucode against invalid_control_signals list
-    for uc in op['ucode']:
-        for iv in invalid_control_signals:
-            if iv['condition'].issubset(set(uc)):
-                raise Exception('\t\t***ERROR: {}'.format(iv['error']))
-    
-    # check for duplicates in ucode
-    for uc in op['ucode']:
-        if len(uc) != len(set(uc)):
-            raise Exception('\t\t***ERROR: duplicate control signals in ucode line: {}'.format(uc))
+        for step in ucode:
+            for ctrl_sigs in invalid_control_signals:
+                if ctrl_sigs['condition'].issubset(set(step)):
+                    raise Exception(f"\t\t***ERROR: {ctrl_sigs['error']}")
+
+        # check for duplicates in ucode
+        for step in ucode:
+            if len(step) != len(set(step)):
+                raise Exception(f"\t\t***ERROR: duplicate control signals in ucode line: {step}")
 
 with open('instruction_set.yaml', 'r') as stream:
     try:
@@ -87,19 +103,19 @@ with open('instruction_set.yaml', 'r') as stream:
         dupes = list(set([x for x in opcode_list if opcode_list.count(x) > 1]))
         if len(dupes) > 0:
             for duplicate in dupes:
-                raise Exception('***ERROR: duplicates opcode 0x{:02x}'.format(duplicate))
-        
+                raise Exception(f"***ERROR: duplicates opcode 0x{duplicate:02x}")
+
         inst_list = ['-']*int(0x80)
-        
+
         # validate instrucions
         print('instructions validations:')
         for key, value in IS['instructions'].items():
-            print('\t{}:'.format(key))
+            print(f"\t{key}:")
             validate_length(value)
             validate_programcounter(value)
-            validate_control_signals(value)
+            validate_control_signals(value['ucode'])
             if key != 'default':
-                validate_ucodereset(value)
+                validate_ucodereset(value['ucode'])
                 validate_opcode(value)
                 inst_list[int(value['opcode'])] = key
             print()
@@ -109,10 +125,11 @@ with open('instruction_set.yaml', 'r') as stream:
             asm.write('#ruledef\n{\n\n')
             for key, value in IS['instructions'].items():
                 if 'asm_def' in value:
-                    asm.write('; {}\n'.format(key))
-                    asm.write('; {}\n'.format(value['description']))
-                    asm.write('; usage: {}\n'.format(value['usage']))
-                    asm.write('{}\n'.format(value['asm_def'].replace('{OPCODE}', '0x{:02X}'.format(value['opcode']))))
+                    asm.write(f"; {key}\n")
+                    asm.write(f"; {value['description']}\n")
+                    asm.write(f"; usage: {value['usage']}\n")
+                    inst_def = value['asm_def'].replace('{OPCODE}', f"0x{value['opcode']:02X}")
+                    asm.write(f"{inst_def}\n")
             asm.write('}\n')
 
         print('Instruction Table')

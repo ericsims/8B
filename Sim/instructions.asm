@@ -71,6 +71,22 @@ load b, ({addr: i16}) =>
   0x0A @ addr`16
 }
 
+; load_a_b
+; Load a register with value in b register
+; usage: load a, b
+load a, b =>
+{
+  0x13
+}
+
+; load_b_a
+; Load b register with value in a register
+; usage: load b, a
+load b, a =>
+{
+  0x17
+}
+
 ; add_a_b
 ; add a register to b register and save to a
 ; usage: add a, b
@@ -97,6 +113,34 @@ add b, #{imm: i8} =>
   assert(imm >= 0)
   assert(imm <= 0xff)
   0x12 @ imm`8
+}
+
+; sub_a_b
+; Subtract b register from a register and save to a
+; usage: sub a, b
+sub a, b =>
+{
+  0x18
+}
+
+; sub_a_imm
+; subtract imm value from a register and save to a
+; usage: sub a, #data[7:0]
+sub a, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x19 @ imm`8
+}
+
+; sub_b_imm
+; subtract imm value from b register and save to b
+; usage: sub b, #data[7:0]
+sub b, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x1A @ imm`8
 }
 
 ; and_a_b
@@ -223,6 +267,30 @@ store a, {addr: i16} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x30 @ addr`16
+}
+
+; store_imm_dir
+; Store imm value to direct address
+; usage: store #data[7:0], address[15:0]
+store #{imm: i8}, {addr: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x3D @imm`8 @ addr`16
+}
+
+; storew_imm_dir
+; Store imm word to direct address
+; usage: storew #data[16:0], address[15:0]
+storew #{imm: i16}, {addr: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xffff)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x3E @imm`8 @ addr`16
 }
 
 ; push_a
@@ -371,6 +439,16 @@ jmc {addr: i16} =>
   0x6F @ addr`16
 }
 
+; jnc
+; Jump if not Carry
+; usage: jnc address[15:0]
+jnc {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x70 @ addr`16
+}
+
 ; call
 ; Call Subroutine
 ; usage: call address[15:0]
@@ -379,6 +457,14 @@ call {addr: i16} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x73 @ addr`16
+}
+
+; ret
+; Return from Subroutine
+; usage: ret
+ret  =>
+{
+  0x74
 }
 
 ; assert_a

@@ -13,7 +13,7 @@ all: $(INST_SET) $(LUTS) tests
 	@mkdir -p lut
 	jupyter nbconvert --execute sin_lut.ipynb --inplace	
 
-tests: $(TEST_BINS) $(LUTS)
+tests: $(INST_SET) $(TEST_BINS) $(LUTS)
 
 $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(@D)
@@ -45,6 +45,7 @@ clean:
 	@rm -f $(LUTS)
 	@rm -f $(TEST_BINS)
 	@rm -f $(addsuffix .annotated,$(TEST_BINS))
+	@rm -f $(INST_SET)
 	@echo "done cleaning..."
 	@echo ""
 	

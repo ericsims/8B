@@ -10,53 +10,52 @@ pattern_5 = 0x00
 
 ; warning this uses assembler macros
 
-store pattern_1, test_pattern
-cal write_memory
+store #pattern_1, test_pattern
+call write_memory
 
-store pattern_2, test_pattern
-cal write_memory
+store #pattern_2, test_pattern
+call write_memory
 
-store pattern_3, test_pattern
-cal write_memory
+store #pattern_3, test_pattern
+call write_memory
 
-store pattern_4, test_pattern
-cal write_memory
+store #pattern_4, test_pattern
+call write_memory
 
-store pattern_5, test_pattern
-cal write_memory
+store #pattern_5, test_pattern
+call write_memory
 
 
-hlt
+halt
 
 error:
     load a, 0xFF
-    tta 0x00 ; throw error
-    hlt
+    assert a, #0x00 ; throw error
+    halt
 
 write_memory:
-    store ram_test_begining_address, addr_pointer
+    storew #ram_test_begining_address, addr_pointer
     .write:
-        move [addr_pointer], test_pattern
+        move (addr_pointer), test_pattern
 
-        cal increment_pointer
+        call increment_pointer
 
         load a, addr_pointer
-        load b, 0xBF
-        sub
+        sub a, #0xBF
         jnz .write ; didn't reached end of mem
 verify_mem:
-    store ram_test_begining_address, addr_pointer
+    storew #ram_test_begining_address, addr_pointer
     .verify:
-        load a, [addr_pointer]
+        load a, (addr_pointer)
         load b, test_pattern
-        sub
+        sub a, b
         jnz error
 
-        cal increment_pointer
+        call increment_pointer
 
         load a, addr_pointer
         load b, 0xBF
-        sub
+        sub a, b
         jnz .verify ; didn't reached end of mem
         ret
 
@@ -66,14 +65,12 @@ verify_mem:
 increment_pointer:
     .increment_pointer_lsb:
         load a, addr_pointer+1
-        load b, 0x01
-        add
+        add a, #0x01
         store a, addr_pointer+1
         jnc .done
     .increment_pointer_msb:
         load a, addr_pointer
-        load b, 0x01
-        add
+        add a, #0x01
         store a, addr_pointer
     .done:
         ret
