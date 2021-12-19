@@ -320,6 +320,28 @@ instructions:
       # load data
     - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
 
+  loadw_hl_imm:
+    description: 'load hl register with immediate word'
+    duration: 7 # clock cycles
+    operands: 2 # bytes (immediate data)
+    usage: 'loadw hl, #data[15:0]'
+    opcode: 0x0C
+    asm_def: |
+      loadw hl, #{imm: i16} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        {OPCODE} @ imm`16
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # Increment MAR to point to data operand MSB. Keep up with PC
+    - [MO, HI, LM]         # load data MSB into HL register MSB
+    - [MC, CE]             # Increment MAR to point to data operand LSB. Keep up with PC
+    - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
+
   load_a_b:
     description: 'Load a register with value in b register'
     duration: 4 # clock cycles
@@ -795,7 +817,7 @@ instructions:
 
   storew_imm_dir:
     description: 'Store imm word to direct address'
-    duration: 15 # clock cycles
+    duration: 16 # clock cycles
     operands: 4 # bytes (immediate value, direct address)
     usage: 'storew #data[16:0], address[15:0]'
     opcode: 0x3E
@@ -806,7 +828,7 @@ instructions:
         assert(imm <= 0xffff)
         assert(addr >= 0)
         assert(addr <= 0xffff)
-        {OPCODE} @imm`8 @ addr`16
+        {OPCODE} @imm`16 @ addr`16
       }
     ucode:
       # fetch
@@ -827,6 +849,7 @@ instructions:
     - [JO, MA]             # load address out of scratch register into MAR
       # save data
     - [DO, MI, LM]         # store MSB data from D scratch reg to memory
+    - [MC]                 # increment MAR to point to LSB location
     - [DO, MI, RU]         # store LSB data from D scratch reg to memory. ucode counter reset
 
   push_a:
@@ -1417,6 +1440,27 @@ instructions:
     - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up               
     - [RU]                 # nop cycle for assert to take place
 
+  assert_hl:
+    description: 'Assert value of hl register == imm value'
+    duration: 6 # clock cycles
+    operands: 2 # byte (imm data)
+    usage: 'assert hl, #data[15:0]'
+    opcode: 0x7A
+    asm_def: |
+      assert hl, #{imm: i16} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        {OPCODE} @ imm`16
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
+    - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
+    - [RU]                 # nop cycle for assert to take place
+
   assert_zf:
     description: 'Assert value of ZF == imm value'
     duration: 5 # clock cycles
@@ -1452,7 +1496,7 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    - [HT]                 # Halt
+    - [HT, RU]             # Halt
 
   default:
     description: 'description'

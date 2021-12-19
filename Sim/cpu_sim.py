@@ -375,6 +375,9 @@ class CPUSim:
                 # B REG
                 if ctrl['BI']:
                     B.set(data)
+                # HL REG
+                if ctrl['HI']:
+                    HL.set(data,ctrl['LM'])
                 # X ALU REG
                 if ctrl['XI']:
                     X.set(data)
@@ -400,7 +403,7 @@ class CPUSim:
                     stack.dec()
 
                 # U CODE
-                UCC = (UCC + 1) & 0xF
+                UCC = (UCC + 1) & 0x1F
                 if ctrl['RU']:
                     UCC = 0
 
@@ -436,6 +439,11 @@ class CPUSim:
                             print(f"pass, b = 0x{B.value:02X}")
                         else:
                             raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
+                    if ctrl['RU'] and ii.value == int(IS['instructions']['assert_hl']['opcode']):
+                        if (mems.get(addr-1)<<8)+(mems.get(addr)) == HL.value:
+                            print(f"pass, HL = 0x{HL.value:04X}")
+                        else:
+                            raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\nPC=0x{pc.value:04X}")
                     if ctrl['RU'] and ii.value == int(IS['instructions']['assert_zf']['opcode']):
                         if mems.get(addr) == flags['ZF']:
                             print(f"pass, ZF = {flags['ZF']}")
@@ -453,7 +461,7 @@ class CPUSim:
                     window['_UCC_'].Update(f"0x{UCC:02X}")
                     window['_A_'].Update(f"0x{A.value:02X}")
                     window['_B_'].Update(f"0x{B.value:02X}")
-                    window['_HL_'].Update(f"0x{HL.value:02X}")
+                    window['_HL_'].Update(f"0x{HL.value:04X}")
                     window['_X_'].Update(f"0x{X.value:02X}")
                     window['_Y_'].Update(f"0x{Y.value:02X}")
                     window['_J_'].Update(f"0x{J.value:04X}")

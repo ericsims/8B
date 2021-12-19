@@ -27,7 +27,7 @@ test:
 	@for test in $(TEST_BINS);\
 	do\
 		echo "running $$test case";\
-		python 8B.py --no-sim --no-gui -f $$test >> /dev/null || exit 1;\
+		python cpu_sim.py --no-sim --no-gui -f $$test >> /dev/null || exit 1;\
 	done;\
 	echo "passed test cases..."
 	@echo ""

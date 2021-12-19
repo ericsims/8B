@@ -17,5 +17,6 @@ load a, #0xBB
 assert a, #0xBB
 ret
 
+; should never reach here
 load a, #0xCC
 assert a, #0x00

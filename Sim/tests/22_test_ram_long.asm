@@ -36,7 +36,7 @@ error:
 write_memory:
     storew #ram_test_begining_address, addr_pointer
     .write:
-        move (addr_pointer), test_pattern
+        move test_pattern, (addr_pointer)
 
         call increment_pointer
 

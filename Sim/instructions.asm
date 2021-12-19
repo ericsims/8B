@@ -71,6 +71,16 @@ load b, ({addr: i16}) =>
   0x0A @ addr`16
 }
 
+; loadw_hl_imm
+; load hl register with immediate word
+; usage: loadw hl, #data[15:0]
+loadw hl, #{imm: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xffff)
+  0x0C @ imm`16
+}
+
 ; load_a_b
 ; Load a register with value in b register
 ; usage: load a, b
@@ -290,7 +300,7 @@ storew #{imm: i16}, {addr: i16} =>
   assert(imm <= 0xffff)
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x3E @imm`8 @ addr`16
+  0x3E @imm`16 @ addr`16
 }
 
 ; push_a
@@ -485,6 +495,16 @@ assert b, #{imm: i8} =>
   assert(imm >= 0)
   assert(imm <= 0xff)
   0x79 @ imm`8
+}
+
+; assert_hl
+; Assert value of hl register == imm value
+; usage: assert hl, #data[15:0]
+assert hl, #{imm: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xffff)
+  0x7A @ imm`16
 }
 
 ; assert_zf

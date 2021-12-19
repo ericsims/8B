@@ -2,3 +2,4 @@
 *.log
 */__Previews
 *.lck
+Sim/bin/*

@@ -2,6 +2,8 @@
 
 #bank rom
 
+; tests load b register with immediate value
+
 load b, #0x00
 assert b, #0x00 ; check that a reg is correct
 
