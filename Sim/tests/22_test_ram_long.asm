@@ -6,6 +6,8 @@ pattern_3 = 0x55
 pattern_4 = 0xAA
 pattern_5 = 0x00
 
+STOP_ADDR = 0xBF
+
 #bank rom
 
 ; warning this uses assembler macros
@@ -29,7 +31,7 @@ call write_memory
 halt
 
 error:
-    load a, 0xFF
+    load a, #0xFF
     assert a, #0x00 ; throw error
     halt
 
@@ -41,7 +43,7 @@ write_memory:
         call increment_pointer
 
         load a, addr_pointer
-        sub a, #0xBF
+        sub a, #STOP_ADDR
         jnz .write ; didn't reached end of mem
 verify_mem:
     storew #ram_test_begining_address, addr_pointer
@@ -54,10 +56,10 @@ verify_mem:
         call increment_pointer
 
         load a, addr_pointer
-        load b, 0xBF
+        load b, #STOP_ADDR
         sub a, b
         jnz .verify ; didn't reached end of mem
-        ret
+            
 
 
 

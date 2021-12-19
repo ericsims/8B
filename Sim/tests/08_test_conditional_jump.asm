@@ -2,9 +2,9 @@
 
 #bank rom
 
-; tests jmz, jmc. does not test jnz, jnc, jmn, jnn
+; tests jmz, jmc, jnz. does not test jnc, jmn, jnn
 
-
+; ** jmz tests ***
 ; first test case
 test1:
 load a, #0xAA
@@ -42,10 +42,10 @@ halt
 ; jump here is correct
 .b:
 load a, #0xCC
-assert a, #0xCC;
+assert a, #0xCC
 
 
-
+; ** JMC tests ***
 ; third test case
 test3:
 load a, #0xAA
@@ -83,6 +83,47 @@ halt
 ; jump here is correct
 .b:
 load a, #0xDD
-assert a, #0xDD;
+assert a, #0xDD
+
+
+; ** JNZ tests ***
+; fifth test case
+test5:
+load a, #0x00
+assert a, #0x00
+add a, #0x00
+
+; jump if not zero. should evaluate to false
+jnz .b
+
+; assert a reg is still correct
+assert a, #0x00
+
+; go to next test case
+jmp test6
+
+; if we jump here, we should error out
+.b:
+load a, #0x00
+assert a, #0x05;
+
+
+; sixth test case
+test6:
+load a, #0x01
+assert a, #0x01
+add a, #0x00
+
+; jump if not zero. should evaluate to true
+jnz .b
+
+; we should error out if we end up here
+assert a, #0x06
+halt
+
+; jump here is correct
+.b:
+load a, #0x06
+assert a, #0x06
 
 halt

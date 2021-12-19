@@ -14,7 +14,7 @@ from REG import REG
 from RAM_STACK import STACK
 from MEMS import MEMS
 
-class CPUSim:
+def main():
 
     FILE_NAME = 'bin/07_test_conditional_jump.bin' # default file
     EXIT_ON_HALT = False
@@ -73,7 +73,7 @@ class CPUSim:
 
     clk_counter = 0
 
-    UPDATE_RATE = 1
+    UPDATE_RATE = 10000
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -252,7 +252,6 @@ class CPUSim:
         try:
             IS = yaml.safe_load(stream)
             inst = [IS['instructions']['default']['ucode']]*int(0x80)
-            print('instructions:')
             for key, value in IS['instructions'].items():
                 if key != 'default':
                     inst[int(value['opcode'])] = value['ucode']
@@ -273,21 +272,21 @@ class CPUSim:
                 #    raise Exception("more than one bus output enabled")
                 if ctrl['PO']:
                     data = pc.get(ctrl['LM'])
-                if ctrl['MO']:
+                elif ctrl['MO']:
                     data = mems.get(addr)
-                if ctrl['AO']:
+                elif ctrl['AO']:
                     data = A.get()
-                if ctrl['BO']:
+                elif ctrl['BO']:
                     data = B.get()
-                if ctrl['JO']:
+                elif ctrl['JO']:
                     data = J.get(ctrl['LM'])
-                if ctrl['KO']:
+                elif ctrl['KO']:
                     data = K.get(ctrl['LM'])
-                if ctrl['DO']:
+                elif ctrl['DO']:
                     data = D.get(ctrl['LM'])
-                if ctrl['SO']:
+                elif ctrl['SO']:
                     data = stack.pop()
-                if ctrl['ADD']:
+                elif ctrl['ADD']:
                     # Add
                     data = (X.value+Y.value) & 0xFF
                 elif ctrl['SUB']:
@@ -397,9 +396,9 @@ class CPUSim:
                 # STACK
                 if ctrl['SI']:
                     stack.push(data)
-                if ctrl['IS']:
+                elif ctrl['IS']:
                     stack.inc()
-                if ctrl['DS']:
+                elif ctrl['DS']:
                     stack.dec()
 
                 # U CODE
@@ -429,26 +428,27 @@ class CPUSim:
                         ctrl[u] = 1
 
                     # handle the assert instuctions. Only do anything on the last cycle
-                    if ctrl['RU'] and ii.value == int(IS['instructions']['assert_a']['opcode']):
-                        if mems.get(addr) == A.value:
-                            print(f"pass, a = 0x{A.value:02X}")
-                        else:
-                            raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
-                    if ctrl['RU'] and ii.value == int(IS['instructions']['assert_b']['opcode']):
-                        if mems.get(addr) == B.value:
-                            print(f"pass, b = 0x{B.value:02X}")
-                        else:
-                            raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
-                    if ctrl['RU'] and ii.value == int(IS['instructions']['assert_hl']['opcode']):
-                        if (mems.get(addr-1)<<8)+(mems.get(addr)) == HL.value:
-                            print(f"pass, HL = 0x{HL.value:04X}")
-                        else:
-                            raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\nPC=0x{pc.value:04X}")
-                    if ctrl['RU'] and ii.value == int(IS['instructions']['assert_zf']['opcode']):
-                        if mems.get(addr) == flags['ZF']:
-                            print(f"pass, ZF = {flags['ZF']}")
-                        else:
-                            raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+                    if ctrl['RU']:
+                        if ii.value == int(IS['instructions']['assert_a']['opcode']):
+                            if mems.get(addr) == A.value:
+                                print(f"pass, a = 0x{A.value:02X}")
+                            else:
+                                raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
+                        elif ii.value == int(IS['instructions']['assert_b']['opcode']):
+                            if mems.get(addr) == B.value:
+                                print(f"pass, b = 0x{B.value:02X}")
+                            else:
+                                raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
+                        elif ii.value == int(IS['instructions']['assert_hl']['opcode']):
+                            if (mems.get(addr-1)<<8)+(mems.get(addr)) == HL.value:
+                                print(f"pass, HL = 0x{HL.value:04X}")
+                            else:
+                                raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\nPC=0x{pc.value:04X}")
+                        elif ii.value == int(IS['instructions']['assert_zf']['opcode']):
+                            if mems.get(addr) == flags['ZF']:
+                                print(f"pass, ZF = {flags['ZF']}")
+                            else:
+                                raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
 
                 if GUI and (event is None or event == 'Exit'):
                     break
@@ -531,3 +531,8 @@ class CPUSim:
 
         except yaml.YAMLError as exc:
             print(exc)
+
+
+
+if __name__ == "__main__":
+    main()
