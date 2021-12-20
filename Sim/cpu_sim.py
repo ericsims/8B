@@ -69,11 +69,11 @@ def main():
     J = REG(16)
     K = REG(16)
     D = REG(16)
-    stack = STACK(mems.sram)
+    stack = STACK(mems)
 
     clk_counter = 0
 
-    UPDATE_RATE = 10000
+    UPDATE_RATE = 1
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -124,8 +124,9 @@ def main():
         'XOR' : 0, # Logical XOR
         'SHL' : 0, # Logical Shift Left
         'SHR' : 0, # Logical Shift Right
-        'ONES': 0, # Ouputs 0xFF
-        'INCR': 0, # Increment
+        'ONES': 0, # Outputs 0xFF
+        'ZERO': 0, # Outputs 0x00
+        'ONE' : 0, # Outputs 0x01
         #misc
         'CE' : 0, # Program counter increment
         'FI' : 0, # CPU Flag refresh
@@ -274,10 +275,14 @@ def main():
                     data = pc.get(ctrl['LM'])
                 elif ctrl['MO']:
                     data = mems.get(addr)
+                elif ctrl['NO']:
+                    data = stack.get(ctrl['LM'])
                 elif ctrl['AO']:
                     data = A.get()
                 elif ctrl['BO']:
                     data = B.get()
+                elif ctrl['HO']:
+                    data = HL.get(ctrl['LM'])
                 elif ctrl['JO']:
                     data = J.get(ctrl['LM'])
                 elif ctrl['KO']:
@@ -307,6 +312,12 @@ def main():
                 elif ctrl['SHR']:
                     # Right Shift 1
                     data = (X.value >> 1) & 0xFF
+                elif ctrl['ZERO']:
+                    data = 0x00
+                elif ctrl['ONES']:
+                    data = 0xFF
+                elif ctrl['ONE']:
+                    data = 0x01
 
                 # FLAGS
                 if ctrl['FI']:
@@ -400,6 +411,9 @@ def main():
                     stack.inc()
                 elif ctrl['DS']:
                     stack.dec()
+                elif ctrl['NI']:
+                    stack.set(data,ctrl['LM'])
+
 
                 # U CODE
                 UCC = (UCC + 1) & 0x1F
@@ -450,77 +464,77 @@ def main():
                             else:
                                 raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
 
-                if GUI and (event is None or event == 'Exit'):
-                    break
+                if GUI:
+                    if event is None or event == 'Exit':
+                        break
+
+                    if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or breakpt:
+                        window['_PC_'].Update(f"0x{pc.value:04X}")
+                        window['_MAR_'].Update(f"0x{mar.value:04X}")
+                        window['_INST_'].Update(f"0x{ii.value:02X}")
+                        window['_UCC_'].Update(f"0x{UCC:02X}")
+                        window['_A_'].Update(f"0x{A.value:02X}")
+                        window['_B_'].Update(f"0x{B.value:02X}")
+                        window['_HL_'].Update(f"0x{HL.value:04X}")
+                        window['_X_'].Update(f"0x{X.value:02X}")
+                        window['_Y_'].Update(f"0x{Y.value:02X}")
+                        window['_J_'].Update(f"0x{J.value:04X}")
+                        window['_K_'].Update(f"0x{K.value:04X}")
+                        window['_D_'].Update(f"0x{D.value:04X}")
+                        window['_DATA_'].Update(f"0x{data:02X}")
+                        window['_ADDR_'].Update(f"0x{addr:04X}")
+
+                        window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
+                        window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
+                        window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
 
 
-                if GUI and (clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or breakpt):
-                    window['_PC_'].Update(f"0x{pc.value:04X}")
-                    window['_MAR_'].Update(f"0x{mar.value:04X}")
-                    window['_INST_'].Update(f"0x{ii.value:02X}")
-                    window['_UCC_'].Update(f"0x{UCC:02X}")
-                    window['_A_'].Update(f"0x{A.value:02X}")
-                    window['_B_'].Update(f"0x{B.value:02X}")
-                    window['_HL_'].Update(f"0x{HL.value:04X}")
-                    window['_X_'].Update(f"0x{X.value:02X}")
-                    window['_Y_'].Update(f"0x{Y.value:02X}")
-                    window['_J_'].Update(f"0x{J.value:04X}")
-                    window['_K_'].Update(f"0x{K.value:04X}")
-                    window['_D_'].Update(f"0x{D.value:04X}")
-                    window['_DATA_'].Update(f"0x{data:02X}")
-                    window['_ADDR_'].Update(f"0x{addr:04X}")
+                        for ctrl_sig,val in ctrl.items():
+                            window[f'_{ctrl_sig}_'].Update(text_color=INDC_COLOR[val>0])
 
-                    window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
-                    window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
-                    window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
+                        window['_STPR_'].Update(f"0x{stack.get_pointer():04X}")
 
+                        window['_CNT_'].Update(f"{clk_counter:,}")
 
-                    for ctrl_sig,val in ctrl.items():
-                        window[f'_{ctrl_sig}_'].Update(text_color=INDC_COLOR[val>0])
+                        sram_values = ""
+                        for n in range(2**14):
+                            if mems.sram.value[n] is None:
+                                sram_values += "--"
+                            else:
+                                sram_values += f"{mems.sram.value[n]:02X}"
+                            if (n+1)%8 == 0:
+                                sram_values += "  "
+                            else:
+                                sram_values += " "
 
-                    window['_STPR_'].Update(f"0x{stack.get_pointer():04X}")
-
-                    window['_CNT_'].Update(f"{clk_counter:,}")
-
-                    sram_values = ""
-                    for n in range(2**14):
-                        if mems.sram.value[n] is None:
-                            sram_values += "--"
-                        else:
-                            sram_values += f"{mems.sram.value[n]:02X}"
-                        if (n+1)%8 == 0:
-                            sram_values += "  "
-                        else:
-                            sram_values += " "
-
-                    window['_SRAM_'].Update(sram_values)
+                        window['_SRAM_'].Update(sram_values)
 
 
-                    img = Image.new('L', [IMG_WID,IMG_HEI], 255)
-                    pixels = img.load()
+                        img = Image.new('L', [IMG_WID,IMG_HEI], 255)
+                        pixels = img.load()
 
-                    for row in range(IMG_HEI):
-                        for col in range(IMG_WID):
-                            dr_addr = int(row/8)+col*10
-                            v = 100
-                            if mems.dpram.value[dr_addr] is not None:
-                                v = ((mems.dpram.value[dr_addr] >> (row%8)) & 0x01) * 255
-                            pixels[col,row] = v
-                    window["-IMAGE-"].update(data=ImageTk.PhotoImage(image=img))
+                        for row in range(IMG_HEI):
+                            for col in range(IMG_WID):
+                                dr_addr = int(row/8)+col*10
+                                v = 100
+                                if mems.dpram.value[dr_addr] is not None:
+                                    v = ((mems.dpram.value[dr_addr] >> (row%8)) & 0x01) * 255
+                                pixels[col,row] = v
+                        window["-IMAGE-"].update(data=ImageTk.PhotoImage(image=img))
 
 
-                    mp = Image.new('L', [128,128], 255)
-                    mp_pixels = mp.load()
+                        mp = Image.new('L', [128,128], 255)
+                        mp_pixels = mp.load()
 
-                    for row in range(128):
-                        for col in range(128):
-                            dr_addr = int(col/4)+row*int(128/4)
-                            v = 100
-                            if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
-                                v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
-                                #print(row,col,dr_addr,(col%4)*2,v)
-                            mp_pixels[col,row] = v
-                    window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
+                        for row in range(128):
+                            for col in range(128):
+                                dr_addr = int(col/4)+row*int(128/4)
+                                v = 100
+                                if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
+                                    v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
+                                    #print(row,col,dr_addr,(col%4)*2,v)
+                                mp_pixels[col,row] = v
+                        window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
 
 
             print(f"max stack usage {stack.max_used} bytes")

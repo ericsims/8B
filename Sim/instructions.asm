@@ -41,6 +41,14 @@ load a, ({addr: i16}) =>
   0x06 @ addr`16
 }
 
+; loadw_hl_sp
+; load hl with value in sp
+; usage: loadw hl, sp
+loadw hl, sp =>
+{
+  0x07
+}
+
 ; load_b_imm
 ; load b register with immediate value
 ; usage: load b, #data[7:0]
@@ -81,6 +89,16 @@ loadw hl, #{imm: i16} =>
   0x0C @ imm`16
 }
 
+; loadw_hl_dir
+; load hl register from direct address
+; usage: loadw hl, addresss[15:0]
+loadw hl, {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x0D @ addr`16
+}
+
 ; load_a_b
 ; Load a register with value in b register
 ; usage: load a, b
@@ -89,12 +107,42 @@ load a, b =>
   0x13
 }
 
+; addw_hl_imm
+; add imm byte to hl word and save to hl word
+; usage: addw hl, #data[7:0]
+addw hl, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x16 @ imm`8
+}
+
+; subw_hl_imm
+; subtract imm byte to hl word and save to hl word
+; usage: subw hl, #data[7:0]
+subw hl, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x1E @ imm`8
+}
+
 ; load_b_a
 ; Load b register with value in a register
 ; usage: load b, a
 load b, a =>
 {
   0x17
+}
+
+; loadw_sp_imm
+; load sp register with immediate word
+; usage: loadw sp, #data[15:0]
+loadw sp, #{imm: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xffff)
+  0x1B @ imm`16
 }
 
 ; add_a_b
@@ -279,6 +327,16 @@ store a, {addr: i16} =>
   0x30 @ addr`16
 }
 
+; storew_hl_dir
+; Store hl register value to direct address
+; usage: store hl, address[15:0]
+storew hl, {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x34 @ addr`16
+}
+
 ; store_imm_dir
 ; Store imm value to direct address
 ; usage: store #data[7:0], address[15:0]
@@ -319,6 +377,22 @@ push b =>
   0x39
 }
 
+; load_a_hl_indir
+; load a register from indirect address in hl register
+; usage: load a, (hl)
+load a, (hl) =>
+{
+  0x40
+}
+
+; load_b_hl_indir
+; load b register from indirect address in hl register
+; usage: load b, (hl)
+load b, (hl) =>
+{
+  0x41
+}
+
 ; push_imm
 ; push immediate value to stack
 ; usage: push #data[7:0]
@@ -347,6 +421,50 @@ push ({addr: i16}) =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x3C @ addr`16
+} 
+
+; pushw_imm
+; push immediate word to stack
+; usage: pushw #data[15:0]
+pushw #{imm: i16} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xffff)
+  0x4C @ imm`16
+}
+
+; pushw_dir
+; push word from source to stack
+; usage: pushw address[15:0]
+pushw {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x4D @ addr`16
+}
+
+; popw_hl
+; pop word off of stack into hl register
+; usage: pop hl
+popw hl =>
+{
+  0x51
+} 
+
+; pop_a
+; pop value off of stack into a register
+; usage: pop a
+pop a =>
+{
+  0x52
+} 
+
+; pop_b
+; pop value off of stack into b register
+; usage: pop b
+pop b =>
+{
+  0x53
 } 
 
 ; move_dir_dir

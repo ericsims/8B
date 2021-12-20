@@ -36,6 +36,10 @@
     #outp 0x0000
 }
 
+#bank ram
+BP: ; base pointer for function calls
+    #res 2
+
 #bank rom
 
 DEFAULT_STACK   = 0xBFFF

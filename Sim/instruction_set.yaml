@@ -74,8 +74,10 @@ control_signals:
       description: 'Logical Shift Right'
     - ONES: # 8
       description: 'Output 0xFF'
-    - INCR: # 9
-      description: 'Increment'
+    - ZERO: # 9
+      description: 'Output 0x00'
+    - ONE: # 10
+      description: 'Output 0x01'
   - CE:
     desc  iption: 'Program Counter Enable'
     active: low
@@ -238,6 +240,28 @@ instructions:
       # load data
     - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
 
+    
+  loadw_hl_sp:
+    description: 'load hl with value in sp'
+    duration: 5 # clock cycles
+    operands: 0 # bytes
+    usage: 'loadw hl, sp'
+    opcode: 0x07
+    asm_def: |
+      loadw hl, sp =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load indirect address
+    - ['NO', HI]             # save SP LSB
+    - ['NO', HI, LM, RU]     # save SP MSB
+
+
   load_b_imm:
     description: 'load b register with immediate value'
     duration: 5 # clock cycles
@@ -342,6 +366,37 @@ instructions:
     - [MC, CE]             # Increment MAR to point to data operand LSB. Keep up with PC
     - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
 
+
+  loadw_hl_dir:
+    description: 'load hl register from direct address'
+    duration: 12 # clock cycles
+    operands: 2 # bytes (direct address)
+    usage: 'loadw hl, addresss[15:0]'
+    opcode: 0x0D
+    asm_def: |
+      loadw hl, {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # load data
+    - [MO, HI, LM]         # load data MSB into HL register MSB
+    - [MC]                 # Increment MAR to point to data LSB.
+    - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
+    
   load_a_b:
     description: 'Load a register with value in b register'
     duration: 4 # clock cycles
@@ -359,6 +414,76 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [AI, BO, RU]         # load data into a register. ucode counter reset
 
+  addw_hl_imm:
+    description: 'add imm byte to hl word and save to hl word'
+    duration: 9 # clock cycles
+    operands: 1 # byte (immeditate value)
+    usage: 'addw hl, #data[7:0]'
+    opcode: 0x16
+    asm_def: |
+      addw hl, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [YI, MO]         # load y register with immediate value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        - [RU]             # ucode counter reset. has to be sepearte step to allow for flags to be checked
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [YI, MO]         # load y register with immediate value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
+
+  subw_hl_imm:
+    description: 'subtract imm byte to hl word and save to hl word'
+    duration: 9 # clock cycles
+    operands: 1 # byte (immeditate value)
+    usage: 'subw hl, #data[7:0]'
+    opcode: 0x1E
+    asm_def: |
+      subw hl, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [YI, MO]         # load y register with immediate value
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
+        - [RU]             # ucode counter reset. has to be sepearte step to allow for flags to be checked
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [YI, MO]         # load y register with immediate value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
+
   load_b_a:
     description: 'Load b register with value in a register'
     duration: 4 # clock cycles
@@ -375,6 +500,28 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [BI, AO, RU]         # load data into b register. ucode counter reset
+
+  loadw_sp_imm:
+    description: 'load sp register with immediate word'
+    duration: 7 # clock cycles
+    operands: 2 # bytes (immediate data)
+    usage: 'loadw sp, #data[15:0]'
+    opcode: 0x1B
+    asm_def: |
+      loadw sp, #{imm: i16} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        {OPCODE} @ imm`16
+      }
+    ucode:
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    - [MC, CE]             # Increment MAR to point to data operand MSB. Keep up with PC
+    - [MO, NI, LM]         # load data MSB into SP register MSB
+    - [MC, CE]             # Increment MAR to point to data operand LSB. Keep up with PC
+    - [MO, NI, RU]         # load data LSB into SP register LSB. ucode counter reset
 
   add_a_b:
     description: 'add a register to b register and save to a'
@@ -782,6 +929,37 @@ instructions:
       # save data
     - [AO, MI, RU]         # store data from A reg to memory. ucode counter reset
 
+
+  storew_hl_dir:
+    description: 'Store hl register value to direct address'
+    duration: 12 # clock cycles
+    operands: 2 # byte (direct address)
+    usage: 'store hl, address[15:0]'
+    opcode: 0x34
+    asm_def: |
+      storew hl, {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+      # save data
+    - [HO, MI, LM]         # store data msb from HL register to memory
+    - [MC]                 # increment MAR to point to LSB location
+    - [HO, MI, RU]         # store data lsb from HL reg to memory. ucode counter reset
+
   store_imm_dir:
     description: 'Store imm value to direct address'
     duration: 12 # clock cycles
@@ -892,6 +1070,50 @@ instructions:
     - [BO, SI]             # save data from D scratch register to stack
     - [DS, RU]             # decrement stack pointer. ucode counter reset
 
+  load_a_hl_indir:
+    description: 'load a register from indirect address in hl register'
+    duration: 6 # clock cycles
+    operands: 0 # bytes
+    usage: 'load a, (hl)'
+    opcode: 0x40
+    asm_def: |
+      load a, (hl) =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [HO, MA, LM]         # Load address out of hl register into MAR
+    - [HO, MA]             # Load address out of hl register into MAR
+      # load data
+    - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
+
+  load_b_hl_indir:
+    description: 'load b register from indirect address in hl register'
+    duration: 6 # clock cycles
+    operands: 0 # bytes
+    usage: 'load b, (hl)'
+    opcode: 0x41
+    asm_def: |
+      load b, (hl) =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [HO, MA, LM]         # Load address out of hl register into MAR
+    - [HO, MA]             # Load address out of hl register into MAR
+      # load data
+    - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
+
   push_imm:
     description: 'push immediate value to stack'
     duration: 7 # clock cycles
@@ -984,6 +1206,132 @@ instructions:
       # save data
     - [DO, SI]             # save data from D scratch register to stack
     - [DS, RU]             # decrement stack pointer. ucode counter reset
+
+  pushw_imm:
+    description: 'push immediate word to stack'
+    duration: 11 # clock cycles
+    operands: 2 # bytes (immedate value)
+    usage: 'pushw #data[15:0]'
+    opcode: 0x4C
+    asm_def: |
+      pushw #{imm: i16} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xffff)
+        {OPCODE} @ imm`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load data
+    - [MC, CE]             # Increment MAR to point to data MSB. keep up with PC
+    - [MO, DI, LM]         # Load imm data to D scratch register
+    - [MC, CE]             # Increment MAR to point to data LSB. keep up with PC
+    - [MO, DI]             # Load imm data to D scratch register
+      # save data
+    - [DO, SI, LM]         # save data from D scratch register to stack
+    - [DS]                 # decrement stack pointer
+    - [DO, SI]             # save data from D scratch register to stack
+    - [DS, RU]             # decrement stack pointer. ucode counter reset
+
+  pushw_dir:
+    description: 'push word from source to stack'
+    duration: 16 # clock cycles
+    operands: 2 # bytes (direct source address)
+    usage: 'pushw address[15:0]'
+    opcode: 0x4D
+    asm_def: |
+      pushw {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    # load direct source address
+    - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+    - [MO, JI, LM]         # load address MSB into J scratch register
+    - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+    - [MO, JI]             # load address LSB into J scratch register
+      # load data from source
+    - [JO, MA, LM]         # load address out of scratch register into MAR
+    - [JO, MA]             # load address out of scratch register into MAR
+    - [DI, MO, LM]         # save data MSB to D scratch register
+    - [MC]                 # increment MAR to point to LSB
+    - [DI, MO]             # save data LSB to D scratch register
+      # save data
+    - [DO, SI, LM]         # save data MSB from D scratch register to stack
+    - [DS]                 # decrement stack pointer
+    - [DO, SI]             # save data LSB from D scratch register to stack
+    - [DS, RU]             # decrement stack pointer. ucode counter reset
+
+  popw_hl:
+    description: 'pop word off of stack into hl register'
+    duration: 7 # clock cycles
+    operands: 0 # bytes
+    usage: 'pop hl'
+    opcode: 0x51
+    asm_def: |
+      popw hl =>
+      {
+        {OPCODE}
+      } 
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    # pop value off of stack off of the stack
+    - [IS]
+    - [SO, HI]             # pop LSB byte into hl register
+    - [IS]
+    - [SO, HI, LM, RU]     # pop MSB byte into hl register. ucode counter reset
+
+  pop_a:
+    description: 'pop value off of stack into a register'
+    duration: 5 # clock cycles
+    operands: 0 # bytes
+    usage: 'pop a'
+    opcode: 0x52
+    asm_def: |
+      pop a =>
+      {
+        {OPCODE}
+      } 
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    # pop value off of stack off of the stack
+    - [IS]
+    - [SO, AI, RU]         # pop byte into a register. ucode counter reset
+
+  pop_b:
+    description: 'pop value off of stack into b register'
+    duration: 5 # clock cycles
+    operands: 0 # bytes
+    usage: 'pop b'
+    opcode: 0x53
+    asm_def: |
+      pop b =>
+      {
+        {OPCODE}
+      } 
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+    # pop value off of stack off of the stack
+    - [IS]
+    - [SO, BI, RU]         # pop byte into b register. ucode counter reset
 
   move_dir_dir:
     description: 'copy byte from source to destination'

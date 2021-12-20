@@ -6,11 +6,11 @@ pattern_3 = 0x55
 pattern_4 = 0xAA
 pattern_5 = 0x00
 
-STOP_ADDR = 0xBF
+STOP_ADDR = 0xC0
 
 #bank rom
 
-; warning this uses assembler macros
+loadw sp, #ram_test_begining_address-1
 
 store #pattern_1, test_pattern
 call write_memory
@@ -82,5 +82,7 @@ addr_pointer:
     #res 2
 test_pattern:
     #res 1
+stack:
+    #res 4
 ram_test_begining_address:
     #res 1

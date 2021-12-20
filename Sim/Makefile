@@ -7,7 +7,7 @@ all-tests := $(addsuffix .test, $(basename $(TEST_BINS)))
 LUTS="lut/sin_lut.dat"
 INST_SET="instructions.asm"
 
-all: $(INST_SET) $(LUTS) tests 
+all: clean $(INST_SET) $(LUTS) tests 
 
 "lut/sin_lut.dat":
 	@mkdir -p lut

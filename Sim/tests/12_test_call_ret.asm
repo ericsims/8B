@@ -3,6 +3,7 @@
 #bank rom
 
 top:
+loadw sp, #0xBFFF
 
 load a, #0xAA
 assert a, #0xAA
