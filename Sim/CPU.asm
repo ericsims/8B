@@ -20,6 +20,143 @@
         }
     }
     
+
+    ; calling convetion
+    __prologue => asm
+    {
+        ; prologue 
+        pushw BP ; save old base pointer to stack
+        loadw hl, sp ; save SP to base pointer
+        storew hl, BP
+    }
+
+    __epilogue => asm
+    {
+        ; epilogue
+        popw hl ; restore old base pointer
+        storew hl, BP
+        ret
+    }
+; loads
+    __load_local a, {index: i8} =>
+    {
+        assert(index == 0)
+        asm
+        {
+            loadw hl, BP
+            load a, (hl)
+        }
+    }
+    __load_local a, {index: i8} =>
+    {
+        assert(index < 0)
+        asm
+        {
+            loadw hl, BP
+            subw hl, #index*-1
+            load a, (hl)
+        }
+    }
+    __load_local a, {index: i8} =>
+    {
+        assert(index > 0)
+        asm
+        {
+            loadw hl, BP
+            addw hl, #index
+            load a, (hl)
+        }
+    }
+    __load_local b, {index: i8} =>
+    {
+        assert(index == 0)
+        asm
+        {
+            loadw hl, BP
+            load b, (hl)
+        }
+    }
+    __load_local b, {index: i8} =>
+    {
+        assert(index < 0)
+        asm
+        {
+            loadw hl, BP
+            subw hl, #index*-1
+            load b, (hl)
+        }
+    }
+    __load_local b, {index: i8} =>
+    {
+        assert(index > 0)
+        asm
+        {
+            loadw hl, BP
+            addw hl, #index
+            load b, (hl)
+        }
+    }
+
+
+;store
+    __store_local a, {index: i8} =>
+    {
+        assert(index == 0)
+        asm
+        {
+            loadw hl, BP
+            store a, (hl)
+        }
+    }
+    __store_local a, {index: i8} =>
+    {
+        assert(index < 0)
+        asm
+        {
+            loadw hl, BP
+            subw hl, #index*-1
+            store a, (hl)
+        }
+    }
+    __store_local a, {index: i8} =>
+    {
+        assert(index > 0)
+        asm
+        {
+            loadw hl, BP
+            addw hl, #index
+            store a, (hl)
+        }
+    }
+    __store_local b, {index: i8} =>
+    {
+        assert(index == 0)
+        asm
+        {
+            loadw hl, BP
+            store b, (hl)
+        }
+    }
+    __store_local b, {index: i8} =>
+    {
+        assert(index < 0)
+        asm
+        {
+            loadw hl, BP
+            subw hl, #index*-1
+            store b, (hl)
+        }
+    }
+    __store_local b, {index: i8} =>
+    {
+        assert(index > 0)
+        asm
+        {
+            loadw hl, BP
+            addw hl, #index
+            store b, (hl)
+        }
+    }
     
 }
 

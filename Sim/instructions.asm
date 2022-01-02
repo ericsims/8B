@@ -393,6 +393,22 @@ load b, (hl) =>
   0x41
 }
 
+; store_a_hl_indir
+; store a register to indirect address in hl register
+; usage: store a, (hl)
+store a, (hl) =>
+{
+  0x42
+}
+
+; store_b_hl_indir
+; store b register to indirect address in hl register
+; usage: store b, (hl)
+store b, (hl) =>
+{
+  0x43
+}
+
 ; push_imm
 ; push immediate value to stack
 ; usage: push #data[7:0]

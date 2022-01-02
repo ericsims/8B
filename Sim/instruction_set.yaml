@@ -478,7 +478,7 @@ instructions:
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
         - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
         - [YI, MO]         # load y register with immediate value
-        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB
         - [YI, ONE]        # load zero into y register
         - [XI, HO, LM]     # load msb into x register
@@ -1113,6 +1113,50 @@ instructions:
     - [HO, MA]             # Load address out of hl register into MAR
       # load data
     - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
+
+  store_a_hl_indir:
+    description: 'store a register to indirect address in hl register'
+    duration: 6 # clock cycles
+    operands: 0 # bytes
+    usage: 'store a, (hl)'
+    opcode: 0x42
+    asm_def: |
+      store a, (hl) =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [HO, MA, LM]         # Load address out of hl register into MAR
+    - [HO, MA]             # Load address out of hl register into MAR
+      # load data
+    - [MI, AO, RU]         # store A reg data to memory. ucode counter reset
+
+  store_b_hl_indir:
+    description: 'store b register to indirect address in hl register'
+    duration: 6 # clock cycles
+    operands: 0 # bytes
+    usage: 'store b, (hl)'
+    opcode: 0x43
+    asm_def: |
+      store b, (hl) =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+    - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+    - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+    - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load direct address
+    - [HO, MA, LM]         # Load address out of hl register into MAR
+    - [HO, MA]             # Load address out of hl register into MAR
+      # load data
+    - [MI, BO, RU]         # store B reg data to memory. ucode counter reset
 
   push_imm:
     description: 'push immediate value to stack'

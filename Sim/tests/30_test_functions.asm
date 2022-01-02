@@ -19,10 +19,7 @@ halt
 
 function: ; x, y (addreses SP+6, SP+5)
 
-; prologue 
-pushw BP ; save old base pointer to stack
-loadw hl, sp ; save SP to base pointer
-storew hl, BP
+__prologue
 
 loadw hl, BP
 addw hl, #6
@@ -34,8 +31,5 @@ load b, (hl)
 
 add a, b
 
-; epilogue
-popw hl
-storew hl, BP
-ret
+__epilogue
 
