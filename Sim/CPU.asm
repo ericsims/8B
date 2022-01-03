@@ -43,8 +43,8 @@
         assert(index == 0)
         asm
         {
-            loadw hl, BP
-            load a, (hl)
+            ;loadw hl, BP
+            load a, (BP)
         }
     }
     __load_local a, {index: i8} =>
@@ -104,8 +104,8 @@
         assert(index == 0)
         asm
         {
-            loadw hl, BP
-            store a, (hl)
+            ;loadw hl, BP
+            store a, (BP)
         }
     }
     __store_local a, {index: i8} =>

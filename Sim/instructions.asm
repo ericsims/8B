@@ -327,6 +327,16 @@ store a, {addr: i16} =>
   0x30 @ addr`16
 }
 
+; store_a_indir
+; store a register to indirect address
+; usage: store a, (address[15:0])
+store a, ({addr: i16}) =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x31 @ addr`16
+}
+
 ; storew_hl_dir
 ; Store hl register value to direct address
 ; usage: store hl, address[15:0]
