@@ -1,2 +1,2 @@
-Record=TopLevelDocument|FileName=Microcode.SchDoc|SheetNumber=1
-Record=NoMainPathDocument|SourceDocument=Microcode.SchDoc|FileName=Top.SchDoc|SheetNumber=2
+Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=CTRL|SchDesignator=CTRL|FileName=Microcode.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Microcode.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 

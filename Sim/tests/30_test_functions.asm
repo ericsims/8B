@@ -3,6 +3,7 @@
 #bank rom
 
 top:
+init_pointers:
 loadw sp, #0xBFFF
 storew #0xABCD, BP
 
@@ -14,6 +15,8 @@ call function
 
 pop b ; discard parameters
 pop b ; discard parameters
+
+assert a, #0x46
 
 halt
 

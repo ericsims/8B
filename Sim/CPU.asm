@@ -43,7 +43,6 @@
         assert(index == 0)
         asm
         {
-            ;loadw hl, BP
             load a, (BP)
         }
     }
@@ -104,7 +103,6 @@
         assert(index == 0)
         asm
         {
-            ;loadw hl, BP
             store a, (BP)
         }
     }
