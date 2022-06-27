@@ -16,7 +16,7 @@ from MEMS import MEMS
 
 def main():
 
-    FILE_NAME = 'bin/07_test_conditional_jump.bin' # default file
+    FILE_NAME = 'bin/01_test_a_reg.bin' # default file
     EXIT_ON_HALT = False
     SIM = True
     GUI = True

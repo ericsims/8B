@@ -84,21 +84,24 @@ control_signals:
   - FI:
     description: 'ALU Flag Refresh'
     active: low
+  - LM:
+    description: 'Bus MSB Byte Select'
+    active: low
+  - RU:
+    description: 'Reset Microcode Counter'
+    active: low
   - MC:
     description: 'Memmory Address Increment'
     active: low
   - IS:
     description: 'Increment Stack Pointer'
-    active: high
+    active: low
   - DS:
     description: 'Decrement Stack Pointer'
-    active: high
-  - LM:
-    description: 'Bus MSB Byte Select'
-    active: high
-  - RU:
-    description: 'Reset Microcode Counter'
-    active: high
+    active: low
+  - AT:
+    description: 'Assert Condition'
+    active: low
 
 flags:
   - ZF:

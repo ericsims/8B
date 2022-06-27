@@ -1,0 +1,101 @@
+digraph falling_edge {
+    rankdir = TB;
+    clk_falling -> ucode_counter [label="0ns", weight=3];
+    ucode_counter -> ctrl_eeprom [label="11ns-38ns", weight=3];
+    ctrl_eeprom -> OUT_decode [label="0ns-150ns", weight=2];
+    ctrl_eeprom -> IN_decode [label="0ns-150ns"];
+    
+    OUT_decode -> sram_read [label="11ns-41ns"];
+    OUT_decode -> eeprom_out_en_logic  [label="11ns-41ns"];
+    OUT_decode -> mem_decode [label="11ns-41ns"];
+    OUT_decode -> flag_refresh [label="11ns-41ns"];
+    flag_refresh -> flags [label="10ns-20ns"];
+
+    
+
+
+    # ALU
+    OUT_decode -> AND_OUT_EN [label="11ns-41ns"];
+    AND -> AND_OUT [label="12ns-27ns" color="blue"];
+    AND_OUT_EN -> ZF_IMM_ [label="15ns-40ns"];
+    AND_OUT -> ZF_IMM_ [label="8ns-12ns" color="blue"];
+    AND_OUT_EN -> AND_data [label="15ns-40ns"];
+    AND_OUT -> AND_data [label="8ns-12ns" color="blue"];
+    AND_data -> ALU_data
+
+    OUT_decode -> OR_OUT_EN [label="11ns-41ns"];
+    OR -> OR_OUT [label="12-22ns" color="blue"];
+    OR_OUT_EN -> ZF_IMM_ [label="15ns-40ns"];
+    OR_OUT -> ZF_IMM_ [label="8ns-12ns" color="blue"];
+    OR_OUT_EN -> OR_data [label="15ns-40ns"];
+    OR_OUT -> OR_data [label="8ns-12ns" color="blue"];
+    OR_data -> ALU_data
+
+    OUT_decode -> ADD_OUT_EN [label="11ns-41ns"];
+    OUT_decode -> CARRY_IN [label="11ns-41ns"];
+    CARRY_IN -> NIBBLE1 [label="9ns-16ns" color="blue"];    
+    NIBBLE1 -> NIBBLE2 [label="9ns-16ns" color="blue"];
+    NIBBLE2 -> NIBBLE3 [label="9ns-16ns" color="blue"];
+    NIBBLE3 -> ADD_OUT [label="9ns-16ns" color="blue"];
+    ADD_OUT_EN -> ZF_IMM_ [label="15ns-40ns"];
+    ADD_OUT -> ZF_IMM_ [label="8ns-12ns" color="blue"];
+    ADD_OUT_EN -> ADD_data [label="15ns-40ns"];
+    ADD_OUT -> ADD_data [label="8ns-12ns" color="blue"];
+    ADD_data -> ALU_data
+    NIBBLE3 -> CF_IMM [label="9ns-16ns" color="blue"];
+    
+    CF_IMM -> flags [label="9-15ns" color="blue"];
+
+    ZF_IMM_ -> ZF_IMM [label="16-44ns" color="blue"];
+    ZF_IMM -> flags [label="9-15ns" color="blue"];
+
+    # regs out
+    OUT_decode -> XO [label="11ns-41ns"];
+    XO -> X_REG_OUT [label="15ns-40ns"];
+    OUT_decode -> YO [label="11ns-41ns"];
+    YO -> Y_REG_OUT [label="15ns-40ns"];
+    OUT_decode -> AO [label="11ns-41ns"];
+    AO -> A_REG_OUT [label="15ns-40ns"];
+    OUT_decode -> BO [label="11ns-41ns"];
+    BO -> B_REG_OUT [label="15ns-40ns"];
+    
+    # regs in
+    IN_decode -> II [label="11ns-41ns", weight=2];
+    II-> INST_REG_IN [label="10-20ns", weight=3];
+    IN_decode -> AI [label="11ns-41ns", weight=2];
+    AI-> A_REG_IN [label="10-20ns", weight=3];
+    IN_decode -> BI [label="11ns-41ns", weight=2];
+    BI-> B_REG_IN [label="10-20ns", weight=3];
+    IN_decode -> XI [label="11ns-41ns", weight=2];
+    XI-> X_REG_IN [label="10-20ns", weight=3];
+    IN_decode -> YI [label="11ns-41ns", weight=2];
+    YI-> Y_REG_IN [label="10-20ns", weight=3];
+
+    sram_read -> sram_read_out;
+
+    clk_falling -> eeprom_read_en [label="0ns"];
+    eeprom_read_en -> eeprom_read [label="36ns-72ns"];
+    eeprom_read -> eeprom_out [label="0-150ns" color="blue", weight=2];
+    eeprom_out -> eeprom_data [label="8ns-12ns" color="blue", weight=1];
+    eeprom_out_en_logic -> eeprom_out_en [label="8ns-49ns", weight=2];
+    eeprom_out_en -> eeprom_data [label="15ns-40ns"];
+    eeprom_data -> eeprom_read_out [weight=1];
+
+    mem_decode -> sram_read;
+    mem_decode -> eeprom_out_en_logic [label="50ns"]; # estimate
+
+    // subgraph cluster_OR { OR_OUT; OR_OUT_EN };
+    // subgraph cluster_AND { AND_OUT; AND_OUT_EN };
+    // subgraph cluster_ADD { ADD_OUT; ADD_OUT_EN };
+    // subgraph cluster_ep { eeprom_out; eeprom_out_en };
+    subgraph cluster_outs { AO; BO; XO; YO; penwidth=0 };
+    subgraph cluster_ins { AI; BI; XI; YI; II; penwidth=0};
+
+    { rank=same; ALU_data; sram_read_out; eeprom_read_out; flags; INST_REG_IN; A_REG_OUT; B_REG_OUT; X_REG_OUT; Y_REG_OUT; A_REG_IN; B_REG_IN; X_REG_IN; Y_REG_IN};
+    #{ rank=same; clk_falling; AND; OR; };
+    { rank=same; OUT_decode; IN_decode; };
+
+
+
+
+}
