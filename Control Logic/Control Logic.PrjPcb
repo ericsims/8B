@@ -82,7 +82,7 @@ DocumentUniqueId=JQSUCDRH
 
 [Document3]
 DocumentPath=Top.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -133,7 +133,7 @@ DocumentUniqueId=HSQHPJQA
 
 [Document6]
 DocumentPath=Logic Port.SchDoc
-AnnotationEnabled=1
+AnnotationEnabled=0
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -164,6 +164,10 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
+
+[GeneratedDocument1]
+DocumentPath=Project Outputs for Control Logic\Design Rule Check - Control Logic.html
+DItemRevisionGUID=
 
 [Configuration1]
 Name=Sources
