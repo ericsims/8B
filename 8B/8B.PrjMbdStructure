@@ -4,6 +4,8 @@ Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Mod
 Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Control Logic\Control Logic.PrjPcb
 Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Module|Designator=SDRAM|Source=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
 Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
+Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=FLAGS|Source=..\ALU_Ctrl\ALU_Ctrl.PrjPcb
+Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\ALU_Ctrl\ALU_Ctrl.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=BACKPLANE|Source=..\Backplane\Backplane.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Backplane\Backplane.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=CTRL|Source=..\Control Logic\Control Logic.PrjPcb

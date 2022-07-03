@@ -48,7 +48,7 @@ PrefsRevisionGUID=
 
 [Document1]
 DocumentPath=Microcode.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -116,7 +116,7 @@ DocumentUniqueId=
 
 [Document5]
 DocumentPath=Decode.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -133,7 +133,7 @@ DocumentUniqueId=HSQHPJQA
 
 [Document6]
 DocumentPath=Logic Port.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=

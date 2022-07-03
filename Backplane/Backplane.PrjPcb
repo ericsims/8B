@@ -217,7 +217,7 @@ GenerateClassCluster=0
 DocumentUniqueId=ZLQSUZES
 
 [Document11]
-DocumentPath=Flags.SchDoc
+DocumentPath=ALU_Ctrl.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0

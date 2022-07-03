@@ -2,28 +2,28 @@ control_signals:
   - OUT: # 4 bits, 16 options
     - NONE: # 0
       description: 'none'
-    - PO: # 1
-      description: 'Program Counter Out'
-    - AO: # 2
-      description: 'A Register Out'
-    - BO: # 3
-      description: 'B Register Out'
-    - MO: # 4
-      description: 'Memmory Out'
-    - NO: # 5
-      description: 'Stack Pointer Out'
-    - SO: # 6
-      description: 'Stack Out'
-    - HO: # 7
-      description: 'HL Register Out'
-    - JO: # 8
-      description: 'J Scratch Register Out'
-    - KO: # 9
-      description: 'K Scratch Register Out'
-    - DO: # 10
-      description: 'D Scratch Register Out'
-    - HT: # 11
+    - HT: # 1
       description: 'Halt'
+    - PO: # 2
+      description: 'Program Counter Out'
+    - AO: # 3
+      description: 'A Register Out'
+    - BO: # 4
+      description: 'B Register Out'
+    - MO: # 5
+      description: 'Memmory Out'
+    - NO: # 6
+      description: 'Stack Pointer Out'
+    - SO: # 7
+      description: 'Stack Out'
+    - HO: # 8
+      description: 'HL Register Out'
+    - JO: # 9
+      description: 'J Scratch Register Out'
+    - KO: # 10
+      description: 'K Scratch Register Out'
+    - DO: # 11
+      description: 'D Scratch Register Out'
   - IN: # 4 bits, 16 options
     - NONE: # 0
       description: 'none'
