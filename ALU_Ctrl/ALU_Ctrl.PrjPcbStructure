@@ -1,0 +1,4 @@
+Record=TopLevelDocument|FileName=ALU_Ctrl.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=ALU_Ctrl.SchDoc|Designator=X|SchDesignator=X|FileName=ALU_Reg.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=ALU_Reg.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=ALU_Ctrl.SchDoc|Designator=Y|SchDesignator=Y|FileName=ALU_Reg.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=ALU_Reg.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=ALU_Ctrl.SchDoc|Designator=ZF|SchDesignator=ZF|FileName=ZF.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=ZF.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
