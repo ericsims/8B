@@ -1,0 +1,14 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 7:30:49 PM On 7/6/2022
+
+Output: Test Point Report
+Type  : Test Points
+From  : Variant [[No Variations]] of PCB Document [Backplane.PcbDoc]
+   Generated File[Assembly Testpoint Report for Backplane.csv]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 7:30:49 PM On 7/6/2022

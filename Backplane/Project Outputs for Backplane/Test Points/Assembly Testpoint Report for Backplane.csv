@@ -1,0 +1,5 @@
+"Net","Name","X Coord","Y Coord","Side","Hole Size","Type"
+"CLK","TP1-1","4625mil","5750mil","Top","62.992mil","Through hole"
+"ALU3","J63-24","4900mil","6300mil","Top","35.433mil","Through hole"
+"ALU2","J63-23","4900mil","6200mil","Top","35.433mil","Through hole"
+"ALU1","J63-22","4900mil","6100mil","Top","35.433mil","Through hole"
