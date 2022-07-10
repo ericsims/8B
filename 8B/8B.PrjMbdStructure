@@ -10,6 +10,8 @@ Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Modu
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Backplane\Backplane.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=CTRL|Source=..\Control Logic\Control Logic.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Control Logic\Control Logic.PrjPcb
+Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=MAR|Source=..\Memmory Address Register\Memmory Address Register.PrjPcb
+Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Memmory Address Register\Memmory Address Register.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=MEM0|Source=..\Memory_EEPROM\Memory_EEPROM.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Memory_EEPROM\Memory_EEPROM.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=MEM1|Source=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
