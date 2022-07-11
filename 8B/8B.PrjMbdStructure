@@ -4,9 +4,11 @@ Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Mod
 Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Control Logic\Control Logic.PrjPcb
 Record=DiagramHierarchy|SourceDocument=Top.MbsDoc|Kind=Multi-board Schematic Module|Designator=SDRAM|Source=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
 Record=SubProject|SourceDocument=Top.MbsDoc|ProjectPath=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
+Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=MAD|Source=..\Memory Address Decoder\Memory Address Decoder.PrjPcb
+Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Memory Address Decoder\Memory Address Decoder.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=ALU_CTRL|Source=..\ALU_Ctrl\ALU_Ctrl.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\ALU_Ctrl\ALU_Ctrl.PrjPcb
-Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=BACKPLANE|Source=..\Backplane\Backplane.PrjPcb
+Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=Backplane|Source=..\Backplane\Backplane.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Backplane\Backplane.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=CTRL|Source=..\Control Logic\Control Logic.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Control Logic\Control Logic.PrjPcb
@@ -16,6 +18,8 @@ Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Modu
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Memory_EEPROM\Memory_EEPROM.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=MEM1|Source=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Memory_SDRAM\Memory_SDRAM.PrjPcb
+Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=PC|Source=..\Program_Counter\Program_Counter.PrjPcb
+Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Program_Counter\Program_Counter.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=REG|Source=..\Register\Register.PrjPcb
 Record=SubProject|SourceDocument=8B.MbsDoc|ProjectPath=..\Register\Register.PrjPcb
 Record=DiagramHierarchy|SourceDocument=8B.MbsDoc|Kind=Multi-board Schematic Module|Designator=SCRATCH|Source=..\Scratch\Scratch.PrjPcb

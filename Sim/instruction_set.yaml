@@ -74,7 +74,7 @@ control_signals:
       description: 'Logical Shift Right'
     - ONES: # 8
       description: 'Output 0xFF'
-    - ZERO: # 9
+    - ZEROS: # 9
       description: 'Output 0x00'
     - ONE: # 10
       description: 'Output 0x01'
@@ -448,7 +448,7 @@ instructions:
         - [YI, MO]         # load y register with immediate value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB
-        - [YI, ONE]        # load zero into y register
+        - [YI, ONE]        # load one into y register
         - [XI, HO, LM]     # load msb into x register
         - [ADD, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
 
@@ -483,7 +483,7 @@ instructions:
         - [YI, MO]         # load y register with immediate value
         - [SUB, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB
-        - [YI, ONE]        # load zero into y register
+        - [YI, ONE]        # load one into y register
         - [XI, HO, LM]     # load msb into x register
         - [SUB, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
 
