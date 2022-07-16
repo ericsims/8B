@@ -1,5 +1,6 @@
 Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=CTRL|SchDesignator=CTRL|FileName=Microcode.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Microcode.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=DBG|SchDesignator=DBG|FileName=Debugger.SchDoc|SheetNumber=5|SymbolType=Normal|RawFileName=Debugger.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=DECODE|SchDesignator=DECODE|FileName=Decode.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=Decode.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=G1|SchDesignator=G1|FileName=Logic Port.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=Logic Port.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=G2|SchDesignator=G2|FileName=Logic Port.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=Logic Port.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 

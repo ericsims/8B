@@ -1,0 +1,3 @@
+Record=TopLevelDocument|FileName=ALU_Add_Shift.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=ALU_Add_Shift.SchDoc|Designator=ADD|SchDesignator=ADD|FileName=ALU_ADDER.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=ALU_ADDER.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=ALU_Add_Shift.SchDoc|Designator=SHIFT|SchDesignator=SHIFT|FileName=ALU_Shift.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=ALU_Shift.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
