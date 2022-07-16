@@ -31,7 +31,7 @@ ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
 IsProjectConflictPreventionWarningsEnabled=0
-OutputPath=
+OutputPath=Project Outputs for ALU_Logic
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -48,7 +48,7 @@ PrefsRevisionGUID=
 
 [Document1]
 DocumentPath=ALU_AND.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -65,7 +65,7 @@ DocumentUniqueId=OMOEKLKY
 
 [Document2]
 DocumentPath=ALU_Logic.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -82,7 +82,7 @@ DocumentUniqueId=ONRENILX
 
 [Document3]
 DocumentPath=ALU_OR.SchDoc
-AnnotationEnabled=0
+AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
 AnnotateSuffix=
@@ -182,6 +182,185 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=YVGLIWZF
 
+[Document9]
+DocumentPath=C:\active\Modular-Payload-System\Hardware\lib\Altium-libs-Shared\TP.PcbLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[Document10]
+DocumentPath=C:\active\Modular-Payload-System\Hardware\lib\Altium-libs-Shared\TP.SchLib
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[Document11]
+DocumentPath=..\Backplane\outjobs.OutJob
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[GeneratedDocument1]
+DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.DRR
+DItemRevisionGUID=
+
+[GeneratedDocument2]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.EXTREP
+DItemRevisionGUID=
+
+[GeneratedDocument3]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.EXTREP
+DItemRevisionGUID=
+
+[GeneratedDocument4]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBL
+DItemRevisionGUID=
+
+[GeneratedDocument5]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBL
+DItemRevisionGUID=
+
+[GeneratedDocument6]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBO
+DItemRevisionGUID=
+
+[GeneratedDocument7]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBO
+DItemRevisionGUID=
+
+[GeneratedDocument8]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBP
+DItemRevisionGUID=
+
+[GeneratedDocument9]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBP
+DItemRevisionGUID=
+
+[GeneratedDocument10]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBS
+DItemRevisionGUID=
+
+[GeneratedDocument11]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBS
+DItemRevisionGUID=
+
+[GeneratedDocument12]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GKO
+DItemRevisionGUID=
+
+[GeneratedDocument13]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GKO
+DItemRevisionGUID=
+
+[GeneratedDocument14]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTL
+DItemRevisionGUID=
+
+[GeneratedDocument15]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTL
+DItemRevisionGUID=
+
+[GeneratedDocument16]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTO
+DItemRevisionGUID=
+
+[GeneratedDocument17]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTO
+DItemRevisionGUID=
+
+[GeneratedDocument18]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTP
+DItemRevisionGUID=
+
+[GeneratedDocument19]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTP
+DItemRevisionGUID=
+
+[GeneratedDocument20]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTS
+DItemRevisionGUID=
+
+[GeneratedDocument21]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTS
+DItemRevisionGUID=
+
+[GeneratedDocument22]
+DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.LDP
+DItemRevisionGUID=
+
+[GeneratedDocument23]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.REP
+DItemRevisionGUID=
+
+[GeneratedDocument24]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.REP
+DItemRevisionGUID=
+
+[GeneratedDocument25]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.RUL
+DItemRevisionGUID=
+
+[GeneratedDocument26]
+DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.RUL
+DItemRevisionGUID=
+
+[GeneratedDocument27]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\ExportSTEP\ALU_Logic.step
+DItemRevisionGUID=
+
+[GeneratedDocument28]
+DocumentPath=Project Outputs for ALU_Logic\ExportSTEP\ALU_Logic.step
+DItemRevisionGUID=
+
+[GeneratedDocument29]
+DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.TXT
+DItemRevisionGUID=
+
+[GeneratedDocument30]
+DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Test Points\Assembly Testpoint Report for ALU_Logic.csv
+DItemRevisionGUID=
+
+[GeneratedDocument31]
+DocumentPath=Project Outputs for ALU_Logic\Test Points\Assembly Testpoint Report for ALU_Logic.csv
+DItemRevisionGUID=
+
+[GeneratedDocument32]
+DocumentPath=Project Outputs for ALU_Logic\Design Rule Check - ALU_Logic.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Sources
 ParameterCount=0
@@ -191,6 +370,9 @@ Variant=[No Variations]
 OutputJobsCount=0
 ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
 ConfigurationType=Source
+
+[Generic_EDE]
+OutputDir=Project Outputs for ALU_Logic
 
 [OutputGroup1]
 Name=Netlist Outputs
@@ -706,96 +888,66 @@ Name=Export Outputs
 Description=
 TargetPrinter=Brother HL-L2320D series
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintJobKind=1|PrintWhat=1
-OutputType1=Ansoft Neutral
-OutputName1=Ansoft Neutral (AutoPCB)
+OutputType1=AnsysEDB
+OutputName1=Ansys EDB
 OutputDocumentPath1=
 OutputVariantName1=
 OutputDefault1=0
-OutputType2=AnsysEDB
-OutputName2=Ansys EDB
+OutputType2=AutoCAD dwg/dxf PCB
+OutputName2=AutoCAD dwg/dxf File PCB
 OutputDocumentPath2=
 OutputVariantName2=
 OutputDefault2=0
-OutputType3=AutoCAD dwg/dxf PCB
-OutputName3=AutoCAD dwg/dxf File PCB
+OutputType3=AutoCAD dwg/dxf Schematic
+OutputName3=AutoCAD dwg/dxf File Schematic
 OutputDocumentPath3=
 OutputVariantName3=
 OutputDefault3=0
-OutputType4=AutoCAD dwg/dxf Schematic
-OutputName4=AutoCAD dwg/dxf File Schematic
+OutputType4=ExportIDF
+OutputName4=Export IDF
 OutputDocumentPath4=
 OutputVariantName4=
 OutputDefault4=0
-OutputType5=ExportIDF
-OutputName5=Export IDF
+OutputType5=ExportPARASOLID
+OutputName5=Export PARASOLID
 OutputDocumentPath5=
-OutputVariantName5=
+OutputVariantName5=[No Variations]
 OutputDefault5=0
-OutputType6=ExportPARASOLID
-OutputName6=Export PARASOLID
+OutputType6=ExportSTEP
+OutputName6=Export STEP
 OutputDocumentPath6=
 OutputVariantName6=[No Variations]
 OutputDefault6=0
-OutputType7=ExportSTEP
-OutputName7=Export STEP
+OutputType7=ExportVRML
+OutputName7=Export VRML
 OutputDocumentPath7=
 OutputVariantName7=[No Variations]
 OutputDefault7=0
-OutputType8=ExportVRML
-OutputName8=Export VRML
+OutputType8=MBAExportPARASOLID
+OutputName8=Export PARASOLID
 OutputDocumentPath8=
-OutputVariantName8=[No Variations]
+OutputVariantName8=
 OutputDefault8=0
-OutputType9=HyperLynx
-OutputName9=HyperLynx (AutoPCB)
+OutputType9=MBAExportSTEP
+OutputName9=Export STEP
 OutputDocumentPath9=
 OutputVariantName9=
 OutputDefault9=0
-OutputType10=MBAExportPARASOLID
-OutputName10=Export PARASOLID
+OutputType10=Save As/Export PCB
+OutputName10=Save As/Export PCB
 OutputDocumentPath10=
 OutputVariantName10=
 OutputDefault10=0
-OutputType11=MBAExportSTEP
-OutputName11=Export STEP
+OutputType11=Save As/Export Schematic
+OutputName11=Save As/Export Schematic
 OutputDocumentPath11=
 OutputVariantName11=
 OutputDefault11=0
-OutputType12=Orcad v7 Capture Design
-OutputName12=Orcad v7 Capture Design (AutoSCH)
+OutputType12=Specctra Design PCB
+OutputName12=Specctra Design PCB
 OutputDocumentPath12=
 OutputVariantName12=
 OutputDefault12=0
-OutputType13=P-CAD ASCII
-OutputName13=P-CAD ASCII (AutoPCB)
-OutputDocumentPath13=
-OutputVariantName13=
-OutputDefault13=0
-OutputType14=P-CAD V16 Schematic Design
-OutputName14=P-CAD V16 Schematic Design (AutoSCH)
-OutputDocumentPath14=
-OutputVariantName14=
-OutputDefault14=0
-OutputType15=Save As/Export PCB
-OutputName15=Save As/Export PCB
-OutputDocumentPath15=
-OutputVariantName15=
-OutputDefault15=0
-OutputType16=Save As/Export Schematic
-OutputName16=Save As/Export Schematic
-OutputDocumentPath16=
-OutputVariantName16=
-OutputDefault16=0
-OutputType17=SiSoft
-OutputName17=SiSoft (AutoPCB)
-OutputDocumentPath17=
-OutputVariantName17=
-OutputDefault17=0
-OutputType18=Specctra Design PCB
-OutputName18=Specctra Design PCB
-OutputDocumentPath18=
-OutputVariantName18=
-OutputDefault18=0
 
 [OutputGroup10]
 Name=PostProcess Outputs

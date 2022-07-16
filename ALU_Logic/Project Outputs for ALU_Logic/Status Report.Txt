@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [ALU_Logic.PcbDoc]
+   Generated File[ALU_Logic.TXT]
+   Generated File[ALU_Logic.LDP]
+   Generated File[ALU_Logic.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 12:40:01 PM On 7/16/2022

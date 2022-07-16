@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [ALU_Add_Shift.PcbDoc]
+   Generated File[ALU_Add_Shift.TXT]
+   Generated File[ALU_Add_Shift.LDP]
+   Generated File[ALU_Add_Shift.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 12:42:44 PM On 7/16/2022
