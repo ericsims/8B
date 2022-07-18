@@ -31,7 +31,7 @@ ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
 IsProjectConflictPreventionWarningsEnabled=0
-OutputPath=Project Outputs for ALU_Logic
+OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -238,126 +238,70 @@ DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.DRR
 DItemRevisionGUID=
 
 [GeneratedDocument2]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.EXTREP
-DItemRevisionGUID=
-
-[GeneratedDocument3]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.EXTREP
 DItemRevisionGUID=
 
-[GeneratedDocument4]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBL
-DItemRevisionGUID=
-
-[GeneratedDocument5]
+[GeneratedDocument3]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBL
 DItemRevisionGUID=
 
-[GeneratedDocument6]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBO
-DItemRevisionGUID=
-
-[GeneratedDocument7]
+[GeneratedDocument4]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBO
 DItemRevisionGUID=
 
-[GeneratedDocument8]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBP
-DItemRevisionGUID=
-
-[GeneratedDocument9]
+[GeneratedDocument5]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBP
 DItemRevisionGUID=
 
-[GeneratedDocument10]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GBS
-DItemRevisionGUID=
-
-[GeneratedDocument11]
+[GeneratedDocument6]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GBS
 DItemRevisionGUID=
 
-[GeneratedDocument12]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GKO
-DItemRevisionGUID=
-
-[GeneratedDocument13]
+[GeneratedDocument7]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GKO
 DItemRevisionGUID=
 
-[GeneratedDocument14]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTL
-DItemRevisionGUID=
-
-[GeneratedDocument15]
+[GeneratedDocument8]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTL
 DItemRevisionGUID=
 
-[GeneratedDocument16]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTO
-DItemRevisionGUID=
-
-[GeneratedDocument17]
+[GeneratedDocument9]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTO
 DItemRevisionGUID=
 
-[GeneratedDocument18]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTP
-DItemRevisionGUID=
-
-[GeneratedDocument19]
+[GeneratedDocument10]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTP
 DItemRevisionGUID=
 
-[GeneratedDocument20]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.GTS
-DItemRevisionGUID=
-
-[GeneratedDocument21]
+[GeneratedDocument11]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.GTS
 DItemRevisionGUID=
 
-[GeneratedDocument22]
+[GeneratedDocument12]
 DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.LDP
 DItemRevisionGUID=
 
-[GeneratedDocument23]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.REP
-DItemRevisionGUID=
-
-[GeneratedDocument24]
+[GeneratedDocument13]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.REP
 DItemRevisionGUID=
 
-[GeneratedDocument25]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Gerber\ALU_Logic.RUL
-DItemRevisionGUID=
-
-[GeneratedDocument26]
+[GeneratedDocument14]
 DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.RUL
 DItemRevisionGUID=
 
-[GeneratedDocument27]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\ExportSTEP\ALU_Logic.step
-DItemRevisionGUID=
-
-[GeneratedDocument28]
+[GeneratedDocument15]
 DocumentPath=Project Outputs for ALU_Logic\ExportSTEP\ALU_Logic.step
 DItemRevisionGUID=
 
-[GeneratedDocument29]
+[GeneratedDocument16]
 DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.TXT
 DItemRevisionGUID=
 
-[GeneratedDocument30]
-DocumentPath=..\ALU_Add_Shift\Project Outputs for ALU_Add_Shift\Test Points\Assembly Testpoint Report for ALU_Logic.csv
-DItemRevisionGUID=
-
-[GeneratedDocument31]
+[GeneratedDocument17]
 DocumentPath=Project Outputs for ALU_Logic\Test Points\Assembly Testpoint Report for ALU_Logic.csv
 DItemRevisionGUID=
 
-[GeneratedDocument32]
+[GeneratedDocument18]
 DocumentPath=Project Outputs for ALU_Logic\Design Rule Check - ALU_Logic.html
 DItemRevisionGUID=
 
@@ -372,7 +316,7 @@ ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
 ConfigurationType=Source
 
 [Generic_EDE]
-OutputDir=Project Outputs for ALU_Logic
+OutputDir=
 
 [OutputGroup1]
 Name=Netlist Outputs
