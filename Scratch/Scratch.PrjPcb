@@ -97,6 +97,10 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=NABVOCKD
 
+[GeneratedDocument1]
+DocumentPath=Project Outputs for Scratch\Design Rule Check - Scratch.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Sources
 ParameterCount=0
