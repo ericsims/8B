@@ -6,7 +6,7 @@ digraph falling_edge {
     ctrl_eeprom -> IN_decode [label="0ns-150ns"];
     
     OUT_decode -> sram_read [label="11ns-41ns"];
-    OUT_decode -> eeprom_out_en_logic  [label="11ns-41ns"];
+    OUT_decode -> eeprom_out_en_logic [label="11ns-41ns"];
     OUT_decode -> mem_decode [label="11ns-41ns"];
     OUT_decode -> flag_refresh [label="11ns-41ns"];
     flag_refresh -> flags [label="10ns-20ns"];
@@ -79,10 +79,10 @@ digraph falling_edge {
     eeprom_out -> eeprom_data [label="8ns-12ns" color="blue", weight=1];
     eeprom_out_en_logic -> eeprom_out_en [label="8ns-49ns", weight=2];
     eeprom_out_en -> eeprom_data [label="15ns-40ns"];
-    eeprom_data -> eeprom_read_out [weight=1];
+    eeprom_data -> eeprom_read_out [label="0ns-150ns", weight=1];
 
-    mem_decode -> sram_read;
-    mem_decode -> eeprom_out_en_logic [label="50ns"]; # estimate
+    mem_decode -> sram_read [label="0ns-100ns"];
+    mem_decode -> eeprom_out_en_logic [label="0ns-100ns"];
 
     // subgraph cluster_OR { OR_OUT; OR_OUT_EN };
     // subgraph cluster_AND { AND_OUT; AND_OUT_EN };

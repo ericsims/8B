@@ -1,0 +1,37 @@
+* D:\Users\erics\Documents\16B\EE Sims\tone_detect.asc
+XU1 0 N004 +15V -15V N002 LM741
+V1 +15V 0 15
+V2 -15V 0 -15
+C1 N002 N001 {C}
+C2 N004 N001 {C}
+R2 N001 0 {R2}
+R1 in N001 {R1}
+R3 N002 N004 {R3}
+V3 in 0 wavefile="samp.wav" chan=0
+XU2 0 N005 +15V -15V out LM741
+C3 out N003 {C}
+C4 N005 N003 {C}
+R5 N003 0 {R5}
+R4 N002 N003 {R4}
+R6 out N005 {R6}
+B1 N006 0 V=V(in)*10
+C5 N007 N006 10µ
+D1 0 N007 1N4148
+D2 N007 vu_in 1N4148
+C6 vu_in 0 4.7µ
+R7 vu_in 0 10k
+B2 N008 0 V=V(out)*10
+C7 N009 N008 10µ
+D3 0 N009 1N4148
+D4 N009 vu_out 1N4148
+C8 vu_out 0 4.7µ
+R8 vu_out 0 10k
+.model D D
+.lib D:\Users\erics\Documents\LTspiceXVII\lib\cmp\standard.dio
+.param C=0.1uF R1=1.7472156052756345k R2=0.04365726231035179k R3=4.963399532458674k R4=1.4497799629589634k R5=0.036225308395872874k R6=4.118459775995007k
+.tran 2
+.wave "in.wav" 16 44.1k V(in) V(in)
+.wave "out.wav" 16 44.1k V(out) V(out)
+.lib LM741.lib
+.backanno
+.end

@@ -3,7 +3,7 @@ import pydot
 
 
 TIMESTEP = 10 #ns
-DURATION = 500 + TIMESTEP #ns
+DURATION = 800 + TIMESTEP #ns
 
 signals = {}
 
