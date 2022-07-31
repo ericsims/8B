@@ -1,1 +1,2 @@
 Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=Decode|SchDesignator=Decode|FileName=Decode.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Decode.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
