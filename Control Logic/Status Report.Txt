@@ -1,0 +1,14 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 1:59:57 PM On 7/31/2022
+
+Output: Export STEP
+Type  : ExportSTEP
+From  : Variant [[No Variations]] of PCB Document [Control Logic.PcbDoc]
+   Generated File[Control Logic.step]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 2:00:07 PM On 7/31/2022

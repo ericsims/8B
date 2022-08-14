@@ -24,6 +24,7 @@ control_signals:
       description: 'K Scratch Register Out'
     - DO: # 11
       description: 'D Scratch Register Out'
+    bits: 4
   - IN: # 4 bits, 16 options
     - NONE: # 0
       description: 'none'
@@ -55,6 +56,7 @@ control_signals:
       description: 'K Scratch Register In'
     - DI: # 14
       description: 'D Scratch Register In'
+    bits: 4
   - ALU: # 4 bits
     - NONE: # 0
       description: 'none'
@@ -78,8 +80,9 @@ control_signals:
       description: 'Output 0x00'
     - ONE: # 10
       description: 'Output 0x01'
+    bits: 4
   - CE:
-    desc  iption: 'Program Counter Enable'
+    desciption: 'Program Counter Enable'
     active: low
   - FI:
     description: 'ALU Flag Refresh'
@@ -103,7 +106,11 @@ control_signals:
     description: 'Assert Condition'
     active: low
 
-flags:
+input:
+  - ucode_count: # ucode counter keyword. dont change
+    bits: 5
+  - instruction: # instruction keyword. dont change
+    bits: 7
   - ZF:
     description: 'Zero Flag'
     active: high
@@ -112,6 +119,9 @@ flags:
     active: high 
   - NF:
     description: 'Negative Flag'
+    active: high 
+  - F4:
+    description: 'RFU flag 4'
     active: high 
 
 instructions:
@@ -1926,7 +1936,7 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [HT, RU]             # Halt
 
-  default:
+  default: #default keyword. dont change. 
     description: 'description'
     duration: 3 # clock cycles
     operands: 0 # bytes

@@ -2,7 +2,10 @@
 Then generate the instructions.asm definitions for custom_asm
 """
 
+import itertools
+import struct
 import yaml
+from yaml.resolver import Resolver
 from termcolor import colored
 from tabulate import tabulate
 
@@ -90,7 +93,124 @@ def validate_control_signals(ucode):
             if len(step) != len(set(step)):
                 raise Exception(f"\t\t***ERROR: duplicate control signals in ucode line: {step}")
 
+def generate_ucode(iss):
+    """generate ucode files for writing to ucode ROM"""
+
+    ctrl = []
+    ctrl_map = {}
+    ctrl_map_sizes = {}
+    # append control signals to ROM output
+    for ct_ in iss['control_signals']:
+        k = list(ct_.keys())[0]
+        if isinstance(ct_[k],list):
+            ctrl_map_sizes[k] = ct_['bits']
+            for n in range(0, ct_['bits']):
+                ctrl.append(f"{k}{n}")
+            for idx, key in enumerate(ct_[k]):
+                if list(key.keys())[0] != 'NONE':
+                    ctrl_map[list(key.keys())[0]] = [k, idx]
+        else:
+            ctrl.append(k)
+    
+    # fill until we have all % 8 bits of ROM output
+    while len(ctrl) % 8 != 0:
+        ctrl.append(f"UC{len(ctrl)}")
+
+    #print('control signals: ', ctrl)
+    #print('control map: ', ctrl_map)
+    #print('control map sizes: ', ctrl_map_sizes)
+
+    inpt = []
+    flags = []
+    # append control signals to ROM output
+    for in_ in iss['input']:
+        k = list(in_.keys())[0]
+        if 'bits' in in_:
+            for n in range(0, in_['bits']):
+                inpt.append(f"{k}{n}")
+        else:
+            inpt.append(k)
+            flags.append(k)
+    #print('input signals: ', inpt)
+    #print('flags: ', flags)
+
+    # generate map microcode into ROM
+    # this is super memory inefficient, but im lazy
+    ucode=[[0] * len(ctrl) for _ in range(2**len(inpt))]
+
+    for key, value in iss['instructions'].items():
+        print(key)
+        #print(value['opcode'])
+        #print(value['ucode'])
+        if key == 'default':
+            #print("ignoring default instruction")
+            continue
+        if isinstance(value['ucode'], dict):
+            if len(value['ucode']['conditions']) > 1:
+                raise Exception(f"***ERROR: {key} has more than one condition")
+            # gnerate list of do not care flags to populate all DNC ROM addreses
+            for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
+                # genreate address and fill in flag values, defer ucode addressing until condition decoding
+                addr = value['opcode'] << inpt.index('instruction0')
+                for n,f in enumerate(flags):
+                    addr |= fs[n] << inpt.index(f)
+                # decode the ucode for the given flag we care about
+                condit = (addr & 1 << inpt.index(value['ucode']['conditions'][0])>0)
+                for idx, sigs in enumerate(value['ucode'][condit]):
+                    addr |= idx << inpt.index('ucode_count0')
+                    #print('  ', condit, idx, sigs)
+                    for sig in sigs:
+                        if sig in ctrl:
+                            # set control bit high, if its a normal outpput bit
+                            ucode[addr][ctrl.index(sig)] = 1
+                        else:
+                            # handle multi bit outputs mapping
+                            for bit_index in range(0, ctrl_map_sizes[ctrl_map[sig][0]]):
+                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0))
+        else:
+            for idx, sigs in enumerate(value['ucode']):
+                # gnerate list of do not care flags to populate all DNC ROM addreses
+                for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
+                    # genreate address and fill in flag values
+                    addr = idx << inpt.index('ucode_count0') | value['opcode'] << inpt.index('instruction0')
+                    for n,f in enumerate(flags):
+                        addr |= fs[n] << inpt.index(f)
+                    for sig in sigs:
+                        if sig in ctrl:
+                            # set control bit high, if its a normal outpput bit
+                            ucode[addr][ctrl.index(sig)] = 1
+                        else:
+                            # handle multi bit outputs mapping
+                            for bit_index in range(0, ctrl_map_sizes[ctrl_map[sig][0]]):
+                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0))
+                    #print(" {addr} {ucode[addr][::-1]}")
+    
+
+    # write ucode to ROM bit files
+    # for each from
+    for rr in range(0,int(len(ctrl)/8)):
+        print(f"ROM_{rr}")
+        with open(f"ROM_{rr}.bin", 'wb') as f:
+            for row in ucode:
+                byte_ = int(''.join(['1' if i else '0' for i in row[(8*rr):(8*(rr+1))]][::-1]), 2)
+                f.write(byte_.to_bytes(1, 'big'))
+                #if(byte_ > 0):
+                #    print(row[16:24][::-1],row[8:16][::-1],row[0:8][::-1], f"{(8*rr)}:{(8*(rr+1))}", F"{byte_:x}")
+
+
+
+
+
 with open('instruction_set.yaml', 'r') as stream:
+
+    # remove resolver entries for On/Off/Yes/No
+    for ch in "OoYyNn":
+        if len(Resolver.yaml_implicit_resolvers[ch]) == 1:
+            del Resolver.yaml_implicit_resolvers[ch]
+        else:
+            Resolver.yaml_implicit_resolvers[ch] = [x for x in
+                    Resolver.yaml_implicit_resolvers[ch] if x[0] != 'tag:yaml.org,2002:bool']
+
     try:
         IS = yaml.safe_load(stream)
 
@@ -134,6 +254,8 @@ with open('instruction_set.yaml', 'r') as stream:
 
         print('Instruction Table')
         print(tabulate((inst_list[i:i+4] for i in range(0, len(inst_list), 4))))
+
+        generate_ucode(IS)
 
     except yaml.YAMLError as exc:
         raise Exception(exc)

@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [Memory_Proto.PcbDoc]
+   Generated File[Memory_Proto.TXT]
+   Generated File[Memory_Proto.LDP]
+   Generated File[Memory_Proto.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 2:00:41 PM On 7/31/2022

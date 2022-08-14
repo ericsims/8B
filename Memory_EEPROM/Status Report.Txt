@@ -1,0 +1,14 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 2:00:48 PM On 7/31/2022
+
+Output: Export STEP
+Type  : ExportSTEP
+From  : Variant [[No Variations]] of PCB Document [Memory_EEPROM.PcbDoc]
+   Generated File[Memory_EEPROM.step]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 2:00:54 PM On 7/31/2022

@@ -2,33 +2,8 @@
 FileName = ALU_Ctrl.GBR
 AutoAperture = True
 *************************************************************
-Generating : Bottom Solder
-      File : ALU_Ctrl.GBS
-
-    Adding Layer      : Bottom Solder
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D15
-    D16
-    D17
-    D18
-    D19
-    D20
-    D21
-    D22
-    D23
-*************************************************************
-
-*************************************************************
-Generating : Top Solder
-      File : ALU_Ctrl.GTS
-
-    Adding Layer      : Top Solder
+Generating : Top Layer
+      File : ALU_Ctrl.GTL
 
     Adding Layer      : Top Layer
 
@@ -36,52 +11,18 @@ Generating : Top Solder
 
 
 Used DCodes :
-    D15
-    D16
-    D17
-    D18
-    D19
-    D20
-    D21
-    D22
-    D23
-*************************************************************
-
-*************************************************************
-Generating : Keep-Out Layer
-      File : ALU_Ctrl.GKO
-
-    Adding Layer      : Keep-Out Layer
-
-
-Used DCodes :
+    D24
     D25
-*************************************************************
-
-*************************************************************
-Generating : Bottom Overlay
-      File : ALU_Ctrl.GBO
-
-    Adding Layer      : Bottom Overlay
-
-
-Used DCodes :
-    D12
-*************************************************************
-
-*************************************************************
-Generating : Top Overlay
-      File : ALU_Ctrl.GTO
-
-    Adding Layer      : Top Overlay
-
-
-Used DCodes :
-    D10
-    D11
-    D12
-    D13
-    D14
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
 *************************************************************
 
 *************************************************************
@@ -109,8 +50,25 @@ Used DCodes :
 *************************************************************
 
 *************************************************************
-Generating : Top Layer
-      File : ALU_Ctrl.GTL
+Generating : Top Overlay
+      File : ALU_Ctrl.GTO
+
+    Adding Layer      : Top Overlay
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+*************************************************************
+
+*************************************************************
+Generating : Top Paste
+      File : ALU_Ctrl.GTP
+
+    Adding Layer      : Top Paste
 
     Adding Layer      : Top Layer
 
@@ -118,18 +76,6 @@ Generating : Top Layer
 
 
 Used DCodes :
-    D24
-    D25
-    D26
-    D27
-    D28
-    D29
-    D30
-    D31
-    D32
-    D33
-    D34
-    D35
 *************************************************************
 
 *************************************************************
@@ -147,10 +93,32 @@ Used DCodes :
 *************************************************************
 
 *************************************************************
-Generating : Top Paste
-      File : ALU_Ctrl.GTP
+Generating : Bottom Overlay
+      File : ALU_Ctrl.GBO
 
-    Adding Layer      : Top Paste
+    Adding Layer      : Bottom Overlay
+
+
+Used DCodes :
+    D12
+*************************************************************
+
+*************************************************************
+Generating : Keep-Out Layer
+      File : ALU_Ctrl.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+    D25
+*************************************************************
+
+*************************************************************
+Generating : Top Solder
+      File : ALU_Ctrl.GTS
+
+    Adding Layer      : Top Solder
 
     Adding Layer      : Top Layer
 
@@ -158,5 +126,37 @@ Generating : Top Paste
 
 
 Used DCodes :
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : ALU_Ctrl.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
 *************************************************************
 

@@ -1,0 +1,14 @@
+Project Outputs Generation Report
+---------------------------------
+Start Output Generation At 2:01:52 PM On 7/31/2022
+
+Output: Export STEP
+Type  : ExportSTEP
+From  : Variant [[No Variations]] of PCB Document [Backplane.PcbDoc]
+   Generated File[Backplane.step]
+
+
+Files Generated   : 1
+Documents Printed : 0
+
+Finished Output Generation At 2:01:53 PM On 7/31/2022
