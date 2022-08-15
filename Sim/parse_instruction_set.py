@@ -3,7 +3,6 @@ Then generate the instructions.asm definitions for custom_asm
 """
 
 import itertools
-import struct
 import yaml
 from yaml.resolver import Resolver
 from termcolor import colored
@@ -16,7 +15,6 @@ def validate_length(inst):
         print(colored(f"\t\t***WARNING: Advertised duration do not match number of ucode steps, {inst['duration']} != {len(inst['ucode'])}",'yellow'))
     if len(inst['ucode']) > 32:
         print(colored(f"\t\t##ERROR: ucode is longer than 32 steps. It includes {len(inst['ucode'])} steps!!!",'red'))
-
 
 def validate_ucodereset(ucode):
     """validate that RU is asserted to reset the ucode counter at the end of the instruction"""
@@ -99,6 +97,7 @@ def generate_ucode(iss):
     ctrl = []
     ctrl_map = {}
     ctrl_map_sizes = {}
+    ctrl_inversion = {}
     # append control signals to ROM output
     for ct_ in iss['control_signals']:
         k = list(ct_.keys())[0]
@@ -106,19 +105,27 @@ def generate_ucode(iss):
             ctrl_map_sizes[k] = ct_['bits']
             for n in range(0, ct_['bits']):
                 ctrl.append(f"{k}{n}")
+                ctrl_inversion[f"{k}{n}"] = 0
             for idx, key in enumerate(ct_[k]):
                 if list(key.keys())[0] != 'NONE':
                     ctrl_map[list(key.keys())[0]] = [k, idx]
         else:
             ctrl.append(k)
-    
-    # fill until we have all % 8 bits of ROM output
-    while len(ctrl) % 8 != 0:
-        ctrl.append(f"UC{len(ctrl)}")
+            if ct_['active'] == 'high':
+                ctrl_inversion[k] = 0
+            elif ct_['active'] == 'low':
+                ctrl_inversion[k] = 1
+            else:
+                raise Exception(f"***ERROR: {k} instruction is not active 'high' or 'low'")
 
-    #print('control signals: ', ctrl)
-    #print('control map: ', ctrl_map)
-    #print('control map sizes: ', ctrl_map_sizes)
+    # error if the ctrl signals are not byte divisible!
+    if len(ctrl) % 8 != 0:
+        raise Exception("***ERROR: number of ctrl signals must be divisible by 8")
+
+    print('control signals: ', ctrl)
+    print('control map: ', ctrl_map)
+    print('control map sizes: ', ctrl_map_sizes)
+    print('control inversion: ', ctrl_inversion)
 
     inpt = []
     flags = []
@@ -134,9 +141,9 @@ def generate_ucode(iss):
     #print('input signals: ', inpt)
     #print('flags: ', flags)
 
-    # generate map microcode into ROM
+    # generate map microcode into ROM. Use inversion dict to initilze values to deasserted, regardless of active high/low
     # this is super memory inefficient, but im lazy
-    ucode=[[0] * len(ctrl) for _ in range(2**len(inpt))]
+    ucode=[list(ctrl_inversion.values()) for _ in range(2**len(inpt))]
 
     for key, value in iss['instructions'].items():
         print(key)
@@ -161,12 +168,13 @@ def generate_ucode(iss):
                     #print('  ', condit, idx, sigs)
                     for sig in sigs:
                         if sig in ctrl:
-                            # set control bit high, if its a normal outpput bit
-                            ucode[addr][ctrl.index(sig)] = 1
+                            # set control bit high, if its a normal output bit. invert if necessry using xor
+                            ucode[addr][ctrl.index(sig)] = 1 ^ ctrl_inversion[sig]
                         else:
                             # handle multi bit outputs mapping
                             for bit_index in range(0, ctrl_map_sizes[ctrl_map[sig][0]]):
-                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0))
+                                # set control bit high. invert if necessry using xor
+                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0)) ^ ctrl_inversion[f"{ctrl_map[sig][0]}{bit_index}"]
         else:
             for idx, sigs in enumerate(value['ucode']):
                 # gnerate list of do not care flags to populate all DNC ROM addreses
@@ -177,12 +185,12 @@ def generate_ucode(iss):
                         addr |= fs[n] << inpt.index(f)
                     for sig in sigs:
                         if sig in ctrl:
-                            # set control bit high, if its a normal outpput bit
-                            ucode[addr][ctrl.index(sig)] = 1
+                            # set control bit high, if its a normal output bit. invert if necessry using xor
+                            ucode[addr][ctrl.index(sig)] = 1 ^ ctrl_inversion[sig]
                         else:
                             # handle multi bit outputs mapping
                             for bit_index in range(0, ctrl_map_sizes[ctrl_map[sig][0]]):
-                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0))
+                                ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0)) ^ ctrl_inversion[f"{ctrl_map[sig][0]}{bit_index}"]
                     #print(" {addr} {ucode[addr][::-1]}")
     
 
@@ -225,7 +233,7 @@ with open('instruction_set.yaml', 'r') as stream:
             for duplicate in dupes:
                 raise Exception(f"***ERROR: duplicates opcode 0x{duplicate:02x}")
 
-        inst_list = ['-']*int(0x80)
+        inst_list = ['-']*int(2**8)
 
         # validate instrucions
         print('instructions validations:')
@@ -254,6 +262,7 @@ with open('instruction_set.yaml', 'r') as stream:
 
         print('Instruction Table')
         print(tabulate((inst_list[i:i+4] for i in range(0, len(inst_list), 4))))
+
 
         generate_ucode(IS)
 

@@ -105,12 +105,24 @@ control_signals:
   - AT:
     description: 'Assert Condition'
     active: low
+  - UC20:
+    description: 'RFU20'
+    active: low
+  - UC21:
+    description: 'RFU20'
+    active: low
+  - UC22:
+    description: 'RFU20'
+    active: low
+  - UC23:
+    description: 'RFU20'
+    active: low
 
 input:
   - ucode_count: # ucode counter keyword. dont change
-    bits: 5
+    bits: 6
   - instruction: # instruction keyword. dont change
-    bits: 7
+    bits: 8
   - ZF:
     description: 'Zero Flag'
     active: high
@@ -120,9 +132,7 @@ input:
   - NF:
     description: 'Negative Flag'
     active: high 
-  - F4:
-    description: 'RFU flag 4'
-    active: high 
+
 
 instructions:
   nop:
