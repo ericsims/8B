@@ -106,9 +106,9 @@ def generate_ucode(iss):
             for n in range(0, ct_['bits']):
                 ctrl.append(f"{k}{n}")
                 ctrl_inversion[f"{k}{n}"] = 0
-            for idx, key in enumerate(ct_[k]):
-                if list(key.keys())[0] != 'NONE':
-                    ctrl_map[list(key.keys())[0]] = [k, idx]
+            for idx, inst_name in enumerate(ct_[k]):
+                if list(inst_name.keys())[0] != 'NONE':
+                    ctrl_map[list(inst_name.keys())[0]] = [k, idx]
         else:
             ctrl.append(k)
             if ct_['active'] == 'high':
@@ -145,25 +145,26 @@ def generate_ucode(iss):
     # this is super memory inefficient, but im lazy
     ucode=[list(ctrl_inversion.values()) for _ in range(2**len(inpt))]
 
-    for key, value in iss['instructions'].items():
-        print(key)
+    for inst_name, inst in iss['instructions'].items():
+        print(inst_name)
         #print(value['opcode'])
         #print(value['ucode'])
-        if key == 'default':
+        if inst_name == 'default':
             #print("ignoring default instruction")
             continue
-        if isinstance(value['ucode'], dict):
-            if len(value['ucode']['conditions']) > 1:
-                raise Exception(f"***ERROR: {key} has more than one condition")
+        # check if this is a branch/condiditional instruction
+        if isinstance(inst['ucode'], dict):
+            if len(inst['ucode']['conditions']) > 1:
+                raise Exception(f"***ERROR: {inst_name} has more than one condition")
             # gnerate list of do not care flags to populate all DNC ROM addreses
             for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
                 # genreate address and fill in flag values, defer ucode addressing until condition decoding
-                addr = value['opcode'] << inpt.index('instruction0')
+                addr = inst['opcode'] << inpt.index('instruction0')
                 for n,f in enumerate(flags):
                     addr |= fs[n] << inpt.index(f)
                 # decode the ucode for the given flag we care about
-                condit = (addr & 1 << inpt.index(value['ucode']['conditions'][0])>0)
-                for idx, sigs in enumerate(value['ucode'][condit]):
+                condit = (addr & 1 << inpt.index(inst['ucode']['conditions'][0])>0)
+                for idx, sigs in enumerate(inst['ucode'][condit]):
                     addr |= idx << inpt.index('ucode_count0')
                     #print('  ', condit, idx, sigs)
                     for sig in sigs:
@@ -176,11 +177,11 @@ def generate_ucode(iss):
                                 # set control bit high. invert if necessry using xor
                                 ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0)) ^ ctrl_inversion[f"{ctrl_map[sig][0]}{bit_index}"]
         else:
-            for idx, sigs in enumerate(value['ucode']):
+            for idx, sigs in enumerate(inst['ucode']):
                 # gnerate list of do not care flags to populate all DNC ROM addreses
                 for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
                     # genreate address and fill in flag values
-                    addr = idx << inpt.index('ucode_count0') | value['opcode'] << inpt.index('instruction0')
+                    addr = idx << inpt.index('ucode_count0') | inst['opcode'] << inpt.index('instruction0')
                     for n,f in enumerate(flags):
                         addr |= fs[n] << inpt.index(f)
                     for sig in sigs:
@@ -192,7 +193,7 @@ def generate_ucode(iss):
                             for bit_index in range(0, ctrl_map_sizes[ctrl_map[sig][0]]):
                                 ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0)) ^ ctrl_inversion[f"{ctrl_map[sig][0]}{bit_index}"]
                     #print(" {addr} {ucode[addr][::-1]}")
-    
+
 
     # write ucode to ROM bit files
     # for each from
