@@ -1,9 +1,12 @@
 Protel Design System Design Rule Check
 PCB File : D:\Users\erics\Documents\16B\ALU_Add_Shift\ALU_Add_Shift.PcbDoc
-Date     : 7/16/2022
-Time     : 12:27:23 PM
+Date     : 9/18/2022
+Time     : 9:50:42 AM
 
 Processing Rule : Clearance Constraint (Gap=8mil) (All),(All)
+Rule Violations :0
+
+Processing Rule : Clearance Constraint (Gap=25mil) (InPoly),(All)
 Rule Violations :0
 
 Processing Rule : Short-Circuit Constraint (Allowed=No) (All),(All)
@@ -48,4 +51,4 @@ Rule Violations :0
 
 Violations Detected : 0
 Waived Violations : 0
-Time Elapsed        : 00:00:01
+Time Elapsed        : 00:00:02

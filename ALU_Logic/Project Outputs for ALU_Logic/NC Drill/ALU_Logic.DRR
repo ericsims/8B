@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: ALU_Logic.PcbDoc   7/31/2022  2:00:21 PM
+NCDrill File Report For: ALU_Logic.PcbDoc   9/18/2022  9:54:12 AM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -8,12 +8,12 @@ ASCII RoundHoles File : ALU_Logic.TXT
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
 T1      10mil (0.254mm)                                           Round             57        PTH        20.08inch (509.94mm)
-T2      20mil (0.508mm)                                           Round             8         PTH        5.55inch (140.89mm)
+T2      20mil (0.508mm)                                           Round             98        PTH        30.24inch (768.03mm)
 T3      30mil (0.75mm)                                            Round             26        PTH        11.59inch (294.28mm)
 T4      35mil (0.9mm)                                             Round             270       PTH        42.05inch (1068.06mm)
 T5      63mil (1.6mm)                                             Round             8         PTH        5.51inch (140.03mm)
 T6      109mil (2.769mm)                                          Round             2         PTH        2.20inch (55.88mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              371
+Totals                                                                              461
 
 Total Processing Time (hh:mm:ss) : 00:00:00

@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: ALU_Add_Shift.PcbDoc   7/16/2022  12:42:43 PM
+NCDrill File Report For: ALU_Add_Shift.PcbDoc   9/18/2022  9:50:58 AM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -7,13 +7,13 @@ ASCII RoundHoles File : ALU_Add_Shift.TXT
 
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
-T1      10mil (0.254mm)                                           Round             113       PTH        29.91inch (759.60mm)
-T2      20mil (0.508mm)                                           Round             10        PTH        7.73inch (196.43mm)
+T1      10mil (0.254mm)                                           Round             115       PTH        30.20inch (767.01mm)
+T2      20mil (0.508mm)                                           Round             78        PTH        25.10inch (637.60mm)
 T3      30mil (0.75mm)                                            Round             32        PTH        11.70inch (297.13mm)
 T4      35mil (0.9mm)                                             Round             292       PTH        44.02inch (1118.20mm)
-T5      63mil (1.6mm)                                             Round             9         PTH        4.45inch (112.98mm)
+T5      63mil (1.6mm)                                             Round             9         PTH        4.33inch (110.06mm)
 T6      109mil (2.769mm)                                          Round             2         PTH        2.20inch (55.88mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              458
+Totals                                                                              528
 
 Total Processing Time (hh:mm:ss) : 00:00:00

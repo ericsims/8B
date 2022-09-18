@@ -15,7 +15,7 @@ LifeCycleDefinitionGUID=
 RevisionNamingSchemeGUID=
 
 [OutputGroup1]
-Name=Build.OutJob
+Name=
 Description=
 TargetOutputMedium=PCB_Files
 VariantName=[No Variations]
@@ -142,18 +142,18 @@ Configuration5_Name1=OutputConfigurationParameter1
 Configuration5_Item1=BoardEdgeRoutToolDia=2000000|GenerateBoardEdgeRout=False|GenerateDrilledSlotsG85=False|GenerateEIADrillFile=False|GenerateSeparatePlatedNonPlatedFiles=False|NumberOfDecimals=5|NumberOfUnits=2|OptimizeChangeLocationCommands=True|OriginPosition=Relative|Record=DrillView|Units=Imperial|ZeroesMode=SuppressTrailingZeroes|DocumentPath=D:\Users\erics\Documents\16B\ALU_Logic\ALU_Logic.PcbDoc
 
 [PublishSettings]
-OutputFilePath2=Project Outputs for Free Documents\Job1.PDF
+OutputFilePath2=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\Assembly_Drawing.PDF
 ReleaseManaged2=1
-OutputBasePath2=Project Outputs for ALU_Ctrl
+OutputBasePath2=Project Outputs for Backplane
 OutputPathMedia2=
 OutputPathMediaValue2=
 OutputPathOutputer2=[Output Type]
 OutputPathOutputerPrefix2=
 OutputPathOutputerValue2=
-OutputFileName2=Assembly_Drawing
+OutputFileName2=Build.PDF
 OutputFileNameMulti2=
 UseOutputNameForMulti2=0
-OutputFileNameSpecial2=
+OutputFileNameSpecial2==ProjectName
 OpenOutput2=1
 PromptOverwrite2=1
 PublishMethod2=0
@@ -169,22 +169,22 @@ ShowComponentParameters2=1
 GlobalBookmarks2=0
 PDFACompliance2=Disabled
 PDFVersion2=Default
-OutputFilePath3=D:\Users\erics\Documents\16B\ALU_Ctrl\Project Outputs for ALU_Ctrl\
+OutputFilePath3=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\
 ReleaseManaged3=1
-OutputBasePath3=Project Outputs for ALU_Ctrl
+OutputBasePath3=Project Outputs for Backplane
 OutputPathMedia3=
 OutputPathMediaValue3=
 OutputPathOutputer3=[Output Type]
 OutputPathOutputerPrefix3=
 OutputPathOutputerValue3=
 OutputFileName3=
-OutputFileNameMulti3=
-UseOutputNameForMulti3=1
+OutputFileNameMulti3==ProjectName
+UseOutputNameForMulti3=0
 OutputFileNameSpecial3=
 OpenOutput3=1
 OutputFilePath4=D:\Users\erics\Documents\16B\ALU_Ctrl\Project Outputs for ALU_Ctrl\..\
 ReleaseManaged4=1
-OutputBasePath4=Project Outputs for ALU_Ctrl
+OutputBasePath4=Project Outputs for Backplane
 OutputPathMedia4=..\
 OutputPathMediaValue4=..\
 OutputPathOutputer4=[Output Custom]
@@ -197,9 +197,9 @@ OutputFileNameSpecial4=
 OpenOutput4=1
 
 [GeneratedFilesSettings]
-RelativeOutputPath2=Project Outputs for Free Documents\Job1.PDF
+RelativeOutputPath2=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\Assembly_Drawing.PDF
 OpenOutputs2=1
-RelativeOutputPath3=D:\Users\erics\Documents\16B\ALU_Ctrl\Project Outputs for ALU_Ctrl\
+RelativeOutputPath3=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\
 OpenOutputs3=1
 AddToProject3=1
 TimestampFolder3=0

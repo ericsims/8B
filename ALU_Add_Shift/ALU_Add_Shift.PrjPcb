@@ -31,7 +31,7 @@ ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
 IsProjectConflictPreventionWarningsEnabled=0
-OutputPath=
+OutputPath=Project Outputs for ALU_Add_Shift
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -149,7 +149,41 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [Document7]
-DocumentPath=..\Backplane\outjobs.OutJob
+DocumentPath=Build.OutJob
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[Document8]
+DocumentPath=outjobs.pas
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[Document9]
+DocumentPath=..\Scripts\run_outjobs.pas
 AnnotationEnabled=1
 AnnotateStartValue=1
 AnnotationIndexControlEnabled=0
@@ -166,74 +200,82 @@ GenerateClassCluster=0
 DocumentUniqueId=
 
 [GeneratedDocument1]
-DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.DRR
+DocumentPath=Project Outputs for ALU_Add_Shift\Test Points\ALU_Add_Shift.csv
 DItemRevisionGUID=
 
 [GeneratedDocument2]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.EXTREP
+DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.DRR
 DItemRevisionGUID=
 
 [GeneratedDocument3]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBL
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.EXTREP
 DItemRevisionGUID=
 
 [GeneratedDocument4]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBO
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBL
 DItemRevisionGUID=
 
 [GeneratedDocument5]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBP
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBO
 DItemRevisionGUID=
 
 [GeneratedDocument6]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBS
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBP
 DItemRevisionGUID=
 
 [GeneratedDocument7]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GKO
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GBS
 DItemRevisionGUID=
 
 [GeneratedDocument8]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTL
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GKO
 DItemRevisionGUID=
 
 [GeneratedDocument9]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTO
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTL
 DItemRevisionGUID=
 
 [GeneratedDocument10]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTP
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTO
 DItemRevisionGUID=
 
 [GeneratedDocument11]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTS
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTP
 DItemRevisionGUID=
 
 [GeneratedDocument12]
-DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.LDP
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.GTS
 DItemRevisionGUID=
 
 [GeneratedDocument13]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.REP
+DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.LDP
 DItemRevisionGUID=
 
 [GeneratedDocument14]
-DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.RUL
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.REP
 DItemRevisionGUID=
 
 [GeneratedDocument15]
-DocumentPath=Project Outputs for ALU_Add_Shift\ExportSTEP\ALU_Add_Shift.step
+DocumentPath=Project Outputs for ALU_Add_Shift\Gerber\ALU_Add_Shift.RUL
 DItemRevisionGUID=
 
 [GeneratedDocument16]
-DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.TXT
+DocumentPath=Project Outputs for ALU_Add_Shift\..\Mechanical\ALU_Add_Shift.step
 DItemRevisionGUID=
 
 [GeneratedDocument17]
-DocumentPath=Project Outputs for ALU_Add_Shift\Test Points\Assembly Testpoint Report for ALU_Add_Shift.csv
+DocumentPath=Project Outputs for ALU_Add_Shift\ExportSTEP\ALU_Add_Shift.step
 DItemRevisionGUID=
 
 [GeneratedDocument18]
+DocumentPath=Project Outputs for ALU_Add_Shift\NC Drill\ALU_Add_Shift.TXT
+DItemRevisionGUID=
+
+[GeneratedDocument19]
+DocumentPath=Project Outputs for ALU_Add_Shift\Test Points\Assembly Testpoint Report for ALU_Add_Shift.csv
+DItemRevisionGUID=
+
+[GeneratedDocument20]
 DocumentPath=Project Outputs for ALU_Add_Shift\Design Rule Check - ALU_Add_Shift.html
 DItemRevisionGUID=
 
@@ -247,8 +289,11 @@ OutputJobsCount=0
 ContentTypeGUID=CB6F2064-E317-11DF-B822-12313F0024A2
 ConfigurationType=Source
 
+[Generic_ScriptingSystem]
+StartProcName=outjobs.pas>Generate
+
 [Generic_EDE]
-OutputDir=
+OutputDir=Project Outputs for ALU_Add_Shift
 
 [OutputGroup1]
 Name=Netlist Outputs
@@ -824,6 +869,36 @@ OutputName12=Specctra Design PCB
 OutputDocumentPath12=
 OutputVariantName12=
 OutputDefault12=0
+OutputType13=Ansoft Neutral
+OutputName13=Ansoft Neutral (AutoPCB)
+OutputDocumentPath13=
+OutputVariantName13=
+OutputDefault13=0
+OutputType14=HyperLynx
+OutputName14=HyperLynx (AutoPCB)
+OutputDocumentPath14=
+OutputVariantName14=
+OutputDefault14=0
+OutputType15=Orcad v7 Capture Design
+OutputName15=Orcad v7 Capture Design (AutoSCH)
+OutputDocumentPath15=
+OutputVariantName15=
+OutputDefault15=0
+OutputType16=P-CAD ASCII
+OutputName16=P-CAD ASCII (AutoPCB)
+OutputDocumentPath16=
+OutputVariantName16=
+OutputDefault16=0
+OutputType17=P-CAD V16 Schematic Design
+OutputName17=P-CAD V16 Schematic Design (AutoSCH)
+OutputDocumentPath17=
+OutputVariantName17=
+OutputDefault17=0
+OutputType18=SiSoft
+OutputName18=SiSoft (AutoPCB)
+OutputDocumentPath18=
+OutputVariantName18=
+OutputDefault18=0
 
 [OutputGroup10]
 Name=PostProcess Outputs

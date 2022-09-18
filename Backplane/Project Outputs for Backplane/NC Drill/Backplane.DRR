@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: Backplane.PcbDoc   7/31/2022  2:01:54 PM
+NCDrill File Report For: Backplane.PcbDoc   9/18/2022  9:53:12 AM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -7,11 +7,12 @@ ASCII RoundHoles File : Backplane.TXT
 
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
-T1      10mil (0.254mm)                                           Round             192       PTH        49.40inch (1254.64mm)
-T2      35mil (0.9mm)                                             Round             1162      PTH        166.41inch (4226.81mm)
-T3      63mil (1.6mm)                                             Round             14        PTH        21.25inch (539.69mm)
-T4      116mil (2.946mm)                                          Round             12        PTH        44.58inch (1132.22mm)
+T1      10mil (0.254mm)                                           Round             195       PTH        55.72inch (1415.16mm)
+T2      20mil (0.508mm)                                           Round             464       PTH        140.05inch (3557.29mm)
+T3      35mil (0.9mm)                                             Round             1178      PTH        179.13inch (4549.96mm)
+T4      63mil (1.6mm)                                             Round             14        PTH        26.27inch (667.31mm)
+T5      126mil (3.2mm)                                            Round             12        PTH        50.45inch (1281.47mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              1380
+Totals                                                                              1863
 
-Total Processing Time (hh:mm:ss) : 00:00:01
+Total Processing Time (hh:mm:ss) : 00:00:00
