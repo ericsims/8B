@@ -11,7 +11,7 @@ control_signals:
     - BO: # 4
       description: 'B Register Out'
     - MO: # 5
-      description: 'Memmory Out'
+      description: 'Memory Out'
     - NO: # 6
       description: 'Stack Pointer Out'
     - SO: # 7
@@ -43,9 +43,9 @@ control_signals:
     - HI: # 7
       description: 'HL Register In'
     - MA: # 8
-      description: 'Memmory Address Register In'  
+      description: 'Memory Address Register In'  
     - MI: # 9
-      description: 'Memmory In'
+      description: 'Memory In'
     - NI: # 10
       description: 'Stack Pointer In'
     - SI: # 11
@@ -82,7 +82,7 @@ control_signals:
       description: 'Output 0x01'
     bits: 4
   - CE:
-    desciption: 'Program Counter Enable'
+    description: 'Program Counter Enable'
     active: low
   - FI:
     description: 'ALU Flag Refresh'
@@ -94,7 +94,7 @@ control_signals:
     description: 'Reset Microcode Counter'
     active: low
   - MC:
-    description: 'Memmory Address Increment'
+    description: 'Memory Address Increment'
     active: low
   - IS:
     description: 'Increment Stack Pointer'
@@ -440,7 +440,7 @@ instructions:
   addw_hl_imm:
     description: 'add imm byte to hl word and save to hl word'
     duration: 9 # clock cycles
-    operands: 1 # byte (immeditate value)
+    operands: 1 # byte (immediate value)
     usage: 'addw hl, #data[7:0]'
     opcode: 0x16
     asm_def: |
@@ -456,15 +456,15 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be sepearte step to allow for flags to be checked
+        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB
@@ -475,7 +475,7 @@ instructions:
   subw_hl_imm:
     description: 'subtract imm byte to hl word and save to hl word'
     duration: 9 # clock cycles
-    operands: 1 # byte (immeditate value)
+    operands: 1 # byte (immediate value)
     usage: 'subw hl, #data[7:0]'
     opcode: 0x1E
     asm_def: |
@@ -491,15 +491,15 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [SUB, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be sepearte step to allow for flags to be checked
+        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneiously load LSB into x register
+        - [HO, XI, MC, CE] # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [SUB, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB

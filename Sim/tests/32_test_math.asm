@@ -11,7 +11,7 @@ storew #0x0000, BP
 push #0x12
 push #0x34
 
-call multiply
+call multiply_repeat_add
 
 pop b ; discard parameters
 pop b ; discard parameters
@@ -23,7 +23,7 @@ push #0xCD
 push #0x00 ; allocate 2 bytes for z
 push #0x00
 
-call multiply16
+call multiply16_repeat_add
 
 popw hl ; save result to hl reg
 pop b ; disacard params

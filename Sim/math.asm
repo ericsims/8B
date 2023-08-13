@@ -2,9 +2,47 @@
 ; math.asm begin
 ; ###
 
-    
+#once     
 #bank rom
-multiply: ; x, y (addreses SP+6, SP+5)
+
+add32: ; x, y (addreses SP+12, SP+8)
+; ******
+; add32 takes two 32 bit params and adds them. leaves flags from the MSB addition in the flag register
+; returns summation on the stack at -1
+; ******
+
+; param stack indicies. points to MSBs
+.x = 12
+.y = 8
+; local variables stack indicies. points to MSBs
+.z = -1
+    __prologue
+    pushw #0x1111 ; init z=0
+    pushw #0x1111 ; init z=0
+;.add_lsb:
+;    __load_local b, .x-3
+;    __load_local a, .y-3
+;    add a, b
+;    __store_local a, .z-4
+.add_lsb_incr:
+    __load_local a, .y-3
+    load b, #0xFF
+    xor a, b
+    load b, a
+    __load_local a, .x-3
+    sub a, b
+    halt
+    __store_local a, .z-4
+.done:
+    pop a
+    pop a
+    pop a
+    pop a
+    __epilogue
+  
+
+
+multiply_repeat_add: ; x, y (addreses SP+6, SP+5)
 ; param stack indicies
 .x = 6
 .y = 5
@@ -40,7 +78,7 @@ multiply: ; x, y (addreses SP+6, SP+5)
     __epilogue
     
     
-multiply16: ; x, y, z (return)
+multiply16_repeat_add: ; x, y, z (return)
 ; param stack indicies
 .x = 8
 .y = 7

@@ -53,7 +53,7 @@ assert hl, #0x0100
 addw hl, #0x02
 assert hl, #0x0102
 
-load w hl, #0xFFFE
+loadw hl, #0xFFFE
 addw hl, #0x01
 assert hl, #0xFFFF
 addw hl, #0x01

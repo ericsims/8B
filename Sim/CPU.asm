@@ -1,4 +1,4 @@
-#bits 8
+
 
 #include "instructions.asm"
 
@@ -52,7 +52,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #index*-1
+            subw hl, #{index}*-1
             load a, (hl)
         }
     }
@@ -62,7 +62,7 @@
         asm
         {
             loadw hl, BP
-            addw hl, #index
+            addw hl, #{index}
             load a, (hl)
         }
     }
@@ -81,7 +81,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #index*-1
+            subw hl, #{index}*-1
             load b, (hl)
         }
     }
@@ -91,7 +91,7 @@
         asm
         {
             loadw hl, BP
-            addw hl, #index
+            addw hl, #{index}
             load b, (hl)
         }
     }
@@ -112,7 +112,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #index*-1
+            subw hl, #{index}*-1
             store a, (hl)
         }
     }
@@ -122,7 +122,7 @@
         asm
         {
             loadw hl, BP
-            addw hl, #index
+            addw hl, #{index}
             store a, (hl)
         }
     }
@@ -141,7 +141,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #index*-1
+            subw hl, #{index}*-1
             store b, (hl)
         }
     }
@@ -151,21 +151,50 @@
         asm
         {
             loadw hl, BP
-            addw hl, #index
+            addw hl, #{index}
             store b, (hl)
+        }
+    }
+
+    ; push_imm
+    ; push immediate values for more than one byte to stack
+    __push16 #{imm: i16} =>
+    {
+    assert(imm <= 0xffff)
+        asm
+        {
+            push #(({imm}>>8)`8)
+            push #({imm}`8)
+        }
+    }
+
+    ; push_imm
+    ; push immediate values for more than one byte to stack
+    __push32 #{imm: i32} =>
+    {
+    assert(imm <= 0xffff_ffff)
+        asm
+        {
+            push #(({imm}>>24)`8)
+            push #(({imm}>>16)`8)
+            push #(({imm}>>8)`8)
+            push #({imm}`8)
         }
     }
     
 }
 
+
 #bankdef ram
 {
+    #bits 8
     #addr 0x8000
     #size 0x4000
 }
 
 #bankdef rom
 {
+    #bits 8
     #addr 0x0000
     #size 0x8000
     #outp 0x0000

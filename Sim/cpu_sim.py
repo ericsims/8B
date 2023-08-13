@@ -23,7 +23,7 @@ def main():
 
     # process flags
 
-    OPTIONS = "f:" #TODO: no abviated options.
+    OPTIONS = "f:" #TODO: no abbreviated options.
     OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim']
 
     try:
@@ -132,12 +132,13 @@ def main():
         'FI' : 0, # CPU Flag refresh
         'MC' : 0, # MAR increment
         'IS' : 0, # increment stack pointer
-        'DS' : 0, # decremetn stack pointer
+        'DS' : 0, # decrement stack pointer
         'LM' : 0, # bus byte indictor
         'RU' : 0  # reset ucode counter
     }
 
-    breakpt = 0
+    breakpt = False
+    finish_inst = False
 
     DEFAULT_REG_LAYOUT = {
         'size':(6,1),
@@ -178,7 +179,8 @@ def main():
         [sg.T('CF  '), sg.T(**DEFAULT_INDICATOR_LAYOUT, key='_CF_')],
         [sg.T('NF  '), sg.T(**DEFAULT_INDICATOR_LAYOUT, key='_NF_')],
         [],
-        [sg.Button('STEP')],
+        [sg.Button('STEP'), sg.Button('STEP Inst.')],
+        [sg.Button('Resume')],
         [sg.T('CLK '), sg.T(
             text='',
             size=(12,1),
@@ -262,8 +264,16 @@ def main():
                     if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or breakpt:
                         event, values = window.Read(timeout=0)
 
-                    if breakpt:
+                    if breakpt and not finish_inst:
                         event, values = window.Read()
+                        if event == "STEP Inst.":
+                            finish_inst = True
+                        if event == "Resume":
+                            finish_inst = False
+                            breakpt = False
+                        if event == "STEP":
+                            pass
+                            
 
                 clk_counter += 1
 
@@ -328,7 +338,9 @@ def main():
                         flags['CF'] = ((X.value+Y.value) > 0xFF) or ((X.value+Y.value) < 0x00)
                     elif ctrl['SUB']:
                         # Subtract
-                        flags['CF'] = ((X.value+(~Y.value)+1) > 0xFF) or ((X.value+(~Y.value)+1) < 0x00)
+                        print(f"x: 0x{X.value:x} y: 0x{Y.value:x}")
+                        print(f"dat: 0x{(X.value+~(Y.value)+1) & 0xFF:x} tc: 0x{(X.value+~(Y.value)+1):x}")
+                        flags['CF'] = ((X.value+~(Y.value)+1) > 0xFF) or ((X.value+~(Y.value)+1) < 0x00)
                     elif ctrl['AND']:
                         flags['CF'] = 0
                     elif ctrl['OR']:
@@ -348,9 +360,9 @@ def main():
                 if ctrl['HT']:
                     if EXIT_ON_HALT:
                         break
-                    if GUI:
-                        event, values = window.Read()
-                    breakpt = 1
+                    #if GUI:
+                    #    event, values = window.Read()
+                    breakpt = True
 
                 # PC
                 if (ctrl['PO'] or ctrl['PI']) and ctrl['CE']:
@@ -465,10 +477,14 @@ def main():
                                 raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
 
                 if GUI:
+                    if finish_inst:
+                        if UCC == 0:
+                            finish_inst = False
+
                     if event is None or event == 'Exit':
                         break
 
-                    if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or breakpt:
+                    if clk_counter % UPDATE_RATE == 0 or breakpt:
                         window['_PC_'].Update(f"0x{pc.value:04X}")
                         window['_MAR_'].Update(f"0x{mar.value:04X}")
                         window['_INST_'].Update(f"0x{ii.value:02X}")
@@ -502,9 +518,12 @@ def main():
                                 sram_values += "--"
                             else:
                                 sram_values += f"{mems.sram.value[n]:02X}"
-                            if (n+1)%8 == 0:
-                                sram_values += "  "
+                            # TODO: sram address is hard coded...
+                            if (n == stack.get_pointer()-0x8000-1):
+                                sram_values += "*"
                             else:
+                                sram_values += " "
+                            if (n+1)%8 == 0:
                                 sram_values += " "
 
                         window['_SRAM_'].Update(sram_values)
@@ -538,7 +557,7 @@ def main():
 
 
             print(f"max stack usage {stack.max_used} bytes")
-            print(f"clk cylces {clk_counter}")
+            print(f"clk cycles {clk_counter}")
 
             if GUI:
                 window.close()

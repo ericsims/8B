@@ -37,7 +37,7 @@ class STACK:
             if self.pointer < 0:
                 raise Exception("pop from stack when empty")
             v = self.mems.get(self.starting_addr-self.pointer)
-            self.mems.set(self.starting_addr-self.pointer, 0)
+            #self.mems.set(self.starting_addr-self.pointer, 0)
             return v
         else:
             self.stack_ptr_not_init()
