@@ -31,7 +31,7 @@ ReportSuppressedErrorsInMessages=0
 FSMCodingStyle=eFMSDropDownList_OneProcess
 FSMEncodingStyle=eFMSDropDownList_OneHot
 IsProjectConflictPreventionWarningsEnabled=0
-OutputPath=Project Outputs for ALU_Logic
+OutputPath=
 LogFolderPath=
 ManagedProjectGUID=
 IncludeDesignInRelease=0
@@ -328,7 +328,7 @@ DocumentPath=Project Outputs for ALU_Logic\Gerber\ALU_Logic.RUL
 DItemRevisionGUID=
 
 [GeneratedDocument16]
-DocumentPath=Project Outputs for ALU_Logic\..\Mechanical\ALU_Logic.step
+DocumentPath=Mechanical\ALU_Logic.step
 DItemRevisionGUID=
 
 [GeneratedDocument17]
@@ -336,10 +336,6 @@ DocumentPath=Project Outputs for ALU_Logic\NC Drill\ALU_Logic.TXT
 DItemRevisionGUID=
 
 [GeneratedDocument18]
-DocumentPath=Project Outputs for ALU_Logic\Test Points\Assembly Testpoint Report for ALU_Logic.csv
-DItemRevisionGUID=
-
-[GeneratedDocument19]
 DocumentPath=Project Outputs for ALU_Logic\Design Rule Check - ALU_Logic.html
 DItemRevisionGUID=
 
@@ -357,7 +353,7 @@ ConfigurationType=Source
 StartProcName=outjobs.pas>Generate
 
 [Generic_EDE]
-OutputDir=Project Outputs for ALU_Logic
+OutputDir=
 
 [OutputGroup1]
 Name=Netlist Outputs
@@ -933,36 +929,6 @@ OutputName12=Specctra Design PCB
 OutputDocumentPath12=
 OutputVariantName12=
 OutputDefault12=0
-OutputType13=Ansoft Neutral
-OutputName13=Ansoft Neutral (AutoPCB)
-OutputDocumentPath13=
-OutputVariantName13=
-OutputDefault13=0
-OutputType14=HyperLynx
-OutputName14=HyperLynx (AutoPCB)
-OutputDocumentPath14=
-OutputVariantName14=
-OutputDefault14=0
-OutputType15=Orcad v7 Capture Design
-OutputName15=Orcad v7 Capture Design (AutoSCH)
-OutputDocumentPath15=
-OutputVariantName15=
-OutputDefault15=0
-OutputType16=P-CAD ASCII
-OutputName16=P-CAD ASCII (AutoPCB)
-OutputDocumentPath16=
-OutputVariantName16=
-OutputDefault16=0
-OutputType17=P-CAD V16 Schematic Design
-OutputName17=P-CAD V16 Schematic Design (AutoSCH)
-OutputDocumentPath17=
-OutputVariantName17=
-OutputDefault17=0
-OutputType18=SiSoft
-OutputName18=SiSoft (AutoPCB)
-OutputDocumentPath18=
-OutputVariantName18=
-OutputDefault18=0
 
 [OutputGroup10]
 Name=PostProcess Outputs

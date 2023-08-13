@@ -157,11 +157,11 @@ def generate_ucode(iss):
             if len(inst['ucode']['conditions']) > 1:
                 raise Exception(f"***ERROR: {inst_name} has more than one condition")
             # gnerate list of do not care flags to populate all DNC ROM addreses
-            for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
+            for flag_combos in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
                 # genreate address and fill in flag values, defer ucode addressing until condition decoding
                 addr = inst['opcode'] << inpt.index('instruction0')
                 for n,f in enumerate(flags):
-                    addr |= fs[n] << inpt.index(f)
+                    addr |= flag_combos[n] << inpt.index(f)
                 # decode the ucode for the given flag we care about
                 condit = (addr & 1 << inpt.index(inst['ucode']['conditions'][0])>0)
                 for idx, sigs in enumerate(inst['ucode'][condit]):
@@ -179,11 +179,11 @@ def generate_ucode(iss):
         else:
             for idx, sigs in enumerate(inst['ucode']):
                 # gnerate list of do not care flags to populate all DNC ROM addreses
-                for fs in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
+                for flag_combos in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
                     # genreate address and fill in flag values
                     addr = idx << inpt.index('ucode_count0') | inst['opcode'] << inpt.index('instruction0')
                     for n,f in enumerate(flags):
-                        addr |= fs[n] << inpt.index(f)
+                        addr |= flag_combos[n] << inpt.index(f)
                     for sig in sigs:
                         if sig in ctrl:
                             # set control bit high, if its a normal output bit. invert if necessry using xor
