@@ -52,7 +52,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #{index}*-1
+            subw hl, #({index})*-1
             load a, (hl)
         }
     }
@@ -81,7 +81,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #{index}*-1
+            subw hl, #({index})*-1
             load b, (hl)
         }
     }
@@ -112,7 +112,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #{index}*-1
+            subw hl, #({index})*-1
             store a, (hl)
         }
     }
@@ -141,7 +141,7 @@
         asm
         {
             loadw hl, BP
-            subw hl, #{index}*-1
+            subw hl, #({index})*-1
             store b, (hl)
         }
     }

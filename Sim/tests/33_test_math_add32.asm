@@ -1,5 +1,10 @@
 #include "../CPU.asm"
 
+#bank ram
+sum: #res 4 ; base pointer for function calls
+
+
+
 #bank rom
 
 top:
@@ -8,22 +13,28 @@ loadw sp, #0xBFFF
 storew #0x0000, BP
 
 
+
 __push32 #0x1234_5678
-__push32 #0x0000_BEEF
+__push32 #0xFFAD_BEEF
+pushw #sum
 
 call add32
 
-;popw hl ; save result to hl reg
 ; disacard params
-; TODO: there is probably a faster way to write to the SP to discard these... each "pop a" is 5 clock cycles
-pop a
-pop a
-pop a
-pop a
-pop a
-pop a
-pop a
-pop a
+; TODO: there is probably a faster way to write to the SP to discard these... each "pop b" is 5 clock cycles
+pop b
+pop b
+pop b
+pop b
+
+pop b
+pop b
+pop b
+pop b
+
+pop b
+pop b
+
 
 ;assert hl, #0x88EF
 

@@ -338,8 +338,6 @@ def main():
                         flags['CF'] = ((X.value+Y.value) > 0xFF) or ((X.value+Y.value) < 0x00)
                     elif ctrl['SUB']:
                         # Subtract
-                        print(f"x: 0x{X.value:x} y: 0x{Y.value:x}")
-                        print(f"dat: 0x{(X.value+~(Y.value)+1) & 0xFF:x} tc: 0x{(X.value+~(Y.value)+1):x}")
                         flags['CF'] = ((X.value+~(Y.value)+1) > 0xFF) or ((X.value+~(Y.value)+1) < 0x00)
                     elif ctrl['AND']:
                         flags['CF'] = 0
