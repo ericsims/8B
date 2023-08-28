@@ -289,12 +289,23 @@ def main():
             key='_VARS_'
         )
     ]]
+    layout_time = [[
+        sg.Multiline(
+            size=(100,70),
+            font=('courier new',8),
+            justification='left',
+            text_color='black',
+            background_color='white',
+            key='_TIME_ANALYSIS_'
+        )
+    ]]
 
     tabs_layout = [[
         sg.TabGroup([[
             sg.Tab('SRAM', layout_sram),
             sg.Tab('STACK', layout_stack),
             sg.Tab('VARS', layout_vars),
+            sg.Tab('TIME', layout_time),
             ]])
         ]]
 
