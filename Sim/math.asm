@@ -2,7 +2,7 @@
 ; math.asm begin
 ; ###
 
-#once     
+#once
 #bank rom
 
 add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
@@ -168,7 +168,7 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
   
 multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
     ; ******
-    ; multiply8_fast takes two 8 bit params and multiplies them.
+    ; multiply8_fast takes two unsigned 8 bit params and multiplies them.
     ; returns 16bit summation to result pointer
     ; ******
 

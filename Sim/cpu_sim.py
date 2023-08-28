@@ -3,6 +3,7 @@ import sys
 import getopt
 import warnings
 import rpyc
+import json
 import yaml
 from PIL import Image, ImageTk
 import PySimpleGUI as sg
@@ -73,7 +74,7 @@ def main():
 
     clk_counter = 0
 
-    UPDATE_RATE = 10000
+    UPDATE_RATE = 1#10000
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -163,7 +164,7 @@ def main():
         [sg.T('D   '), sg.T('0x0000', **DEFAULT_REG_LAYOUT, key='_D_')],
         [sg.T('DATA'), sg.T('0x00  ', **DEFAULT_REG_LAYOUT, key='_DATA_')],
         [sg.T('ADDR'), sg.T('0x0000', **DEFAULT_REG_LAYOUT, key='_ADDR_')],
-        [sg.T('STPR'), sg.T('0x0000', **DEFAULT_REG_LAYOUT, key='_STPR_')]
+        [sg.T('STPR'), sg.T('0x0000', **DEFAULT_REG_LAYOUT, key='_STPR_')],
     ]
 
     DEFAULT_INDICATOR_LAYOUT = {
@@ -181,14 +182,23 @@ def main():
         [],
         [sg.Button('STEP'), sg.Button('STEP Inst.')],
         [sg.Button('Resume')],
-        [sg.T('CLK '), sg.T(
+        [sg.T('CLK  '), sg.T(
             text='',
-            size=(12,1),
+            size=(13,1),
             justification='left',
             text_color='black',
             background_color='white',
             key='_CNT_'
         )],
+        [sg.T('INST '), sg.T(
+            text='inst??',
+            size=(1,1),
+            justification='left',
+            text_color='black',
+            background_color='white',
+            font=('courier new',8),
+            key='_INST_NAME_')
+        ],
         [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))],
         [sg.Image(key="-MAP-", size=(128,128))]
     ]
@@ -237,7 +247,6 @@ def main():
         byte = file.read(1)
         if not byte:
             break
-        #print(byte)
         mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
         eep_ptr+=1
 
@@ -250,6 +259,7 @@ def main():
         values = None
 
     inst = []
+    inst_names = {}
 
     with open('instruction_set.yaml', 'r') as stream:
         try:
@@ -258,6 +268,7 @@ def main():
             for key, value in IS['instructions'].items():
                 if key != 'default':
                     inst[int(value['opcode'])] = value['ucode']
+                    inst_names[int(value['opcode'])] = key
 
             while True:
                 if GUI:
@@ -437,7 +448,7 @@ def main():
                 # handle ucode
                 ctrl = dict.fromkeys(ctrl, 0)
                 if isinstance(inst[ii.value], dict):
-                    # branch/conditional instruciton
+                    # branch/conditional instruction
                     condition = True
                     for c in inst[ii.value]['conditions']:
                         if not flags[c]:
@@ -446,12 +457,12 @@ def main():
                         for u in inst[ii.value][condition][UCC]:
                             ctrl[u] = 1
 
-                # normal seqeunctial instruciton
+                # normal sequential instruction
                 elif  UCC < len(inst[ii.value]):
                     for u in inst[ii.value][UCC]:
                         ctrl[u] = 1
 
-                    # handle the assert instuctions. Only do anything on the last cycle
+                    # handle the assert instructions. Only do anything on the last cycle
                     if ctrl['RU']:
                         if ii.value == int(IS['instructions']['assert_a']['opcode']):
                             if mems.get(addr) == A.value:
@@ -480,6 +491,7 @@ def main():
                             finish_inst = False
 
                     if event is None or event == 'Exit':
+                        print()
                         break
 
                     if clk_counter % UPDATE_RATE == 0 or breakpt:
@@ -501,6 +513,11 @@ def main():
                         window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
                         window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
                         window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
+
+                        if  ii.value in inst_names:
+                            window['_INST_NAME_'].Update(inst_names[ii.value])
+                        else:
+                            window['_INST_NAME_'].Update("?")
 
 
                         for ctrl_sig,val in ctrl.items():

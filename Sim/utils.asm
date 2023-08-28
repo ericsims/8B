@@ -1,43 +1,45 @@
 ;unsigned itoa for a single byte, base 10
 #bank rom
 uitoa_b:
-    sti 0x00, .buffer+0 ; zero out buffer
-    sti 0x00, .buffer+1
-    sti 0x00, .buffer+2
-    sti 0x00, .buffer+3
-    sti 0x00, .byte_counter ; zero out byte counter
+    store #0x00, .buffer+0 ; zero out buffer
+    store #0x00, .buffer+1
+    store #0x00, .buffer+2
+    store #0x00, .buffer+3
+    store #0x00, .byte_counter ; zero out byte counter
 
     .digit_loop:
-        lda .input_byte ; 
-        sta mult_A
-        sti 10, mult_B
-        cal divide ; divide input_byte by 10. result will be stored to mult_res and remainder in mult_A
-        lda mult_A ; remainder
-        lbi 0x30 ; load '0' in ASCII
-        add
-        sta mult_A ; use mult_A as scratch registor for ascii representation of remainder
+        load a, .input_byte ; 
+        store a, mult_A
+        store #10, mult_B
+        call divide ; divide input_byte by 10. result will be stored to mult_res and remainder in mult_A
+        load a, mult_A ; remainder
+        load b, #0x30 ; load '0' in ASCII
+        add a, b
+        store a, mult_A ; use mult_A as scratch registor for ascii representation of remainder
                 
-        lai .buffer[7:0]+3 ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
-        ldb .byte_counter
-        sub
-        pha
-        lai 0x80
-        pha
+        load a, #.buffer[7:0]+3 ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
+        load b, .byte_counter
+        sub a, b
+        push a
+        load a, #0x80
+        push a
         
-        lda mult_A  ; save ascii encoded remainder to buffer
-        ssa
+        load a, mult_A  ; save ascii encoded remainder to buffer
+        popw hl
+        store a, (hl)
+        ;ssa
         
-        lda .byte_counter ; increment byte counter
-        lbi 0x01
-        add
-        sta .byte_counter
+        load a, .byte_counter ; increment byte counter
+        load b, #0x01
+        add a, b
+        store a, .byte_counter
         
-        lda mult_res ; save devision result back to input_byte and process next digit_loop
-        sta .input_byte
+        load a, mult_res ; save devision result back to input_byte and process next digit_loop
+        store a, .input_byte
         
-        lda .input_byte; check if input_byte is non-zero
-        lbi 0x00
-        add
+        load a, .input_byte; check if input_byte is non-zero
+        load b, #0x00
+        add a, b
         jmz .break_digit_loop
         
         jmp .digit_loop
@@ -46,55 +48,61 @@ uitoa_b:
     .break_digit_loop:    
     
     .shift_buffer:
-        sti 0x00, .shift_counter ; zero out shift counter
-        lda .buffer+0 ; load first byte in buffer
-        lbi 0x00
-        add
+        store #0x00, .shift_counter ; zero out shift counter
+        load a, .buffer+0 ; load first byte in buffer
+        load b, #0x00
+        add a, b
         jnz .done ; if the first byte is non zero, the the buffer is left aligned
 
         
     .shift_buffer_loop:
-        ;save destination ptr to stack
-        lai .buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
-        ldb .shift_counter
-        add
-        pha
-        lai 0x80
-        pha
+        ;save destination ptr to store a,ck
+        load a, #.buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
+        load b, ldb .shift_counter
+        add a, b
+        push a
+        load a, #0x80
+        push a
         
-        lda .shift_counter
-        lbi 0x01
-        add
-        sta .shift_counter
+        load a, .shift_counter
+        load b, #0x01
+        add a, b
+        store a, .shift_counter
         
-        ; save source ptr to stack
-        lai .buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
-        ldb .shift_counter
-        add
-        pha
-        lai 0x80
-        pha
+        ; save source ptr to store a,ck
+        load a, #.buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
+        load b, .shift_counter
+        add a, b
+        push a
+        load a, #0x80
+        push a
         
-        lsa ; load buffer[shift_counter+1] to A
+        popw hl 
+        load a, (hl)
+        ;lsa ; load buffer[shift_counter+1] to A
         
-        ssa ; save buffer[shift_counter+1] to buffer[shift_counter]
+        popw hl 
+        store a, (hl)
+        ;ssa ; save buffer[shift_counter+1] to buffer[shift_counter]
         
-        lda .shift_counter
-        lbi 0x03
-        sub
+        load a, .shift_counter
+        load b, #0x03
+        sub a, b
         jnz .shift_buffer_loop
         
         ; null term
-        ;save source ptr to stack
-        lai .buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
-        ldb .shift_counter
-        add
-        pha
-        lai 0x80
-        pha
+        ;save source ptr to store a,ck
+        load a, .buffer[7:0] ; load buffer pointer TODO: this only works if the buffer doesn't cross an 8bit address boundry!!
+        load b, .shift_counter
+        add a, b
+        push a
+        load a, #0x80
+        push a
         
-        lai 0x00 ; null terminate the string
-        ssa
+        load a, #0x00 ; null terminate the string
+        popw hl 
+        store a, (hl)
+        ; ssa
         
         jmp .shift_buffer
     
@@ -118,8 +126,8 @@ uitoa_b:
 #bank rom
 uart_putc:
     ; TODO: check if UART is ready
-    lda .char
-    sta UART
+    load a, .char
+    store a, UART
     ret
     
 #bank ram
@@ -131,28 +139,30 @@ uart_putc:
 ; TODO: this funciton doesn't check if the UART is ready to send
 #bank rom
 uart_print:
-    lda .data_pointer+1
-    pha
-    lda .data_pointer
-    pha
+    load a, .data_pointer+1
+    push a
+    load a, .data_pointer
+    push a
     
-    lsa
-    lbi 0x00
-    add
+    popw hl
+    load a, (hl)
+    ;lsa
+    load b, #0x00
+    add a, b
     
     jmz .done
     
-    sta uart_putc.char
-    cal uart_putc
+    store a, uart_putc.char
+    call uart_putc
     
-    lda .data_pointer+1 ; increment data_pointer
-    lbi 0x01
-    add
-    sta .data_pointer+1
+    load a, .data_pointer+1 ; increment data_pointer
+    load b, #0x01
+    add a, b
+    store a, .data_pointer+1
     jnc .pass ; deal with carry for strings that crosses an 8bit address boundry
-    lda .data_pointer
-    add
-    sta .data_pointer
+    load a, .data_pointer
+    add a, b
+    store a, .data_pointer
     
     .pass:
         
@@ -169,7 +179,7 @@ uart_print:
 ; TODO: this funciton doesn't check if the UART is ready to send      
 #bank rom
 uart_println:
-    cal uart_print
-    sti "\n", uart_putc.char
-    cal uart_putc
+    call uart_print
+    store #"\n", uart_putc.char
+    call uart_putc
     ret
