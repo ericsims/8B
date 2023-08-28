@@ -13,12 +13,12 @@ class MEMS:
         self.uart = UART()
         self.motor = MOTOR(self.sim)
                
-    def get(self,addr):
+    def get(self,addr,ignore_uninit=False):
         addr = addr & 0xFFFF
         if addr >=0 and addr <= 0x7FFF:
             return self.eeprom.get(addr)
         elif addr >= 0x8000 and addr <= 0xBFFF:
-            return self.sram.get(addr)
+            return self.sram.get(addr,ignore_uninit=ignore_uninit)
         elif addr >= 0xC000 and addr <= 0xC3FF:
             return self.dpram.get(addr)
         elif addr >= 0xD002 and addr <= 0xD003:

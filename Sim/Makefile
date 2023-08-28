@@ -18,7 +18,7 @@ tests: $(INST_SET) $(TEST_BINS) $(LUTS)
 $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(@D)
 	${CC} -f binary -o $@ $<
-	@${CC} -f annotated -o $@.annotated $< > /dev/null
+	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
 	@echo ""
 
 

@@ -11,28 +11,6 @@ call static_uart_print
 
 storew #str_2, static_uart_print.data_pointer
 call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
-storew #str_2, static_uart_print.data_pointer
-call static_uart_print
 
 halt
 

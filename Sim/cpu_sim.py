@@ -15,6 +15,9 @@ from REG import REG
 from RAM_STACK import STACK
 from MEMS import MEMS
 
+from parse_vars import *
+
+
 def main():
 
     FILE_NAME = 'bin/01_test_a_reg.bin' # default file
@@ -74,7 +77,7 @@ def main():
 
     clk_counter = 0
 
-    UPDATE_RATE = 1#10000
+    UPDATE_RATE = 10000
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -276,11 +279,22 @@ def main():
             ]
         ], vertical_alignment='t' )
     ]]
+    layout_vars = [[
+        sg.Multiline(
+            size=(100,70),
+            font=('courier new',8),
+            justification='left',
+            text_color='black',
+            background_color='white',
+            key='_VARS_'
+        )
+    ]]
 
     tabs_layout = [[
         sg.TabGroup([[
-            sg.Tab('SRAM 1', layout_sram),
-            sg.Tab('STACK 2', layout_stack)
+            sg.Tab('SRAM', layout_sram),
+            sg.Tab('STACK', layout_stack),
+            sg.Tab('VARS', layout_vars),
             ]])
         ]]
 
@@ -312,6 +326,9 @@ def main():
         eep_ptr+=1
 
     file.close()
+
+    vars = parse_vars(FILE_NAME)
+    max_var_width = max([len(list(var.keys())[0]) for var in vars])
 
     if GUI:
         event, values = window.Read(timeout=0)
@@ -611,6 +628,39 @@ def main():
                         window['_STACK_'].update(stack_values)
                         window['_STACK_USAGE_'].update(stack.pointer)
                         window['_STACK_MAX_USAGE_'].update(stack.max_used)
+
+                        var_values = ""
+                        for var in vars:
+                            # print(var, max_var_width)
+                            var_name = list(var.keys())[0]
+                            var_addr = list(var.values())[0]
+                            var_bytes = [None]*4
+                            for n in range(len(var_bytes)):
+                                var_bytes[n] = mems.get(var_addr+n,ignore_uninit=True)
+                            
+                            var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} "
+                            if var_bytes[0] is not None:
+                                var_values += f"0x{var_bytes[0]:02X} "
+                            else:
+                                var_values += "?"
+                            if not (None in var_bytes[0:1]):
+                                var_values += f"0x{var_bytes[0]:02X}{var_bytes[1]:02X} "
+                            if not (None in var_bytes):
+                                var_values += f"0x{var_bytes[0]:02X}{var_bytes[1]:02X}{var_bytes[2]:02X}{var_bytes[3]:02X} "
+                            var_values += "\n"
+
+                            # if mems.get(var_addr+1,ignore_uninit=True) is not None:
+
+                            
+                            # try:
+                            # var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} 0x{mems.get(var_addr,ignore_uninit=True):02X}, 0x{(mems.get(var_addr,ignore_uninit=True)*256+mems.get(var_addr+1,ignore_uninit=True)):04X}\n"
+                            # except:
+                            #     try:
+                            #         var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} 0x{mems.get(var_addr,ignore_uninit=True):02X}\n"
+                            #     except:
+                            #         var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} ? \n"
+                        
+                        window['_VARS_'].update(var_values)
 
 
                         img = Image.new('L', [IMG_WID,IMG_HEI], 255)
