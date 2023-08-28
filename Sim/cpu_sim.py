@@ -77,7 +77,7 @@ def main():
 
     clk_counter = 0
 
-    UPDATE_RATE = 10000
+    UPDATE_RATE = 1#10000
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -250,6 +250,8 @@ def main():
                     justification='left',
                     text_color='black',
                     background_color='white',
+                    write_only = True,
+                    disabled = True,
                     key='_STACK_'
                 )
             ]
@@ -286,6 +288,8 @@ def main():
             justification='left',
             text_color='black',
             background_color='white',
+            write_only = True,
+            disabled = True,
             key='_VARS_'
         )
     ]]
@@ -296,6 +300,8 @@ def main():
             justification='left',
             text_color='black',
             background_color='white',
+            write_only = True,
+            disabled = True,
             key='_TIME_ANALYSIS_'
         )
     ]]
@@ -349,6 +355,7 @@ def main():
 
     inst = []
     inst_names = {}
+    inst_stats = {}
 
     with open('instruction_set.yaml', 'r') as stream:
         try:
@@ -358,6 +365,9 @@ def main():
                 if key != 'default':
                     inst[int(value['opcode'])] = value['ucode']
                     inst_names[int(value['opcode'])] = key
+                    inst_stats[key] = {
+                        'calls': 0,
+                    }
 
             while True:
                 if GUI:
@@ -488,6 +498,7 @@ def main():
                 # INST
                 if ctrl['II']:
                     ii.set(data)
+                    inst_stats[inst_names[ii.value]]['calls'] += 1
 
                 # A REG
                 if ctrl['AI']:
@@ -603,12 +614,6 @@ def main():
                         window['_CF_'].update(text_color=INDC_COLOR[flags['CF']])
                         window['_NF_'].update(text_color=INDC_COLOR[flags['NF']])
 
-                        if  ii.value in inst_names:
-                            window['_INST_NAME_'].update(inst_names[ii.value])
-                        else:
-                            window['_INST_NAME_'].update("?")
-
-
                         for ctrl_sig,val in ctrl.items():
                             window[f'_{ctrl_sig}_'].update(text_color=INDC_COLOR[val>0])
 
@@ -654,25 +659,24 @@ def main():
                                 var_values += f"0x{var_bytes[0]:02X} "
                             else:
                                 var_values += "?"
-                            if not (None in var_bytes[0:1]):
+                            if not (None in var_bytes[0:2]):
                                 var_values += f"0x{var_bytes[0]:02X}{var_bytes[1]:02X} "
                             if not (None in var_bytes):
                                 var_values += f"0x{var_bytes[0]:02X}{var_bytes[1]:02X}{var_bytes[2]:02X}{var_bytes[3]:02X} "
-                            var_values += "\n"
-
-                            # if mems.get(var_addr+1,ignore_uninit=True) is not None:
-
-                            
-                            # try:
-                            # var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} 0x{mems.get(var_addr,ignore_uninit=True):02X}, 0x{(mems.get(var_addr,ignore_uninit=True)*256+mems.get(var_addr+1,ignore_uninit=True)):04X}\n"
-                            # except:
-                            #     try:
-                            #         var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} 0x{mems.get(var_addr,ignore_uninit=True):02X}\n"
-                            #     except:
-                            #         var_values += f"0x{var_addr:04X} {var_name:<{max_var_width}} ? \n"
-                        
+                            var_values += "\n"                        
                         window['_VARS_'].update(var_values)
 
+                        if  ii.value in inst_names:
+                            window['_INST_NAME_'].update(inst_names[ii.value])
+                        else:
+                            window['_INST_NAME_'].update("?")
+
+                        inst_stats_str = ""
+                        for x in sorted(inst_stats.items(), key=lambda item: item[1]['calls'], reverse=True):
+                            name = x[0]
+                            stats = x[1]
+                            inst_stats_str += f"{name:<20} {stats}\n"
+                        window['_TIME_ANALYSIS_'].update(inst_stats_str)  
 
                         img = Image.new('L', [IMG_WID,IMG_HEI], 255)
                         pixels = img.load()

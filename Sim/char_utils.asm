@@ -35,7 +35,7 @@ static_uart_print:
     ; instead of calling put c this is faster...
     store a, UART
     
-    loadw hl, .data_pointer
+    ; loadw hl, .data_pointer ; dont need to load again
     addw hl, #0x01
     storew hl, .data_pointer        
     jmp static_uart_print
