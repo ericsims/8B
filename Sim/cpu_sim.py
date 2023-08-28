@@ -16,6 +16,7 @@ from RAM_STACK import STACK
 from MEMS import MEMS
 
 from parse_vars import *
+from print_call_graph import *
 
 
 def main():
@@ -77,7 +78,7 @@ def main():
 
     clk_counter = 0
 
-    UPDATE_RATE = 1#10000
+    UPDATE_RATE = 10000
 
     IMG_HEI = 80
     IMG_WID = 101
@@ -344,7 +345,7 @@ def main():
 
     file.close()
 
-    vars = parse_vars(FILE_NAME)
+    vars, symbols = parse_vars(FILE_NAME)
     max_var_width = max([len(list(var.keys())[0]) for var in vars])
 
     if GUI:
@@ -356,6 +357,8 @@ def main():
     inst = []
     inst_names = {}
     inst_stats = {}
+    call_graph = [0x0000]
+    previous_pc = 0x0000
 
     with open('instruction_set.yaml', 'r') as stream:
         try:
@@ -535,11 +538,19 @@ def main():
                 elif ctrl['NI']:
                     stack.set(data,ctrl['LM'])
 
+                # check if this is a jmp/call/ret instruction
+                if ctrl['PI'] and ctrl['RU']:
+                    # if call_graph[-1] != previous_pc:
+                    #     call_graph.append(previous_pc)
+                    call_graph.append(pc.value)
 
                 # U CODE
                 UCC = (UCC + 1) & 0x1F
                 if ctrl['RU']:
                     UCC = 0
+                
+                if UCC == 0:
+                    previous_pc = pc.value
 
 
 
@@ -707,6 +718,8 @@ def main():
 
             print(f"max stack usage {stack.max_used} bytes")
             print(f"clk cycles {clk_counter}")
+
+            print_call_graph(call_graph, symbols)
 
             if GUI:
                 window.close()

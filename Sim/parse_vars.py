@@ -19,7 +19,7 @@ def parse_vars(file_name):
                      pass
         except:
             print(f"An exception occurred loading {symbols_file_path}")
-            return vars
+            return vars, symbols
 
     with open(annotations_file_path, 'r') as annotations_file:
         try:
@@ -29,7 +29,7 @@ def parse_vars(file_name):
                 try:
                     # print(f"l: {dat}")
                     addr = int(dat[1], 16)
-                    # TODO: RAM rang is hard coded
+                    # TODO: RAM range is hard coded
                     if addr >= 0x8000 and addr <= 0xBFFF:
                         # print(f"{symbols[addr]}")
                         vars.append({symbols[addr]: addr})
@@ -37,7 +37,7 @@ def parse_vars(file_name):
                     pass    
         except:
             print(f"An exception occurred loading {annotations_file_path}")
-            return vars
+            return vars, symbols
     # print(vars)
     
-    return vars
+    return vars, symbols
