@@ -184,7 +184,7 @@ def main():
         [sg.Button('Resume')],
         [sg.T('CLK  '), sg.T(
             text='',
-            size=(13,1),
+            size=(12,1),
             justification='left',
             text_color='black',
             background_color='white',
@@ -192,15 +192,27 @@ def main():
         )],
         [sg.T('INST '), sg.T(
             text='inst??',
-            size=(1,1),
+            size=(21,1),
             justification='left',
             text_color='black',
             background_color='white',
-            font=('courier new',8),
+            font=('courier new',7),
             key='_INST_NAME_')
         ],
         [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))],
-        [sg.Image(key="-MAP-", size=(128,128))]
+        [sg.Image(key="-MAP-", size=(128,128))],
+        [sg.T('UART')],
+        [
+            sg.Multiline(
+                size=(30,24),
+                autoscroll=True,
+                font=('courier new',7),
+                justification='left',
+                text_color='black',
+                background_color='white',
+                key='_UART_'
+            )
+        ]
     ]
 
     layout_ctrl = [
@@ -214,30 +226,79 @@ def main():
         ])
 
 
-    layout_mem = [
-        [sg.T('SRAM')],
-        [
-            sg.T(text='',
+    layout_sram = [[
+        sg.T(
+            text='',
             size=(128*3+16,128),
             font=('courier new',6),
             justification='left',
             text_color='black',
             background_color='white',
-            key='_SRAM_')
-        ]
-    ]
+            key='_SRAM_'
+        )
+    ]]
+    layout_stack = [[
+        sg.Column([
+            [
+                sg.Multiline(
+                    size=(12,70),
+                    autoscroll=True,
+                    font=('courier new',8),
+                    justification='left',
+                    text_color='black',
+                    background_color='white',
+                    key='_STACK_'
+                )
+            ]
+        ], vertical_alignment='t' ),
+        sg.Column([
+            [
+                sg.T('Current Usage   '),
+                sg.T(
+                    text='',
+                    size=(12,1),
+                    justification='left',
+                    text_color='black',
+                    background_color='white',
+                    key='_STACK_USAGE_'
+                )
+            ],
+            [
+                sg.T('Max Stack Usage '),
+                sg.T(
+                    text='',
+                    size=(12,1),
+                    justification='left',
+                    text_color='black',
+                    background_color='white',
+                    key='_STACK_MAX_USAGE_'
+                )
+            ]
+        ], vertical_alignment='t' )
+    ]]
+
+    tabs_layout = [[
+        sg.TabGroup([[
+            sg.Tab('SRAM 1', layout_sram),
+            sg.Tab('STACK 2', layout_stack)
+            ]])
+        ]]
 
     layout = [[
-        sg.Column(layout_regs, vertical_alignment='t'),
-        sg.Column(layout_ctrl, vertical_alignment='t'),
+        sg.Column(layout_regs,  vertical_alignment='t'),
+        sg.Column(layout_ctrl,  vertical_alignment='t'),
         sg.Column(layout_flags, vertical_alignment='t'),
-        sg.Column(layout_mem, vertical_alignment='t')
+        sg.Column(tabs_layout,  vertical_alignment='t')
     ]]
 
     if GUI:
         window = sg.Window('8B', layout, font=('courier new',11))
     else:
         window = None
+
+    def update_uart(char):
+        window['_UART_'].update(char, append=True)
+    mems.uart.callback = update_uart
 
     INDC_COLOR = ['gray', 'green']
 
@@ -495,37 +556,37 @@ def main():
                         break
 
                     if clk_counter % UPDATE_RATE == 0 or breakpt:
-                        window['_PC_'].Update(f"0x{pc.value:04X}")
-                        window['_MAR_'].Update(f"0x{mar.value:04X}")
-                        window['_INST_'].Update(f"0x{ii.value:02X}")
-                        window['_UCC_'].Update(f"0x{UCC:02X}")
-                        window['_A_'].Update(f"0x{A.value:02X}")
-                        window['_B_'].Update(f"0x{B.value:02X}")
-                        window['_HL_'].Update(f"0x{HL.value:04X}")
-                        window['_X_'].Update(f"0x{X.value:02X}")
-                        window['_Y_'].Update(f"0x{Y.value:02X}")
-                        window['_J_'].Update(f"0x{J.value:04X}")
-                        window['_K_'].Update(f"0x{K.value:04X}")
-                        window['_D_'].Update(f"0x{D.value:04X}")
-                        window['_DATA_'].Update(f"0x{data:02X}")
-                        window['_ADDR_'].Update(f"0x{addr:04X}")
+                        window['_PC_'].update(f"0x{pc.value:04X}")
+                        window['_MAR_'].update(f"0x{mar.value:04X}")
+                        window['_INST_'].update(f"0x{ii.value:02X}")
+                        window['_UCC_'].update(f"0x{UCC:02X}")
+                        window['_A_'].update(f"0x{A.value:02X}")
+                        window['_B_'].update(f"0x{B.value:02X}")
+                        window['_HL_'].update(f"0x{HL.value:04X}")
+                        window['_X_'].update(f"0x{X.value:02X}")
+                        window['_Y_'].update(f"0x{Y.value:02X}")
+                        window['_J_'].update(f"0x{J.value:04X}")
+                        window['_K_'].update(f"0x{K.value:04X}")
+                        window['_D_'].update(f"0x{D.value:04X}")
+                        window['_DATA_'].update(f"0x{data:02X}")
+                        window['_ADDR_'].update(f"0x{addr:04X}")
 
-                        window['_ZF_'].Update(text_color=INDC_COLOR[flags['ZF']])
-                        window['_CF_'].Update(text_color=INDC_COLOR[flags['CF']])
-                        window['_NF_'].Update(text_color=INDC_COLOR[flags['NF']])
+                        window['_ZF_'].update(text_color=INDC_COLOR[flags['ZF']])
+                        window['_CF_'].update(text_color=INDC_COLOR[flags['CF']])
+                        window['_NF_'].update(text_color=INDC_COLOR[flags['NF']])
 
                         if  ii.value in inst_names:
-                            window['_INST_NAME_'].Update(inst_names[ii.value])
+                            window['_INST_NAME_'].update(inst_names[ii.value])
                         else:
-                            window['_INST_NAME_'].Update("?")
+                            window['_INST_NAME_'].update("?")
 
 
                         for ctrl_sig,val in ctrl.items():
-                            window[f'_{ctrl_sig}_'].Update(text_color=INDC_COLOR[val>0])
+                            window[f'_{ctrl_sig}_'].update(text_color=INDC_COLOR[val>0])
 
-                        window['_STPR_'].Update(f"0x{stack.get_pointer():04X}")
+                        window['_STPR_'].update(f"0x{stack.get_pointer():04X}")
 
-                        window['_CNT_'].Update(f"{clk_counter:,}")
+                        window['_CNT_'].update(f"{clk_counter:,}")
 
                         sram_values = ""
                         for n in range(2**14):
@@ -541,7 +602,15 @@ def main():
                             if (n+1)%8 == 0:
                                 sram_values += " "
 
-                        window['_SRAM_'].Update(sram_values)
+                        window['_SRAM_'].update(sram_values)
+
+                        stack_values = ""
+                        for n in range(stack.starting_addr,stack.starting_addr-stack.pointer,-1):
+                            stack_values += f"0x{n:04X}:  {mems.get(n):02X}\n"
+
+                        window['_STACK_'].update(stack_values)
+                        window['_STACK_USAGE_'].update(stack.pointer)
+                        window['_STACK_MAX_USAGE_'].update(stack.max_used)
 
 
                         img = Image.new('L', [IMG_WID,IMG_HEI], 255)
@@ -579,8 +648,6 @@ def main():
 
         except yaml.YAMLError as exc:
             print(exc)
-
-
 
 if __name__ == "__main__":
     main()
