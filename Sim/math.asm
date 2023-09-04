@@ -5,6 +5,205 @@
 #once
 #bank rom
 
+#bank ram
+static_x_32: ; input x
+    #res 4
+static_y_32: ; input y
+    #res 4
+static_z_32: ; input z
+    #res 4
+static_cf: ; carry flag
+    #res 1
+
+#bank rom
+
+static_add32: ; x+y=z
+    ; ******
+    ; add32 takes two 32 bit params and adds them.
+    ; returns 32bit summation in staic_z_32. carry flag is left in b register.
+    ; WARNGING: this funciton contamintes the x input var
+    ; ******
+
+    ; __prologue
+    ; push #0x00    ; init cf=0
+    ; pushw #0x1111 ; init z=0
+    ; pushw #0x1111 ; init z=0
+
+
+    .add_byte1:
+        ; __load_local b, .x-3
+        load b, static_x_32+3
+        ; __load_local a, .y-3
+        load a, static_y_32+3
+        add a, b
+        jmc .handle_first_carry1
+        ; __store_local a, .z-3
+        store a, static_z_32+1
+        jmp .add_byte2
+    .handle_first_carry1:
+        ; __store_local a, .z-3
+        store a, static_z_32+3
+        ; __load_local a, .x-2
+        load a, static_x_32+2
+        add a, #0x01
+        jmc .handle_first_carry2
+        ; __store_local a, .x-2
+        store a, static_x_32+2
+        jmp .add_byte2
+    .handle_first_carry2:
+        ; __store_local a, .x-2
+        store a, static_x_32+2
+        ; __load_local a, .x-1
+        load a, static_x_32+1
+        add a, #0x01
+        jmc .handle_first_carry3
+        ; __store_local a, .x-1
+        store a, static_x_32+1
+        jmp .add_byte2
+    .handle_first_carry3:
+        ; __store_local a, .x-1
+        store a, static_x_32+1
+        ; __load_local a, .x
+        load a, static_x_32
+        add a, #0x01
+        jmc .handle_first_carry4
+        ; __store_local a, .x
+        store a, static_x_32
+        jmp .add_byte2
+    .handle_first_carry4:
+        ; __store_local a, .x
+        store a, static_x_32
+        ; load a, #0x01
+        ; __store_local a, .cf
+        store #0x01, static_cf
+
+
+    .add_byte2:
+        ; __load_local b, .x-2
+        load b, static_x_32+2
+        ; __load_local a, .y-2
+        load a, static_y_32+2
+        add a, b
+        jmc .handle_second_carry2
+        ; __store_local a, .z-2
+        store a, static_z_32+2
+        jmp .add_byte3
+    .handle_second_carry2:
+        ; __store_local a, .z-2
+        store a, static_z_32+2
+        ; __load_local a, .x-1
+        load a, static_x_32+1
+        add a, #0x01
+        jmc .handle_second_carry3
+        ; __store_local a, .x-1
+        store a, static_x_32+1
+        jmp .add_byte3
+    .handle_second_carry3:
+        ; __store_local a, .x-1
+        store a, static_x_32+1
+        ; __load_local a, .x
+        load a, static_x_32
+        add a, #0x01
+        jmc .handle_second_carry4
+        ; __store_local a, .x
+        store a, static_x_32
+        jmp .add_byte3
+    .handle_second_carry4:
+        ; __store_local a, .x
+        store a, static_x_32
+        ; load a, #0x01
+        ; __store_local a, .cf
+        store #0x01, static_cf
+
+
+    .add_byte3:
+        ; __load_local b, .x-1
+        load b, static_x_32+1
+        ; __load_local a, .y-1
+        load a, static_y_32+1
+        add a, b
+        jmc .handle_third_carry3
+        ; __store_local a, .z-1
+        load a, static_z_32+1
+        jmp .add_byte4
+    .handle_third_carry3:
+        ; __store_local a, .z-1
+        store a, static_z_32+1
+        ; __load_local a, .x
+        load a, static_x_32
+        add a, #0x01
+        jmc .handle_third_carry4
+        ; __store_local a, .x
+        store a, static_x_32
+        jmp .add_byte4
+    .handle_third_carry4:
+        ; __store_local a, .x
+        store a, static_x_32
+        ; load a, #0x01
+        ; __store_local a, .cf
+        store #0x01, static_cf
+
+
+    .add_byte4:
+        ; __load_local b, .x
+        load b, static_x_32
+        ; __load_local a, .y
+        load a, static_y_32
+        add a, b
+        jmc .handle_fourth_carry4
+        ; __store_local a, .z
+        store a, static_z_32
+        jmp .done
+    .handle_fourth_carry4:
+        ; __store_local a, .z
+        store a, static_z_32
+        ; load a, #0x01
+        ; __store_local a, .cf
+        store #0x01, static_cf
+
+    .done:
+        ret
+
+    ; .done:
+    ;     ; save the 4 bytes off to the resultant array location
+    ;     __load_local a, .res_addr
+    ;     push a
+    ;     __load_local a, .res_addr-1
+    ;     push a
+    ;     popw hl
+    ;     addw hl, #0x03
+    ;     pop a
+    ;     store a, (hl)
+
+    ;     __load_local a, .res_addr
+    ;     push a
+    ;     __load_local a, .res_addr-1
+    ;     push a
+    ;     popw hl
+    ;     addw hl, #0x02
+    ;     pop a
+    ;     store a, (hl)
+
+    ;     __load_local a, .res_addr
+    ;     push a
+    ;     __load_local a, .res_addr-1
+    ;     push a
+    ;     popw hl
+    ;     addw hl, #0x01
+    ;     pop a
+    ;     store a, (hl)
+
+    ;     __load_local a, .res_addr
+    ;     push a
+    ;     __load_local a, .res_addr-1
+    ;     push a
+    ;     popw hl
+    ;     pop a
+    ;     store a, (hl)
+
+    ;     pop b ; save cf to b register
+
+        ; __epilogue
 add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
     ; ******
     ; add32 takes two 32 bit params and adds them.
