@@ -212,3 +212,4 @@ DPRAM           = 0xC000
 MOT_ENC         = 0xD002
 MOT_CTRL        = 0xD003
 UART            = 0xD008
+EXT_ROM         = 0xD00C

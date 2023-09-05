@@ -119,9 +119,9 @@ control_signals:
     active: low
 
 input:
-  - ucode_count: # ucode counter keyword. dont change
+  - ucode_count: # ucode counter keyword. don't change
     bits: 6
-  - instruction: # instruction keyword. dont change
+  - instruction: # instruction keyword. don't change
     bits: 8
   - ZF:
     description: 'Zero Flag'
@@ -1811,8 +1811,8 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    # setup for jump. PC need to be incremetned first, so that the corret ret address is put onto the stack
-    - [MC, CE]             # Incrment MAR to point to destination address. Increment PC to skip MSB of destination address
+    # setup for jump. PC need to be incremented first, so that the correct ret address is put onto the stack
+    - [MC, CE]             # Increment MAR to point to destination address. Increment PC to skip MSB of destination address
     - [CE]                 # Increment PC to skip LSB of destination address
     # save PC to stack
     - [PO, SI, LM]         # save PC MSB to stack
@@ -1839,7 +1839,7 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    # pop corret ret address is put off of the stack
+    # pop correct ret address is put off of the stack
     - [IS]
     - [SO, DI]             # pop LSB into D
     - [IS]
@@ -1946,7 +1946,7 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [HT, RU]             # Halt
 
-  default: #default keyword. dont change. 
+  default: #default keyword. don't change. 
     description: 'description'
     duration: 3 # clock cycles
     operands: 0 # bytes

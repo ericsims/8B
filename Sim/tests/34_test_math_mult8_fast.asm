@@ -1,7 +1,7 @@
 #include "../CPU.asm"
 
 #bank ram
-sum: #res 2 ; base pointer for function calls
+sum: #res 2 ;result poitbed
 
 
 #bank rom
@@ -11,12 +11,12 @@ init_pointers:
 loadw sp, #0xBFFF
 storew #0x0000, BP
 
-a=0xFF
-b=0xFF
+val_a=0xFF
+val_b=0xFF
 
 
-push #{a}
-push #{b}
+push #{val_a}
+push #{val_b}
 pushw #sum
 
 call multiply8_fast
@@ -30,7 +30,7 @@ pop a
 
 loadw hl, sum
 
-assert hl, #(a*b)
+assert hl, #(val_a*val_b)
 
 
 halt
