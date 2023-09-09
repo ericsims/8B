@@ -13,5 +13,4 @@ halt
 
 
 
-#include "../char_utils.asm"
-#include "../math.asm"
+#include "../lib/char_utils.asm"

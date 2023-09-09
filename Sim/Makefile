@@ -4,14 +4,14 @@ TEST_SRC_DIR=tests
 TEST_SRCS=$(wildcard $(TEST_SRC_DIR)/*.asm)
 TEST_BINS=$(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
 all-tests := $(addsuffix .test, $(basename $(TEST_BINS)))
-LUTS="" #"lut/sin_lut.dat"
+LUTS="lut/sin_lut.dat"
 INST_SET="instructions.asm"
 
 all: clean $(INST_SET) $(LUTS) tests 
 
-# "lut/sin_lut.dat":
-# 	@mkdir -p lut
-# 	jupyter nbconvert --execute sin_lut.ipynb --inplace	
+"lut/sin_lut.dat":
+	@mkdir -p lut
+	jupyter nbconvert --execute sin_lut.ipynb --inplace	
 
 tests: $(INST_SET) $(TEST_BINS) $(LUTS)
 

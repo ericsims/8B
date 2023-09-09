@@ -369,7 +369,10 @@ def main():
     window = None
 
   def update_uart(char):
-    window['_UART_'].update(char, append=True)
+    if GUI:
+      window['_UART_'].update(char, append=True)
+    else:
+      pass
   mems.uart.callback = update_uart
 
   INDC_COLOR = ['gray', 'green']
@@ -785,7 +788,7 @@ def main():
       print(f"max stack usage {stack.max_used} bytes")
       print(f"clk cycles {clk_counter}")
 
-      print_call_graph(call_graph, symbols)
+    #   print_call_graph(call_graph, symbols)
 
       if GUI:
         window.close()

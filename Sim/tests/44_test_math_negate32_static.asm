@@ -27,4 +27,4 @@ assert a, #0xED
 halt
 
 
-#include "../math.asm"
+#include "../lib/static_math.asm"

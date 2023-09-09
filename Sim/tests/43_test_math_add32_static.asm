@@ -32,4 +32,4 @@ assert a, #0x01
 halt
 
 
-#include "../math.asm"
+#include "../lib/static_math.asm"

@@ -18,5 +18,4 @@ str_1: #d "hello world\n\0"
 str_2: #d "This assembly thing seems to be working!!!\nyay.\n\0"
 
 
-#include "../char_utils.asm"
-#include "../math.asm"
+#include "../lib/char_utils.asm"

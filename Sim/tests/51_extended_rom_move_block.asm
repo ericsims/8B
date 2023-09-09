@@ -17,7 +17,7 @@ call static_ext_move_block
 done:
 halt 
 
-#include "../ext_mem_utils.asm"
+#include "../lib/ext_mem_utils.asm"
 
 #bank ram
 test_length = 0x51 ; about the len of this progam

@@ -922,7 +922,7 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [BO, XI]             # load B reg into ALU X.
-    - [SHR, BI, FI, RU]    # SHR, save to A reg, update flags. ucode counter reset
+    - [SHR, BI, FI, RU]    # SHR, save to B reg, update flags. ucode counter reset
 
   store_a_dir:
     description: 'Store a register value to direct address'

@@ -36,4 +36,4 @@ assert hl, #(val_a*val_b)
 halt
 
 
-#include "../math.asm"
+#include "../lib/math.asm"

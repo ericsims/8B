@@ -34,4 +34,4 @@ assert hl, #0x88EF
 halt
 
 
-#include "../math.asm"
+#include "../lib/math.asm"

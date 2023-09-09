@@ -41,4 +41,4 @@ pop a
 halt
 
 
-#include "../math.asm"
+#include "../lib/math.asm"
