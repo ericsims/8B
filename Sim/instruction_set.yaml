@@ -1670,9 +1670,9 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    - [MC]                 # Increment MAR to point to MSB of destiation address
+    - [MC]                 # Increment MAR to point to MSB of destination address
     - [PI, MO, LM]         # load PC with MSB of destination address
-    - [MC]                 # Increment MAR to point to LSB of destiation address
+    - [MC]                 # Increment MAR to point to LSB of destination address
     - [PI, MO, RU]         # load PC with LSB of destination address. ucode counter reset
 
   jmz:
@@ -1694,15 +1694,15 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [CE]             # Increment PC to skip distation address
-        - [CE, RU]         # Increment PC to skip distation address. ucode counter reset
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [MC]             # Increment MAR to point to MSB of destiation address
+        - [MC]             # Increment MAR to point to MSB of destination address
         - [PI, MO, LM]     # load PC with MSB of destination address
-        - [MC]             # Increment MAR to point to LSB of destiation address
+        - [MC]             # Increment MAR to point to LSB of destination address
         - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
   jnz:
     description: 'Jump if not Zero'
@@ -1723,16 +1723,16 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [MC]             # Increment MAR to point to MSB of destiation address
+        - [MC]             # Increment MAR to point to MSB of destination address
         - [PI, MO, LM]     # load PC with MSB of destination address
-        - [MC]             # Increment MAR to point to LSB of destiation address
+        - [MC]             # Increment MAR to point to LSB of destination address
         - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [CE]             # Increment PC to skip distation address
-        - [CE, RU]         # Increment PC to skip distation address. ucode counter reset
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
 
   jmc:
     description: 'Jump if Carry'
@@ -1753,15 +1753,15 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [CE]             # Increment PC to skip distation address
-        - [CE, RU]         # Increment PC to skip distation address. ucode counter reset
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [MC]             # Increment MAR to point to MSB of destiation address
+        - [MC]             # Increment MAR to point to MSB of destination address
         - [PI, MO, LM]     # load PC with MSB of destination address
-        - [MC]             # Increment MAR to point to LSB of destiation address
+        - [MC]             # Increment MAR to point to LSB of destination address
         - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
 
   jnc:
@@ -1783,16 +1783,16 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [MC]             # Increment MAR to point to MSB of destiation address
+        - [MC]             # Increment MAR to point to MSB of destination address
         - [PI, MO, LM]     # load PC with MSB of destination address
-        - [MC]             # Increment MAR to point to LSB of destiation address
+        - [MC]             # Increment MAR to point to LSB of destination address
         - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [CE]             # Increment PC to skip distation address
-        - [CE, RU]         # Increment PC to skip distation address. ucode counter reset
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
 
   call:
     description: 'Call Subroutine'
@@ -1811,8 +1811,8 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    # setup for jump. PC need to be incremetned first, so that the corret ret address is put onto the stack
-    - [MC, CE]             # Incrment MAR to point to destination address. Increment PC to skip MSB of destination address
+    # setup for jump. PC need to be incremented first, so that the correct ret address is put onto the stack
+    - [MC, CE]             # Increment MAR to point to destination address. Increment PC to skip MSB of destination address
     - [CE]                 # Increment PC to skip LSB of destination address
     # save PC to stack
     - [PO, SI, LM]         # save PC MSB to stack
@@ -1821,7 +1821,7 @@ instructions:
     - [DS]                 # decrement stack pointer
     # jump
     - [PI, MO, LM]         # load PC with MSB of destination address
-    - [MC]                 # Increment MAR to point to LSB of destiation address
+    - [MC]                 # Increment MAR to point to LSB of destination address
     - [PI, MO, RU]         # load PC with LSB of destination address. ucode counter reset
 
   ret:
@@ -1839,7 +1839,7 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    # pop corret ret address is put off of the stack
+    # pop correct ret address is put off of the stack
     - [IS]
     - [SO, DI]             # pop LSB into D
     - [IS]
