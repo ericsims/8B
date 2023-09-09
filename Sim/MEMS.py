@@ -2,6 +2,7 @@ from EEPROM import EEPROM
 from SRAM import SRAM
 from UART import UART
 from MOTOR import MOTOR
+from Extended_EEPROM import Extended_EEPROM
 
 
 class MEMS:
@@ -12,6 +13,7 @@ class MEMS:
         self.dpram = SRAM(2**10)
         self.uart = UART()
         self.motor = MOTOR(self.sim)
+        self.ext_eeprom = Extended_EEPROM()
                
     def get(self,addr,ignore_uninit=False):
         addr = addr & 0xFFFF
@@ -25,6 +27,8 @@ class MEMS:
             return self.motor.get(addr)
         elif addr == 0xD008:
             return self.uart.get(addr)
+        elif addr >= 0xD00C and addr <=0xD00F:
+            return self.ext_eeprom.get(addr)
         else:
             raise Exception("Tried to read mem at invalid addr 0x{:04X}".format(addr))
 
@@ -40,6 +44,10 @@ class MEMS:
             return self.motor.set(addr,V)
         elif addr == 0xD008:
             return self.uart.set(addr,V)
+        elif addr == 0xD008:
+            return self.uart.set(addr,V)
+        elif addr >= 0xD00C and addr <=0xD00F:
+            return self.ext_eeprom.set(addr,V)
         else:
             raise Exception("Tried to write mem at invalid addr 0x{:04X}".format(addr))
             

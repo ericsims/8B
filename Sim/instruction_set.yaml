@@ -119,9 +119,9 @@ control_signals:
     active: low
 
 input:
-  - ucode_count: # ucode counter keyword. dont change
+  - ucode_count: # ucode counter keyword. don't change
     bits: 6
-  - instruction: # instruction keyword. dont change
+  - instruction: # instruction keyword. don't change
     bits: 8
   - ZF:
     description: 'Zero Flag'
@@ -1946,7 +1946,7 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [HT, RU]             # Halt
 
-  default: #default keyword. dont change. 
+  default: #default keyword. don't change. 
     description: 'description'
     duration: 3 # clock cycles
     operands: 0 # bytes
