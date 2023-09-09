@@ -3,14 +3,14 @@
 
 #ruledef
 {
-    __load_ext_rom a, {addr: i16} =>
+  __load_ext_rom a, {addr: i16} =>
+  {
+    asm
     {
-        asm
-        {
-            storew #{addr}, EXT_ROM+1
-            load a, EXT_ROM
-        }
+      storew #{addr}, EXT_ROM+1
+      load a, EXT_ROM
     }
+  }
 }
 
 #bank rom

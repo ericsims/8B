@@ -82,7 +82,7 @@ def main():
 
   clk_counter = 0
 
-  UPDATE_RATE = 1#10000
+  UPDATE_RATE = 1000#10000
 
   IMG_HEI = 80
   IMG_WID = 101
