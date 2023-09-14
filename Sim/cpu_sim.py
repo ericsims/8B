@@ -390,7 +390,7 @@ def main():
 
   file.close()
 
-  vars, symbols = parse_vars(FILE_NAME)
+  vars, symbols, code = parse_vars(FILE_NAME)
   max_var_width = max([len(list(var.keys())[0]) for var in vars])
 
   if GUI:
@@ -547,6 +547,13 @@ def main():
         if ctrl['II']:
           ii.set(data)
           inst_stats[inst_names[ii.value]]['calls'] += 1
+          # print(pc.value)
+          # store dead code info
+          list_addrs = [c['addr'] for c in code]
+          indices = [i for i, x in enumerate(list_addrs) if x == pc.value-1]
+          for i in indices:
+            code[i]['execs'] += 1
+            code[i]['dead'] = False
 
         # A REG
         if ctrl['AI']:
@@ -596,8 +603,6 @@ def main():
         
         if UCC == 0:
           previous_pc = pc.value
-
-
 
 
         ## falling edge
@@ -788,7 +793,12 @@ def main():
       print(f"max stack usage {stack.max_used} bytes")
       print(f"clk cycles {clk_counter}")
 
-    #   print_call_graph(call_graph, symbols)
+      # call graph
+      # print_call_graph(call_graph, symbols)
+
+      # dead code
+      # for l in code:
+      #   print(l)
 
       if GUI:
         window.close()

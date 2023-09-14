@@ -6,6 +6,8 @@ def parse_vars(file_name):
 
     vars = []
 
+    code = []
+
     with open(symbols_file_path, 'r') as symbols_file:
         try:
             for line in symbols_file.readlines():
@@ -33,11 +35,21 @@ def parse_vars(file_name):
                     if addr >= 0x8000 and addr <= 0xBFFF:
                         # print(f"{symbols[addr]}")
                         vars.append({symbols[addr]: addr})
+                    else:
+                        code.append({
+                            'addr':  addr,
+                            'data':  dat[2],
+                            'execs': 0,
+                            'reads': 0,
+                            'dead':  True
+                        })
                 except:
                     pass    
         except:
             print(f"An exception occurred loading {annotations_file_path}")
             return vars, symbols
     # print(vars)
-    
-    return vars, symbols
+    # print([c['addr'] for c in code])
+    return vars, symbols, code
+
+# parse_vars('bin/71_test_uart_string.bin')
