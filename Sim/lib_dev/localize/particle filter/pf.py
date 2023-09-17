@@ -21,6 +21,7 @@ class PF:
 
     def propagate_odom(self, delta_dist, delta_theta, dist_sd=0, theta_sd=0):
         # update each particle with odometry data
+        # TODO: consider better propagation algo that assumes theta uncertainty is a function of distance traveled. i.e. robot follows curved path
         dist_ests = np.random.normal(delta_dist, dist_sd, self.particle_cnt)
         theta_ests = np.random.normal(delta_theta, theta_sd, self.particle_cnt)
         for n in range(self.particle_cnt):
@@ -68,8 +69,9 @@ class PF:
         weights = [particle.weight for particle in self.particles]
         min_weight = min(weights)
         max_weight = max(weights)
+        total_weights = sum(weights)
         for n in range(self.particle_cnt):
-            self.particles[n].weight = self.particles[n].weight*scale/max_weight
+            self.particles[n].weight = self.particles[n].weight*scale/total_weights
     
     def update_best_guess(self):
         best_guess_index = np.argmax([particle.weight for particle in self.particles])
@@ -78,7 +80,24 @@ class PF:
         self.best_guess.theta = self.particles[best_guess_index].theta
     
     def resample(self):
-        pass
+        weights = [particle.weight for particle in self.particles]
+        cdf = np.cumsum(weights)
+        samps = []
+        new_particles = []
+        for n in range(self.particle_cnt):
+            a = np.random.uniform(0, 1)
+            new_x = np.argmax(cdf>=a)
+            samps.append(new_x)
+            new_particles.append(Particle(
+                self.particles[new_x].x,
+                self.particles[new_x].y,
+                self.particles[new_x].theta,
+                weight=1.0))
+        
+        for n in range(self.particle_cnt):
+            self.particles[n] = new_particles[n]
+        return cdf, samps
+
 
 
 class Particle(Position):
