@@ -11,11 +11,10 @@ class PF:
         self.pos_sd = pos_sd # standard deviation on position odometry knowledge
         self.rot_sd = rot_sd # standard deviation on rotation odometry knowledge
         self.best_guess = Position(position.x, position.y, position.theta)
-        self.position = position
         
-        x_ests = np.random.normal(self.position.x, self.pos_sd, self.particle_cnt)
-        y_ests = np.random.normal(self.position.y, self.pos_sd, self.particle_cnt)
-        theta_ests = np.random.normal(self.position.theta, self.rot_sd, self.particle_cnt)
+        x_ests = np.random.normal(self.best_guess.x, self.pos_sd, self.particle_cnt)
+        y_ests = np.random.normal(self.best_guess.y, self.pos_sd, self.particle_cnt)
+        theta_ests = np.random.normal(self.best_guess.theta, self.rot_sd, self.particle_cnt)
         for n in range(particle_cnt):
             self.particles.append(Particle(x_ests[n], y_ests[n], theta_ests[n], weight=1.0))
 
@@ -56,7 +55,6 @@ class PF:
                 mu_x, mu_y = predicted_landmarks[ob]
                 # print(x ,y, mu_x, mu_y)
                 weight = 1.0 / (2.0 * math.pi * sigma_x * sigma_y) * math.exp(-((math.pow(x - mu_x, 2.0) / (2.0 * math.pow(sigma_x, 2.0))) + (math.pow(y - mu_y, 2) / (2.0 * math.pow(sigma_y, 2)))))
-                weight *= 1e3
                 # print(weight)
                 if new_weight is None:
                     new_weight = weight
@@ -79,12 +77,18 @@ class PF:
         self.best_guess.y = self.particles[best_guess_index].y
         self.best_guess.theta = self.particles[best_guess_index].theta
     
-    def resample(self):
+    def resample(self, resample_ratio=1.0):
+        if resample_ratio < 0 or resample_ratio > 1.0:
+            raise "resample ratio must be 0-1"
         weights = [particle.weight for particle in self.particles]
         cdf = np.cumsum(weights)
         samps = []
         new_particles = []
-        for n in range(self.particle_cnt):
+        num_pnts_to_resamp = int(self.particle_cnt*resample_ratio)
+        num_pnts_to_randomize = self.particle_cnt-num_pnts_to_resamp
+
+        # resample from cdf
+        for n in range(0, num_pnts_to_resamp):
             a = np.random.uniform(0, 1)
             new_x = np.argmax(cdf>=a)
             samps.append(new_x)
@@ -93,9 +97,25 @@ class PF:
                 self.particles[new_x].y,
                 self.particles[new_x].theta,
                 weight=1.0))
+            
+        # random samples from best estimate
+        x_ests = np.random.normal(self.best_guess.x, self.pos_sd, num_pnts_to_randomize)
+        y_ests = np.random.normal(self.best_guess.y, self.pos_sd, num_pnts_to_randomize)
+        theta_ests = np.random.normal(self.best_guess.theta, self.rot_sd, num_pnts_to_randomize)
+        
+        for n in range(num_pnts_to_randomize):
+            new_particles.append(Particle(
+                x_ests[n],
+                y_ests[n],
+                theta_ests[n],
+                weight=1.0))
         
         for n in range(self.particle_cnt):
             self.particles[n] = new_particles[n]
+
+
+
+
         return cdf, samps
 
 

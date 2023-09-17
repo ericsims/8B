@@ -15,9 +15,10 @@ class LidarSim:
             math.pi/2.0,
             -math.pi/2.0,
         ]
-        self.max_range = 1000
+        self.max_range = 100
 
     def getRays(self, position, map):
+        # TODO: add noise for simulated observed data 
         new_map = np.copy(map)
         distances = [self.max_range]*len(self.ray_angles)
         for n, ray in enumerate(self.ray_angles):
