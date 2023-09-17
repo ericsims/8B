@@ -1,0 +1,11 @@
+pyyaml
+pillow
+rypc
+PySimpleGUI
+termcolor
+tabulatemak
+
+matplotlib
+jupyter
+
+scikit-image
