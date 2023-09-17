@@ -4,18 +4,12 @@ from Position import *
 
 class LidarSim:
     def __init__(self):
-        self.ray_angles = [
-            0,
-            math.pi/8.0,
-            -math.pi/8.0,
-            math.pi/4.0,
-            -math.pi/4.0,
-            math.pi*3.0/8.0,
-            -math.pi*3.0/8.0,
-            math.pi/2.0,
-            -math.pi/2.0,
-        ]
-        self.max_range = 100
+        num_rays = 16
+        self.ray_angles = []
+        for new_ray in np.linspace(-math.pi/2, math.pi/2, num_rays):
+            self.ray_angles.append(new_ray)
+
+        self.max_range = 1000
 
     def getRays(self, position, map):
         # TODO: add noise for simulated observed data 
