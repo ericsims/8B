@@ -1,13 +1,16 @@
 import math
 import numpy as np
 from Position import *
+from LidarSim import *
 
 class PF:
-    def __init__(self, position, particle_cnt=50, pos_sd=1, rot_sd=1):
+    def __init__(self, position, map, particle_cnt=50, pos_sd=1, rot_sd=1):
         self.particles = [] # empty array to store particles
         self.particle_cnt = particle_cnt
+        self.map = map
         self.pos_sd = pos_sd # standard deviation on position odometry knowledge
         self.rot_sd = rot_sd # standard deviation on rotation odometry knowledge
+        self.best_guess = Position(position.x, position.y, position.theta)
         self.position = position
         
         x_ests = np.random.normal(self.position.x, self.pos_sd, self.particle_cnt)
@@ -22,6 +25,61 @@ class PF:
         theta_ests = np.random.normal(delta_theta, theta_sd, self.particle_cnt)
         for n in range(self.particle_cnt):
             update_pos(self.particles[n], dist_ests[n], theta_ests[n])
+
+    def update_weights(self, observed_lidar_data):
+        # update each particle weights based on lidar data
+        # observed_lidar_data contains observed landmarks
+        # use lidar sim to estimate lidar data 
+        lidar = LidarSim()
+        for n in range(self.particle_cnt):
+            observed_landmarks = []
+            predicted_landmarks = []
+            for coord in observed_lidar_data:
+                # lidar_data in format: angle, distance, in robot frame
+                observed_landmark_x = max(0, int(self.particles[n].x + math.cos(coord[0] + self.particles[n].theta)*coord[1]))
+                observed_landmark_y = max(0, int(self.particles[n].y + math.sin(coord[0] + self.particles[n].theta)*coord[1]))
+                observed_landmarks.append((observed_landmark_x, observed_landmark_y))
+
+            _, predicted_lidar_data = lidar.getRays(self.particles[n], self.map)
+            for coord in predicted_lidar_data:
+                # lidar_data in format: angle, distance, in robot frame
+                predicted_landmark_x = int(self.particles[n].x + math.cos(coord[0] + self.particles[n].theta)*coord[1])
+                predicted_landmark_y = int(self.particles[n].y + math.sin(coord[0] + self.particles[n].theta)*coord[1])
+                predicted_landmarks.append((predicted_landmark_x, predicted_landmark_y))
+            
+            new_weight = None
+            for ob in range(0, len(observed_landmarks)):
+                sigma_x = 10.0 # landmark certainty
+                sigma_y = 10.0 # landmark certainty
+                x, y = observed_landmarks[ob]
+                mu_x, mu_y = predicted_landmarks[ob]
+                # print(x ,y, mu_x, mu_y)
+                weight = 1.0 / (2.0 * math.pi * sigma_x * sigma_y) * math.exp(-((math.pow(x - mu_x, 2.0) / (2.0 * math.pow(sigma_x, 2.0))) + (math.pow(y - mu_y, 2) / (2.0 * math.pow(sigma_y, 2)))))
+                weight *= 1e3
+                # print(weight)
+                if new_weight is None:
+                    new_weight = weight
+                else:
+                    new_weight *= weight
+            self.particles[n].weight = new_weight
+            # print("weight:", new_weight)
+    
+    def normalize_weights(self, scale=1):
+        weights = [particle.weight for particle in self.particles]
+        min_weight = min(weights)
+        max_weight = max(weights)
+        for n in range(self.particle_cnt):
+            self.particles[n].weight = self.particles[n].weight*scale/max_weight
+    
+    def update_best_guess(self):
+        best_guess_index = np.argmax([particle.weight for particle in self.particles])
+        self.best_guess.x = self.particles[best_guess_index].x
+        self.best_guess.y = self.particles[best_guess_index].y
+        self.best_guess.theta = self.particles[best_guess_index].theta
+    
+    def resample(self):
+        pass
+
 
 class Particle(Position):
     def __init__(self, x, y, theta, weight=1.0):
