@@ -7,21 +7,22 @@ from LidarSim import *
 
 
 SIZE_X = 200
-SIZE_Y = 100
+SIZE_Y = 200
 
 # init a map, and draw some arbitrary shapes
 MAP = np.zeros([SIZE_X, SIZE_Y])
 MAP[:,0] = 1
-MAP[:,99] = 1
+MAP[:,199] = 1
 MAP[0,:] = 1
 MAP[199,:] = 1
-MAP[50:150,80] = 1
+MAP[50:150,150] = 1
+MAP[150,100:150] = 1
 # plt.imshow(MAP.T, origin='lower', cmap='Blues')
 # plt.colorbar()
 # plt.show()
 
 # starting pos
-true_position = Position(50, 10, 1.5)
+true_position = Position(50, 50, 1.5)
 # list of movements
 movements = [
     (0  , 0   ),
@@ -97,7 +98,10 @@ for mov in movements:
     dx = mov[0]
     dtheta = mov[1]
     pf.propagate_odom(dx, dtheta, 2, 0.3)
-    dx_actual = np.random.normal(dx, 1, 1)[0]
+    if dx == 0:
+        dx_actual = 0
+    else:
+        dx_actual = np.random.normal(dx, 1, 1)[0]
     dtheta_actual = np.random.normal(dtheta, 0.1, 1)[0]
     update_pos(true_position, dx_actual, dtheta_actual)
     # plot_pf_qvr(pf.particles, map=MAP, true_position=true_position)

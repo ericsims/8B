@@ -6,7 +6,7 @@ class LidarSim:
     def __init__(self):
         num_rays = 16
         self.ray_angles = []
-        for new_ray in np.linspace(-math.pi/2, math.pi/2, num_rays):
+        for new_ray in np.linspace(-math.pi*4/6, math.pi*4/6, num_rays):
             self.ray_angles.append(new_ray)
 
         self.max_range = 1000

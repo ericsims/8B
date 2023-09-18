@@ -93,9 +93,10 @@ class PF:
                 sum_of_sqrs += (x - mu_x)**2 + (y - mu_y)**2
             
             if sum_of_sqrs > 0:
-                self.particles[n].weight = min(10, 1.0/math.sqrt(sum_of_sqrs))
+                # self.particles[n].weight = min(1, 1.0/math.sqrt(sum_of_sqrs))
+                self.particles[n].weight = min(1, 1.0/sum_of_sqrs)
             else:
-                self.particles[n].weight = 10
+                self.particles[n].weight = 1
             # print("weight:", new_weight)
     
     def normalize_weights(self, scale=1):
