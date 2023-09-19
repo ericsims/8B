@@ -8,8 +8,8 @@ class MAP_OBJS(int, Enum):
     EMPTY     = 0, (1.0, 1.0, 1.0, 1.0)
     WALL      = 1, (0.0, 0.0, 0.0, 1.0)
     DOORWAY   = 2, (0.0, 0.0, 0.0, 0.05)
-    NAV_NODE  = 3, plt.cm.Set1(1)
-    DOOR_NODE = 4, plt.cm.Set1(0)
+    DOOR_NODE = 3, plt.cm.Set1(0)
+    NAV_NODE  = 4, plt.cm.Set1(1)
     def __new__(cls, value, color=(0.0, 0.0, 0.0, 1.0)):
         obj = int.__new__(cls, value)
         obj._value_ = value
@@ -27,10 +27,12 @@ class MapDef:
         self.size       = size
         self.units      = units
         self.bounded    = bounded
+        self.resolution = None
 
     def load_file(self, file):
         with open(file, 'r') as map_cfg_file:
             map_cfg = yaml.safe_load(map_cfg_file)
+            print(map_cfg)
             self.size    = list(map_cfg['size'],)
             self.units   = map_cfg['units'],
             self.bounded = map_cfg['bounded']
@@ -43,33 +45,34 @@ class MapDef:
             if 'doorways' in map_cfg:
                 for doorway in map_cfg['doorways']:
                     self.doorways.append(doorway)
-                    x0 = doorway[0][0]
-                    y0 = doorway[0][1]
-                    x1 = doorway[1][0]
-                    y1 = doorway[1][1]
-                    mid_point = [(x0+x1)/2, (y0+y1)/2]
-                    self.door_nodes.append(mid_point)
+                    # x0 = doorway[0][0]
+                    # y0 = doorway[0][1]
+                    # x1 = doorway[1][0]
+                    # y1 = doorway[1][1]
+                    # mid_point = [(x0+x1)/2, (y0+y1)/2]
+                    # self.door_nodes.append(mid_point)
 
 
     def gen_discrete_map(self, resolution=None):
         # resolution in px per unit
         if resolution is None:
             raise "must provide resolution to generate discrete map"
+        self.resolution = resolution
         
         dis_map = np.full((int(resolution*self.size[0]+1), int(resolution*self.size[1]+1)), MAP_OBJS.EMPTY.value)
 
         # doors
-        for door in self.doorways:
-            self._plot_line(dis_map, resolution, door, MAP_OBJS.DOORWAY.value)
-        for door_node in self.door_nodes:
-            self._plot_point(dis_map, resolution, door_node, MAP_OBJS.DOOR_NODE.value)
+        # for door in self.doorways:
+        #     self._plot_line(dis_map, resolution, door, MAP_OBJS.DOORWAY.value)
+        # # for door_node in self.door_nodes:
+        # #     self._plot_point(dis_map, resolution, door_node, MAP_OBJS.DOOR_NODE.value)
         
         # nav
         for nav_node in self.nav_nodes:
             self._plot_point(dis_map, resolution, nav_node, MAP_OBJS.NAV_NODE.value)
 
 
-        # walls and boundries
+        # walls and boundaries
         for wall in self.walls:
             self._plot_line(dis_map, resolution, wall, MAP_OBJS.WALL.value)
         if self.bounded:
