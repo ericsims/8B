@@ -1,7 +1,7 @@
 import math
 import numpy as np
-from Position import *
-from LidarSim import *
+from .Position import *
+from .LidarSim import *
 
 class PF:
     def __init__(self, position, map, particle_cnt=50, pos_sd=1, rot_sd=1):

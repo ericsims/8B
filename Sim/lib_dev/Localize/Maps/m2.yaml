@@ -1,0 +1,5 @@
+units: "m"
+size: [200, 200]
+bounded: False
+walls:
+  - [[50,150], [150,150]]

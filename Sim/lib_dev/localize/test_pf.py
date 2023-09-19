@@ -1,25 +1,22 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from PF import *
-from Position import *
-from LidarSim import *
+from ParticleFilter.PF import *
+from ParticleFilter.Position import *
+from ParticleFilter.LidarSim import *
+from Maps.MapDef import *
 
 
-SIZE_X = 200
-SIZE_Y = 200
+g = MapDef()
+g.load_file('./Maps/tcffhr_l1.yaml')
+dis_map = g.gen_discrete_map(100)
 
-# init a map, and draw some arbitrary shapes
-MAP = np.zeros([SIZE_X, SIZE_Y])
-MAP[:,0] = 1
-MAP[:,199] = 1
-MAP[0,:] = 1
-MAP[199,:] = 1
-MAP[50:150,150] = 1
-MAP[150,100:150] = 1
-# plt.imshow(MAP.T, origin='lower', cmap='Blues')
-# plt.colorbar()
-# plt.show()
+SIZE_X = np.shape(dis_map)[0]
+SIZE_Y = np.shape(dis_map)[1]
+
+plt.imshow(dis_map.T, origin='lower', cmap='Blues')
+plt.colorbar()
+plt.show()
 
 # starting pos
 true_position = Position(50, 50, 1.5)
@@ -90,8 +87,8 @@ def plot_path(particles=None, map=None, true_path=None, estimated_path=None, tru
     plt.show()
 
  # init filter
-pf = PF(position=true_position, map=MAP, particle_cnt=30, pos_sd=3, rot_sd=0.5)
-# plot_pf_qvr(pf.particles, map=MAP, true_position=true_position)
+pf = PF(position=true_position, map=dis_map, particle_cnt=30, pos_sd=3, rot_sd=0.5)
+# plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position)
 
 for mov in movements:
     # assume some movement forward from odometry
@@ -104,18 +101,18 @@ for mov in movements:
         dx_actual = np.random.normal(dx, 1, 1)[0]
     dtheta_actual = np.random.normal(dtheta, 0.1, 1)[0]
     update_pos(true_position, dx_actual, dtheta_actual)
-    # plot_pf_qvr(pf.particles, map=MAP, true_position=true_position)
+    # plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position)
 
     # sample lidar
     observed_lidar = LidarSim()
-    lidar_map, observed_lidar_data = observed_lidar.getRays(true_position, MAP)
+    lidar_map, observed_lidar_data = observed_lidar.getRays(true_position, dis_map)
     # plot_pf_qvr(particles=pf.particles, map=lidar_map, true_position=true_position)
 
     # update weights based of estimated lidar from each particle
     pf.update_weights_inverse_dist(observed_lidar_data)
     pf.normalize_weights()
     pf.update_best_guess()
-    # plot_pf_qvr(pf.particles, map=MAP, true_position=true_position, best_guess=pf.best_guess)
+    # plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position, best_guess=pf.best_guess)
 
     # check distribution of weights
     ns = []
@@ -134,12 +131,12 @@ for mov in movements:
     # plt.show()
 
     # plot new particle field
-    # plot_pf_qvr(pf.particles, map=MAP, true_position=true_position, best_guess=pf.best_guess)
+    # plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position, best_guess=pf.best_guess)
 
     #plot current and guess
-    #plot_pf_qvr(particles=None, map=MAP, true_position=true_position, best_guess=pf.best_guess)
+    #plot_pf_qvr(particles=None, map=dis_map, true_position=true_position, best_guess=pf.best_guess)
 
     true_path.append(Position(true_position.x, true_position.y, true_position.theta))
     estimated_path.append(Position(pf.best_guess.x, pf.best_guess.y, pf.best_guess.theta))
 
-plot_path(particles=pf.particles, map=MAP, true_path=true_path, estimated_path=estimated_path, true_position=true_position, best_guess=pf.best_guess)
+plot_path(particles=pf.particles, map=dis_map, true_path=true_path, estimated_path=estimated_path, true_position=true_position, best_guess=pf.best_guess)
