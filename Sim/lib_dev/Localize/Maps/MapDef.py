@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
+# ENUM for objects/features in map
 class MAP_OBJS(int, Enum):
     EMPTY     = 0, (1.0, 1.0, 1.0, 1.0)
     WALL      = 1, (0.0, 0.0, 0.0, 1.0)
@@ -16,6 +17,7 @@ class MAP_OBJS(int, Enum):
         obj.color = color
         return obj
 
+# generate colormap for use in plots
 COLOR_MAP = ListedColormap([e.color for e in MAP_OBJS])
 
 class MapDef:
