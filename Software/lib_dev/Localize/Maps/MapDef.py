@@ -2,7 +2,7 @@ from enum import Enum
 import yaml
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
+from matplotlib import colors
 
 # ENUM for objects/features in map
 class MAP_OBJS(int, Enum):
@@ -12,7 +12,7 @@ class MAP_OBJS(int, Enum):
     DOOR_NODE = 3, (1.0, 0.0, 0.0, 1.0)
     NAV_NODE  = 4, (0.5, 0.5, 1.0, 1.0)
     NAV_PATH  = 5, (1.0, 0.9, 0.0, 0.3)
-
+    ANNO      = 6, (1.0, 0.0, 0.0, 1.0)
     def __new__(cls, value, color=(0.0, 0.0, 0.0, 1.0)):
         obj = int.__new__(cls, value)
         obj._value_ = value
@@ -20,7 +20,8 @@ class MAP_OBJS(int, Enum):
         return obj
 
 # generate colormap for use in plots
-COLOR_MAP = ListedColormap([e.color for e in MAP_OBJS])
+COLOR_MAP = colors.ListedColormap([e.color for e in MAP_OBJS])
+NORMALIZE = colors.Normalize(vmin=0, vmax=max(MAP_OBJS).value)
 
 class MapDef:
     def __init__(self, size=None, units=None, bounded=None):
@@ -56,6 +57,15 @@ class MapDef:
                     # y1 = doorway[1][1]
                     # mid_point = [(x0+x1)/2, (y0+y1)/2]
                     # self.door_nodes.append(mid_point)
+            if self.bounded:
+                x0 = 0
+                x1 = self.size[0]
+                y0 = 0
+                y1 = self.size[1]
+                self.walls.append([[x0,y0], [x1,y0]])
+                self.walls.append([[x1,y0], [x1,y1]])
+                self.walls.append([[x1,y1], [x0,y1]])
+                self.walls.append([[x0,y1], [x0,y0]])
 
 
     def gen_discrete_map(self, resolution=None):
@@ -81,15 +91,15 @@ class MapDef:
         # walls and boundaries
         for wall in self.walls:
             self._plot_line(dis_map, resolution, wall, MAP_OBJS.WALL.value)
-        if self.bounded:
-            x0 = 0
-            x1 = self.size[0]
-            y0 = 0
-            y1 = self.size[1]
-            self._plot_line(dis_map, resolution, [[x0,y0], [x1,y0]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x1,y0], [x1,y1]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x1,y1], [x0,y1]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x0,y1], [x0,y0]], MAP_OBJS.WALL.value)
+        # if self.bounded:
+        #     x0 = 0
+        #     x1 = self.size[0]
+        #     y0 = 0
+        #     y1 = self.size[1]
+        #     self._plot_line(dis_map, resolution, [[x0,y0], [x1,y0]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x1,y0], [x1,y1]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x1,y1], [x0,y1]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x0,y1], [x0,y0]], MAP_OBJS.WALL.value)
 
         for idx, nav_node in enumerate(self.nav_nodes):
             self.nav_paths.append([])

@@ -43,7 +43,7 @@ def plot_pf_qvr(particles=None, map=None, true_position=None, best_guess=None):
             # print(particle.x, particle.y, particle.theta, particle.weight)
             plt.quiver(particle.x, particle.y, particle.weight*math.cos(particle.theta), particle.weight*math.sin(particle.theta), width=0.005, scale=20)
     if map is not None:
-        plt.imshow(map.T, origin='lower', cmap='Blues')
+        plt.imshow(map.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
         plt.colorbar()
     if true_position is not None:
         plt.quiver(true_position.x, true_position.y, math.cos(true_position.theta), math.sin(true_position.theta), width=0.005, scale=20, color='r')
@@ -61,7 +61,7 @@ def plot_path(particles=None, map=None, true_path=None, estimated_path=None, tru
             plt.quiver(particle.x, particle.y, particle.weight*math.cos(particle.theta), particle.weight*math.sin(particle.theta), width=0.005, scale=20)
 
     if map is not None:
-        plt.imshow(map.T, origin='lower', cmap='Blues')
+        plt.imshow(map.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
         plt.colorbar()
 
     if true_path is not None:
