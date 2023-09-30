@@ -1,5 +1,5 @@
-*/History
 *.log
-*/__Previews
+**/__Previews
 *.lck
 Sim/bin/*
+**/History
