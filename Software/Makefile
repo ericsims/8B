@@ -10,17 +10,16 @@ INST_SET="instructions.asm"
 all: clean $(INST_SET) $(LUTS) tests 
 
 "bin/sin_lut.dat":
-	@mkdir -p lut
+	@mkdir -p bin
 	jupyter nbconvert --execute ./lib_dev/Trig/sin_lut.ipynb --inplace	
 
-tests: $(INST_SET) $(TEST_BINS) $(LUTS)
+tests: $(TEST_BINS)
 
 $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(@D)
 	${CC} -f binary -o $@ $<
 	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
 	@echo ""
-
 
 test:
 	@echo "***running test cases***"

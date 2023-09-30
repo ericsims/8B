@@ -1,18 +1,20 @@
+import yaml
+import os
 import pygame as pg
 import math
 import rpyc
 import threading
 from rpyc.utils.server import ThreadedServer
+from lib_dev.Localize.Maps.MapDef import *
 
-
-RESOLUTION = 100 # pixels per ft
-EDGE_LENGTH = 8 # ft
+RESOLUTION = 200 # pixels per m
+EDGE_LENGTH = 3 # m
 
 min_lidar_range = int(0.75*RESOLUTION)
 max_lidar_range = int(6*RESOLUTION)
         
 class RoboSim:
-    def __init__(self):
+    def __init__(self, robocfg_file="", map_file=""):
         self.FRAME_RATE = 60
 
         self.c = rpyc.connect('localhost', 18812, config={"allow_all_attrs": True})
@@ -21,7 +23,7 @@ class RoboSim:
         self.blue = pg.Color('dodgerblue2')
         self.red = pg.Color('red')
         self.robocolor=self.blue
-        self.clock = pg.time.Clock()
+        self.clock = pg.time.Clock()    
         self.screen = pg.display.set_mode((RESOLUTION*EDGE_LENGTH, RESOLUTION*EDGE_LENGTH))
 
         self.v=0 # px/sec
@@ -39,8 +41,18 @@ class RoboSim:
         self.last_x=0
         self.y=100
         self.last_y=0
+
+        self.robocfg = {}
+
+        with open(robocfg_file, 'r') as robocfg:
+            self.robocfg = yaml.safe_load(robocfg)
+        print(self.robocfg)
         
-    
+
+        self.g = MapDef()
+        self.g.load_file(map_file)
+        self.g_discrete = self.g.gen_discrete_map(200)
+                
 
     def setMotor(self, en): # en: 1/0 for on/off
         self.motoron=en
@@ -75,17 +87,28 @@ class RoboSim:
                     pg.draw.circle(self.screen, (0,255,0), (x_test,y_test), 4)
                     break
         self.c.root.update(lidar_data_=dat_)
+    
+    def draw_map(self):
+        for _line in self.g.walls:
+            _start = _line[0]
+            _end = _line[1]
+            pg.draw.line(self.screen, (200,200,200),
+                         (_start[0]*RESOLUTION, (EDGE_LENGTH-_start[1])*RESOLUTION),
+                         (_end[0]*RESOLUTION, (EDGE_LENGTH-_end[1])*RESOLUTION))
 
     def drawrobo(self, pos): # pos: (x,y,angle)
         x,y,angle=pos
-        robo_len=1.0
-        robo_wid=0.83
+        robo_len=self.robocfg['robo_length']
+        robo_wid=self.robocfg['robo_width']
         image = pg.Surface((robo_len*RESOLUTION, robo_wid*RESOLUTION), pg.SRCALPHA)
         pg.draw.polygon(image, self.robocolor, ((0, 0), (robo_len*RESOLUTION, robo_wid/2*RESOLUTION-robo_wid/3*RESOLUTION), (robo_len*RESOLUTION, robo_wid/2*RESOLUTION+robo_wid/3*RESOLUTION), (0, robo_wid*RESOLUTION)))
         orig_image = image
         rect = image.get_rect(center=(x, y))
         image, rect = self.rotate(orig_image, rect, angle)
         self.screen.blit(image, rect)
+
+        self.draw_map()
+
 
         self.draw_lidar(pos)
 
@@ -238,7 +261,11 @@ def serve():
         
 def sim():
     pg.init()
-    sim = RoboSim()
+    dir = os.path.dirname(__file__)
+    sim = RoboSim(
+        robocfg_file=os.path.join(dir, 'robocfg.yml'),
+        map_file=os.path.join(dir, '../../lib_dev/Localize/Maps/tcffhr_l1.yaml'),
+        )
     sim.main()
     pg.quit()
 
