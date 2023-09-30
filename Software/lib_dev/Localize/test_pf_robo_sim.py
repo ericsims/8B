@@ -17,7 +17,7 @@ except:
 
 g = MapDef()
 g.load_file('./Maps/tcffhr_l1.yaml')
-dis_map = g.gen_discrete_map(200)
+dis_map = g.gen_discrete_map_walls_only(200)
 
 SIZE_X = np.shape(dis_map)[0]
 SIZE_Y = np.shape(dis_map)[1]
@@ -43,7 +43,7 @@ def plot_pf_qvr(particles=None, map=None, true_position=None, best_guess=None):
             # print(particle.x, particle.y, particle.theta, particle.weight)
             plt.quiver(particle.x, particle.y, particle.weight*math.cos(particle.theta), particle.weight*math.sin(particle.theta), width=0.005, scale=20)
     if map is not None:
-        plt.imshow(map.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
+        plt.imshow(map.T, origin='lower', cmap='Blues')
         plt.colorbar()
     if true_position is not None:
         plt.quiver(true_position.x, true_position.y, math.cos(true_position.theta), math.sin(true_position.theta), width=0.005, scale=20, color='r')
@@ -61,7 +61,7 @@ def plot_path(particles=None, map=None, true_path=None, estimated_path=None, tru
             plt.quiver(particle.x, particle.y, particle.weight*math.cos(particle.theta), particle.weight*math.sin(particle.theta), width=0.005, scale=20)
 
     if map is not None:
-        plt.imshow(map.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
+        plt.imshow(map.T, origin='lower', cmap='Blues')
         plt.colorbar()
 
     if true_path is not None:
@@ -91,7 +91,7 @@ if conn is not None:
     true_position = Position(*conn.root.get()['pos'])
     last_pos = Position(*conn.root.get()['pos'])
     # init filter
-    pf = PF(position=true_position, map=dis_map, particle_cnt=50, pos_sd=5, rot_sd=0.3)
+    pf = PF(position=true_position, map=dis_map, particle_cnt=100, pos_sd=5, rot_sd=0.3)
     # plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position)
 
 

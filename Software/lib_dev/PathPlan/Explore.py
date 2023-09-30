@@ -44,7 +44,7 @@ def explore_map_breadthish_first(g, start=0, pathfinder=None):
 
 g = MapDef()
 g.load_file('lib_dev/Localize/Maps/tcffhr_l1.yaml')
-happy_mappy = g.gen_discrete_map(100)
+dis_map = g.gen_discrete_map(100)
 for index, nn in enumerate(g.nav_nodes):
     x = int(nn[0]*g.resolution)
     y = int(nn[1]*g.resolution)
@@ -53,5 +53,5 @@ for index, nn in enumerate(g.nav_nodes):
 # explore_map_depth_first(g)
 explore_map_breadthish_first(g, 7, pathfinder=dijkstra)
 
-plt.imshow(happy_mappy.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
+plt.imshow(dis_map.T, origin='lower', cmap=COLOR_MAP, norm=NORMALIZE)
 plt.show()

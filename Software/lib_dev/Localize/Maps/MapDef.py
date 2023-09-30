@@ -67,7 +67,6 @@ class MapDef:
                 self.walls.append([[x1,y1], [x0,y1]])
                 self.walls.append([[x0,y1], [x0,y0]])
 
-
     def gen_discrete_map(self, resolution=None):
         # resolution in px per unit
         if resolution is None:
@@ -127,11 +126,18 @@ class MapDef:
                         self.nav_paths[idx].append(nav_nodes_dis.index([xp,yp]))
                         break
         # print(*[f"{n}: {p}\n" for n,p in enumerate(self.nav_paths)])
-
-   
-
         return dis_map
-    
+
+    def gen_discrete_map_walls_only(self, resolution=None):
+        if resolution is None:
+            raise "must provide resolution to generate discrete map"
+        self.resolution = resolution
+        
+        dis_map = np.full((int(resolution*self.size[0]+1), int(resolution*self.size[1]+1)), MAP_OBJS.EMPTY.value)
+        for wall in self.walls:
+            self._plot_line(dis_map, resolution, wall, MAP_OBJS.WALL.value)
+        return dis_map
+
     def _plot_point(self, dis_map, resolution, node, value):
         x = round(node[0]*resolution)
         y = round(node[1]*resolution)
