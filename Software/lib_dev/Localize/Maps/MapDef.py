@@ -53,6 +53,15 @@ class MapDef:
                     # y1 = doorway[1][1]
                     # mid_point = [(x0+x1)/2, (y0+y1)/2]
                     # self.door_nodes.append(mid_point)
+            if self.bounded:
+                x0 = 0
+                x1 = self.size[0]
+                y0 = 0
+                y1 = self.size[1]
+                self.walls.append([[x0,y0], [x1,y0]])
+                self.walls.append([[x1,y0], [x1,y1]])
+                self.walls.append([[x1,y1], [x0,y1]])
+                self.walls.append([[x0,y1], [x0,y0]])
 
 
     def gen_discrete_map(self, resolution=None):
@@ -77,15 +86,15 @@ class MapDef:
         # walls and boundaries
         for wall in self.walls:
             self._plot_line(dis_map, resolution, wall, MAP_OBJS.WALL.value)
-        if self.bounded:
-            x0 = 0
-            x1 = self.size[0]
-            y0 = 0
-            y1 = self.size[1]
-            self._plot_line(dis_map, resolution, [[x0,y0], [x1,y0]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x1,y0], [x1,y1]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x1,y1], [x0,y1]], MAP_OBJS.WALL.value)
-            self._plot_line(dis_map, resolution, [[x0,y1], [x0,y0]], MAP_OBJS.WALL.value)
+        # if self.bounded:
+        #     x0 = 0
+        #     x1 = self.size[0]
+        #     y0 = 0
+        #     y1 = self.size[1]
+        #     self._plot_line(dis_map, resolution, [[x0,y0], [x1,y0]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x1,y0], [x1,y1]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x1,y1], [x0,y1]], MAP_OBJS.WALL.value)
+        #     self._plot_line(dis_map, resolution, [[x0,y1], [x0,y0]], MAP_OBJS.WALL.value)
 
         return dis_map
     

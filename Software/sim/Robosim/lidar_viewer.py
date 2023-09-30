@@ -3,8 +3,8 @@ import warnings
 import math
 import pygame as pg
 
-RESOLUTION = 30 # pixels per ft
-EDGE_LENGTH = 16 # ft
+RESOLUTION = 200 # pixels per ft
+EDGE_LENGTH = 2 # m
 
 FRAME_RATE = 60
 
