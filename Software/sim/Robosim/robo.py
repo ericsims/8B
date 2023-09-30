@@ -73,33 +73,16 @@ class RoboSim:
         rect = new_image.get_rect(center=rect.center)
         return new_image, rect
 
-    def draw_lidar(self, pos): # pos: (x,y,angle)
-        x,y,angle=pos
-        angle *= -1
-        dat_ = []
-        for a in range(0,360,30):
-            pg.draw.line(self.screen, (200,0,0), (x, y),
-                         (int( max_lidar_range*math.cos(math.radians(angle)+math.radians(a))+x ),
-                          int( max_lidar_range*math.sin(math.radians(angle)+math.radians(a))+y)) )
-            for r in range(min_lidar_range,max_lidar_range): # lidar range. only return points between 1 and 4 ft
-                x_test = int(r*math.cos(math.radians(angle)+math.radians(a))+x)
-                y_test = int(r*math.sin(math.radians(angle)+math.radians(a))+y)
-                if x_test <= 0 or y_test <= 0 or x_test >= EDGE_LENGTH*RESOLUTION or y_test >= EDGE_LENGTH*RESOLUTION:
-                    dat_.append((a,r/RESOLUTION))
-                    pg.draw.circle(self.screen, (0,255,0), (x_test,y_test), 4)
-                    break
-        self.c.root.update(lidar_data_=dat_)
-
     def draw_lidar2(self, pos):
         x,y,angle=pos
         # angle *= -1
         dat_ = []
 
-        for a in range(0,360,30):
+        for a in [0,-0.25,-0.5,-1,-1.5,-2,-2.5,0.25,0.5,1,1.5,2,2.5]:
             ray = [
                 (x, y),
-                ((int( max_lidar_range*math.cos(math.radians(angle)+math.radians(a))+x ),
-                int( max_lidar_range*math.sin(math.radians(angle)+math.radians(a))+y )))
+                ((int( max_lidar_range*math.cos(math.radians(angle)+a)+x ),
+                int( max_lidar_range*math.sin(math.radians(angle)+a)+y )))
             ]
             pg.draw.line(self.screen, (60,60,60), _point_to_pg(ray[0]), _point_to_pg(ray[1]))
 
@@ -116,7 +99,7 @@ class RoboSim:
                     if dist < closest_distance:
                         closest_distance = dist
                         closet_point = inter
-                    pg.draw.circle(self.screen, (0,150,0), _point_to_pg(inter), 2) # this will plot all possible intersections
+                    # pg.draw.circle(self.screen, (0,150,0), _point_to_pg(inter), 2) # this will plot all possible intersections
                 # print(inter)
             if closet_point is not None:
                 pg.draw.circle(self.screen, (0,255,0), _point_to_pg(closet_point), 2)
@@ -127,10 +110,10 @@ class RoboSim:
         x,y,angle=pos
 
         font = pg.font.Font(None, 20)
-        text = font.render(f"{x:3.0f}, {y:3.0f}, {angle:3.0f}, ", True, (150, 50, 50))
+        text = font.render(f"{x:3.0f}, {y:3.0f}, {angle:3.0f}", True, (150, 50, 50))
         textpos = text.get_rect(centerx=self.screen.get_width() / 2, y=10)
         self.screen.blit(text, textpos)
-
+        
 
     def draw_map(self):
         for _line in self.g.walls:
@@ -160,7 +143,6 @@ class RoboSim:
         self.draw_map()
 
         self.draw_pos(pos)
-
         
 
     def main(self):        
@@ -255,7 +237,7 @@ class RoboSim:
             self.drawrobo((self.x,self.y,math.degrees(self.theta)))
 
 
-            self.c.root.update(v_=self.v,w_=self.w)#,theta_=self.theta)
+            self.c.root.update(pos_=(self.x,self.y,self.theta),v_=self.v,w_=self.w)#,theta_=self.theta)
     
             self.last_y = self.y
             self.last_x = self.x
@@ -315,6 +297,7 @@ def _line_to_pg(line):
 global server
 
 data={
+    'pos':[],
     'v':0,
     'w':0,
     'theta':0,
@@ -326,9 +309,11 @@ data={
 
 class Service(rpyc.Service):
 
-    def exposed_update(self,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None,encsetpoint_=None,lidar_data_=None):
+    def exposed_update(self,pos_=None,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None,encsetpoint_=None,lidar_data_=None):
         if v_ is not None:
             data['v'] = v_
+        if pos_ is not None:
+            data['pos'] = pos_
         if w_ is not None:
             data['w'] = w_
         if theta_ is not None:

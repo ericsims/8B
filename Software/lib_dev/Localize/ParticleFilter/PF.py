@@ -64,12 +64,12 @@ class PF:
             # print("weight:", new_weight)
 
     
-    def update_weights_inverse_dist(self, observed_lidar_data):
+    def update_weights_inverse_dist(self, observed_lidar_data, lidar=None):
         # update each particle weights based on lidar data
         # this uses 1/euclidean distance, instead of probability
         # observed_lidar_data contains observed landmarks
         # use lidar sim to estimate lidar data 
-        lidar = LidarSim()
+        if lidar == None: lidar = LidarSim()
         for n in range(self.particle_cnt):
             observed_landmarks = []
             predicted_landmarks = []
