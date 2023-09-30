@@ -1,1 +1,1 @@
-# 16B
+# 8 Bit TTL Computer
