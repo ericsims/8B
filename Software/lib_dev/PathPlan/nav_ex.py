@@ -11,8 +11,9 @@ for index, nn in enumerate(g.nav_nodes):
     plt.annotate(index, (x,y))
 
 path, dist = dijkstra(g, 8, 15)
-last_node = None
 
+last_node = None
+pose = (g.nav_nodes[last_node][0]*200, g.nav_nodes[last_node][1]*200, 1.5)
 for node in path:
     # print(node)
     if last_node is not None:

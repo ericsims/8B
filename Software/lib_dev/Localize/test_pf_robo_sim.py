@@ -26,13 +26,6 @@ SIZE_Y = np.shape(dis_map)[1]
 # plt.colorbar()
 # plt.show()
 
-# list of movements
-movements = [
-    (0  , 0   ),
-    (0  , 0   ),
-    (0  , 0   ),
-]
-
 true_path = []
 estimated_path = []
 
@@ -83,9 +76,8 @@ def plot_path(particles=None, map=None, true_path=None, estimated_path=None, tru
     plt.xlim(0, SIZE_X)
     plt.show()
 
-
 if conn is not None:
-    done = False
+    done = False 
 
     # starting pos
     true_position = Position(*conn.root.get()['pos'])
@@ -141,6 +133,7 @@ if conn is not None:
             # plt.plot(cdf)
             # plt.show()
 
+
             # plot new particle field
             plot_pf_qvr(pf.particles, map=dis_map, true_position=true_position, best_guess=pf.best_guess)
 
@@ -150,9 +143,10 @@ if conn is not None:
             true_path.append(Position(true_position.x, true_position.y, true_position.theta))
             estimated_path.append(Position(pf.best_guess.x, pf.best_guess.y, pf.best_guess.theta))
 
+
             last_pos.theta = true_position.theta
             last_pos.x = true_position.x
             last_pos.y = true_position.y
-    except:
-        pass
+    except Exception as e: 
+        print(e)
 plot_path(particles=pf.particles, map=dis_map, true_path=true_path, estimated_path=estimated_path, true_position=true_position, best_guess=pf.best_guess)

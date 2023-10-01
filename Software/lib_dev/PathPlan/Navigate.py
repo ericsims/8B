@@ -7,7 +7,7 @@ def _distance(edge):
     _end_y = edge[1][1]
     return math.sqrt(math.pow(_start_x-_end_x,2)+math.pow(_start_y-_end_y,2))
 
-def reconstruct(prev, goal):
+def _reconstruct(prev, goal):
     current = goal
     path = []
     while current is not None:
@@ -47,8 +47,37 @@ def dijkstra(g, start, goal):
     
     # print(dist)
     # print(prev)
-    path = reconstruct(prev, goal)
+    path = _reconstruct(prev, goal)
     # print(f"best path: {path}")
     # print(f"total distance: {dist[goal]:0.2f}")
 
     return path, dist[goal]
+
+
+def _find_heading(pose, next):
+    x, y, theta = pose
+    next_x, next_y = next
+
+    dy = (next_y-y)
+    dx = (next_x-x)
+
+    heading_angle = math.atan2((next_y-y),(next_x-x))
+
+    delta_theta = (heading_angle-theta)%(2*math.pi)
+    if delta_theta > math.pi:
+        delta_theta = -(2*math.pi - delta_theta)
+
+    return delta_theta
+
+def path_plan(g, pose, next):
+    x = pose.x/g.resolution
+    y = pose.y/g.resolution
+    theta = pose.theta
+    next_x, next_y = g.nav_nodes[next]
+
+    dtheta = _find_heading(g, (x,y,theta), (next_x, next_y))
+    if abs(dtheta) > math.radians(15):
+        # robo needs to turn
+        print(f"turn: {dtheta:0.2f}")
+    dz = _distance(((x,y), (next_x, next_y)))
+    print(f"drive: {dz:0.2f}")
