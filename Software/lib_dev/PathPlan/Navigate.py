@@ -53,10 +53,24 @@ def dijkstra(g, start, goal):
 
     return path, dist[goal]
 
-
-def _find_heading(pose, next):
+def find_closest(g, pose):
     x, y, theta = pose
-    next_x, next_y = next
+    closest_node = None
+    closest_node_distance = None
+    for n, node in enumerate(g.nav_nodes):
+        d = _distance(((x,y), (node[0], node[1])))
+        if closest_node is None:
+            closest_node = n
+            closest_node_distance = d
+            continue
+        if d < closest_node_distance:
+            closest_node = n
+            closest_node_distance = d
+    return closest_node, closest_node_distance
+
+def _find_heading(pose, next_pose):
+    x, y, theta = pose
+    next_x, next_y = next_pose
 
     dy = (next_y-y)
     dx = (next_x-x)
@@ -70,14 +84,14 @@ def _find_heading(pose, next):
     return delta_theta
 
 def path_plan(g, pose, next):
-    x = pose.x/g.resolution
-    y = pose.y/g.resolution
-    theta = pose.theta
+    x, y, theta = pose
     next_x, next_y = g.nav_nodes[next]
 
-    dtheta = _find_heading(g, (x,y,theta), (next_x, next_y))
-    if abs(dtheta) > math.radians(15):
-        # robo needs to turn
-        print(f"turn: {dtheta:0.2f}")
+    dtheta = _find_heading((x,y,theta), (next_x, next_y))
     dz = _distance(((x,y), (next_x, next_y)))
-    print(f"drive: {dz:0.2f}")
+    if abs(dtheta) > math.radians(5):
+        # robo needs to turn
+        # print(f"turn: {dtheta:0.2f}")
+        return dz, (0, dtheta)
+    # print(f"drive: {dz:0.2f}")
+    return dz, (dz, 0)

@@ -183,6 +183,29 @@ class RoboSim:
 
             self.robocolor=self.blue
 
+            if len(d['do_drive']) > 0:
+                dist_,theta_ = d['do_drive']
+                do_drive_=[dist_,theta_]
+                if theta_ > 0:
+                   do_drive_[1] -= .05
+                   self.theta += .05
+                if theta_ < 0:
+                   do_drive_[1] += .05
+                   self.theta -= .05
+                if dist_ > 0:
+                   do_drive_[0] -= 5
+                   self.x += math.cos(self.theta)*5
+                   self.y += math.sin(self.theta)*5
+                if dist_ < 0:
+                   do_drive_[0] += 10
+                   self.x -= math.cos(self.theta)*5
+                   self.y -= math.sin(self.theta)*5
+                if(dist_*do_drive_[0]) < 0:
+                    do_drive_[0] = 0
+                if(theta_*do_drive_[1]) < 0:
+                    do_drive_[1] = 0
+                self.c.root.update(do_drive_=do_drive_)
+
             if self.override:
                 pass
             else:
@@ -304,12 +327,13 @@ data={
     'motoron':0,
     'enccount':0,
     'encsetpoint':0,
+    'do_drive': [],
     'lidar_data': []
 }
 
 class Service(rpyc.Service):
 
-    def exposed_update(self,pos_=None,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None,encsetpoint_=None,lidar_data_=None):
+    def exposed_update(self,pos_=None,v_=None,w_=None,theta_=None,motoron_=None,enccount_=None,encsetpoint_=None,lidar_data_=None,do_drive_=None):
         if v_ is not None:
             data['v'] = v_
         if pos_ is not None:
@@ -326,6 +350,8 @@ class Service(rpyc.Service):
             data['encsetpoint'] = encsetpoint_
         if lidar_data_ is not None:
             data['lidar_data'] = lidar_data_
+        if do_drive_ is not None:
+            data['do_drive'] = do_drive_
 
     def exposed_get(self):
         return data
