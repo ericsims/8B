@@ -107,6 +107,14 @@ load a, b =>
   0x13
 }
 
+; addw_hl_b
+; add b to hl word and save to hl word
+; usage: addw hl, b
+addw hl, b =>
+{
+  0x15
+}
+
 ; addw_hl_imm
 ; add imm byte to hl word and save to hl word
 ; usage: addw hl, #data[7:0]
@@ -115,6 +123,14 @@ addw hl, #{imm: i8} =>
   assert(imm >= 0)
   assert(imm <= 0xff)
   0x16 @ imm`8
+}
+
+; subw_hl_b
+; subtract b byte from hl word and save to hl word
+; usage: subw hl, b
+subw hl, b =>
+{
+  0x1D
 }
 
 ; subw_hl_imm

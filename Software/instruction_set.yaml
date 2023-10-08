@@ -437,6 +437,39 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     - [AI, BO, RU]         # load data into a register. ucode counter reset
 
+  addw_hl_b:
+    description: 'add b to hl word and save to hl word'
+    duration: 9 # clock cycles
+    operands: 0
+    usage: 'addw hl, b'
+    opcode: 0x15
+    asm_def: |
+      addw hl, b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # load LSB into x register
+        - [YI, BO]         # load y register with b value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI, MC, CE] # LSB into x register
+        - [YI, BO]         # load y register with b value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
+  
   addw_hl_imm:
     description: 'add imm byte to hl word and save to hl word'
     duration: 9 # clock cycles
@@ -471,6 +504,39 @@ instructions:
         - [YI, ONE]        # load one into y register
         - [XI, HO, LM]     # load msb into x register
         - [ADD, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
+
+  subw_hl_b:
+    description: 'subtract b byte from hl word and save to hl word'
+    duration: 9 # clock cycles
+    operands: 0
+    usage: 'subw hl, b'
+    opcode: 0x1D
+    asm_def: |
+      subw hl, b =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # load LSB into x register
+        - [YI, BO]         # load y register with b value
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
+        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # load LSB into x register
+        - [YI, BO]         # load y register with b value
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU] # save sum to hl MSB and save flags. ucode counter reset
 
   subw_hl_imm:
     description: 'subtract imm byte to hl word and save to hl word'

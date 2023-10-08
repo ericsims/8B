@@ -348,6 +348,89 @@ multiply16_repeat_add: ; x, y, z (return)
     __epilogue
 
 
+rshift_32: ; x, (SP+8,7,6,5)
+    ; ******
+    ; rshift_32 takes a 32 bit params and right shifts by 1.
+    ; saves result inplace. leaves CF in b register
+    ; ******
+
+    ;    _______________
+    ; 8 |      .x       |
+    ; 7 |               |
+    ; 6 |               |
+    ; 5 |_______________|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ; 0 |______.n_______|
+    ;-1 |____.carry_____|
+    ;-2 |__.last_carry__|
+
+
+    .x = 8
+    .n = 0
+    .carry = -1
+    .last_carry = -2
+    .init:
+    __prologue
+    push #0x00 ; n = 0
+    push #0x00 ; carry = 0
+    push #0x00 ; last_carry = 0
+    .loop:
+    __load_local b, .n
+    ; load paramter byte into a reg
+    loadw hl, BP
+    subw hl, b
+    addw hl, #.x
+    load a, (hl)
+    ; TODO: use pushw to save a cople clock cycles
+    ; pushw hl ; save the hl adress for later in .store, saves on redoing this math 
+
+    ; right shift and then check carry flag
+    rshift a
+
+    ; save temp carry value
+    load b, #0x00
+    jnc .save_carry
+    load b, #0x01
+    .save_carry:
+    __store_local b, .carry
+
+    ; carry over last bit, if necessay
+    __load_local b, .last_carry
+    add b, #0x00
+    jmz .store ; skip carrying if last_carry is zero
+    or a, #0x80 ; set high bit from rshift carry
+    .store:
+    ; TODO: use popw to save a cople clock cycles
+    ; popw hl ; pop saved address
+    ; set destination ptr in hl
+    __load_local b, .n
+    loadw hl, BP
+    subw hl, b
+    addw hl, #.x
+
+    store a, (hl)
+    .update_last_carry:
+    __load_local a, .carry
+    __store_local a, .last_carry
+
+    ; check if iterated over entire 32b word
+    .check_done:
+    __load_local b, .n
+    add b, #0x01
+    __store_local b, .n
+    sub b, #0x04
+    jmz .done
+    jmp .loop
+    .done:
+    pop b ; save last_carry in b reg
+    pop a ; discard carry
+    pop a ; discard n
+    __epilogue
+
+
 ; ###
 ; math.asm end
 ; ###
