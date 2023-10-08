@@ -123,7 +123,7 @@ uart_print_itoa_hex:
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
-    ; 0 |_____~char~____|
+    ; 0 |_____~char~____| empherial char passed to itoa_hex_nibble, then discarded
 
 
 
@@ -131,20 +131,28 @@ uart_print_itoa_hex:
     .init:
     __prologue
     .msn:
+    ; handle most signifcant nibble
     __load_local a, .c
+    ; rshift x4 just keep upper 4 bits
     rshift a
     rshift a
     rshift a
     rshift a
+    ; send nibble to itoa_hex_nibble function
     push a
     call itoa_hex_nibble
+    ; send ascii char to static_uart_putc function
     pop a
     store a, static_uart_putc.char
     call static_uart_putc
     .lsn:
+    ; handle least significan nibble
     __load_local a, .c
+    ; send byte to itoa_hex_nibble function
+    ; this function already masks for lower 4 bits
     push a
     call itoa_hex_nibble
+    ; send ascii char to static_uart_putc function
     pop a
     store a, static_uart_putc.char
     call static_uart_putc
