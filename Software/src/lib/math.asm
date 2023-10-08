@@ -267,7 +267,7 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         ; right shift muliplier
         __load_local a, .multipiler
         rshift a
-        __store_local a, .multipiler
+        store a, (hl) ; same as __store_local a, .multipiler
 
         ; add overflow bit back to z
         __load_local a, .z

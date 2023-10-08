@@ -34,8 +34,10 @@ class MapDef:
         self.units      = units
         self.bounded    = bounded
         self.resolution = None
+        self.name       = ""
 
     def load_file(self, file):
+        self.name = file
         with open(file, 'r') as map_cfg_file:
             map_cfg = yaml.safe_load(map_cfg_file)
             # print(map_cfg)
