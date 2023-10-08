@@ -17,6 +17,31 @@ static_uart_putc:
     .char:      ; char to print to uart
         #res 1
 
+; ****************************
+
+
+; UART print "\n" new line
+#bank rom
+static_uart_print_newline:
+    store #"\n", static_uart_putc.char
+    call static_uart_putc
+    ret
+
+; ****************************
+
+; UART print "0x" prefix
+#bank rom
+static_uart_print_hex_prefix:
+    store #"0", static_uart_putc.char
+    call static_uart_putc
+    store #"x", static_uart_putc.char
+    call static_uart_putc
+    ret
+
+; ****************************
+
+
+
 
 ; UART print until '\0'
 ; TODO: this function doesn't check if the UART is ready to send
@@ -30,10 +55,8 @@ static_uart_print:
     jmz .done
     
     ; put c
-    ;store a, static_uart_putc.char
-    ;call static_uart_putc
-    ; instead of calling put c this is faster...
-    store a, UART
+    store a, static_uart_putc.char
+    call static_uart_putc
     
     ; loadw hl, .data_pointer ; dont need to load again
     addw hl, #0x01
@@ -46,3 +69,91 @@ static_uart_print:
 #bank ram
     .data_pointer:  ; pointer to begining of string. MSB, LSB
         #res 2
+
+; ****************************
+
+#bank rom
+itoa_hex_nibble:
+    ; ******
+    ; itoa_hex takes a 1 byte params and converts it to hex char.
+    ; contaminates c var with new char
+    ; ******
+
+    ;    _______________
+    ; 5 |______.c_______|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+
+
+
+    .c = 5
+    .init:
+    __prologue
+    ; mask nibble
+    __load_local a, .c
+    and a, #0x0F
+    ; store a, (hl) ; could use __store_local a, .c, but addr still in hl
+    ; if .c is >= than 10, handle .hex, otherwise handle DEC
+    load b, a
+    sub b, #0x0A
+    jnc .hex
+
+    .dec:
+    add a, #0x30 ; add '0'
+    jmp .done
+    .hex:
+    add a, #(0x41-0x0A) ; add 'A'
+
+    .done:
+    store a, (hl)
+    __epilogue
+; ****************************
+
+#bank rom
+uart_print_itoa_hex:
+    ; ******
+    ; itoa_hex takes a 1 byte param and prints to console.
+    ; ******
+
+    ;    _______________
+    ; 5 |______.c_______|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ; 0 |_____~char~____|
+
+
+
+    .c = 5
+    .init:
+    __prologue
+    .msn:
+    __load_local a, .c
+    rshift a
+    rshift a
+    rshift a
+    rshift a
+    push a
+    call itoa_hex_nibble
+    pop a
+    store a, static_uart_putc.char
+    call static_uart_putc
+    .lsn:
+    __load_local a, .c
+    push a
+    call itoa_hex_nibble
+    pop a
+    store a, static_uart_putc.char
+    call static_uart_putc
+    .done:
+    __epilogue
+
+; ****************************
+
+
+; ###
+; char_utils.asm begin
+; ###

@@ -12,6 +12,27 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
     ; returns 32bit summation to result pointer. carry flag is left in b register.
     ; WARNGING: this funciton contamintes the x var
     ; ******
+    ;    _______________
+    ;14 |      .x       |
+    ;13 |               |
+    ;12 |               |
+    ;11 |_______________|
+    ;10 |      .7       |
+    ; 9 |               |
+    ; 8 |               |
+    ; 7 |_______________|
+    ; 6 |   .res_addr   |
+    ; 5 |_______________|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ; 0 |______.cf______|
+    ;-1 |      .z       |
+    ;-2 |               |
+    ;-3 |               |
+    ;-4 |_______________|
+
 
     ; param stack indicies. points to MSBs
     .x = 14 ; 11 thru 14
@@ -166,12 +187,29 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
         pop b ; save cf to b register
 
         __epilogue
+; **********************************
   
 multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
     ; ******
     ; multiply8_fast takes two unsigned 8 bit params and multiplies them.
     ; returns 16bit summation to result pointer
     ; ******
+
+    ;    _______________
+    ; 8 |______.x_______|
+    ; 7 |______.y_______|
+    ; 6 |   .res_addr   |
+    ; 5 |_______________|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ; 0 |______.cf______|
+    ;-1 |      .z       |
+    ;-2 |_______________|
+    ;-3 |__.multiplier__|
+    ;-4 |______.n_______|
+    ;-5 |_.overflow_temp|
 
     ; param stack indicies. points to MSBs
     .x = 8
@@ -180,21 +218,21 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
     ; local variables stack indicies. points to MSBs
     .cf = 0
     .z = -1
-    .mulipiler = -3
+    .multipiler = -3
     .n = -4
     .overflow_temp = -5
     __prologue
     push #0x00    ; init cf=0
-    pushw #0x00    ; init z=0
+    pushw #0x00   ; init z=0
     __load_local a, .y
-    push a         ;  init mulipiler=.y
+    push a        ;  init multipiler=.y
     push #0x08    ; init n=0
     push #0x00    ; init overflow_temp=0
     jmp .skip_load_mult
 
     .mult:
         __store_local a, .n ; save iteration
-        __load_local a, .mulipiler
+        __load_local a, .multipiler
     .skip_load_mult:
         rshift a
         jnc .next_skip_add; if no bit in ones place, jump to next interation
@@ -227,9 +265,9 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         __store_local a, .z-1
     .checkdone:
         ; right shift muliplier
-        __load_local a, .mulipiler
+        __load_local a, .multipiler
         rshift a
-        __store_local a, .mulipiler
+        __store_local a, .multipiler
 
         ; add overflow bit back to z
         __load_local a, .z
@@ -268,7 +306,7 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         pop a; discard cf
 
         __epilogue
-
+; **********************************
 
 multiply_repeat_add: ; x, y (addreses SP+6, SP+5)
 ; param stack indicies
@@ -304,7 +342,8 @@ multiply_repeat_add: ; x, y (addreses SP+6, SP+5)
     pop a ; save z to a reg
     pop b ; discard y_local
     __epilogue
-    
+
+ ; **********************************   
     
 multiply16_repeat_add: ; x, y, z (return)
 ; param stack indicies
@@ -347,11 +386,14 @@ multiply16_repeat_add: ; x, y, z (return)
     pop b ; discard y_local
     __epilogue
 
+; **********************************
+
 
 rshift_32: ; x, (SP+8,7,6,5)
     ; ******
     ; rshift_32 takes a 32 bit params and right shifts by 1.
     ; saves result inplace. leaves CF in b register
+    ; WARNGING: this funciton contamintes the x var
     ; ******
 
     ;    _______________
@@ -430,6 +472,7 @@ rshift_32: ; x, (SP+8,7,6,5)
     pop a ; discard n
     __epilogue
 
+; **********************************
 
 ; ###
 ; math.asm end

@@ -10,7 +10,7 @@
 ; ******
 #bank ram
 static_rand_lfsr8_x:
-    #res 4
+    #res 1
 
 #bank rom
 static_rand_lfsr8:
@@ -43,6 +43,9 @@ static_rand_lfsr8:
 .done:
     store a, static_rand_lfsr8_x
     ret
+
+; ****************************
+
 
 ; ###
 ; rand.asm end
