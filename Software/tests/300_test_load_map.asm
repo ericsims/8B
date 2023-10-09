@@ -24,13 +24,237 @@ call print_map_name
 
 call print_nodes
 
+push #0x00
+push #0x02
+
+call get_distance
+
 end:
 halt
+
+get_distance:
+    ; gets the distance between two map nodes
+    ; takes two params n0, n1. returns distance in b register
+    ; calls get_node
+    ;     _______________
+    ; 6  |______.n0______|
+    ; 5  |______.n1______|
+    ; 4  |_______?_______| RESERVED
+    ; 3  |_______?_______|    .
+    ; 2  |_______?_______|    .
+    ; 1  |_______?_______| RESERVED
+    ; 0  |_____.x_0______|
+    ;-1  |_____.y_0______|
+    ;-2  |_____.p0_0_____|
+    ;-3  |_____.p1_0_____|
+    ;-4  |_____.p2_0_____|
+    ;-5  |_____.p3_0_____|
+    ;-6  |_____.n_0______|
+    ;-7  |_____.x_1______|
+    ;-8  |_____.y_1______|
+    ;-9  |_____.p0_1_____|
+    ;-10 |_____.p1_1_____|
+    ;-11 |_____.p2_1_____|
+    ;-12 |_____.p3_1_____|
+    ;-13 |_____.n_1______|
+    ;-14 |     .dx^2     |
+    ;-15 |_______________|
+    ;-16 |     .dy^2     |
+    ;-17 |_______________|
+    ;    |       ~       | additional empherial stack usage for subcalls
+
+
+    .n0 = 6
+    .n1 = 5
+    .x_0 = 0
+    .y_0 = -1
+    .x_1 = -7
+    .y_1 = -8
+    .dx2 = -14
+    .dy2 = -16
+
+    .init:
+    __prologue
+    pushw #0x0000 ; x_0 = 0, y_0 = 0
+    pushw #0x0000 ; p0_0 = 0, p1_0 = 0
+    pushw #0x0000 ; p2_0 = 0, p3_0 = 0
+    __load_local a, .n0
+    push a ; n_0 = n0
+
+    call get_node
+    
+    pushw #0x0000 ; x_1 = 0, y_1 = 0
+    pushw #0x0000 ; p0_1 = 0, p1_1 = 0
+    pushw #0x0000 ; p2_1 = 0, p3_1 = 0
+    __load_local a, .n1
+    push a ; n_1 = n1
+
+    call get_node
+    halt
+
+    ; compute dx^2
+    __load_local a, .x_0
+    __load_local b, .x_1
+    sub a, b
+    push a
+    push a
+    pushw #scratch1
+    call multiply8_fast
+    halt
+    popw hl ; discard scratch 1 pointer
+    popw hl ; discard dx and dx
+    load a, scratch1
+    __store_local a, .dx2
+    load a, scratch1+1
+    __store_local a, .dx2-1
+
+    halt
+
+    .done:
+    __epilogue
+
+get_node_ptr:
+    ; gets the addresss of a node
+    ; takes two params. .n node index, .node_ptr
+    ; overwrites .node_ptr with node address
+    ; calls ?
+
+    ;    _______________
+    ; 7 |   .node_ptr   |
+    ; 6 |_______________|
+    ; 5 |______.n_______|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ;   |       ~       | additional empherial stack usage for subcalls
+
+    .node_ptr = 7
+    .n = 5
+ 
+    .init:
+    __prologue
+
+    ; multiplying node index by size of nodes
+    loadw hl, sp ; save SP to hl
+    subw hl, #0x01
+    storew hl, scratch1
+    pushw #0x0000; placeholder result
+    __load_local a, .n
+    ; load a, num_nodes
+    push a
+    push #0x06
+    pushw scratch1 
+    call multiply8_fast
+    pop a   ; discard param
+    pop a   ; discard param
+    popw hl ; discard param
+    ; pop into scratch1 to flip endianess
+    pop a
+    store a, scratch1
+    pop a
+    store a, scratch1+1
+    loadw hl, scratch1
+    ; add offset from start of map
+    addw hl, #0x01
+    storew #0x0000, static_x_32
+    storew hl, static_x_32+2
+    storew #0x0000, static_y_32
+    storew #map, static_y_32+2
+    call static_add32
+    ; loadw hl, static_z_32+2
+    load a, static_z_32+2
+    __store_local a, .node_ptr
+    load a, static_z_32+3
+    __store_local a, .node_ptr-1
+
+
+    .done:
+    __epilogue
+
+
+get_node:
+    ; gets the details of a node
+    ; takes three params. .n0 node index, .x and .y, and .p0-.p3
+    ; overwrites .x and .y with node position, and .p0-.p3 with nodes
+    ; calls ?
+    ;    _______________
+    ;11 |______.x_______|
+    ;10 |______.y_______|
+    ; 9 |______.p0______|
+    ; 8 |______.p1______|
+    ; 7 |______.p2______|
+    ; 6 |______.p3______|
+    ; 5 |______.n_______|
+    ; 4 |_______?_______| RESERVED
+    ; 3 |_______?_______|    .
+    ; 2 |_______?_______|    .
+    ; 1 |_______?_______| RESERVED
+    ;   |       ~       | additional empherial stack usage for subcalls
+
+    .x  = 11
+    .y  = 10
+    .p0 = 9
+    .p1 = 8
+    .p2 = 7
+    .p3 = 6
+    .n  = 5
+
+    .init:
+    __prologue
+    
+    .get_ptr:
+    ; get node_ptr
+    pushw #0x0000 ; node_ptr result
+    __load_local a, .n
+    push a
+    call get_node_ptr
+    pop a
+    popw hl
+    storew hl, scratch1
+
+    ; x
+    load a, (hl)
+    addw hl, #0x01
+    storew hl, scratch1
+    __store_local a, .x
+    ; y
+    loadw hl, scratch1
+    load a, (hl)
+    addw hl, #0x01
+    storew hl, scratch1
+    __store_local a, .y
+    ; p0
+    loadw hl, scratch1
+    load a, (hl)
+    addw hl, #0x01
+    storew hl, scratch1
+    __store_local a, .p0
+    ; p1
+    loadw hl, scratch1
+    load a, (hl)
+    addw hl, #0x01
+    storew hl, scratch1
+    __store_local a, .p1
+    ; p2
+    loadw hl, scratch1
+    load a, (hl)
+    addw hl, #0x01
+    storew hl, scratch1
+    __store_local a, .p2
+    ; p3
+    loadw hl, scratch1
+    load a, (hl)
+    __store_local a, .p3
+
+    .done:
+    __epilogue
+
 
 print_nodes:
     ; prints the coordinates of the maps nodes
     ; takes no params. doesnt return anything
-    ; calls ?
+    ; calls static_uart_print, uart_print_itoa_hex, static_uart_print_newline
 
     ;    _______________
     ; 4 |_______?_______| RESERVED
@@ -38,50 +262,36 @@ print_nodes:
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
     ; 0 |______.n_______|
-    ;-1 |   .node_ptr   |
-    ;-2 |_______________|
-    ;-3 |______.x_______|
-    ;-4 |______.y_______|
+    ;-1 |______.x_______|
+    ;-2 |______.y_______|
+    ;-3 |______.p0______|
+    ;-4 |______.p1______|
+    ;-5 |______.p2______|
+    ;-6 |______.p3______|
     ;   |       ~       | additional empherial stack usage for subcalls
 
     .n = 0 ; node index
-    .node_ptr = -1 ; node index
-    .x = -3 ; x coord
-    .y = -4 ; y coord
+    .x = -1 ; x coord
+    .y = -2 ; y coord
+    .p0 = -3 ; p0
+    .p1 = -4 ; p1
+    .p2 = -5 ; p2
+    .p3 = -6 ; p3
     __prologue
     .init:
     push #0x00 ; n = 0
-    loadw hl, #map
-    addw hl, #0x01
-    ; pushw hl ; .node_ptr = map+1
-    storew hl, scratch1
-    pushw scratch1
-
-    push #0x00 ; x = 0
-    push #0x00 ; y = 0
+    pushw #0x0000 ; x = 0, y = 0
+    pushw #0x0000 ; p0 = 0, p1 = 0
+    pushw #0x0000 ; p2 = 0, p3 = 0
 
     .top:
-    ; TODO
 
     .get_coords:
-    ; TODO: there is probably a way to do this on the stack...
-    ; x
-    __load_local a, .node_ptr
-    store a,  scratch1
-    __load_local a, (.node_ptr-1)
-    store a,  scratch1+1
-    loadw hl, scratch1
-    load a, (hl)
-    __store_local a, .x
-    ; y
-    __load_local a, .node_ptr
-    store a,  scratch1
-    __load_local a, (.node_ptr-1)
-    store a,  scratch1+1
-    loadw hl, scratch1
-    addw hl, #0x01
-    load a, (hl)
-    __store_local a, .y
+    ; TODO: there is probably a way to do this all on the stack...
+    __load_local a, .n
+    push a
+    call get_node
+    pop a
 
     ; print n: {n} x: {x}, y: {y}
     ; print "n: "
@@ -120,26 +330,17 @@ print_nodes:
     ; if not increment .n
     add b, #0x01
     __store_local b, .n
-    ; and increment .node_ptr
-    __load_local a, .node_ptr
-    store a,  scratch1
-    __load_local a, (.node_ptr-1)
-    store a,  scratch1+1
-    loadw hl, scratch1
-    addw hl, #0x06
-    storew hl, scratch1
-    load a,  scratch1
-    __store_local a, .node_ptr
-    load a,  scratch1+1
-    __store_local a, (.node_ptr-1)
     jmp .top
 
 
     .done:
-    pop a ; discard y
-    pop a ; discard x
-    popw hl ; discard .node_ptr
-    pop a ; discard .n
+    pop a
+    pop a
+    pop a
+    pop a
+    pop a
+    pop a
+    pop a
     __epilogue
 
 
@@ -162,35 +363,13 @@ print_map_name:
     storew #str_2, static_uart_print.data_pointer
     call static_uart_print
 
-    ; first find address of name string
-    ; multiplying number of nodes by size of nodes
-    loadw hl, sp ; save SP to hl
-    subw hl, #0x01
-    storew hl, scratch1
-    pushw #0x0000; placeholder result
+    ; get node_ptr
+    pushw #0x0000 ; node_ptr result
     load a, num_nodes
     push a
-    push #0x06
-    pushw scratch1 
-    call multiply8_fast
-    pop a   ; discard param
-    pop a   ; discard param
-    popw hl ; discard param
-    ; pop into scratch1 to flip endianess
+    call get_node_ptr
     pop a
-    store a, scratch1
-    pop a
-    store a, scratch1+1
-    loadw hl, scratch1
-    ; add offset from start of map
-    addw hl, #0x01
-    storew #0x0000, static_x_32
-    storew hl, static_x_32+2
-    storew #0x0000, static_y_32
-    storew #map, static_y_32+2
-    call static_add32
-    loadw hl, static_z_32+2
-    ; print string
+    popw hl
     storew hl, static_uart_print.data_pointer
     call static_uart_print
     call static_uart_print_newline
