@@ -123,7 +123,7 @@ uart_print_itoa_hex:
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
-    ; 0 |_____~char~____| empherial char passed to itoa_hex_nibble, then discarded
+    ; 0 |_____~char~____| ephemeral  char passed to itoa_hex_nibble, then discarded
 
 
 

@@ -61,7 +61,7 @@ get_distance:
     ;-15 |_______________|
     ;-16 |     .dy^2     |
     ;-17 |_______________|
-    ;    |       ~       | additional empherial stack usage for subcalls
+    ;    |       ~       | additional ephemeral  stack usage for subcalls
 
 
     .n0 = 6
@@ -127,7 +127,7 @@ get_node_ptr:
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional empherial stack usage for subcalls
+    ;   |       ~       | additional ephemeral  stack usage for subcalls
 
     .node_ptr = 7
     .n = 5
@@ -190,7 +190,7 @@ get_node:
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional empherial stack usage for subcalls
+    ;   |       ~       | additional ephemeral  stack usage for subcalls
 
     .x  = 11
     .y  = 10
@@ -268,7 +268,7 @@ print_nodes:
     ;-4 |______.p1______|
     ;-5 |______.p2______|
     ;-6 |______.p3______|
-    ;   |       ~       | additional empherial stack usage for subcalls
+    ;   |       ~       | additional ephemeral  stack usage for subcalls
 
     .n = 0 ; node index
     .x = -1 ; x coord
@@ -355,7 +355,7 @@ print_map_name:
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional empherial stack usage for subcalls
+    ;   |       ~       | additional ephemeral  stack usage for subcalls
 
 
     __prologue
