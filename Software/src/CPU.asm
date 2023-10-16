@@ -1,5 +1,4 @@
-
-
+#once
 #include "instructions.asm"
 
 #ruledef
