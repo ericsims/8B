@@ -13,38 +13,37 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
     ; WARNGING: this funciton contamintes the x var
     ; ******
     ;    _______________
-    ;14 |      .x       |
-    ;13 |               |
-    ;12 |               |
-    ;11 |_______________|
-    ;10 |      .7       |
-    ; 9 |               |
-    ; 8 |               |
-    ; 7 |_______________|
-    ; 6 |   .res_addr   |
+    ;16 |      .z       |
+    ;15 |               |
+    ;14 |               |
+    ;13 |_______________|
+    ;12 |      .x       |
+    ;11 |               |
+    ;10 |               |
+    ; 9 |_______________|
+    ; 8 |      .y       |
+    ; 7 |               |
+    ; 6 |               |
     ; 5 |_______________|
     ; 4 |_______?_______| RESERVED
     ; 3 |_______?_______|    .
     ; 2 |_______?_______|    .
     ; 1 |_______?_______| RESERVED
     ; 0 |______.cf______|
-    ;-1 |      .z       |
-    ;-2 |               |
-    ;-3 |               |
-    ;-4 |_______________|
+
 
 
     ; param stack indicies. points to MSBs
-    .x = 14 ; 11 thru 14
-    .y = 10 ; 7 thru 10
-    .res_addr = 6 ; 5 thru 6
+    
+    .z  = 16 ; -1 thru -4
+    .x  = 12 ; 11 thru 14
+    .y  =  8 ; 7 thru 10
     ; local variables stack indicies. points to MSBs
     .cf = 0
-    .z = -1 ; -1 thru -4
-    __prologue
-    push #0x00    ; init cf=0
-    pushw #0x1111 ; init z=0
-    pushw #0x1111 ; init z=0
+    .init:
+        __prologue
+        push #0x00    ; init cf=0
+
 
 
     .add_byte1:
@@ -149,40 +148,40 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
 
     .done:
         ; save the 4 bytes off to the resultant array location
-        __load_local a, .res_addr
-        push a
-        __load_local a, .res_addr-1
-        push a
-        popw hl
-        addw hl, #0x03
-        pop a
-        store a, (hl)
+        ; __load_local a, .res_addr
+        ; push a
+        ; __load_local a, .res_addr-1
+        ; push a
+        ; popw hl
+        ; addw hl, #0x03
+        ; pop a
+        ; store a, (hl)
 
-        __load_local a, .res_addr
-        push a
-        __load_local a, .res_addr-1
-        push a
-        popw hl
-        addw hl, #0x02
-        pop a
-        store a, (hl)
+        ; __load_local a, .res_addr
+        ; push a
+        ; __load_local a, .res_addr-1
+        ; push a
+        ; popw hl
+        ; addw hl, #0x02
+        ; pop a
+        ; store a, (hl)
 
-        __load_local a, .res_addr
-        push a
-        __load_local a, .res_addr-1
-        push a
-        popw hl
-        addw hl, #0x01
-        pop a
-        store a, (hl)
+        ; __load_local a, .res_addr
+        ; push a
+        ; __load_local a, .res_addr-1
+        ; push a
+        ; popw hl
+        ; addw hl, #0x01
+        ; pop a
+        ; store a, (hl)
 
-        __load_local a, .res_addr
-        push a
-        __load_local a, .res_addr-1
-        push a
-        popw hl
-        pop a
-        store a, (hl)
+        ; __load_local a, .res_addr
+        ; push a
+        ; __load_local a, .res_addr-1
+        ; push a
+        ; popw hl
+        ; pop a
+        ; store a, (hl)
 
         pop b ; save cf to b register
 

@@ -1,10 +1,5 @@
 #include "../src/CPU.asm"
 
-#bank ram
-sum: #res 4 ; base pointer for function calls
-
-
-
 #bank rom
 
 top:
@@ -14,9 +9,9 @@ storew #0x0000, BP
 
 
 
-__push32 #0x1234_5678
-__push32 #0xFFAD_BEEF
-pushw #sum
+__push32 #0x0000_0000 ; result placeholder
+__push32 #0x1234_5678 ; x
+__push32 #0xFFAD_BEEF ; y
 
 call add32
 
@@ -32,11 +27,8 @@ pop a
 pop a
 pop a
 
-pop a
-pop a
-
-
-;assert hl, #0x88EF
+; check result is 0x11E2_1567
+;assert hl, ???
 
 halt
 
