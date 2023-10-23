@@ -16,6 +16,25 @@ static_cf: ; carry flag
 
 #bank rom
 
+static_abs8: ; x=abs(x)
+    ; ******
+    ; static_abs8 returns the abosslute value of an 8 bit input
+    ; WARNGING: this funciton contamintes the x input var
+    ; ******
+
+    .check_sign:
+        load a, static_x_32+3
+        and a, #0x80
+        jmz .done
+    .negate:
+        load a, static_x_32+3
+        xor a, #0xFF ; flip bits
+        add a, #0x01 ; add one
+        store a, static_x_32+3
+    .done:
+        ret
+
+
 static_negate32: ; x=-x
     ; ******
     ; static_negate32 takes a 32 bit params and returns the twos compliment oppsite.

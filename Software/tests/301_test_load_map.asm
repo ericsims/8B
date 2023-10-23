@@ -22,11 +22,157 @@ store a, num_nodes
 
 call print_map_name
 
-call print_nodes
+; call print_nodes
+
+push #0x00
+push #0x03
+call get_distance
+pop a
+pop a
+assert b, #75
+
+push #0x03
+push #0x00
+call get_distance
+pop a
+pop a
+assert b, #75
 
 end:
 halt
 
+get_distance:
+    ; gets the distance between two map nodes
+    ; dist = sqrt(dx^2+dy^2)
+    ; takes two params n0, n1. returns distance in b register
+    ; calls get_node
+    ;     _______________
+    ; 6  |______.n0______|
+    ; 5  |______.n1______|
+    ; 4  |_______?_______| RESERVED
+    ; 3  |_______?_______|    .
+    ; 2  |_______?_______|    .
+    ; 1  |_______?_______| RESERVED
+    ; 0  |_____.x_0______|
+    ;-1  |_____.y_0______|
+    ;-2  |_____.p0_0_____|
+    ;-3  |_____.p1_0_____|
+    ;-4  |_____.p2_0_____|
+    ;-5  |_____.p3_0_____|
+    ;-6  |_____.n_0______|
+    ;-7  |_____.x_1______|
+    ;-8  |_____.y_1______|
+    ;-9  |_____.p0_1_____|
+    ;-10 |_____.p1_1_____|
+    ;-11 |_____.p2_1_____|
+    ;-12 |_____.p3_1_____|
+    ;-13 |_____.n_1______|
+    ;-14 |     .dx^2     |
+    ;-15 |_______________|
+    ;-16 |     .dy^2     |
+    ;-17 |_______________|
+    ;-18 |_____.dist_____|
+    ;    |       ~       | additional ephemeral  stack usage for subcalls
+
+
+    .n0 = 6
+    .n1 = 5
+    .x_0 = 0
+    .y_0 = -1
+    .x_1 = -7
+    .y_1 = -8
+    .dx2 = -14
+    .dy2 = -16
+
+    .init:
+    __prologue
+    pushw #0x0000 ; x_0 = 0, y_0 = 0
+    pushw #0x0000 ; p0_0 = 0, p1_0 = 0
+    pushw #0x0000 ; p2_0 = 0, p3_0 = 0
+    __load_local a, .n0
+    push a ; n_0 = n0
+
+    call get_node
+    
+    pushw #0x0000 ; x_1 = 0, y_1 = 0
+    pushw #0x0000 ; p0_1 = 0, p1_1 = 0
+    pushw #0x0000 ; p2_1 = 0, p3_1 = 0
+    __load_local a, .n1
+    push a ; n_1 = n1
+
+    call get_node
+
+    ; ** compute dx^2 **
+    __load_local a, .x_0
+    __load_local b, .x_1
+    ; compute dx=abs(x_0-x_1)
+    sub a, b
+    store a, static_x_32+3
+    call static_abs8
+    load a, static_x_32+3
+    ; compute dx^2
+    push a ; empherial x
+    push a ; empherial y
+    pushw #scratch1 ; empherial desination reg
+    call multiply8_fast
+    popw hl ; discard scratch 1 pointer
+    popw hl ; discard dx and dx
+    pushw scratch1 ; .dx^2
+
+    ; ** compute dy^2 **
+    __load_local a, .y_0
+    __load_local b, .y_1
+    ; compute dy=abs(y_0-y_1)
+    sub a, b
+    store a, static_x_32+3
+    call static_abs8
+    load a, static_x_32+3
+    ; compute dy^2
+    push a ; empherial x
+    push a ; empherial y
+    pushw #scratch1 ; empherial desination reg
+    call multiply8_fast
+    popw hl ; discard scratch 1 pointer
+    popw hl ; discard dx and dx
+    pushw scratch1 ; .dy^2
+
+    ; ** compute sqrt(dx^2+dy^2) **
+    ; store 0x0000_dx2 to static_x_32
+    storew #0x00, static_x_32
+    __load_local a, .dx2
+    store a, static_x_32+2
+    subw hl, #0x01
+    load a, (hl)
+    store a, static_x_32+3
+    ; store 0x0000_dy2 to static_y_32
+    storew #0x00, static_y_32
+    __load_local a, .dy2
+    store a, static_y_32+2
+    subw hl, #0x01
+    load a, (hl)
+    store a, static_y_32+3
+    ; compute dist2=dx^2+dy^2
+    ; TODO:handle overflow?? or don't and just make sure node positions are low enough values that this doesn't overflow at 16 bit value
+    call static_add32
+    ; now do sqrt
+    push #0x00 ; result placeholder
+    pushw static_z_32+2
+    call sqrt
+    popw hl ; discard input
+
+    .done:
+    pop b   ; .distance
+    popw hl ; .dy^2
+    popw hl ; .dx^2
+    pop a   ; .n_1
+    popw hl ; .p3_1, .p2_1
+    popw hl ; .p1_1, .p0_1
+    popw hl ; .y_1, .x_1
+    pop a   ; .n_0
+    popw hl ; .p3_0, .p2_0
+    popw hl ; .p1_0, .p0_0
+    popw hl ; .y_0, .x_0
+    __epilogue
 
 get_node_ptr:
     ; gets the addresss of a node
@@ -287,7 +433,7 @@ print_map_name:
     call static_uart_print_newline
     __epilogue
 
-str_1: #d "This program loads and parses a test map\n\0"
+str_1: #d "This program loads and parses a test map\nThen, it computes some example distances between nodes\0"
 str_2: #d "Loading map: \0"
 str_5: #d "n: \0"
 str_3: #d " x: \0"
@@ -295,6 +441,7 @@ str_4: #d ", y: \0"
 
 #include "../src/lib/static_math.asm"
 #include "../src/lib/math.asm"
+#include "../src/lib/math_sqrt.asm"
 #include "../src/lib/char_utils.asm"
 
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
