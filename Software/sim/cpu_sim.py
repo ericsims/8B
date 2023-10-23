@@ -598,13 +598,14 @@ def main():
         if ctrl['PI'] and ctrl['RU']:
           # if call_graph[-1] != previous_pc:
           #   call_graph.append(previous_pc)
+          # TODO: not really sure what i want my call graphs to look like in this mess
           if ii.value == 0x73: # call
-            call_graph.append(pc.value)
             pass
           elif ii.value == 0x74: # return
             pass
           else: # some kind of jump
             pass
+          call_graph.append(pc.value)
 
         # U CODE
         UCC = (UCC + 1) & 0x1F
@@ -809,7 +810,7 @@ def main():
         print_call_graph(call_graph, symbols)
 
       # dead code
-      if 1:
+      if 0:
         print("** DEAD CODE REPORT **")
         print(\
           "legend: ",
