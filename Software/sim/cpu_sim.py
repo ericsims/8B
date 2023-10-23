@@ -7,6 +7,7 @@ import json
 import yaml
 from PIL import Image, ImageTk
 import PySimpleGUI as sg
+from termcolor import colored
 
 from PC import PC
 from II import II
@@ -377,6 +378,8 @@ def main():
 
   INDC_COLOR = ['gray', 'green']
 
+  eeprom_usage = 0
+
   file = open(FILE_NAME, 'rb')
   eep_ptr = 0
   while 1:
@@ -384,6 +387,7 @@ def main():
     if not byte:
       break
     mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
+    eeprom_usage += 1
     # TODO: load real ext_rom bin
     mems.ext_eeprom.value[eep_ptr] = ord(byte) & 0xFF
     eep_ptr+=1
@@ -443,6 +447,12 @@ def main():
           data = pc.get(ctrl['LM'])
         elif ctrl['MO']:
           data = mems.get(addr)
+          # store dead code info
+          list_addrs = [c['addr'] for c in code]
+          indices = [i for i, x in enumerate(list_addrs) if x == addr]
+          for i in indices:
+            if ctrl['II']: code[i]['execs'] += 1
+            code[i]['dead'] = False
         elif ctrl['NO']:
           data = stack.get(ctrl['LM'])
         elif ctrl['AO']:
@@ -548,12 +558,6 @@ def main():
           ii.set(data)
           inst_stats[inst_names[ii.value]]['calls'] += 1
           # print(pc.value)
-          # store dead code info
-          list_addrs = [c['addr'] for c in code]
-          indices = [i for i, x in enumerate(list_addrs) if x == pc.value-1]
-          for i in indices:
-            code[i]['execs'] += 1
-            code[i]['dead'] = False
 
         # A REG
         if ctrl['AI']:
@@ -789,16 +793,32 @@ def main():
                 mp_pixels[col,row] = v
             window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
 
-
+      print()
       print(f"max stack usage {stack.max_used} bytes")
+      print(f"eeprom usage {eeprom_usage}/{mems.eeprom.size} bytes ({eeprom_usage/mems.eeprom.size*100:0.2f}%)")
       print(f"clk cycles {clk_counter}")
 
       # call graph
-      # print_call_graph(call_graph, symbols)
+      if 0:
+        print_call_graph(call_graph, symbols)
 
       # dead code
-      # for l in code:
-      #   print(l)
+      if 0:
+        print("** DEAD CODE REPORT **")
+        print(\
+          "legend: ",
+          colored("read", None),
+          colored("executed", 'blue'),
+          colored("dead", 'red'),
+          )
+        print()
+        for l in code:
+          # print(l)
+          color = None
+          if l['dead']: color = 'red'
+          elif l['execs'] > 0: color = 'blue'
+          print(colored(f"{l['addr']} | {l['data']}", color))
+
 
       if GUI:
         window.close()

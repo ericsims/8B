@@ -96,7 +96,7 @@
     }
 
 
-;store
+; store
     __store_local a, {index: i8} =>
     {
         assert(index == 0)
@@ -180,9 +180,9 @@
             push #({imm}`8)
         }
     }
-    
-}
 
+    __text {data} => 0`0 @ data
+}
 
 #bankdef ram
 {

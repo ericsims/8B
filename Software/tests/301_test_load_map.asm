@@ -3,43 +3,48 @@
 #bank ram
 num_nodes: ; number of nodes in map
     #res 1
-scratch1:
+scratch1: ; scrach var used for math
     #res 2
+
 
 #bank rom
 top:
-init_pointers:
-loadw sp, #0xBFFF
-storew #0x0000, BP
-intro:
-; print str_1
-storew #str_1, static_uart_print.data_pointer
-call static_uart_print
+main:
+    init_pointers:
+        loadw sp, #0xBFFF
+        storew #0x0000, BP
 
-get_num_nodes:
-load a, map
-store a, num_nodes
+    intro: ; print str_1
+        storew #str_1, static_uart_print.data_pointer
+        call static_uart_print
 
-call print_map_name
+    get_map:
+        load a, map
+        store a, num_nodes
 
-; call print_nodes
+        call print_map_name
 
-push #0x00
-push #0x03
-call get_distance
-pop a
-pop a
-assert b, #75
+    get_nodes:
+        call print_nodes
 
-push #0x03
-push #0x00
-call get_distance
-pop a
-pop a
-assert b, #75
+    test_distance_func:
+        push #0x00
+        push #0x03
+        call get_distance
+        pop a
+        pop a
+        assert b, #75
 
-end:
-halt
+        push #0x03
+        push #0x00
+        call get_distance
+        pop a
+        pop a
+        assert b, #75
+
+    end:
+        halt
+; end main
 
 get_distance:
     ; gets the distance between two map nodes
@@ -433,17 +438,18 @@ print_map_name:
     call static_uart_print_newline
     __epilogue
 
-str_1: #d "This program loads and parses a test map\nThen, it computes some example distances between nodes\0"
-str_2: #d "Loading map: \0"
-str_5: #d "n: \0"
-str_3: #d " x: \0"
-str_4: #d ", y: \0"
-
 #include "../src/lib/static_math.asm"
 #include "../src/lib/math.asm"
 #include "../src/lib/math_sqrt.asm"
 #include "../src/lib/char_utils.asm"
 
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
+
+str_1: #d "This program loads and parses a test map\nThen, it computes some example distances between nodes\0"
+str_2: #d "Loading map: \0"
+str_5: #d "n: \0"
+str_3: #d " x: \0"
+str_4: #d ", y: \0"
+
 
 halt ; dummy halt so i can see how big the program is

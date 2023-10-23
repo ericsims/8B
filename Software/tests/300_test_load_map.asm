@@ -11,8 +11,7 @@ top:
 init_pointers:
 loadw sp, #0xBFFF
 storew #0x0000, BP
-intro:
-; print str_1
+intro: ; print str_1
 storew #str_1, static_uart_print.data_pointer
 call static_uart_print
 
