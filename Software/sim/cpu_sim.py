@@ -598,7 +598,13 @@ def main():
         if ctrl['PI'] and ctrl['RU']:
           # if call_graph[-1] != previous_pc:
           #   call_graph.append(previous_pc)
-          call_graph.append(pc.value)
+          if ii.value == 0x73: # call
+            call_graph.append(pc.value)
+            pass
+          elif ii.value == 0x74: # return
+            pass
+          else: # some kind of jump
+            pass
 
         # U CODE
         UCC = (UCC + 1) & 0x1F
@@ -799,7 +805,7 @@ def main():
       print(f"clk cycles {clk_counter}")
 
       # call graph
-      if 0:
+      if 1:
         print_call_graph(call_graph, symbols)
 
       # dead code
