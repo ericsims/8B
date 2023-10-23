@@ -16,23 +16,9 @@ main:
     get_map:
         call print_map_name
 
-    get_nodes:
-        call print_nodes
-
-    test_distance_func:
-        push #0x00
-        push #0x03
-        call get_distance
-        pop a
-        pop a
-        assert b, #75
-
-        push #0x03
-        push #0x00
-        call get_distance
-        pop a
-        pop a
-        assert b, #75
+    TODO:
+        storew #str_2, static_uart_print.data_pointer
+        call static_uart_print
 
     end:
         halt
@@ -43,4 +29,5 @@ main:
 
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 
-str_1: #d "This program loads and parses a test map\nThen, it computes some example distances between nodes\0"
+str_1: #d "This program loads and parses a test map then attempts to find the shortest path using dijkstra's algorithm.\n\0"
+str_2: #d "NOT IMPLMENTED!\n\0"

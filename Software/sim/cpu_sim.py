@@ -803,7 +803,7 @@ def main():
         print_call_graph(call_graph, symbols)
 
       # dead code
-      if 0:
+      if 1:
         print("** DEAD CODE REPORT **")
         print(\
           "legend: ",
