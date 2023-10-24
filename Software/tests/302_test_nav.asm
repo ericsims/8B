@@ -51,7 +51,7 @@ dijkstra:
     ;            ...
     ;     |___visit_[SIZE_OF_ARRAYS-1]___|
 
-    .SIZE_OF_ARRAYS   = 20 ; this needs to be >= to the NUM_NODES in the map, but less than 40ish, so stack manipulation works (i think)  i could probably do this dynamically from the NUM_NODES var
+    .SIZE_OF_ARRAYS   = 40 ; this needs to be >= to the NUM_NODES in the map, but less than 40ish, so stack manipulation works (i think)  i could probably do this dynamically from the NUM_NODES var
  
 
     .n0           =  6
@@ -62,8 +62,8 @@ dijkstra:
     .dist_start   = -3
     .prev_start   = (.dist_start-.SIZE_OF_ARRAYS)
     .visit_start  = (.dist_start-.SIZE_OF_ARRAYS*2)
-    .next_node_x  = (.dist_start-.SIZE_OF_ARRAYS*3) ; unused?
-    .next_node_y  = (.next_node_x-1) ; unused?
+    .next_node_x  = (.dist_start-.SIZE_OF_ARRAYS*3)  ; unused
+    .next_node_y  = (.next_node_x-1)                 ; unused
     .next_node_p0 = (.next_node_x-2)
     .next_node_p1 = (.next_node_x-3)
     .next_node_p2 = (.next_node_x-4)
@@ -196,7 +196,7 @@ dijkstra:
                 store a, .scratch1+1 ; dist[next_node] in .scratch1+1
 
                 ; if dist[next_node] == 0xFF
-                ; TODO: do i actaully need this? isnt next_dist always < FF?
+                ; do i actaully need this? isnt next_dist always < FF?
                 ; sub a, #0xFF
                 ; jmz ...do_update
 
@@ -204,7 +204,6 @@ dijkstra:
                 load a, .scratch1
                 load b, .scratch1+1
                 sub a, b
-                halt
                 jmc ...do_update
                 jmp ...done_with_dist
 
@@ -222,7 +221,7 @@ dijkstra:
                 loadw hl, BP
                 subw hl, #({.prev_start})*-1
                 subw hl, b
-                store b, (hl)
+                store a, (hl)
             ...done_with_dist:
             
         ..next_node:
