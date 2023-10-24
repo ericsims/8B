@@ -419,7 +419,7 @@ instructions:
     - [MO, HI, LM]         # load data MSB into HL register MSB
     - [MC]                 # Increment MAR to point to data LSB.
     - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
-    
+
   load_a_b:
     description: 'Load a register with value in b register'
     duration: 4 # clock cycles

@@ -806,7 +806,7 @@ def main():
       print(f"clk cycles {clk_counter}")
 
       # call graph
-      if 1:
+      if 0:
         print_call_graph(call_graph, symbols)
 
       # dead code

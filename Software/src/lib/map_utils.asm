@@ -220,7 +220,7 @@ get_node:
     ; gets the details of a node
     ; takes three params. .n0 node index, .x and .y, and .p0-.p3
     ; overwrites .x and .y with node position, and .p0-.p3 with nodes
-    ; calls ?
+    ; calls get_node_ptr
     ;    _______________
     ;11 |______.x_______|
     ;10 |______.y_______|
