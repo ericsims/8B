@@ -1,6 +1,8 @@
 #include "../src/CPU.asm"
 
 #bank ram
+path:
+    #res (dijkstra.SIZE_OF_ARRAYS+1)
 
 #bank rom
 top:
@@ -315,6 +317,20 @@ dijkstra:
             jmp .mark_node_visted
     .reconstruct:
         ; reconstruct path backwards from destination to start
+        ..clear:
+            ; clear visited array to reuse for reversing the path.
+            load b, #(.SIZE_OF_ARRAYS-1)
+            loadw hl, BP
+            subw hl, #({.visit_start})*-1
+            subw hl, b
+            ...update_data:
+                store #0xFF, (hl)
+                addw hl, #0x01
+                sub b, #0x01
+                jnz ...update_data
+            halt
+
+            
         ..next_node:
             __load_local b, .u
             push b
