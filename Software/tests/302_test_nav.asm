@@ -188,6 +188,7 @@ dijkstra:
                 load a, (hl)
                 pop b
                 add a, b
+                jmc .error ;
                 store a, .scratch1 ; next_dist in .scratch1
 
                 ; if dist[next_node] == 0xFF || next_dist < dist[next_node] ...\
@@ -274,7 +275,7 @@ dijkstra:
             load a, #0xFF
             addw hl, #(.SIZE_OF_ARRAYS*2) ; load dist[i], which is a fixed offset from visit[i]
             load b, (hl)
-            store b, .scratch1+1 ; save dist[i] for later use in .scrach1+1
+            store b, .scratch1+1 ; save dist[i] for later use in .scratch1+1
             sub a, b
             jmz ..continue
 
@@ -323,37 +324,93 @@ dijkstra:
             loadw hl, BP
             subw hl, #({.visit_start})*-1
             subw hl, b
+            store b, .scratch1+1
             ...update_data:
-                store #0xFF, (hl)
+                load a, #0xFF
+                store a, (hl)
                 addw hl, #0x01
                 sub b, #0x01
                 jnz ...update_data
-            halt
-
-            
+        ..reverse:
         ..next_node:
-            __load_local b, .u
-            push b
+            ; a = .u
+            __load_local a, .u
+            ; save a to array in reverse order
+            loadw hl, BP
+            subw hl, #({.visit_start})*-1
+            load b, .scratch1+1
+            subw hl, b
+            store a, (hl)
+            ; decrement counter and save for next loop
+            sub b, #0x01
+            store b, .scratch1+1
+            ; print path
+            push a
             call uart_print_itoa_hex
             pop b
+            ; load b, a
             loadw hl, BP
             subw hl, #({.prev_start})*-1
             subw hl, b
             load a, (hl) ; a = prev[.u]
             load b, a
             sub a, #0xFF
-            jmz ..done
+            jmz ..done_pushing_path
             __store_local b, .u
             
-            storew #str_2, static_uart_print.data_pointer
+            ; print path in reverse order
+            storew #str_5, static_uart_print.data_pointer
             call static_uart_print
 
             jmp ..next_node
-        ..done:
+        ..done_pushing_path:
             call static_uart_print_newline
 
+        ..save_reverse_order:
+            ; destination offset
+            store #0x00, .scratch1
+            ; source array offset still in .scratch+1
+            load b, .scratch1+1
+            add b, #0x01
+            store b, .scratch1+1
+            
+            ...save_byte:
+            ; check if done
+            load b, .scratch1+1 
+            sub b, #(.SIZE_OF_ARRAYS)
+            jmz ..done_reversing
+
+            ; get source byte
+            loadw hl, BP
+            subw hl, #({.visit_start})*-1
+            load b, .scratch1+1
+            subw hl, b
+            load a, (hl)
+            ; increment counter and save for next loop
+            add b, #0x01
+            store b, .scratch1+1
+
+            ; save byte to destination
+            loadw hl, #path
+            load b, .scratch1
+            addw hl, b
+            store a, (hl)
+            ; increment counter and save for next loop
+            add b, #0x01
+            store b, .scratch1
+
+            jmp ...save_byte
+
+        ..done_reversing:
+            ; save terminating 0xFF byte to destination
+            loadw hl, #path
+            load b, .scratch1
+            addw hl, b
+            load a, #0xFF
+            store a, (hl)
+            ; halt
+           
     .done:
-        halt
         ; discard local arrays
         store #0x03, .scratch1 ; do this 3 times
         ..do_free:
@@ -377,6 +434,9 @@ dijkstra:
         pop a ; .next_node
         pop a ; u
         __epilogue
+    
+    .error: ; error. call this if there is an error to halt
+        halt
 ; end dijkstra
 
 
@@ -474,4 +534,5 @@ str_1: #d "This program loads and parses a test map then attempts to find the sh
 str_2: #d " --> \0"
 str_3: #d " dist: \0"
 str_4: #d "finding next node...\n\0"
+str_5: #d " <-- \0"
 
