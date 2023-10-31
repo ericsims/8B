@@ -4,9 +4,12 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from MapDef import *
 
+# cd 8B/Software/lib_dev/Localize
+# python Maps/gen_map_bin.py
+
 g = MapDef()
 g.load_file('Maps/tcffhr_l1.yaml')
-happy_mappy = g.gen_discrete_map(100)
+happy_mappy = g.gen_discrete_map(50)
 for index, nn in enumerate(g.nav_nodes):
     x = int(nn[0]*g.resolution)
     y = int(nn[1]*g.resolution)

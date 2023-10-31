@@ -23,12 +23,18 @@ def dijkstra(g, start, goal):
     dist[start] = 0
     u = start
     while sum(visited) < len(visited):
-        # print(u
+        # print(u)
+        
+        # print(f'current node: 0x{u:02X}')
         visited[u] = 1
         if u == goal: break
         # update distances
         for next_node in g.nav_paths[u]:
-            next_dist = _distance([g.nav_nodes[u], g.nav_nodes[next_node]]) + dist[u]
+            dist_ = _distance([g.nav_nodes[u], g.nav_nodes[next_node]])
+            next_dist = dist_ + dist[u]
+            print(f"{u:02X} --> {next_node:02X}, \
+                  dist:{math.floor(dist_*g.resolution):02X}, \
+                    next dist:{math.floor(next_dist*g.resolution):02X}")
             if dist[next_node] is None or next_dist < dist[next_node]:
                 dist[next_node] = next_dist
                 prev[next_node] = u

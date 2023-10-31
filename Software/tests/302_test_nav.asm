@@ -54,20 +54,22 @@ dijkstra:
     .SIZE_OF_ARRAYS   = 40 ; this needs to be >= to the NUM_NODES in the map, but less than 40ish, so stack manipulation works (i think)  i could probably do this dynamically from the NUM_NODES var
  
 
-    .n0           =  6
-    .n1           =  5
-    .u            =  0
-    .next_node    = -1
-    .path_index   = -2
-    .dist_start   = -3
-    .prev_start   = (.dist_start-.SIZE_OF_ARRAYS)
-    .visit_start  = (.dist_start-.SIZE_OF_ARRAYS*2)
-    .next_node_x  = (.dist_start-.SIZE_OF_ARRAYS*3)  ; unused
-    .next_node_y  = (.next_node_x-1)                 ; unused
-    .next_node_p0 = (.next_node_x-2)
-    .next_node_p1 = (.next_node_x-3)
-    .next_node_p2 = (.next_node_x-4)
-    .next_node_p3 = (.next_node_x-5)
+    .n0            =  6
+    .n1            =  5
+    .u             =  0
+    .next_node     = -1
+    .path_index    = -2
+    .dist_start    = -3
+    .prev_start    = (.dist_start-.SIZE_OF_ARRAYS)
+    .visit_start   = (.dist_start-.SIZE_OF_ARRAYS*2)
+    .next_node_x   = (.dist_start-.SIZE_OF_ARRAYS*3)  ; unused
+    .next_node_y   = (.next_node_x-1)                 ; unused
+    .next_node_p0  = (.next_node_x-2)
+    .next_node_p1  = (.next_node_x-3)
+    .next_node_p2  = (.next_node_x-4)
+    .next_node_p3  = (.next_node_x-5)
+
+    .smallest_dist = (.dist_start-.SIZE_OF_ARRAYS*3)
 
 #bank ram
     .scratch1: #res 2 ; 2 bytes of scratch to use during init
@@ -132,7 +134,7 @@ dijkstra:
         __load_local a, .n1
         __load_local b, .u
         sub a, b
-        jmz .done
+        jmz .reconstruct
     .get_next_nodes:
         pushw #0x0000 ; .x, .y placeholders
         pushw #0x0000 ; .p0, .p1 placeholders
@@ -237,30 +239,102 @@ dijkstra:
             popw hl
 
     .check_closest_node:
+        ; print "fiding next node"
+        ; storew #str_4, static_uart_print.data_pointer
+        ; call static_uart_print
         ..init:
-        ; i = 0
-        ; smallest_distance = FF
-        halt
+            ; i = 0
+            ; smallest_distance = FF
+            push #0xFF; smallest_distance = FF
+            store #0x00, .scratch1 ; i = 0
+            ; using.smallest_dist as well
+            ; halt
+        ; for i in NUM_NODES, (or just skip unused notes in destance)
+        ..check_valid:
+            ; print current node
+            ; load b, .scratch1
+            ; push b
+            ; call uart_print_itoa_hex
+            ; pop b
+            ; store #" ", static_uart_putc.char
+            ; call static_uart_putc
+
+            ; if visit[i] == 0x0E continue, this node is already visted
+            load a, #0x0E
+            load b, .scratch1
+            loadw hl, BP
+            subw hl, #({.visit_start})*-1
+            subw hl, b
+            load b, (hl)
+            sub a, b
+            jmz ..continue
+            ; if dist[i] == 0xFF continue this distnace hasn't be checked
+            load a, #0xFF
+            addw hl, #(.SIZE_OF_ARRAYS*2) ; load dist[i], which is a fixed offset from visit[i]
+            load b, (hl)
+            store b, .scratch1+1 ; save dist[i] for later use in .scrach1+1
+            sub a, b
+            jmz ..continue
+
+            ; push b
+            ; call uart_print_itoa_hex
+            ; pop b
+
+            ; if smallest_distance == 0xFF, or dist[i] < smallest_distance
+            ; actually since smallest_dist is init to 0xFF, the '<' comparison is enough
+            load a, .scratch1+1;perhaps this is already in b reg?
+            __load_local b, .smallest_dist
+            sub a, b
+            jmc ..do_update
+            jmp ..continue
+            ..do_update:
+            ; smallest_distance = dist[i] (set smallest dist)
+            load b, .scratch1+1
+            __store_local b, .smallest_dist
+            ; u = i (jump to next node)
+            load a, .scratch1
+            __store_local a, .u
+        ..continue:
+            ; __load_local a, .smallest_dist
+            ; push a
+            ; call uart_print_itoa_hex
+            ; pop a
+            ; call static_uart_print_newline
+
+            load a, .scratch1
+            add a, #0x01
+            store a, .scratch1
+            load b, map_utils.num_nodes
+            sub a, b
+            jmz ..done
+            jmp ..check_valid
+        ..done:
+            __load_local b, .u ; b = .u (next node)
+            pop a ; a = shortest_dist
+            ; halt
+            jmp .mark_node_visted
+    .reconstruct:
     .done:
+        halt
         ; discard local arrays
         store #0x03, .scratch1 ; do this 3 times
-        ..do_init:
+        ..do_free:
             load a, .scratch1
             sub a, #0x01
             jmc ..done
             store a, .scratch1
             store #(.SIZE_OF_ARRAYS-1), .scratch1+1
-            ...push_zeros:
+            ...pop_data:
                 pop a
                 load a, .scratch1+1
                 sub a, #0x01
-                jmc ...done_init_zeros
+                jmc ...done_free
                 store a, .scratch1+1
-                jmp ...push_zeros
-            ...done_init_zeros:
-            jmp ..do_init
+                jmp ...pop_data
+            ...done_free:
+            jmp ..do_free
         ..done:
-        halt
+        ; halt
         pop a ; .path_index
         pop a ; .next_node
         pop a ; u
@@ -361,4 +435,5 @@ map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 str_1: #d "This program loads and parses a test map then attempts to find the shortest path using dijkstra's algorithm.\n\0"
 str_2: #d " --> \0"
 str_3: #d " dist: \0"
+str_4: #d "finding next node...\n\0"
 

@@ -3,3 +3,7 @@
 *.lck
 Software/bin
 **/History
+
+# lock files
+*~$*
+*.~*
