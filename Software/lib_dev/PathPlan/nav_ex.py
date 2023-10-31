@@ -13,7 +13,7 @@ for index, nn in enumerate(g.nav_nodes):
     y = int(nn[1]*g.resolution)
     plt.annotate(index, (x,y))
 
-path, dist = dijkstra(g, 13, 5)
+path, dist = dijkstra(g, 7, 19)
 print(path)
 
 # last_node = None

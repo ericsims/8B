@@ -1,61 +1,10 @@
-#include "../src/CPU.asm"
+; ###
+; nav_utils.asm begin
+; ###
 
-#bank ram
-path:
-    #res (dijkstra.SIZE_OF_ARRAYS+1)
+#once
 
 #bank rom
-top:
-main:
-    init_pointers:
-        loadw sp, #0xBFFF
-        storew #0x0000, BP
-
-    intro: ; print str_1
-        storew #str_1, static_uart_print.data_pointer
-        call static_uart_print
-
-    get_map:
-        call print_map_name
- 
-    nav: ; 13 --> 5
-        push #0x0D
-        push #0x05
-        call dijkstra
-        pop a
-        pop a
-    
-    verify_result: ; [13, 14, 4, 20, 21, 10, 9, 3, 7, 0, 6, 5]
-        load a, {path+0}
-        assert a, #0x0D
-        load a, {path+1}
-        assert a, #0x0E
-        load a, {path+2}
-        assert a, #0x04
-        load a, {path+3}
-        assert a, #0x14
-        load a, {path+4}
-        assert a, #0x15
-        load a, {path+5}
-        assert a, #0x0A
-        load a, {path+6}
-        assert a, #0x09
-        load a, {path+7}
-        assert a, #0x03
-        load a, {path+8}
-        assert a, #0x07
-        load a, {path+9}
-        assert a, #0x00
-        load a, {path+10}
-        assert a, #0x06
-        load a, {path+11}
-        assert a, #0x05
-        load a, {path+12}
-        assert a, #0xFF
-
-    end:
-        halt
-; end main
 
 dijkstra:
     ; find shortest path using dijkstra's algorithm
@@ -128,18 +77,6 @@ dijkstra:
             ...done_init_zeros:
             jmp ..do_init
         ..done:
-
-    ; .test:
-    ;     ; this writes a value to local array
-    ;     loadw hl, BP
-    ;     subw hl, #({.dist_start})*-1
-    ;     push #0xAB ; value
-    ;     push #0x05 ; index
-    ;     storew hl, .scratch1 ; TODO: these two could be pushw hl
-    ;     pushw .scratch1
-    ;     call set_local_array
-    ;     popw hl
-    ;     popw hl
         
     .set_start:
         __load_local b, .n0
@@ -187,25 +124,25 @@ dijkstra:
         ..get_dist:
             __load_local a, .u
             push a
-            call uart_print_itoa_hex
+            ; call uart_print_itoa_hex
             
             ; print u --> p
-            storew #str_2, static_uart_print.data_pointer
-            call static_uart_print
+            ; storew #str_2, static_uart_print.data_pointer
+            ; call static_uart_print
 
             __load_local a, .next_node
             push a
-            call uart_print_itoa_hex
+            ; call uart_print_itoa_hex
 
             call get_distance ; dist_to_next_node = sqrt((.u.x-.p.x)^2+(.u.y-.p.y)^2)
             popw hl
             ; distance
             push b
             ; print dist
-            storew #str_3, static_uart_print.data_pointer
-            call static_uart_print
-            call uart_print_itoa_hex
-            call static_uart_print_newline
+            ; storew #str_3, static_uart_print.data_pointer
+            ; call static_uart_print
+            ; call uart_print_itoa_hex
+            ; call static_uart_print_newline
 
             ...next_dist:
                 ; next_dist = dist[.u] + dist_to_next_node
@@ -279,7 +216,6 @@ dijkstra:
             push #0xFF; smallest_distance = FF
             store #0x00, .scratch1 ; i = 0
             ; using.smallest_dist as well
-            ; halt
         ; for i in NUM_NODES, (or just skip unused notes in destance)
         ..check_valid:
             ; print current node
@@ -342,7 +278,6 @@ dijkstra:
         ..done:
             __load_local b, .u ; b = .u (next node)
             pop a ; a = shortest_dist
-            ; halt
             jmp .mark_node_visted
     .reconstruct:
         ; reconstruct path backwards from destination to start
@@ -373,10 +308,10 @@ dijkstra:
             sub b, #0x01
             store b, .scratch1+1
             ; print path
-            push a
-            call uart_print_itoa_hex
-            pop b
-            ; load b, a
+            ; push a
+            ; call uart_print_itoa_hex
+            ; pop b
+            load b, a ; comment this out if printing path!!
             loadw hl, BP
             subw hl, #({.prev_start})*-1
             subw hl, b
@@ -387,12 +322,12 @@ dijkstra:
             __store_local b, .u
             
             ; print path in reverse order
-            storew #str_5, static_uart_print.data_pointer
-            call static_uart_print
+            ; storew #str_5, static_uart_print.data_pointer
+            ; call static_uart_print
 
             jmp ..next_node
         ..done_pushing_path:
-            call static_uart_print_newline
+            ; call static_uart_print_newline
 
         ..save_reverse_order:
             ; destination offset
@@ -436,7 +371,6 @@ dijkstra:
             addw hl, b
             load a, #0xFF
             store a, (hl)
-            ; halt
            
     .done:
         ; discard local arrays
@@ -457,7 +391,6 @@ dijkstra:
             ...done_free:
                 jmp ..do_free
         ..done:
-        ; halt
         pop a ; .path_index
         pop a ; .next_node
         pop a ; u
@@ -468,101 +401,15 @@ dijkstra:
         assert a, #0xFF
         halt
 ; end dijkstra
+; dijkstra strings
+; str_1: #d "This program loads and parses a test map then attempts to find the shortest path using dijkstra's algorithm.\n\0"
+; str_2: #d " --> \0"
+; str_3: #d " dist: \0"
+; str_4: #d "finding next node...\n\0"
+; str_5: #d " <-- \0"
 
+; #include "./char_utils.asm"
 
-; get_array_addr:
-;     ; helper function that is used by set_local_array and get_local_array
-;     ; accesses the stack of the calling function!
-;     .n     = 7
-;     .start = 6
-;     #bank ram
-;     .addr: #res 2 ; 2 bytes of address scratc to make this faster
-;     #bank rom
-;     ; store .start addr in .addr
-;     loadw hl, BP
-;     addw hl, #.start
-;     load a, (hl)
-;     store a, .addr
-;     subw hl, #0x01
-;     load a, (hl)
-;     store a, .addr+1
-    
-;     ; compute offset address
-;     __load_local b, .n
-;     loadw hl, .addr
-;     subw hl, b
-;     storew hl, .addr
-;     ret
-
-; set_local_array:
-;     ; sets value in local array
-;     ; takes .start address, n index, and v value
-;     ;      _______________
-;     ; 8   |______.v_______|
-;     ; 7   |______.n_______|
-;     ; 6   |    .start     |
-;     ; 5   |_______________|
-;     ; 4   |_______?_______| RESERVED
-;     ; 3   |_______?_______|    .
-;     ; 2   |_______?_______|    .
-;     ; 1   |_______?_______| RESERVED
-
-;     .v     = 8
-;     .n     = 7
-;     .start = 6
-
-;     .init:
-;         __prologue
-;     .get_array_addr:
-;         call get_array_addr
-;     .set_val:
-;         ; save val
-;         __load_local a, .v
-;         loadw hl, get_array_addr.addr
-;         store a, (hl)
-
-;     .done:
-;         __epilogue
-; ; set_local_array
-
-; get_local_array:
-;     ; gets value in local array
-;     ; takes .start address, n index, and v value. store value to in
-;     ;      _______________
-;     ; 8   |______.v_______|
-;     ; 7   |______.n_______|
-;     ; 6   |    .start     |
-;     ; 5   |_______________|
-;     ; 4   |_______?_______| RESERVED
-;     ; 3   |_______?_______|    .
-;     ; 2   |_______?_______|    .
-;     ; 1   |_______?_______| RESERVED
-
-;     .v     = 8
-;     .n     = 7
-;     .start = 6
-
-;     .init:
-;         __prologue
-;     .get_array_addr:
-;         call get_array_addr
-;     .set_val:
-;         ; save val
-;         loadw hl, get_array_addr.addr
-;         load a, (hl)
-;         __store_local a, .v
-
-;     .done:
-;         __epilogue
-; ; set_local_array
-
-#include "../src/lib/map_utils.asm"
-
-map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
-
-str_1: #d "This program loads and parses a test map then attempts to find the shortest path using dijkstra's algorithm.\n\0"
-str_2: #d " --> \0"
-str_3: #d " dist: \0"
-str_4: #d "finding next node...\n\0"
-str_5: #d " <-- \0"
-
+; ###
+; nav_utils.asm end
+; ###

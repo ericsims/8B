@@ -3,7 +3,7 @@ BIN_DIR=bin
 TEST_SRC_DIR=tests
 TEST_SRCS=$(wildcard $(TEST_SRC_DIR)/*.asm)
 TEST_BINS=$(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
-all-tests := $(addsuffix .test, $(basename $(TEST_BINS)))
+all_tests := $(addsuffix .test, $(basename $(TEST_BINS)))
 LUTS="bin/sin_lut.dat"
 INST_SET="instructions.asm"
 
@@ -21,15 +21,20 @@ $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
 	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
 	@echo ""
 
-test:
-	@echo "***running test cases***"
-	@for test in $(TEST_BINS);\
-	do\
-		echo "running $$test case";\
-		python sim/cpu_sim.py --no-sim --no-gui -f $$test >> /dev/null || exit 1;\
-	done;\
-	echo "passed test cases..."
-	@echo ""
+test: $(all_tests)
+$(all_tests): %.test : %.bin
+	@echo "running test case $<"
+	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
+
+# test:
+# 	@echo "***running test cases***"
+# 	@for test in $(TEST_BINS);\
+# 	do\
+# 		echo "running $$test case";\
+# 		python sim/cpu_sim.py --no-sim --no-gui -f $$test >> /dev/null || exit 1;\
+# 	done;\
+# 	echo "passed test cases..."
+# 	@echo ""
 
 $(INST_SET):
 	@echo "***builing instruction set***"

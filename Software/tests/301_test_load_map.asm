@@ -25,14 +25,14 @@ main:
         call get_distance
         pop a
         pop a
-        assert b, #75
+        assert b, #0x25
 
         push #0x03
         push #0x00
         call get_distance
         pop a
         pop a
-        assert b, #75
+        assert b, #0x25
 
     end:
         halt
