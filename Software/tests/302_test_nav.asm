@@ -17,8 +17,8 @@ main:
         call print_map_name
  
     nav:
-        push #0x07
-        push #0x13
+        push #0x0D
+        push #0x05
         call dijkstra
         pop a
         pop a
@@ -314,6 +314,28 @@ dijkstra:
             ; halt
             jmp .mark_node_visted
     .reconstruct:
+        ; reconstruct path backwards from destination to start
+        ..next_node:
+            __load_local b, .u
+            push b
+            call uart_print_itoa_hex
+            pop b
+            loadw hl, BP
+            subw hl, #({.prev_start})*-1
+            subw hl, b
+            load a, (hl) ; a = prev[.u]
+            load b, a
+            sub a, #0xFF
+            jmz ..done
+            __store_local b, .u
+            
+            storew #str_2, static_uart_print.data_pointer
+            call static_uart_print
+
+            jmp ..next_node
+        ..done:
+            call static_uart_print_newline
+
     .done:
         halt
         ; discard local arrays
@@ -332,7 +354,7 @@ dijkstra:
                 store a, .scratch1+1
                 jmp ...pop_data
             ...done_free:
-            jmp ..do_free
+                jmp ..do_free
         ..done:
         ; halt
         pop a ; .path_index
