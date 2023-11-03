@@ -395,6 +395,7 @@ def main():
   file.close()
 
   vars, symbols, code = parse_vars(FILE_NAME)
+  list_addrs = enumerate([c['addr'] for c in code])
   max_var_width = max([len(list(var.keys())[0]) for var in vars])
 
   if GUI:
@@ -448,8 +449,7 @@ def main():
         elif ctrl['MO']:
           data = mems.get(addr)
           # store dead code info
-          list_addrs = [c['addr'] for c in code]
-          indices = [i for i, x in enumerate(list_addrs) if x == addr]
+          indices = [i for i, x in list_addrs if x == addr]
           for i in indices:
             if ctrl['II']: code[i]['execs'] += 1
             code[i]['dead'] = False
@@ -556,6 +556,7 @@ def main():
         # INST
         if ctrl['II']:
           ii.set(data)
+          # calls
           inst_stats[inst_names[ii.value]]['calls'] += 1
           # print(pc.value)
 
@@ -605,6 +606,7 @@ def main():
             pass
           else: # some kind of jump
             pass
+          # calls
           call_graph.append(pc.value)
 
         # U CODE
