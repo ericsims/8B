@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : PCB Document [Power_Clock_proto.PcbDoc]
+   Generated File[Power_Clock_proto.TXT]
+   Generated File[Power_Clock_proto.LDP]
+   Generated File[Power_Clock_proto.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 10:29:54 AM On 9/18/2022

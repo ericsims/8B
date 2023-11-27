@@ -15,7 +15,7 @@ LifeCycleDefinitionGUID=
 RevisionNamingSchemeGUID=
 
 [OutputGroup1]
-Name=
+Name=Build.OutJob
 Description=
 TargetOutputMedium=PCB_Files
 VariantName=[No Variations]
@@ -142,9 +142,9 @@ Configuration5_Name1=OutputConfigurationParameter1
 Configuration5_Item1=BoardEdgeRoutToolDia=2000000|GenerateBoardEdgeRout=False|GenerateDrilledSlotsG85=False|GenerateEIADrillFile=False|GenerateSeparatePlatedNonPlatedFiles=False|NumberOfDecimals=5|NumberOfUnits=2|OptimizeChangeLocationCommands=True|OriginPosition=Relative|Record=DrillView|Units=Imperial|ZeroesMode=SuppressTrailingZeroes|DocumentPath=D:\Users\erics\Documents\16B\ALU_Logic\ALU_Logic.PcbDoc
 
 [PublishSettings]
-OutputFilePath2=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\Assembly_Drawing.PDF
+OutputFilePath2=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\Scratch.PDF
 ReleaseManaged2=1
-OutputBasePath2=Project Outputs for Backplane
+OutputBasePath2=Project Outputs for Scratch
 OutputPathMedia2=
 OutputPathMediaValue2=
 OutputPathOutputer2=[Output Type]
@@ -169,9 +169,9 @@ ShowComponentParameters2=1
 GlobalBookmarks2=0
 PDFACompliance2=Disabled
 PDFVersion2=Default
-OutputFilePath3=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\
+OutputFilePath3=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\
 ReleaseManaged3=1
-OutputBasePath3=Project Outputs for Backplane
+OutputBasePath3=Project Outputs for Scratch
 OutputPathMedia3=
 OutputPathMediaValue3=
 OutputPathOutputer3=[Output Type]
@@ -182,9 +182,9 @@ OutputFileNameMulti3==ProjectName
 UseOutputNameForMulti3=0
 OutputFileNameSpecial3=
 OpenOutput3=1
-OutputFilePath4=D:\Users\erics\Documents\16B\ALU_Ctrl\Project Outputs for ALU_Ctrl\..\
+OutputFilePath4=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\..\
 ReleaseManaged4=1
-OutputBasePath4=Project Outputs for Backplane
+OutputBasePath4=Project Outputs for Scratch
 OutputPathMedia4=..\
 OutputPathMediaValue4=..\
 OutputPathOutputer4=[Output Custom]
@@ -197,9 +197,9 @@ OutputFileNameSpecial4=
 OpenOutput4=1
 
 [GeneratedFilesSettings]
-RelativeOutputPath2=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\Assembly_Drawing.PDF
+RelativeOutputPath2=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\Scratch.PDF
 OpenOutputs2=1
-RelativeOutputPath3=D:\Users\erics\Documents\16B\Backplane\Project Outputs for Backplane\
+RelativeOutputPath3=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\
 OpenOutputs3=1
 AddToProject3=1
 TimestampFolder3=0
@@ -209,7 +209,7 @@ OpenGerberOutput3=0
 OpenNCDrillOutput3=0
 OpenIPCOutput3=0
 EnableReload3=0
-RelativeOutputPath4=D:\Users\erics\Documents\16B\ALU_Ctrl\Project Outputs for ALU_Ctrl\..\
+RelativeOutputPath4=D:\Users\erics\Documents\8B\Hardware\Scratch\Project Outputs for Scratch\..\
 OpenOutputs4=1
 AddToProject4=1
 TimestampFolder4=0

@@ -1,0 +1,7 @@
+"Net","Name","X Coord","Y Coord","Side","Hole Size","Type"
+"HT#","TP5-1","2300mil","2900mil","Top","62.992mil","Through hole"
+"DBG","TP6-1","2700mil","2900mil","Top","62.992mil","Through hole"
+"RST#","TP4-1","1900mil","2900mil","Top","62.992mil","Through hole"
+"GND","TP1-1","2500mil","1700mil","Top","62.992mil","Through hole"
+"VCC","TP2-1","2500mil","1300mil","Top","62.992mil","Through hole"
+"CLK","TP3-1","1500mil","2900mil","Top","62.992mil","Through hole"

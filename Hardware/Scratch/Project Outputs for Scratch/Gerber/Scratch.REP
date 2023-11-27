@@ -2,6 +2,17 @@
 FileName = Scratch.GBR
 AutoAperture = True
 *************************************************************
+Generating : Keep-Out Layer
+      File : Scratch.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+    D26
+*************************************************************
+
+*************************************************************
 Generating : Bottom Overlay
       File : Scratch.GBO
 
@@ -13,19 +24,17 @@ Used DCodes :
 *************************************************************
 
 *************************************************************
-Generating : Top Overlay
-      File : Scratch.GTO
+Generating : Bottom Paste
+      File : Scratch.GBP
 
-    Adding Layer      : Top Overlay
+    Adding Layer      : Bottom Paste
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
 
 
 Used DCodes :
-    D10
-    D11
-    D12
-    D13
-    D14
-    D15
 *************************************************************
 
 *************************************************************
@@ -77,10 +86,40 @@ Used DCodes :
 *************************************************************
 
 *************************************************************
-Generating : Top Layer
-      File : Scratch.GTL
+Generating : Top Paste
+      File : Scratch.GTP
+
+    Adding Layer      : Top Paste
 
     Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Top Overlay
+      File : Scratch.GTO
+
+    Adding Layer      : Top Overlay
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : Scratch.GBL
+
+    Adding Layer      : Bottom Layer
 
     Adding Layer      : Multi-Layer
 
@@ -102,48 +141,10 @@ Used DCodes :
 *************************************************************
 
 *************************************************************
-Generating : Bottom Paste
-      File : Scratch.GBP
-
-    Adding Layer      : Bottom Paste
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-*************************************************************
-
-*************************************************************
-Generating : Top Paste
-      File : Scratch.GTP
-
-    Adding Layer      : Top Paste
+Generating : Top Layer
+      File : Scratch.GTL
 
     Adding Layer      : Top Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-*************************************************************
-
-*************************************************************
-Generating : Keep-Out Layer
-      File : Scratch.GKO
-
-    Adding Layer      : Keep-Out Layer
-
-
-Used DCodes :
-*************************************************************
-
-*************************************************************
-Generating : Bottom Layer
-      File : Scratch.GBL
-
-    Adding Layer      : Bottom Layer
 
     Adding Layer      : Multi-Layer
 

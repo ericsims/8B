@@ -50,13 +50,13 @@
 
 # Scratch
 
-- [ ] board keep out
-- [ ] silkscreen
-- [ ] part number/date
-- [ ] teardrops
-- [ ] polygons
-- [ ] run out jobs
-- [ ] quote
+- [x] board keep out
+- [x] silkscreen
+- [x] part number/date
+- [x] teardrops
+- [x] polygons
+- [x] run out jobs
+- [x] quote
 
 # Program Counter
 
@@ -73,10 +73,10 @@
 - [x] board keep out
 - [x] silkscreen
 - [x] part number/date
-- [ ] teardrops
+- [x] teardrops
 - [x] polygons
-- [ ] run out jobs
-- [ ] quote
+- [x] run out jobs
+- [x] quote
 
 # Clock Proto
 

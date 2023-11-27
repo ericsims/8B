@@ -1,7 +1,10 @@
 Protel Design System Design Rule Check
-PCB File : D:\Users\erics\Documents\16B\Scratch\Scratch.PcbDoc
-Date     : 7/24/2022
-Time     : 10:04:41 AM
+PCB File : D:\Users\erics\Documents\8B\Hardware\Scratch\Scratch.PcbDoc
+Date     : 11/26/2023
+Time     : 4:57:16 PM
+
+Processing Rule : Clearance Constraint (Gap=25mil) (InPoly),(All)
+Rule Violations :0
 
 Processing Rule : Clearance Constraint (Gap=8mil) (All),(All)
 Rule Violations :0

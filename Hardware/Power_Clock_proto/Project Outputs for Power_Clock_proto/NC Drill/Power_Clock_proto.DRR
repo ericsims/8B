@@ -1,0 +1,21 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: Power_Clock_proto.PcbDoc   9/18/2022  10:29:53 AM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : Power_Clock_proto.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      30mil (0.75mm)                                            Round             8         PTH        1.06inch (27.05mm)
+T2      33mil (0.85mm)                                            Round             2         PTH        0.30inch (7.62mm)
+T3      35mil (0.9mm)                                             Round             16        PTH        1.50inch (38.10mm)
+T4      39mil (1mm)                                               Round             2         PTH        0.10inch (2.54mm)
+T5      63mil (1.6mm)                                             Round             6         PTH        3.22inch (81.70mm)
+T6      66mil (1.676mm)                                           Round             8         PTH        1.75inch (44.45mm)
+T7      81mil (2.05mm)                                            Round             2         PTH        0.39inch (9.96mm)
+T8      109mil (2.769mm)                                          Round             1         PTH        0.00inch (0.00mm)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              45
+
+Total Processing Time (hh:mm:ss) : 00:00:00
