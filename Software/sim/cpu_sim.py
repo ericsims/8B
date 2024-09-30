@@ -38,6 +38,8 @@ def main():
   GUI = True
   DEAD_CODE = False
 
+  BP_ADDR = 0x8000
+
   # process flags
 
   OPTIONS = "f:" #TODO: no abbreviated options.
@@ -92,7 +94,7 @@ def main():
 
   clk_counter = 0
 
-  UPDATE_RATE = 10000
+  UPDATE_RATE = 100#10000
 
   IMG_HEI = 80
   IMG_WID = 101
@@ -286,7 +288,7 @@ def main():
   layout_stack = [[
     sg.Column([
       [sg.Multiline(
-        size=(12,70),
+        size=(20,70),
         autoscroll=True,
         font=('courier new',8),
         justification='left',
@@ -319,7 +321,28 @@ def main():
           background_color='white',
           key='_STACK_MAX_USAGE_'
         )
-      ]
+      ],
+      [
+        sg.T('Current Function '),
+        sg.T(
+          text='',
+          size=(30,1),
+          justification='left',
+          text_color='black',
+          background_color='white',
+          key='_CUR_FUNC_'
+        )
+      ],
+      [sg.Listbox(
+        values=[],
+        select_mode=sg.LISTBOX_SELECT_MODE_SINGLE,
+        size=(90,50),
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_LOC_VARS_'
+      )]
     ], vertical_alignment='t' )
   ]]
   layout_vars = [[
@@ -430,7 +453,7 @@ def main():
 
   file.close()
 
-  vars, symbols, code = parse_vars(FILE_NAME)
+  vars, labels, symbols, code = parse_vars(FILE_NAME)
   list_addrs = list(enumerate([c['addr'] for c in code]))
   max_var_width = max([len(list(var.keys())[0]) for var in vars])
   debug_code_highlight = []
@@ -655,9 +678,10 @@ def main():
                 # print(f"  {k} {stack_trace}")
                 if test_trace == stack_trace:
                   dup = k
+                  break
 
               if dup is None:
-                call_graph.append({'addr':pc.value, 'symbol':symbols[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
+                call_graph.append({'addr':pc.value, 'symbol':labels[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
                 current_call = len(call_graph)-1
               else:
                 current_call = dup
@@ -785,14 +809,49 @@ def main():
 
             window['_SRAM_'].update(sram_values)
 
+            # STACK
+            bf = (mems.get(BP_ADDR,ignore_uninit=True)<<8)+mems.get(BP_ADDR+1,ignore_uninit=True)
+
             stack_values = ""
             for n in range(stack.starting_addr,stack.starting_addr-stack.pointer,-1):
-              stack_values += f"0x{n:04X}:  {mems.get(n):02X}\n"
+              stack_values += f"0x{n:04X}: {mems.get(n):02X} {bf-n:02X}\n"
 
             window['_STACK_'].update(stack_values)
             window['_STACK_USAGE_'].update(stack.pointer)
             window['_STACK_MAX_USAGE_'].update(stack.max_used)
+            window['_CUR_FUNC_'].update(call_graph[current_call]['symbol'])
+            local_vars = []
+            # print(f'{bf:04X}')
+            for s in symbols:
+              if s.startswith(call_graph[current_call]['symbol']+'.param8'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': mems.get(bf+symbols[s],ignore_uninit=True)})
+              elif s.startswith(call_graph[current_call]['symbol']+'.param16'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
+                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]-1,ignore_uninit=True)})
+              elif s.startswith(call_graph[current_call]['symbol']+'.param32'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
+                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
+                                   (mems.get(bf+symbols[s]-1,ignore_uninit=True)<<16)+\
+                                   (mems.get(bf+symbols[s]-2,ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]-3,ignore_uninit=True)})
+              elif s.startswith(call_graph[current_call]['symbol']+'.local8'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': \
+                                   mems.get(bf+symbols[s],ignore_uninit=True)})
+              elif s.startswith(call_graph[current_call]['symbol']+'.local16'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
+                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]-1,ignore_uninit=True)})
+              elif s.startswith(call_graph[current_call]['symbol']+'.local32'):
+                local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
+                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
+                                   (mems.get(bf+symbols[s]-1,ignore_uninit=True)<<16)+\
+                                   (mems.get(bf+symbols[s]-2,ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]-3,ignore_uninit=True)})
+            window['_LOC_VARS_'].update(values=local_vars)
 
+
+            # GLOBALS
             var_values = ""
             for var in vars:
               # print(var, max_var_width)

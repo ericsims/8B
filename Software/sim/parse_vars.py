@@ -2,6 +2,8 @@ def parse_vars(file_name):
     annotations_file_path = file_name+'.annotated'
     symbols_file_path = file_name+'.symbols'
 
+    labels = {}
+
     symbols = {}
 
     vars = []
@@ -15,13 +17,18 @@ def parse_vars(file_name):
                 dat = list(map(str.strip, dat))
                 # print(f"l: {dat}")
                 try:
-                    symbols[int(dat[1], 0)] = dat[0]
+                    symbols[dat[0]] = int(dat[1], 0)
+                except:
+                    pass
+                try:
+                    if int(dat[1], 0) in labels.keys(): continue
+                    labels[int(dat[1], 0)] = dat[0]
                 except:
                      # ignore symbols/labels that obviously not addrs
                      pass
         except:
             print(f"An exception occurred loading {symbols_file_path}")
-            return vars, symbols
+            return vars, labels, None, None
 
     with open(annotations_file_path, 'r') as annotations_file:
         try:
@@ -34,7 +41,7 @@ def parse_vars(file_name):
                     # TODO: RAM range is hard coded
                     if addr >= 0x8000 and addr <= 0xBFFF:
                         # print(f"{symbols[addr]}")
-                        vars.append({symbols[addr]: addr})
+                        vars.append({labels[addr]: addr})
                     else:
                         code.append({
                             'addr':  addr,
@@ -47,11 +54,11 @@ def parse_vars(file_name):
                     pass    
         except:
             print(f"An exception occurred loading {annotations_file_path}")
-            return vars, symbols, None
+            return vars, labels, None, None
     # print(vars)
     # print(symbols)
     # print(code)
     # print([c['addr'] for c in code])
-    return vars, symbols, code
+    return vars, labels, symbols, code
 
 # parse_vars('bin/71_test_uart_string.bin')

@@ -22,7 +22,7 @@ class MEMS:
         elif addr >= 0x8000 and addr <= 0xBFFF:
             return self.sram.get(addr,ignore_uninit=ignore_uninit)
         elif addr >= 0xC000 and addr <= 0xC3FF:
-            return self.dpram.get(addr)
+            return self.dpram.get(addr,ignore_uninit=ignore_uninit)
         elif addr >= 0xD002 and addr <= 0xD003:
             return self.motor.get(addr)
         elif addr == 0xD008:

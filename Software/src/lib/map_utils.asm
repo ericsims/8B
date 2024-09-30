@@ -159,21 +159,21 @@ get_distance:
 get_node_ptr:
     ; gets the addresss of a node
     ; takes two params. .n node index, .node_ptr
-    ; overwrites .node_ptr with node address
+    ; overwrites .param16_node_ptr with node address
     ; calls ?
 
-    ;    _______________
-    ; 7 |   .node_ptr   |
-    ; 6 |_______________|
-    ; 5 |______.n_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;    ________________________
+    ; 7 |   .param16_node_ptr   |
+    ; 6 |_______________________|
+    ; 5 |_______.param8_n_______|
+    ; 4 |___________?___________| RESERVED
+    ; 3 |___________?___________|    .
+    ; 2 |___________?___________|    .
+    ; 1 |___________?___________| RESERVED
+    ;   |           ~           | additional ephemeral  stack usage for subcalls
 
-    .node_ptr = 7
-    .n = 5
+    .param16_node_ptr = 7
+    .param8_n = 5
  
     .init:
     __prologue
@@ -183,7 +183,7 @@ get_node_ptr:
     subw hl, #0x01
     storew hl, map_utils.scratch1
     pushw #0x0000; placeholder result
-    __load_local a, .n
+    __load_local a, .param8_n
     ; load a, map_utils.num_nodes
     push a
     push #0x06
@@ -207,9 +207,9 @@ get_node_ptr:
     call static_add32
     ; loadw hl, static_z_32+2
     load a, static_z_32+2
-    __store_local a, .node_ptr
+    __store_local a, .param16_node_ptr
     load a, static_z_32+3
-    __store_local a, .node_ptr-1
+    __store_local a, .param16_node_ptr-1
 
 
     .done:

@@ -79,23 +79,23 @@ itoa_hex_nibble:
     ; contaminates c var with new char
     ; ******
 
-    ;    _______________
-    ; 5 |______.c_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
+    ;    _______________________
+    ; 5 |_______.param8_c_______|
+    ; 4 |___________?___________| RESERVED
+    ; 3 |___________?___________|    .
+    ; 2 |___________?___________|    .
+    ; 1 |___________?___________| RESERVED
 
 
 
-    .c = 5
+    .param8_c = 5
     .init:
     __prologue
     ; mask nibble
-    __load_local a, .c
+    __load_local a, .param8_c
     and a, #0x0F
-    ; store a, (hl) ; could use __store_local a, .c, but addr still in hl
-    ; if .c is >= than 10, handle .hex, otherwise handle DEC
+    ; store a, (hl) ; could use __store_local a, .param8_c, but addr still in hl
+    ; if .param8_c is >= than 10, handle .hex, otherwise handle DEC
     load b, a
     sub b, #0x0A
     jnc .hex
@@ -117,22 +117,22 @@ uart_print_itoa_hex:
     ; itoa_hex takes a 1 byte param and prints to console.
     ; ******
 
-    ;    _______________
-    ; 5 |______.c_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ; 0 |_____~char~____| ephemeral  char passed to itoa_hex_nibble, then discarded
+    ;    _______________________
+    ; 5 |_______.param8_c_______|
+    ; 4 |___________?___________| RESERVED
+    ; 3 |___________?___________|    .
+    ; 2 |___________?___________|    .
+    ; 1 |___________?___________| RESERVED
+    ; 0 |_________~char~________| ephemeral  char passed to itoa_hex_nibble, then discarded
 
 
 
-    .c = 5
+    .param8_c = 5
     .init:
     __prologue
     .msn:
     ; handle most signifcant nibble
-    __load_local a, .c
+    __load_local a, .param8_c
     ; rshift x4 just keep upper 4 bits
     rshift a
     rshift a
@@ -147,7 +147,7 @@ uart_print_itoa_hex:
     call static_uart_putc
     .lsn:
     ; handle least significan nibble
-    __load_local a, .c
+    __load_local a, .param8_c
     ; send byte to itoa_hex_nibble function
     ; this function already masks for lower 4 bits
     push a

@@ -16,28 +16,28 @@
     ; call satic_add32
     ; ******
 
-    ;    _______________
-    ; 9 |____.result____|
-    ; 8 |     .val      |
-    ; 7 |_______________|
-    ; 6 |   .res_addr   |
-    ; 5 |_______________|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;    _______________________
+    ; 9 |____.param8_result_____|
+    ; 8 |     .param16_val      |
+    ; 7 |_______________________|
+    ; 6 |   .param16_lut_addr   |
+    ; 5 |_______________________|
+    ; 4 |___________?___________| RESERVED
+    ; 3 |___________?___________|    .
+    ; 2 |___________?___________|    .
+    ; 1 |___________?___________| RESERVED
+    ;   |           ~           | additional ephemeral  stack usage for subcalls
 
-    .result   =  9
-    .val      =  8
-    .res_addr =  6
+    .param8_result    =  9
+    .param16_val      =  8
+    .param16_lut_addr =  6
 
     .init:
         __prologue
 
     .init_ptr:
         loadw hl, BP
-        addw hl, #{.res_addr}
+        addw hl, #{.param16_lut_addr}
         load a, (hl)
         store a, rev_lut_ptr
         subw hl, #0x01
@@ -47,7 +47,7 @@
         ; save val value, and sign extend
         storew #0x0000, static_y_32
         loadw hl, BP
-        addw hl, #{.val}
+        addw hl, #{.param16_val}
         load a, (hl)
         store a, static_y_32+2
         subw hl, #0x01
@@ -77,7 +77,7 @@
         loadw hl, rev_lut_ptr
         addw hl, #0x02
         load a, (hl)
-        __store_local a, .result
+        __store_local a, .param8_result
 
         loadw hl, rev_lut_ptr
         addw hl, #0x03
