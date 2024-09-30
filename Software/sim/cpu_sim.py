@@ -1,13 +1,15 @@
-
+#!/usr/bin/env python
 import sys
 import getopt
 import warnings
 import rpyc
 import json
 import yaml
+from enum import Enum
 from PIL import Image, ImageTk
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from termcolor import colored
+import itertools
 
 from PC import PC
 from II import II
@@ -17,16 +19,22 @@ from RAM_STACK import STACK
 from MEMS import MEMS
 
 from parse_vars import *
-from print_call_graph import *
+# from print_call_graph import *
 
 
 # TODO: dead code analysis
 # TODO: call graph to include call/ret/jumps. add subgraph for subroutines
 # TODO: extended memory
 
+class dbg(Enum):
+  CONTINUE = 1
+  BREAK_IMM = 2
+  BREAK_AFTER_INST = 3
+  BREAK_AFTER_RET = 4
+
 def main():
 
-  FILE_NAME = 'bin/01_test_a_reg.bin' # default file
+  FILE_NAME = 'bin/001_test_a_reg.bin' # default file
   EXIT_ON_HALT = False
   SIM = True
   GUI = True
@@ -146,8 +154,7 @@ def main():
     'LM' : 0, # bus byte indictor
     'RU' : 0  # reset ucode counter
   }
-
-  breakpt = False
+  
   finish_inst = False
 
   DEFAULT_REG_LAYOUT = {
@@ -189,7 +196,10 @@ def main():
     [sg.T('CF  '), sg.T(**DEFAULT_INDICATOR_LAYOUT, key='_CF_')],
     [sg.T('NF  '), sg.T(**DEFAULT_INDICATOR_LAYOUT, key='_NF_')],
     [],
-    [sg.Button('uSTEP'), sg.Button('STEP Inst.')],
+    [sg.Button('uSTEP')],
+    [sg.Button('STEP Inst.')],
+    [sg.Button('STEP Out')],
+    [sg.Button('Pause')],
     [sg.Button('Resume')],
     [sg.T('CLK  '), sg.T(
       text='',
@@ -235,6 +245,32 @@ def main():
     ])
 
 
+  layout_debug = [[
+    sg.Column([
+      [sg.Listbox(
+        values=[],
+        select_mode=sg.LISTBOX_SELECT_MODE_SINGLE,
+        size=(128,70),
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_DEBUG_'
+      )]
+    ]),
+    sg.Column([
+      [sg.Listbox(
+        values=[],
+        select_mode=sg.LISTBOX_SELECT_MODE_SINGLE,
+        size=(70,50),
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_CALLS_'
+      )]
+    ]),
+  ]]
   layout_sram = [[
     sg.T(
       text='',
@@ -248,19 +284,17 @@ def main():
   ]]
   layout_stack = [[
     sg.Column([
-      [
-        sg.Multiline(
-          size=(12,70),
-          autoscroll=True,
-          font=('courier new',8),
-          justification='left',
-          text_color='black',
-          background_color='white',
-          write_only = True,
-          disabled = True,
-          key='_STACK_'
-        )
-      ]
+      [sg.Multiline(
+        size=(12,70),
+        autoscroll=True,
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        write_only = True,
+        disabled = True,
+        key='_STACK_'
+      )]
     ], vertical_alignment='t' ),
     sg.Column([
       [
@@ -349,6 +383,7 @@ def main():
 
   tabs_layout = [[
     sg.TabGroup([[
+      sg.Tab('DEBUG', layout_debug),
       sg.Tab('SRAM', layout_sram),
       sg.Tab('STACK', layout_stack),
       sg.Tab('VARS', layout_vars),
@@ -395,11 +430,18 @@ def main():
   file.close()
 
   vars, symbols, code = parse_vars(FILE_NAME)
-  list_addrs = enumerate([c['addr'] for c in code])
+  list_addrs = list(enumerate([c['addr'] for c in code]))
   max_var_width = max([len(list(var.keys())[0]) for var in vars])
+  debug_code_highlight = []
+
+  dbg_state = dbg.CONTINUE
 
   if GUI:
     event, values = window.Read(timeout=0)
+    dbg_state = dbg.BREAK_IMM
+
+    window['_DEBUG_'].update(values=[f"{line['addr']:08x} {line['data']}" for line in code])
+
   else:
     event = None
     values = None
@@ -407,8 +449,10 @@ def main():
   inst = []
   inst_names = {}
   inst_stats = {}
-  call_graph = [0x0000]
+  current_call = 0
+  call_graph = [{'addr': 0, 'symbol': 'entry_point', 'stack_trace': [0], 'qty': 1, 'bk_on_ret': False}]
   previous_pc = 0x0000
+
 
   with open('instruction_set.yaml', 'r') as stream:
     try:
@@ -424,16 +468,23 @@ def main():
 
       while True:
         if GUI:
-          if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or breakpt:
-            event, values = window.Read(timeout=0)
+          if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or dbg_state == dbg.BREAK_IMM or dbg_state == dbg.BREAK_AFTER_INST:
+            if dbg_state == dbg.BREAK_IMM:
+              event, values = window.Read()
+            else:
+              event, values = window.Read(timeout=0)
 
-          if breakpt and not finish_inst:
-            event, values = window.Read()
+            if event == "Pause":
+              dbg_state = dbg.BREAK_IMM
+              continue
             if event == "STEP Inst.":
-              finish_inst = True
+              dbg_state = dbg.BREAK_AFTER_INST
+            if event == "STEP Out":
+              dbg_state = dbg.BREAK_AFTER_RET
+              call_graph[current_call]['bk_on_ret'] = True
+              print("stepping out")
             if event == "Resume":
-              finish_inst = False
-              breakpt = False
+              dbg_state = dbg.CONTINUE
             if event == "uSTEP":
               pass
               
@@ -528,7 +579,7 @@ def main():
             break
           #if GUI:
           #  event, values = window.Read()
-          breakpt = True
+          dbg_state = dbg.BREAK_IMM
 
         # PC
         if (ctrl['PO'] or ctrl['PI']) and ctrl['CE']:
@@ -600,14 +651,34 @@ def main():
           # if call_graph[-1] != previous_pc:
           #   call_graph.append(previous_pc)
           # TODO: not really sure what i want my call graphs to look like in this mess
-          if ii.value == 0x73: # call
+          if ii.value == 0x73: # call)
+            dup = None
+            stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
+            for k in range(len(call_graph)):
+              test_trace = [call_graph[n]['addr'] for n in call_graph[k]['stack_trace']]
+              # print(f"  {k} {stack_trace}")
+              if test_trace == stack_trace:
+                dup = k
+
+            if dup is None:
+              call_graph.append({'addr':pc.value, 'symbol':symbols[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
+              current_call = len(call_graph)-1
+            else:
+              current_call = dup
+              call_graph[current_call]['qty'] += 1
+
+            print("call")
             pass
           elif ii.value == 0x74: # return
+            if call_graph[current_call]['bk_on_ret']: 
+              call_graph[current_call]['bk_on_ret'] = False
+              dbg_state = dbg.BREAK_IMM
+            current_call = call_graph[current_call]['stack_trace'][-2]
+            print("return")
             pass
           else: # some kind of jump
             pass
           # calls
-          call_graph.append(pc.value)
 
         # U CODE
         UCC = (UCC + 1) & 0x1F
@@ -616,7 +687,6 @@ def main():
         
         if UCC == 0:
           previous_pc = pc.value
-
 
         ## falling edge
         # handle ucode
@@ -660,15 +730,14 @@ def main():
                 raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
 
         if GUI:
-          if finish_inst:
-            if UCC == 0:
-              finish_inst = False
+          if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:
+            dbg_state = dbg.BREAK_IMM
 
           if event is None or event == 'Exit':
             print()
             break
 
-          if clk_counter % UPDATE_RATE == 0 or breakpt:
+          if clk_counter % UPDATE_RATE == 0 or dbg_state == dbg.BREAK_IMM:
             window['_PC_'].update(f"0x{pc.value:04X}")
             window['_MAR_'].update(f"0x{mar.value:04X}")
             window['_INST_'].update(f"0x{ii.value:02X}")
@@ -687,6 +756,22 @@ def main():
             window['_ZF_'].update(text_color=INDC_COLOR[flags['ZF']])
             window['_CF_'].update(text_color=INDC_COLOR[flags['CF']])
             window['_NF_'].update(text_color=INDC_COLOR[flags['NF']])
+
+
+            if UCC == 0:
+              new_debug_code_highlight = [i for i, x in list_addrs if x == pc.value]
+              # print(pc.value, debug_code_highlight,[i for i, x in list_addrs if x == pc.value])
+              if len(new_debug_code_highlight)>0:
+                for l in debug_code_highlight:
+                  window['_DEBUG_'].Widget.itemconfig(l, fg='black', bg='white')
+                debug_code_highlight=new_debug_code_highlight
+                window['_DEBUG_'].update(scroll_to_index=max([debug_code_highlight[0]-10,0]))
+                for l in debug_code_highlight:
+                  window['_DEBUG_'].Widget.itemconfig(l, fg='red', bg='light blue')
+
+            window['_CALLS_'].update(values=[f"{len(call['stack_trace'])}{'  ' * len(call['stack_trace'])} {call['symbol']} {call['qty']}" for call in call_graph])
+            window['_CALLS_'].Widget.itemconfig(current_call, fg='red', bg='light blue')
+            window['_CALLS_'].update(scroll_to_index=max([current_call-10,0]))
 
             for ctrl_sig,val in ctrl.items():
               window[f'_{ctrl_sig}_'].update(text_color=INDC_COLOR[val>0])
@@ -808,8 +893,9 @@ def main():
       print(f"clk cycles {clk_counter}")
 
       # call graph
-      if 0:
-        print_call_graph(call_graph, symbols)
+      # i broke this. do i still need it?
+      # if 0:
+      #   print_call_graph(call_graph, symbols)
 
       # dead code
       if 0:

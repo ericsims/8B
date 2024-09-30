@@ -109,13 +109,13 @@ control_signals:
     description: 'RFU20'
     active: low
   - UC21:
-    description: 'RFU20'
+    description: 'RFU21'
     active: low
   - UC22:
-    description: 'RFU20'
+    description: 'RFU22'
     active: low
   - UC23:
-    description: 'RFU20'
+    description: 'RFU23'
     active: low
 
 input:

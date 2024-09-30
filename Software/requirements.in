@@ -1,11 +1,9 @@
 pyyaml
 pillow
-rypc
-PySimpleGUI
+rpyc
+FreeSimpleGUI
 termcolor
-tabulatemak
-
 matplotlib
 jupyter
-
 scikit-image
+tabulate

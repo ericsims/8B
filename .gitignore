@@ -7,3 +7,7 @@ Software/bin
 # lock files
 *~$*
 *.~*
+
+# python
+.venv/
+requirements.txt

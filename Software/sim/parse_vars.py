@@ -47,8 +47,10 @@ def parse_vars(file_name):
                     pass    
         except:
             print(f"An exception occurred loading {annotations_file_path}")
-            return vars, symbols
+            return vars, symbols, None
     # print(vars)
+    # print(symbols)
+    # print(code)
     # print([c['addr'] for c in code])
     return vars, symbols, code
 
