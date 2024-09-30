@@ -8,6 +8,7 @@ REQ_FILE := requirements.in
 TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)/*.asm))
 TEST_BINS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
 all_tests  :=  $(addsuffix .test, $(basename $(TEST_BINS)))
+all_tests_gui  :=  $(addsuffix .gui.test, $(basename $(TEST_BINS)))
 
 LUTS := $(BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
@@ -54,6 +55,12 @@ test: $(all_tests)
 $(all_tests): %.test : %.bin
 	@echo "running test case $<"
 	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
+
+test_gui: $(all_tests_gui) 
+$(all_tests_gui): %.gui.test : %.bin
+	@echo "running test case $<"
+	@python sim/cpu_sim.py --no-sim --exit-on-halt -f $< >> /dev/null || exit 1
+
 
 clean:
 	@echo "***cleaning up***"

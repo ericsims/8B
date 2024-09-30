@@ -94,7 +94,7 @@ def main():
 
   clk_counter = 0
 
-  UPDATE_RATE = 100#10000
+  UPDATE_RATE = 1#10000
 
   IMG_HEI = 80
   IMG_WID = 101
@@ -424,7 +424,7 @@ def main():
   ]]
 
   if GUI:
-    window = sg.Window('8B', layout, font=('courier new',11))
+    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11))
   else:
     window = None
 
@@ -462,7 +462,7 @@ def main():
 
   if GUI:
     event, values = window.Read(timeout=0)
-    dbg_state = dbg.BREAK_IMM
+    if not EXIT_ON_HALT: dbg_state = dbg.BREAK_IMM
 
     window['_DEBUG_'].update(values=[f"{line['addr']:08x} {line['data']}" for line in code])
 
