@@ -18,7 +18,6 @@ from RAM_STACK import STACK
 from MEMS import MEMS
 
 from parse_vars import *
-# from print_call_graph import *
 
 
 # TODO: dead code analysis
@@ -46,7 +45,7 @@ def main():
 
   try:
     # grab flags
-    args, vals = getopt.getopt(sys.argv[1:], OPTIONS, OPTIONS_LONG)
+    args, _ = getopt.getopt(sys.argv[1:], OPTIONS, OPTIONS_LONG)
     for arg_, val_ in args:
       arg_ = arg_.strip()
 
@@ -64,7 +63,7 @@ def main():
 
   except getopt.error as err:
     # output error, and return with an error code
-    print (str(err))
+    print(str(err))
 
   if SIM:
     try:
@@ -157,7 +156,7 @@ def main():
     'RU' : 0  # reset ucode counter
   }
   
-  finish_inst = False
+  ctrl_zeroed = dict.fromkeys(ctrl, 0)
 
   DEFAULT_REG_LAYOUT = {
     'size':(6,1),
@@ -453,8 +452,6 @@ def main():
   inst_stats = {}
   current_call = 0
   call_graph = [{'addr': 0, 'symbol': 'entry_point', 'stack_trace': [0], 'qty': 1, 'bk_on_ret': False}]
-  previous_pc = 0x0000
-
 
   with open('instruction_set.yaml', 'r') as stream:
     try:
@@ -484,7 +481,6 @@ def main():
             if event == "STEP Out":
               dbg_state = dbg.BREAK_AFTER_RET
               call_graph[current_call]['bk_on_ret'] = True
-              print("stepping out")
             if event == "Resume":
               dbg_state = dbg.CONTINUE
             if event == "uSTEP":
@@ -581,8 +577,6 @@ def main():
         if ctrl['HT']:
           if EXIT_ON_HALT:
             break
-          #if GUI:
-          #  event, values = window.Read()
           dbg_state = dbg.BREAK_IMM
 
         # PC
@@ -650,51 +644,42 @@ def main():
         elif ctrl['NI']:
           stack.set(data,ctrl['LM'])
 
-        # check if this is a jmp/call/ret instruction
-        if ctrl['PI'] and ctrl['RU']:
-          # if call_graph[-1] != previous_pc:
-          #   call_graph.append(previous_pc)
-          # TODO: not really sure what i want my call graphs to look like in this mess
-          if ii.value == 0x73: # call)
-            dup = None
-            stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
-            for k in range(len(call_graph)):
-              test_trace = [call_graph[n]['addr'] for n in call_graph[k]['stack_trace']]
-              # print(f"  {k} {stack_trace}")
-              if test_trace == stack_trace:
-                dup = k
+        if GUI:
+          # check if this is a jmp/call/ret instruction
+          if ctrl['PI'] and ctrl['RU']:
+            if ii.value == 0x73: # call)
+              dup = None
+              stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
+              for k in range(len(call_graph)):
+                test_trace = [call_graph[n]['addr'] for n in call_graph[k]['stack_trace']]
+                # print(f"  {k} {stack_trace}")
+                if test_trace == stack_trace:
+                  dup = k
 
-            if dup is None:
-              call_graph.append({'addr':pc.value, 'symbol':symbols[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
-              current_call = len(call_graph)-1
-            else:
-              current_call = dup
-              call_graph[current_call]['qty'] += 1
-
-            # print("call")
-            pass
-          elif ii.value == 0x74: # return
-            if call_graph[current_call]['bk_on_ret']: 
-              call_graph[current_call]['bk_on_ret'] = False
-              dbg_state = dbg.BREAK_IMM
-            current_call = call_graph[current_call]['stack_trace'][-2]
-            # print("return")
-            pass
-          else: # some kind of jump
-            pass
-          # calls
+              if dup is None:
+                call_graph.append({'addr':pc.value, 'symbol':symbols[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
+                current_call = len(call_graph)-1
+              else:
+                current_call = dup
+                call_graph[current_call]['qty'] += 1
+              # print("call")
+            elif ii.value == 0x74: # return
+              if call_graph[current_call]['bk_on_ret']: 
+                call_graph[current_call]['bk_on_ret'] = False
+                dbg_state = dbg.BREAK_IMM
+              current_call = call_graph[current_call]['stack_trace'][-2]
+              # print("return")
+            else: # some kind of jump
+              pass
 
         # U CODE
         UCC = (UCC + 1) & 0x1F
         if ctrl['RU']:
           UCC = 0
-        
-        if UCC == 0:
-          previous_pc = pc.value
 
         ## falling edge
         # handle ucode
-        ctrl = dict.fromkeys(ctrl, 0)
+        ctrl = dict(ctrl_zeroed) # set to zeros
         if isinstance(inst[ii.value], dict):
           # branch/conditional instruction
           condition = True
@@ -706,7 +691,7 @@ def main():
               ctrl[u] = 1
 
         # normal sequential instruction
-        elif  UCC < len(inst[ii.value]):
+        elif UCC < len(inst[ii.value]):
           for u in inst[ii.value][UCC]:
             ctrl[u] = 1
 
@@ -896,10 +881,6 @@ def main():
       print(f"eeprom usage {eeprom_usage}/{mems.eeprom.size} bytes ({eeprom_usage/mems.eeprom.size*100:0.2f}%)")
       print(f"clk cycles {clk_counter}")
 
-      # call graph
-      # i broke this. do i still need it?
-      # if 0:
-      #   print_call_graph(call_graph, symbols)
 
       # dead code
       if DEAD_CODE:
