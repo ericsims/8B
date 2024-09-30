@@ -9,7 +9,6 @@ from enum import Enum
 from PIL import Image, ImageTk
 import FreeSimpleGUI as sg
 from termcolor import colored
-import itertools
 
 from PC import PC
 from II import II
@@ -38,11 +37,12 @@ def main():
   EXIT_ON_HALT = False
   SIM = True
   GUI = True
+  DEAD_CODE = False
 
   # process flags
 
   OPTIONS = "f:" #TODO: no abbreviated options.
-  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim']
+  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code']
 
   try:
     # grab flags
@@ -59,6 +59,8 @@ def main():
         EXIT_ON_HALT = True
       elif arg_ in ("--no-sim"):
         SIM = False
+      elif arg_ in ("--dead-code"):
+        DEAD_CODE = True
 
   except getopt.error as err:
     # output error, and return with an error code
@@ -257,7 +259,7 @@ def main():
         background_color='white',
         key='_DEBUG_'
       )]
-    ]),
+    ], vertical_alignment='t' ),
     sg.Column([
       [sg.Listbox(
         values=[],
@@ -269,7 +271,7 @@ def main():
         background_color='white',
         key='_CALLS_'
       )]
-    ]),
+    ], vertical_alignment='t' ),
   ]]
   layout_sram = [[
     sg.T(
@@ -295,7 +297,7 @@ def main():
         disabled = True,
         key='_STACK_'
       )]
-    ], vertical_alignment='t' ),
+    ], vertical_alignment='t'),
     sg.Column([
       [
         sg.T('Current Usage   '),
@@ -470,9 +472,9 @@ def main():
         if GUI:
           if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or dbg_state == dbg.BREAK_IMM or dbg_state == dbg.BREAK_AFTER_INST:
             if dbg_state == dbg.BREAK_IMM:
-              event, values = window.Read()
+              event, _ = window.Read()
             else:
-              event, values = window.Read(timeout=0)
+              event, _ = window.Read(timeout=0)
 
             if event == "Pause":
               dbg_state = dbg.BREAK_IMM
@@ -500,10 +502,12 @@ def main():
         elif ctrl['MO']:
           data = mems.get(addr)
           # store dead code info
-          indices = [i for i, x in list_addrs if x == addr]
-          for i in indices:
-            if ctrl['II']: code[i]['execs'] += 1
-            code[i]['dead'] = False
+          # TODO: this is very slow
+          if DEAD_CODE:
+            indices = [i for i, x in list_addrs if x == addr]
+            for i in indices:
+              if ctrl['II']: code[i]['execs'] += 1
+              code[i]['dead'] = False
         elif ctrl['NO']:
           data = stack.get(ctrl['LM'])
         elif ctrl['AO']:
@@ -667,14 +671,14 @@ def main():
               current_call = dup
               call_graph[current_call]['qty'] += 1
 
-            print("call")
+            # print("call")
             pass
           elif ii.value == 0x74: # return
             if call_graph[current_call]['bk_on_ret']: 
               call_graph[current_call]['bk_on_ret'] = False
               dbg_state = dbg.BREAK_IMM
             current_call = call_graph[current_call]['stack_trace'][-2]
-            print("return")
+            # print("return")
             pass
           else: # some kind of jump
             pass
@@ -769,7 +773,7 @@ def main():
                 for l in debug_code_highlight:
                   window['_DEBUG_'].Widget.itemconfig(l, fg='red', bg='light blue')
 
-            window['_CALLS_'].update(values=[f"{len(call['stack_trace'])}{'  ' * len(call['stack_trace'])} {call['symbol']} {call['qty']}" for call in call_graph])
+            window['_CALLS_'].update(values=[f"{len(call['stack_trace']):2} {call['addr']:04X} {' \u2506 ' * (len(call['stack_trace'])-1)} \u251C {call['symbol']} {call['qty']}" for call in call_graph])
             window['_CALLS_'].Widget.itemconfig(current_call, fg='red', bg='light blue')
             window['_CALLS_'].update(scroll_to_index=max([current_call-10,0]))
 
@@ -898,7 +902,7 @@ def main():
       #   print_call_graph(call_graph, symbols)
 
       # dead code
-      if 0:
+      if DEAD_CODE:
         print("** DEAD CODE REPORT **")
         print(\
           "legend: ",

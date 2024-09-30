@@ -16,7 +16,7 @@ hello_world:
 
 fun:
     jmp .print
-    .str: #d "Ths is fun!\n\0"
+    .str: #d "This is fun!\n\0"
     .print: storew #.str, static_uart_print.data_pointer
     call static_uart_print
 
