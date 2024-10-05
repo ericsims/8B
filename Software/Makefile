@@ -67,7 +67,7 @@ clean:
 	@rm -f $(LUTS)
 	@rm -f $(TEST_BINS)
 	@rm -f $(addsuffix .annotated,$(TEST_BINS))
-	@rm -f $(INST_SET)
+	@rm -f $(INST_SET_OUT)
 	@echo "done cleaning..."
 	@echo ""
 

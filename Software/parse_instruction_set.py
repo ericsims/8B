@@ -91,7 +91,7 @@ def validate_control_signals(ucode):
             if len(step) != len(set(step)):
                 raise Exception(f"\t\t***ERROR: duplicate control signals in ucode line: {step}")
 
-def generate_ucode(iss):
+def generate_ucode(iss, verbose=False):
     """generate ucode files for writing to ucode ROM"""
 
     ctrl = []
@@ -122,10 +122,11 @@ def generate_ucode(iss):
     if len(ctrl) % 8 != 0:
         raise Exception("***ERROR: number of ctrl signals must be divisible by 8")
 
-    print('control signals: ', ctrl)
-    print('control map: ', ctrl_map)
-    print('control map sizes: ', ctrl_map_sizes)
-    print('control inversion: ', ctrl_inversion)
+    if(verbose):
+        print('control signals: ', ctrl)
+        print('control map: ', ctrl_map)
+        print('control map sizes: ', ctrl_map_sizes)
+        print('control inversion: ', ctrl_inversion)
 
     inpt = []
     flags = []
@@ -146,7 +147,7 @@ def generate_ucode(iss):
     ucode=[list(ctrl_inversion.values()) for _ in range(2**len(inpt))]
 
     for inst_name, inst in iss['instructions'].items():
-        print(inst_name)
+        if(verbose): print(inst_name)
         #print(value['opcode'])
         #print(value['ucode'])
         if inst_name == 'default':
@@ -178,9 +179,9 @@ def generate_ucode(iss):
                                 ucode[addr][ctrl.index(f"{ctrl_map[sig][0]}{bit_index}")] = (int((ctrl_map[sig][1] & (1<<bit_index)) > 0)) ^ ctrl_inversion[f"{ctrl_map[sig][0]}{bit_index}"]
         else:
             for idx, sigs in enumerate(inst['ucode']):
-                # gnerate list of do not care flags to populate all DNC ROM addreses
+                # generate list of do not care flags to populate all DNC ROM addreses
                 for flag_combos in [list(i) for i in itertools.product([0,1], repeat=len(flags))]:
-                    # genreate address and fill in flag values
+                    # genereate address and fill in flag values
                     addr = idx << inpt.index('ucode_count0') | inst['opcode'] << inpt.index('instruction0')
                     for n,f in enumerate(flags):
                         addr |= flag_combos[n] << inpt.index(f)
@@ -246,7 +247,7 @@ with open('instruction_set.yaml', 'r') as stream:
             if key != 'default':
                 validate_ucodereset(value['ucode'])
                 validate_opcode(value)
-                inst_list[int(value['opcode'])] = key
+                inst_list[int(value['opcode'])] = f'{key}'
             print()
 
         with open('./src/instructions.asm', 'w') as asm:
@@ -262,8 +263,8 @@ with open('instruction_set.yaml', 'r') as stream:
             asm.write('}\n')
 
         print('Instruction Table')
-        print(tabulate((inst_list[i:i+4] for i in range(0, len(inst_list), 4))))
-
+        print(tabulate(([f'{i:02X}']+inst_list[i:i+4] for i in range(0, len(inst_list), 4))))
+        print()
 
         generate_ucode(IS)
 

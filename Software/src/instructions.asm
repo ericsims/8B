@@ -9,7 +9,7 @@
 nop =>
 {
   0x00
-}   
+}
 
 ; load_a_imm
 ; Load a register with immediate value
@@ -693,6 +693,18 @@ assert zf, #{imm: i8} =>
 halt =>
 {
   0x7F
+}
+
+; load_a_indir_offset
+; load a register with value in (address) + offset
+; usage: load a, address[15:0], signed_offset[7:0]
+load a, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0)
+  assert(offset <= 0xff)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x54 @ addr`16  @ imm`8
 }
 
 }
