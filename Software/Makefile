@@ -4,9 +4,12 @@ SRC_DIR := src
 TEST_SRC_DIR := tests
 VENV_DIR := .venv
 REQ_FILE := requirements.in
+DOC_DIR := docs/test_inter/
+DOC_CONV := scripts/asm4doxy.pl
 
 TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)/*.asm))
 TEST_BINS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
+DOC_FILES := $(patsubst $(TEST_SRC_DIR)/%.asm,$(DOC_DIR)/%-asm.c,$(TEST_SRCS))
 all_tests  :=  $(addsuffix .test, $(basename $(TEST_BINS)))
 all_tests_gui  :=  $(addsuffix .gui.test, $(basename $(TEST_BINS)))
 
@@ -61,9 +64,20 @@ $(all_tests_gui): %.gui.test : %.bin
 	@echo "running test case $<"
 	@python sim/cpu_sim.py --no-sim --exit-on-halt -f $< >> /dev/null || exit 1
 
+.PHONY: doxygen
+asm4doxy: $(DOC_FILES)
+$(DOC_DIR)/%-asm.c: $(TEST_SRC_DIR)/%.asm
+	@mkdir -p $(DOC_DIR)
+	@echo "doc $<"
+	@cd $(DOC_DIR) && $(CURDIR)/$(DOC_CONV) ../../$^
+
+doxygen: asm4doxy
+	@echo generate doxygen
+	@doxygen
 
 clean:
 	@echo "***cleaning up***"
+	@rm -r $(DOC_DIR)
 	@rm -f $(LUTS)
 	@rm -f $(TEST_BINS)
 	@rm -f $(addsuffix .annotated,$(TEST_BINS))

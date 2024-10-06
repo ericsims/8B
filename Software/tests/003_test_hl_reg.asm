@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests hl register immedate loads
+;
+; @section Test Coverage
+; @coverage{loadw_hl_imm, assert_hl}
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom

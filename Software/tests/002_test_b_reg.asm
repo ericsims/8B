@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests b register immedate loads
+;
+; @section Test Coverage
+; @coverage{load_b_imm, assert_b}
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom
