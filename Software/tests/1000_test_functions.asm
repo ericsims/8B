@@ -4,7 +4,7 @@
 
 top:
 init_pointers:
-loadw sp, #0xBFFF
+loadw sp, #DEFAULT_STACK
 storew #0xABCD, BP
 
 
@@ -20,16 +20,26 @@ assert a, #0x46
 
 halt
 
+; @function
+; @section description
+; test function
+;       _____________________
+; -6   |______.param8_a______|
+; -5   |______.param8_b______|
+; -4   |__________?__________| RESERVED
+; -3   |__________?__________|    .
+; -2   |__________?__________|    .
+; -1   |__________?__________| RESERVED
 function: ; x, y (addreses SP+6, SP+5)
 
 __prologue
 
 loadw hl, BP
-addw hl, #6
+subw hl, #6
 load a, (hl)
 
 loadw hl, BP
-addw hl, #5
+subw hl, #5
 load b, (hl)
 
 add a, b

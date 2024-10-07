@@ -1198,7 +1198,7 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       # save data
     - [AO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_b:
     description: 'push b register value to stack'
@@ -1218,7 +1218,7 @@ instructions:
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       # save data
     - [BO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   load_a_hl_indir:
     description: 'load a register from indirect address in hl register'
@@ -1331,7 +1331,7 @@ instructions:
     - [MO, DI]             # Load imm data to D scratch register
       # save data
     - [DO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_dir:
     description: 'push byte from source to stack'
@@ -1362,7 +1362,7 @@ instructions:
     - [DI, MO]             # save data to D scratch register
       # save data
     - [DO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_indir:
     description: 'push byte from indirect source to stack'
@@ -1399,7 +1399,7 @@ instructions:
     - [DI, MO]             # save data to D scratch register
       # save data
     - [DO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   pushw_imm:
     description: 'push immediate word to stack'
@@ -1426,9 +1426,9 @@ instructions:
     - [MO, DI]             # Load imm data to D scratch register
       # save data
     - [DO, SI, LM]         # save data from D scratch register to stack
-    - [DS]                 # decrement stack pointer
+    - [IS]                 # decrement stack pointer
     - [DO, SI]             # save data from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   pushw_dir:
     description: 'push word from source to stack'
@@ -1461,9 +1461,9 @@ instructions:
     - [DI, MO]             # save data LSB to D scratch register
       # save data
     - [DO, SI, LM]         # save data MSB from D scratch register to stack
-    - [DS]                 # decrement stack pointer
+    - [IS]                 # decrement stack pointer
     - [DO, SI]             # save data LSB from D scratch register to stack
-    - [DS, RU]             # decrement stack pointer. ucode counter reset
+    - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   popw_hl:
     description: 'pop word off of stack into hl register'
@@ -1482,9 +1482,9 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     # pop value off of stack off of the stack
-    - [IS]
+    - [DS]
     - [SO, HI]             # pop LSB byte into hl register
-    - [IS]
+    - [DS]
     - [SO, HI, LM, RU]     # pop MSB byte into hl register. ucode counter reset
 
   pop_a:
@@ -1504,7 +1504,7 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     # pop value off of stack off of the stack
-    - [IS]
+    - [DS]
     - [SO, AI, RU]         # pop byte into a register. ucode counter reset
 
   pop_b:
@@ -1524,7 +1524,7 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     # pop value off of stack off of the stack
-    - [IS]
+    - [DS]
     - [SO, BI, RU]         # pop byte into b register. ucode counter reset
 
   move_dir_dir:
@@ -1910,9 +1910,9 @@ instructions:
     - [CE]                 # Increment PC to skip LSB of destination address
     # save PC to stack
     - [PO, SI, LM]         # save PC MSB to stack
-    - [DS]                 # decrement stack pointer
+    - [IS]                 # decrement stack pointer
     - [PO, SI]             # save PC LSB to stack
-    - [DS]                 # decrement stack pointer
+    - [IS]                 # decrement stack pointer
     # jump
     - [PI, MO, LM]         # load PC with MSB of destination address
     - [MC]                 # Increment MAR to point to LSB of destination address
@@ -1934,9 +1934,9 @@ instructions:
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
     # pop ret address off of the stack
-    - [IS]
+    - [DS]
     - [SO, PI]             # pop LSB into PC
-    - [IS]
+    - [DS]
     - [SO, PI, LM, RU]     # pop MSB into PC. ucode counter reset
 
   assert_a:

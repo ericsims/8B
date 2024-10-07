@@ -213,7 +213,7 @@ BP: ; base pointer for function calls
 #bank rom
 
 ; con
-DEFAULT_STACK   = 0xBFFF
+DEFAULT_STACK   = 0x9000
 DPRAM           = 0xC000
 MOT_ENC         = 0xD002
 MOT_CTRL        = 0xD003

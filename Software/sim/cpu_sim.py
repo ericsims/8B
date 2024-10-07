@@ -813,8 +813,8 @@ def main():
             bf = (mems.get(BP_ADDR,ignore_uninit=True)<<8)+mems.get(BP_ADDR+1,ignore_uninit=True)
 
             stack_values = ""
-            for n in range(stack.starting_addr,stack.starting_addr-stack.pointer,-1):
-              stack_values += f"0x{n:04X}: {mems.get(n):02X} {bf-n:02X}\n"
+            for n in range(stack.starting_addr,stack.starting_addr+stack.pointer):
+              stack_values += f"0x{n:04X}: {mems.get(n):02X} {bf+n:02X}\n"
 
             window['_STACK_'].update(stack_values)
             window['_STACK_USAGE_'].update(stack.pointer)

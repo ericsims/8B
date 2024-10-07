@@ -327,8 +327,6 @@ multiply_repeat_add: ; x, y (addreses SP+6, SP+5)
     .param8_z = -1
     __prologue
 
-    ; TODO: check and swap params to make this faster
-
     push #0x00 ; init .local32_y = 0
     push #0x00 ; init z=0
 
