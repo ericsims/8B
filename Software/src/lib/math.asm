@@ -6,6 +6,17 @@
 
 #bank rom
 
+;;
+; @function
+; @brief takes two 32 bit params and commputs the sum
+; @section description
+; takes two 32 bit params and adds them
+; returns 32bit summation to result pointer. carry flag is left in b register.
+; @param .param32_z
+; @param .param32_x
+; @param .param32_y a
+; @return void
+;;
 add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
     ; ******
     ; add32 takes two 32 bit params and adds them.

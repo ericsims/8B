@@ -2,20 +2,25 @@ CC := customasm
 BIN_DIR := bin
 SRC_DIR := src
 TEST_SRC_DIR := tests
+LIB_SRC_DIR := src/lib
 VENV_DIR := .venv
 REQ_FILE := requirements.in
-DOC_DIR := docs/test_inter/
-DOC_CONV := scripts/asm4doxy.pl
+IR_DOCS_DIR := irdocs
 
 TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)/*.asm))
+LIB_SRCS := $(sort $(wildcard $(LIB_SRC_DIR)/*.asm))
 TEST_BINS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
-DOC_FILES := $(patsubst $(TEST_SRC_DIR)/%.asm,$(DOC_DIR)/%-asm.c,$(TEST_SRCS))
 all_tests  :=  $(addsuffix .test, $(basename $(TEST_BINS)))
-all_tests_gui  :=  $(addsuffix .gui.test, $(basename $(TEST_BINS)))
+
+
+IR_DOCS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(TEST_SRCS))
+IR_DOCS += $(patsubst $(LIB_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(LIB_SRCS))
 
 LUTS := $(BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
 INST_SET_IN := instruction_set.yaml
+
+parse_docs = ./scripts/parse_docs.py
 
 .PHONY: all deps
 
@@ -59,28 +64,18 @@ $(all_tests): %.test : %.bin
 	@echo "running test case $<"
 	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
 
-test_gui: $(all_tests_gui) 
-$(all_tests_gui): %.gui.test : %.bin
-	@echo "running test case $<"
-	@python sim/cpu_sim.py --no-sim --exit-on-halt -f $< >> /dev/null || exit 1
-
-.PHONY: doxygen
-asm4doxy: $(DOC_FILES)
-$(DOC_DIR)/%-asm.c: $(TEST_SRC_DIR)/%.asm
-	@mkdir -p $(DOC_DIR)
-	@echo "doc $<"
-	@cd $(DOC_DIR) && $(CURDIR)/$(DOC_CONV) ../../$^
-
-doxygen: asm4doxy
-	@echo generate doxygen
-	@doxygen
+docs: $(IR_DOCS)
+$(IR_DOCS_DIR)/%.yml: $(TEST_SRC_DIR)/%.asm
+	@mkdir -p $(IR_DOCS_DIR)
+	@$(parse_docs) $< $@
+$(IR_DOCS_DIR)/%.yml: $(LIB_SRC_DIR)/%.asm
+	@mkdir -p $(IR_DOCS_DIR)
+	@$(parse_docs) $< $@
 
 clean:
 	@echo "***cleaning up***"
-	@rm -r $(DOC_DIR)
-	@rm -f $(LUTS)
-	@rm -f $(TEST_BINS)
-	@rm -f $(addsuffix .annotated,$(TEST_BINS))
+	@rm -rf $(BIN_DIR)
+	@rm -rf $(IR_DOCS_DIR)
 	@rm -f $(INST_SET_OUT)
 	@echo "done cleaning..."
 	@echo ""

@@ -6,7 +6,7 @@
 ; tests nop and halt
 ;
 ; @section Test Coverage
-; @coverage{nop,halt}
+; @coverage nop halt
 ;
 ;;
 

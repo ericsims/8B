@@ -6,7 +6,7 @@
 ; tests hl register immedate loads
 ;
 ; @section Test Coverage
-; @coverage{loadw_hl_imm, assert_hl}
+; @coverage loadw_hl_imm assert_hl
 ;
 ;;
 

@@ -6,7 +6,7 @@
 ; tests b register immedate loads
 ;
 ; @section Test Coverage
-; @coverage{load_b_imm, assert_b}
+; @coverage load_b_imm assert_b
 ;
 ;;
 
