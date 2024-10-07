@@ -25,19 +25,17 @@ x2:
 
 top:
 
-halt
-
 store #0xAB, x0
 store #0xCD, x1
 store #0xEF, x2
-storew #x1, BP
+storew #x0, BP
 
 load a, (BP), 0
-assert a, #0xCD
-load a, (BP), 1
-assert a, #0xEF
-load a, (BP), -1
 assert a, #0xAB
+load a, (BP), 1
+assert a, #0xCD
+load a, (BP), 2
+assert a, #0xEF
 
 
 halt

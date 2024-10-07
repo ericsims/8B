@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests calls and returns
+;
+; @section Test Coverage
+; @coverage call ret
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom

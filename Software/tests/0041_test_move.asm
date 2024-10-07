@@ -1,3 +1,14 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests moving data
+;
+; @section Test Coverage
+; @coverage move_dir_dir move_indir_dir move_dir_indir move_indir_indir
+;
+;;
 #include "../src/CPU.asm"
 
 #bank rom

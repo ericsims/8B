@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests indirect loads and stores
+;
+; @section Test Coverage
+; @coverage load_a_indir load_b_indir
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom
@@ -9,8 +21,6 @@ load b, (pointer1)
 assert a, #0x12
 assert b, #0x12
 
-load a, #0x23
-store a, (pointer1)
 halt
 
 #bank ram

@@ -1,3 +1,14 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests add and subtract
+;
+; @section Test Coverage
+; @coverage add_a_imm add_b_imm addw_hl_imm subw_hl_imm
+;
+;;
 #include "../src/CPU.asm"
 
 #bank rom

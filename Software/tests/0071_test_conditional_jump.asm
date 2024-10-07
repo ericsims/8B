@@ -1,8 +1,19 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests conditional jumps
+; tests jmz, jmc, jnz. does not test jnc, jmn, jnn
+;
+; @section Test Coverage
+; @coverage jmz jmc jnz
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom
-
-; tests jmz, jmc, jnz. does not test jnc, jmn, jnn
 
 ; ** jmz tests ***
 ; first test case
