@@ -21,6 +21,9 @@
     
 
     ; calling convetion
+    ; 1. call funciton. this will put the return address on the stack
+    ; 2. save old BP to stack. this is start of the function stack
+    ; 3. save current base pointer to BP memory
     __prologue => asm
     {
         ; prologue 
@@ -29,6 +32,8 @@
         storew hl, BP
     }
 
+    ; 1. restore old base pointer from stack
+    ; 2. return
     __epilogue => asm
     {
         ; epilogue
@@ -36,6 +41,8 @@
         storew hl, BP
         ret
     }
+
+
 ; loads
     __load_local a, {index: i8} =>
     {

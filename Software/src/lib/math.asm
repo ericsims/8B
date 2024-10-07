@@ -14,7 +14,7 @@
 ; returns 32bit summation to result pointer. carry flag is left in b register.
 ; @param .param32_z
 ; @param .param32_x
-; @param .param32_y a
+; @param .param32_y
 ; @return void
 ;;
 add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)

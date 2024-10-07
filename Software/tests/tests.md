@@ -6,7 +6,8 @@
     010-099 macros
     100-199 static math
     200-299 math
-    700-899 string manipulation
-    900-999 extended rom
+    200-299 math LUT
+    700-709 string manipulation
+    710-719 extended rom
 2000-2999 application
-    2000-2099 navigation algorithms
+    000-099 navigation algorithms

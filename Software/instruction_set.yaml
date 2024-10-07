@@ -1920,7 +1920,7 @@ instructions:
 
   ret:
     description: 'Return from Subroutine'
-    duration: 9 # clock cycles
+    duration: 7 # clock cycles
     operands: 0 # bytes
     usage: 'ret'
     opcode: 0x74
@@ -1933,14 +1933,11 @@ instructions:
     - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
     - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
     - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-    # pop correct ret address is put off of the stack
+    # pop ret address off of the stack
     - [IS]
-    - [SO, DI]             # pop LSB into D
+    - [SO, PI]             # pop LSB into PC
     - [IS]
-    - [SO, DI, LM]         # pop LSB into D
-    # jump
-    - [PI, DO, LM]         # load PC with MSB of destination address
-    - [PI, DO, RU]         # load PC with LSB of destination address. ucode counter reset
+    - [SO, PI, LM, RU]     # pop MSB into PC. ucode counter reset
 
   assert_a:
     description: 'Assert value of A register == imm value'
