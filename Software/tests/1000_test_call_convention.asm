@@ -32,6 +32,9 @@ halt
 ; -1   |__________?__________| RESERVED
 function: ; x, y (addreses SP+6, SP+5)
 
+.param8_a = -6
+.param8_b = -5
+
 __prologue
 
 loadw hl, BP

@@ -17,7 +17,7 @@ def parse_vars(file_name):
                 dat = list(map(str.strip, dat))
                 # print(f"l: {dat}")
                 try:
-                    symbols[dat[0]] = int(dat[1], 0)
+                    symbols[dat[0]] = int(dat[1].replace("0x-", "-0x"), 0)
                 except:
                     pass
                 try:

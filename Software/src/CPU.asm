@@ -21,9 +21,49 @@
     
 
     ; calling convetion
-    ; 1. call funciton. this will put the return address on the stack
-    ; 2. save old BP to stack. this is start of the function stack
-    ; 3. save current base pointer to BP memory
+    ;
+    ; 1. push parameters to stack
+    ; 2. call function using `call` instruciton. This will put the return address on the stack
+    ; 3. prologue macro
+    ;   3a. saves old BP to stack.
+    ;   3b. save current base pointer to BP memory
+    ;
+    ; for return
+    ; 1. set return value in b register
+    ; 2. epilogue macro
+    ;   2a. ;TODO: check SP=BP
+    ;   2b. restore old BP
+    ;   2c. `ret` to return to function call 
+    ;
+    ; notes:
+    ;  - stack grows up (address increases as values pushed to stack)
+    ;  - b register for return value
+    ;  - registers are not preserved during function calls
+    ;  - all values are big endian
+    ;  - don't overwrite parameters, use a pointer to set return value
+    ;
+    ; ex. fnc(param32, param16, param8)
+    ;
+    ;  BP             STACK
+    ; OFFSET
+    ;         _______________________
+    ;  -11   |        .param32       | params stored big endian
+    ;  -10   |                       |
+    ;  -9    |                       |
+    ;  -8    |_______________________|
+    ;  -7    |        .param16       |
+    ;  -6    |_______________________|
+    ;  -5    |________.param8________|
+    ;  -4    |      return_addr      | <-- address placed by `call instruction`
+    ;  -3    |_______________________|
+    ;  -2    |      previous_BP      | <-- BP saved during prologue
+    ;  -1    |_______________________|
+    ;   0    |           .           | <-- this address is saved to BP
+    ;   1    |           .           |
+    ;   2    |           .           | local vars stored big endian
+    ;   3    |           .           |
+    ;
+    ;
     __prologue => asm
     {
         ; prologue 
@@ -32,11 +72,10 @@
         storew hl, BP
     }
 
-    ; 1. restore old base pointer from stack
-    ; 2. return
     __epilogue => asm
     {
         ; epilogue
+
         popw hl ; restore old base pointer
         storew hl, BP
         ret
@@ -164,27 +203,13 @@
 
     ; push_imm
     ; push immediate values for more than one byte to stack
-    __push16 #{imm: i16} =>
-    {
-    assert(imm <= 0xffff)
-        asm
-        {
-            push #(({imm}>>8)`8)
-            push #({imm}`8)
-        }
-    }
-
-    ; push_imm
-    ; push immediate values for more than one byte to stack
     __push32 #{imm: i32} =>
     {
-    assert(imm <= 0xffff_ffff)
+        assert(imm <= 0xffff_ffff)
         asm
         {
-            push #(({imm}>>24)`8)
-            push #(({imm}>>16)`8)
-            push #(({imm}>>8)`8)
-            push #({imm}`8)
+            pushw #(({imm}>>16)`16)
+            pushw #({imm}`16)
         }
     }
 

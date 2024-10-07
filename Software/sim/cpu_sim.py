@@ -288,7 +288,7 @@ def main():
   layout_stack = [[
     sg.Column([
       [sg.Multiline(
-        size=(20,70),
+        size=(30,70),
         autoscroll=True,
         font=('courier new',8),
         justification='left',
@@ -814,7 +814,7 @@ def main():
 
             stack_values = ""
             for n in range(stack.starting_addr,stack.starting_addr+stack.pointer):
-              stack_values += f"0x{n:04X}: {mems.get(n):02X} {bf+n:02X}\n"
+              stack_values += f"0x{n:04X}: {mems.get(n):02X} {n-bf:02X} {' <-- BP' if n==bf else ''}\n"
 
             window['_STACK_'].update(stack_values)
             window['_STACK_USAGE_'].update(stack.pointer)
@@ -828,27 +828,27 @@ def main():
               elif s.startswith(call_graph[current_call]['symbol']+'.param16'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
                                    (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]-1,ignore_uninit=True)})
+                                    mems.get(bf+symbols[s]+1,ignore_uninit=True)})
               elif s.startswith(call_graph[current_call]['symbol']+'.param32'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
                                    (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
-                                   (mems.get(bf+symbols[s]-1,ignore_uninit=True)<<16)+\
-                                   (mems.get(bf+symbols[s]-2,ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]-3,ignore_uninit=True)})
+                                   (mems.get(bf+symbols[s]+1,ignore_uninit=True)<<16)+\
+                                   (mems.get(bf+symbols[s]+2,ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]+3,ignore_uninit=True)})
               elif s.startswith(call_graph[current_call]['symbol']+'.local8'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': \
                                    mems.get(bf+symbols[s],ignore_uninit=True)})
               elif s.startswith(call_graph[current_call]['symbol']+'.local16'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
                                    (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]-1,ignore_uninit=True)})
+                                    mems.get(bf+symbols[s]+1,ignore_uninit=True)})
               elif s.startswith(call_graph[current_call]['symbol']+'.local32'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
                                    (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
-                                   (mems.get(bf+symbols[s]-1,ignore_uninit=True)<<16)+\
-                                   (mems.get(bf+symbols[s]-2,ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]-3,ignore_uninit=True)})
-            window['_LOC_VARS_'].update(values=local_vars)
+                                   (mems.get(bf+symbols[s]+1,ignore_uninit=True)<<16)+\
+                                   (mems.get(bf+symbols[s]+2,ignore_uninit=True)<<8)+\
+                                    mems.get(bf+symbols[s]+3,ignore_uninit=True)})
+            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']:0{v['size']>>2}X}" for v in local_vars])
 
 
             # GLOBALS
