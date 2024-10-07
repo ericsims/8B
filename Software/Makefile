@@ -24,7 +24,7 @@ parse_docs = ./scripts/parse_docs.py
 
 .PHONY: all deps
 
-all: tests
+all: tests docs
 
 $(VENV_DIR):
 	@echo makeing python venv... 
