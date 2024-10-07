@@ -695,16 +695,52 @@ halt =>
   0x7F
 }
 
-; load_a_indir_offset
+; load_a_indir_poffset
 ; load a register with value in (address) + offset
-; usage: load a, address[15:0], signed_offset[7:0]
+; usage: load a, address[15:0], offset[7:0]
 load a, ({addr: i16}), {offset: i8} =>
 {
-  assert(offset >= -0x7F)
-  assert(offset <= 0x7F)
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x54 @ addr`16  @ offset`8
+}
+
+; load_a_indir_noffset
+; load a register with value in (address) - offset
+; usage: load a, address[15:0], offset[7:0]
+load a, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x55 @ addr`16  @ (offset*-1)`8
+}
+
+; load_b_indir_poffset
+; load b register with value in (address) + offset
+; usage: load b, address[15:0], offset[7:0]
+load b, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x56 @ addr`16  @ offset`8
+}
+
+; load_b_indir_noffset
+; load b register with value in (address) - offset
+; usage: load b, address[15:0], offset[7:0]
+load b, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x57 @ addr`16  @ (offset*-1)`8
 }
 
 }
