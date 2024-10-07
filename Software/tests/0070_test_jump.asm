@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests unconditional jump
+;
+; @section Test Coverage
+; @coverage jmp
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom
@@ -9,11 +21,11 @@ assert a, #0xAA
 
 jmp next
 
-assert a, #0x00
+assert a, #0x00 ; fail if no jump
 halt
 
 next:
 load a, #0xBB
-assert a, #0xBB;
+assert a, #0xBB
 
 halt

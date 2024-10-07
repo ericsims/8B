@@ -6,6 +6,7 @@ LIB_SRC_DIR := src/lib
 VENV_DIR := .venv
 REQ_FILE := requirements.in
 IR_DOCS_DIR := irdocs
+DOCS_DIR := docs
 
 TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)/*.asm))
 LIB_SRCS := $(sort $(wildcard $(LIB_SRC_DIR)/*.asm))
@@ -20,7 +21,9 @@ LUTS := $(BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
 INST_SET_IN := instruction_set.yaml
 
-parse_docs = ./scripts/parse_docs.py
+parse_docs_script = ./scripts/parse_docs.py
+coverage_report_script = ./scripts/inst_coverage_report.py
+coverage_report = $(DOCS_DIR)/inst_coverage.txt
 
 .PHONY: all deps
 
@@ -64,13 +67,19 @@ $(all_tests): %.test : %.bin
 	@echo "running test case $<"
 	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
 
-docs: $(IR_DOCS)
+docs: coverage_report
 $(IR_DOCS_DIR)/%.yml: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(IR_DOCS_DIR)
-	@$(parse_docs) $< $@
+	@$(parse_docs_script) $< $@
 $(IR_DOCS_DIR)/%.yml: $(LIB_SRC_DIR)/%.asm
 	@mkdir -p $(IR_DOCS_DIR)
-	@$(parse_docs) $< $@
+	@$(parse_docs_script) $< $@
+
+coverage_report: $(coverage_report)
+$(coverage_report): $(IR_DOCS)
+	@mkdir -p $(DOCS_DIR)
+	@echo generating instruction test coverage report...
+	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
 
 clean:
 	@echo "***cleaning up***"

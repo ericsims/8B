@@ -11,3 +11,6 @@ Software/bin
 # python
 .venv/
 requirements.txt
+
+# autogen
+irdocs/

@@ -1,3 +1,12 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; reads and writes from various ram addresses
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom

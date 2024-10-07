@@ -1,3 +1,15 @@
+;;
+; @file
+; @author Eric Sims
+;
+; @section Description
+; tests 8 bit logic functions
+;
+; @section Test Coverage
+; @coverage add_a_b or_a_b xor_a_b lshift_a rshift_a
+;
+;;
+
 #include "../src/CPU.asm"
 
 #bank rom
@@ -23,6 +35,8 @@ load a, #0x12
 load b, #0x34
 and a, b
 assert a, #0x10
+
+
 
 
 ; OR tests
