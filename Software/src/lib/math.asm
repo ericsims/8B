@@ -15,184 +15,186 @@
 ; @param .param32_z
 ; @param .param32_x
 ; @param .param32_y
-; @return void
+; @return carry_flag
+;
+;      ________________________
+; -14 |    .param16_outp      |
+; -13 |_______________________|
+; -12 |   .param32_x_temp     |
+; -11 |                       |
+; -10 |                       |
+; -9  |_______________________|
+; -8  |      .param32_y       |
+; -7  |                       |
+; -6  |                       |
+; -5  |_______________________|
+; -4  |___________?___________| RESERVED
+; -3  |___________?___________|    .
+; -2  |___________?___________|    .
+; -1  |___________?___________| RESERVED
+;  0  |______.local8_cf_______|
+;  1  |      .local32_x       |
+;  2  |                       |
+;  3  |                       |
+;  4  |_______________________|
+;  5  |      .local32_z       |
+;  6  |                       |
+;  7  |                       |
+;  8  |_______________________|
 ;;
 add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
     ; ******
     ; add32 takes two 32 bit params and adds them.
-    ; returns 32bit summation to result pointer. carry flag is left in b register.
     ; WARNGING: this funciton contamintes the x var
     ; ******
-    ;    _______________________
-    ;16 |      .param32_z       |
-    ;15 |                       |
-    ;14 |                       |
-    ;13 |_______________________|
-    ;12 |      .param32_x       |
-    ;11 |                       |
-    ;10 |                       |
-    ; 9 |_______________________|
-    ; 8 |      .param32_y       |
-    ; 7 |                       |
-    ; 6 |                       |
-    ; 5 |_______________________|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ; 0 |______.local8_cf_______|
-
-
 
     ; param stack indicies. points to MSBs
-    
-    .param32_z  = 16 ; -1 thru -4
-    .param32_x  = 12 ; 11 thru 14
-    .param32_y  =  8 ; 7 thru 10
+    .param16_outp = -14
+    .param32_x_temp = -12
+    .param32_y = -8
     ; local variables stack indicies. points to MSBs
     .local8_cf = 0
+    .local32_x = 1
+    .local32_z = 5
     .init:
         __prologue
         push #0x00    ; init cf=0
+        ; init localx with paramx
+        load a, (BP), .param32_x_temp
+        push a
+        load a, (BP), .param32_x_temp+1
+        push a
+        load a, (BP), .param32_x_temp+2
+        push a
+        load a, (BP), .param32_x_temp+3
+        push a
+        __push32 #0x0000_0000 ; init local z = 0
 
 
 
     .add_byte1:
-        __load_local b, .param32_x-3
-        __load_local a, .param32_y-3
+        load b, (BP), .local32_x+3
+        load a, (BP), .param32_y+3
         add a, b
         jmc .handle_first_carry1
-        __store_local a, .param32_z-3
+        store a, (BP), .local32_z+3
         jmp .add_byte2
     .handle_first_carry1:
-        __store_local a, .param32_z-3
-        __load_local a, .param32_x-2
+        store a, (BP), .local32_z+3
+        load a, (BP), .local32_x+2
         load b, #0x01
         add a, b
         jmc .handle_first_carry2
-        __store_local a, .param32_x-2
+        store a, (BP), .local32_x+2
         jmp .add_byte2
     .handle_first_carry2:
-        __store_local a, .param32_x-2
-        __load_local a, .param32_x-1
+        store a, (BP), .local32_x+2
+        load a, (BP), .local32_x+1
         load b, #0x01
         add a, b
         jmc .handle_first_carry3
-        __store_local a, .param32_x-1
+        store a, (BP), .local32_x+1
         jmp .add_byte2
     .handle_first_carry3:
-        __store_local a, .param32_x-1
-        __load_local a, .param32_x
+        store a, (BP), .local32_x+1
+        load a, (BP), .local32_x
         load b, #0x01
         add a, b
         jmc .handle_first_carry4
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         jmp .add_byte2
     .handle_first_carry4:
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         load a, #0x01
-        __store_local a, .local8_cf
+        store a, (BP), .local8_cf
 
 
     .add_byte2:
-        __load_local b, .param32_x-2
-        __load_local a, .param32_y-2
+        load b, (BP), .local32_x+2
+        load a, (BP), .param32_y+2
         add a, b
         jmc .handle_second_carry2
-        __store_local a, .param32_z-2
+        store a, (BP), .local32_z+2
         jmp .add_byte3
     .handle_second_carry2:
-        __store_local a, .param32_z-2
-        __load_local a, .param32_x-1
+        store a, (BP), .local32_z+2
+        load a, (BP), .local32_x+1
         load b, #0x01
         add a, b
         jmc .handle_second_carry3
-        __store_local a, .param32_x-1
+        store a, (BP), .local32_x+1
         jmp .add_byte3
     .handle_second_carry3:
-        __store_local a, .param32_x-1
-        __load_local a, .param32_x
+        store a, (BP), .local32_x+1
+        load a, (BP), .local32_x
         load b, #0x01
         add a, b
         jmc .handle_second_carry4
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         jmp .add_byte3
     .handle_second_carry4:
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         load a, #0x01
-        __store_local a, .local8_cf
+        store a, (BP), .local8_cf
 
 
     .add_byte3:
-        __load_local b, .param32_x-1
-        __load_local a, .param32_y-1
+        load b, (BP), .local32_x+1
+        load a, (BP), .param32_y+1
         add a, b
         jmc .handle_third_carry3
-        __store_local a, .param32_z-1
+        store a, (BP), .local32_z+1
         jmp .add_byte4
     .handle_third_carry3:
-        __store_local a, .param32_z-1
-        __load_local a, .param32_x
+        store a, (BP), .local32_z+1
+        load a, (BP), .local32_x
         load b, #0x01
         add a, b
         jmc .handle_third_carry4
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         jmp .add_byte4
     .handle_third_carry4:
-        __store_local a, .param32_x
+        store a, (BP), .local32_x
         load a, #0x01
-        __store_local a, .local8_cf
+        store a, (BP), .local8_cf
 
 
     .add_byte4:
-        __load_local b, .param32_x
-        __load_local a, .param32_y
+        load b, (BP), .local32_x
+        load a, (BP), .param32_y
         add a, b
         jmc .handle_fourth_carry4
-        __store_local a, .param32_z
+        store a, (BP), .local32_z
         jmp .done
     .handle_fourth_carry4:
-        __store_local a, .param32_z
+        store a, (BP), .local32_z
         load a, #0x01
-        __store_local a, .local8_cf
+        store a, (BP), .local8_cf
 
 
     .done:
         ; save the 4 bytes off to the resultant array location
-        ; __load_local a, .res_addr
-        ; push a
-        ; __load_local a, .res_addr-1
-        ; push a
-        ; popw hl
-        ; addw hl, #0x03
-        ; pop a
-        ; store a, (hl)
+        loadw hl, (BP), .param16_outp
+        addw hl, #0x03 ; LSB on top of stack
+        pop a
+        store a, (hl)
 
-        ; __load_local a, .res_addr
-        ; push a
-        ; __load_local a, .res_addr-1
-        ; push a
-        ; popw hl
-        ; addw hl, #0x02
-        ; pop a
-        ; store a, (hl)
+        subw hl, #0x01
+        pop a
+        store a, (hl)
 
-        ; __load_local a, .res_addr
-        ; push a
-        ; __load_local a, .res_addr-1
-        ; push a
-        ; popw hl
-        ; addw hl, #0x01
-        ; pop a
-        ; store a, (hl)
+        subw hl, #0x01
+        pop a
+        store a, (hl)
 
-        ; __load_local a, .res_addr
-        ; push a
-        ; __load_local a, .res_addr-1
-        ; push a
-        ; popw hl
-        ; pop a
-        ; store a, (hl)
+        subw hl, #0x01
+        pop a
+        store a, (hl)
+
+        pop a
+        pop a
+        pop a
+        pop a
 
         pop b ; save cf to b register
 

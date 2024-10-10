@@ -34,11 +34,14 @@ $(VENV_DIR):
 	@python -m venv .venv
 
 deps: $(VENV_DIR)
-	@echo installing python packages...
-	( \
+	@( \
+		echo activating venv...; \
 		source $(VENV_DIR)/Scripts/activate; \
+		echo installing pip-tools...; \
 		python -m pip install pip-tools; \
-		pip-compile.exe $(REQ_FILE); \
+		echo building requirements list...; \
+		pip-compile.exe $(REQ_FILE) -v; \
+		echo installing requirements...; \
 		pip install -r requirements.txt; \
 	)
 

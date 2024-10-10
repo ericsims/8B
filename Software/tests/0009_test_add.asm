@@ -6,7 +6,7 @@
 ; tests add and subtract
 ;
 ; @section Test Coverage
-; @coverage add_a_imm add_b_imm
+; @coverage add_a_imm add_b_imm add_a_b
 ;
 ;;
 #include "../src/CPU.asm"

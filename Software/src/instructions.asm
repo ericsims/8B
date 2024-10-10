@@ -495,6 +495,14 @@ pushw {addr: i16} =>
   0x4D @ addr`16
 }
 
+; pushw_hl
+; push hl register onto stack
+; usage: push hl
+pushw hl =>
+{
+  0x50
+} 
+
 ; popw_hl
 ; pop word off of stack into hl register
 ; usage: pop hl
@@ -765,6 +773,30 @@ store a, ({addr: i16}), {offset: i8} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x59 @ addr`16  @ (offset*-1)`8
+}
+
+; loadw_hl_indir_poffset
+; load hl register with value in (address) + offset
+; usage: loadw hl, address[15:0], offset[7:0]
+loadw hl, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5C @ addr`16  @ offset`8
+}
+
+; loadw_hl_indir_noffset
+; load hl register with value in (address) - offset
+; usage: loadw hl, address[15:0], offset[7:0]
+loadw hl, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5D @ addr`16  @ (offset*-1)`8
 }
 
 }

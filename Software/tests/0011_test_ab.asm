@@ -19,4 +19,9 @@ load b, #0xAA
 load a, b
 assert a, #0xAA
 
+load a, #0xCC
+load b, a
+assert b, #0xCC
+
+
 halt

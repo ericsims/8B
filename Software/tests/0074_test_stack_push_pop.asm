@@ -6,7 +6,7 @@
 ; tests stack maniuplation
 ;
 ; @section Test Coverage
-; @coverage push_imm pop_a pop_b push_a push_b pushw_imm popw_hl
+; @coverage push_imm pop_a pop_b push_a push_b pushw_imm popw_hl pushw_hl
 ;
 ;;
 #include "../src/CPU.asm"
@@ -76,5 +76,11 @@ popw hl
 assert hl, #0x4567
 popw hl
 assert hl, #0x1234
+
+loadw hl, #0xDEAD
+pushw hl
+loadw hl, #0xBEEF
+popw hl
+assert hl, #0xDEAD
 
 halt

@@ -6,11 +6,15 @@
 ; tests hl register immedate loads
 ;
 ; @section Test Coverage
-; @coverage loadw_hl_imm
+; @coverage loadw_hl_imm loadw_hl_dir storew_hl_dir
 ;
 ;;
 
 #include "../src/CPU.asm"
+
+#bank ram
+w:
+    #res 2
 
 #bank rom
 
@@ -39,5 +43,15 @@ assert hl, #0xF; check that hl reg is correct
 
 loadw hl, #0x0000
 assert hl, #0x0000 ; check that hl reg is correct
+
+storew #0xABCD, w
+loadw hl, w
+assert hl, #0xABCD
+
+loadw hl, #0xDEAD
+storew hl, w
+loadw hl, #0xBEEF
+loadw hl, w
+assert hl, #0xDEAD
 
 halt

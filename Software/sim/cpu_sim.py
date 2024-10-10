@@ -781,8 +781,9 @@ def main():
                 window['_DEBUG_'].update(scroll_to_index=max([debug_code_highlight[0]-10,0]))
                 for l in debug_code_highlight:
                   window['_DEBUG_'].Widget.itemconfig(l, fg='red', bg='light blue')
-
-            window['_CALLS_'].update(values=[f"{len(call['stack_trace']):2} {call['addr']:04X} {' \u2506 ' * (len(call['stack_trace'])-1)} \u251C {call['symbol']} {call['qty']}" for call in call_graph])
+            U2506 = '\u2506'
+            U251C = '\u251C'
+            window['_CALLS_'].update(values=[f"{len(call['stack_trace']):2} {call['addr']:04X} {f' {U2506} ' * (len(call['stack_trace'])-1)} {U251C} {call['symbol']} {call['qty']}" for call in call_graph])
             window['_CALLS_'].Widget.itemconfig(current_call, fg='red', bg='light blue')
             window['_CALLS_'].update(scroll_to_index=max([current_call-10,0]))
 
@@ -823,32 +824,28 @@ def main():
             local_vars = []
             # print(f'{bf:04X}')
             for s in symbols:
-              if s.startswith(call_graph[current_call]['symbol']+'.param8'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': mems.get(bf+symbols[s],ignore_uninit=True)})
-              elif s.startswith(call_graph[current_call]['symbol']+'.param16'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
-                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]+1,ignore_uninit=True)})
-              elif s.startswith(call_graph[current_call]['symbol']+'.param32'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
-                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
-                                   (mems.get(bf+symbols[s]+1,ignore_uninit=True)<<16)+\
-                                   (mems.get(bf+symbols[s]+2,ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]+3,ignore_uninit=True)})
-              elif s.startswith(call_graph[current_call]['symbol']+'.local8'):
+              a = [ None, None, None, None ]
+              if s.startswith(call_graph[current_call]['symbol']+'.param') or \
+                    s.startswith(call_graph[current_call]['symbol']+'.local'):
+                a = [ mems.get(bf+symbols[s]+nn,ignore_uninit=True) for nn in range(4)]
+
+              if s.startswith(call_graph[current_call]['symbol']+'.param8') or \
+                    s.startswith(call_graph[current_call]['symbol']+'.local8'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': \
-                                   mems.get(bf+symbols[s],ignore_uninit=True)})
-              elif s.startswith(call_graph[current_call]['symbol']+'.local16'):
+                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"})
+              elif s.startswith(call_graph[current_call]['symbol']+'.param16') or \
+                    s.startswith(call_graph[current_call]['symbol']+'.local16'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
-                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]+1,ignore_uninit=True)})
-              elif s.startswith(call_graph[current_call]['symbol']+'.local32'):
+                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"+\
+                                   f"{'??' if a[1] is None else f'{a[1]:02X}'}"})
+              elif s.startswith(call_graph[current_call]['symbol']+'.param32') or \
+                    s.startswith(call_graph[current_call]['symbol']+'.local32'):
                 local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
-                                   (mems.get(bf+symbols[s],ignore_uninit=True)<<24)+\
-                                   (mems.get(bf+symbols[s]+1,ignore_uninit=True)<<16)+\
-                                   (mems.get(bf+symbols[s]+2,ignore_uninit=True)<<8)+\
-                                    mems.get(bf+symbols[s]+3,ignore_uninit=True)})
-            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']:0{v['size']>>2}X}" for v in local_vars if v['value'] is not None])
+                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"+\
+                                   f"{'??' if a[1] is None else f'{a[1]:02X}'}"+\
+                                   f"{'??' if a[2] is None else f'{a[2]:02X}'}"+\
+                                   f"{'??' if a[3] is None else f'{a[3]:02X}'}"})
+            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']}" for v in local_vars])
 
 
             # GLOBALS

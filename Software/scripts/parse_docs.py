@@ -10,7 +10,7 @@ parser.add_argument("input_file", help="input file path")
 parser.add_argument("output_file", help="output file path")
 args = vars(parser.parse_args())
 
-print(f'generating docs for {args['input_file']}...')
+print(f"generating docs for {args['input_file']}...")
 
 COM_CHAR = ';'
 CMD_CHAR = '@'

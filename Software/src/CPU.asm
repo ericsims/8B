@@ -213,6 +213,34 @@
         }
     }
 
+
+    ; push_pointer
+    ; push immediate values for more than one byte to stack
+    __push_pointer_sp {offset: i8} =>
+    {
+        assert(offset >= 0x00)
+        assert(offset <= 0xFF)
+        asm
+        {
+            loadw hl, sp
+            addw hl, #({offset}`8)
+            pushw hl
+        }
+    }
+    __push_pointer_sp {offset: i8} =>
+    {
+        assert(offset < 0x00)
+        assert(offset >= -0xFF)
+        asm
+        {
+            loadw hl, sp
+            subw hl, #({offset})*-1
+            pushw hl
+        }
+    }
+
+
+
     __text {data} => 0`0 @ data
 }
 
