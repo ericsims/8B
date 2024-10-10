@@ -14,7 +14,7 @@
 #bank rom
 
 top:
-loadw sp, #0xBFFF
+loadw sp, #DEFAULT_STACK
 
 
 ; push imm data

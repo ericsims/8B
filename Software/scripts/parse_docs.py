@@ -59,6 +59,15 @@ def setParam(file,n,tokens=None):
     else:
         return {'param':tokens[0].lstrip('.')}
 
+def setReturn(file,n,tokens=None):
+    if len(tokens) > 1:
+        b = ''
+        for t in tokens[1:]: b = b+t+' '
+        b = b.strip()
+        return {'return':tokens[0].lstrip('.'), 'body':[b]}
+    else:
+        return {'return':tokens[0].lstrip('.')}
+
 COMMANDS = {
     'file': getFile,
     'author': setAuthor,
@@ -67,6 +76,7 @@ COMMANDS = {
     'brief': setBrief,
     'function': setFunction,
     'param': setParam,
+    'return': setReturn,
 }
 
 # def extract_any_top_token(list_of_dicts, key):

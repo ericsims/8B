@@ -29,7 +29,7 @@ class MEMS:
             return self.uart.get(addr)
         elif addr >= 0xD00C and addr <=0xD00F:
             return self.ext_eeprom.get(addr)
-        else:
+        elif not ignore_uninit:
             raise Exception("Tried to read mem at invalid addr 0x{:04X}".format(addr))
 
     def set(self,addr,V):

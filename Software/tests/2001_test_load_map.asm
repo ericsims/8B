@@ -6,7 +6,7 @@
 top:
 main:
     init_pointers:
-        loadw sp, #0xBFFF
+        loadw sp, #DEFAULT_STACK
         storew #0x0000, BP
 
     intro: ; print str_1

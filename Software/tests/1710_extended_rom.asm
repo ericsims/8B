@@ -17,7 +17,7 @@
 
 top:
 init_pointers:
-loadw sp, #0xBFFF
+loadw sp, #DEFAULT_STACK
 storew #0x0000, BP
 
 storew #0x0005, EXT_ROM+1

@@ -6,7 +6,7 @@
 ; tests a register immedate loads
 ;
 ; @section Test Coverage
-; @coverage load_a_imm assert_a
+; @coverage load_a_imm
 ;
 ;;
 

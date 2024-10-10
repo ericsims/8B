@@ -15,7 +15,7 @@
 #bank rom
 
 top:
-loadw sp, #0xBFFF
+loadw sp, #DEFAULT_STACK
 
 load a, #0xAA
 assert a, #0xAA

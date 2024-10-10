@@ -94,7 +94,7 @@ def main():
 
   clk_counter = 0
 
-  UPDATE_RATE = 1#10000
+  UPDATE_RATE = 10000
 
   IMG_HEI = 80
   IMG_WID = 101
@@ -848,7 +848,7 @@ def main():
                                    (mems.get(bf+symbols[s]+1,ignore_uninit=True)<<16)+\
                                    (mems.get(bf+symbols[s]+2,ignore_uninit=True)<<8)+\
                                     mems.get(bf+symbols[s]+3,ignore_uninit=True)})
-            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']:0{v['size']>>2}X}" for v in local_vars])
+            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']:0{v['size']>>2}X}" for v in local_vars if v['value'] is not None])
 
 
             # GLOBALS

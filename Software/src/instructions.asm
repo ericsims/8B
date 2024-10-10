@@ -743,4 +743,28 @@ load b, ({addr: i16}), {offset: i8} =>
   0x57 @ addr`16  @ (offset*-1)`8
 }
 
+; store_a_indir_poffset
+; store a register to indirect (address) + offset
+; usage: store a, address[15:0], offset[7:0]
+store a, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x58 @ addr`16  @ offset`8
+}
+
+; store_a_indir_noffset
+; store a register to indirect (address) - offset
+; usage: store a, address[15:0], offset[7:0]
+store a, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x59 @ addr`16  @ (offset*-1)`8
+}
+
 }

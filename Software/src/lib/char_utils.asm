@@ -6,31 +6,43 @@
 
 #bank rom
 
-; UART print char
-#bank rom
+;;
+; @function
+; @brief print character to UART
+; @section description
+; static function
+;;
 static_uart_putc:
     ; TODO: check if UART is ready
     load a, .char
     store a, UART
     ret
+
 #bank ram
     .char:      ; char to print to uart
         #res 1
 
-; ****************************
 
-
-; UART print "\n" new line
 #bank rom
+;;
+; @function
+; @brief print newline '\n' character to UART
+; @section description
+; static function
+;;
 static_uart_print_newline:
     store #"\n", static_uart_putc.char
     call static_uart_putc
     ret
 
-; ****************************
 
-; UART print "0x" prefix
 #bank rom
+;;
+; @function
+; @brief print hex prefix '0x' to UART
+; @section description
+; static function
+;;
 static_uart_print_hex_prefix:
     store #"0", static_uart_putc.char
     call static_uart_putc
@@ -38,14 +50,15 @@ static_uart_print_hex_prefix:
     call static_uart_putc
     ret
 
-; ****************************
 
-
-
-
-; UART print until '\0'
-; TODO: this function doesn't check if the UART is ready to send
 #bank rom
+;;
+; @function
+; @brief print null terminated string to UART
+; @section description
+; static function
+; TODO: this function doesn't check if the UART is ready to send
+;;
 static_uart_print:
     ; load current char
     loadw hl, .data_pointer
@@ -70,64 +83,62 @@ static_uart_print:
     .data_pointer:  ; pointer to begining of string. MSB, LSB
         #res 2
 
-; ****************************
 
 #bank rom
+;;
+; @function
+; @brief converts one nibble of number to string
+; @section description
+; takes a 1 byte params and converts it to hex char
+;     _______________________
+; -5 |_______.param8_c_______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_c input number
+; @return out_char
+;;
 itoa_hex_nibble:
-    ; ******
-    ; itoa_hex takes a 1 byte params and converts it to hex char.
-    ; contaminates c var with new char
-    ; ******
-
-    ;    _______________________
-    ; 5 |_______.param8_c_______|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-
-
-
-    .param8_c = 5
+    .param8_c = -5
     .init:
     __prologue
     ; mask nibble
-    __load_local a, .param8_c
-    and a, #0x0F
+    load b, (BP), .param8_c
+    and b, #0x0F
     ; store a, (hl) ; could use __store_local a, .param8_c, but addr still in hl
     ; if .param8_c is >= than 10, handle .hex, otherwise handle DEC
-    load b, a
-    sub b, #0x0A
+    load a, b
+    sub a, #0x0A
     jnc .hex
 
     .dec:
-    add a, #0x30 ; add '0'
+    add b, #0x30 ; add '0'
     jmp .done
     .hex:
-    add a, #(0x41-0x0A) ; add 'A'
+    add b, #(0x41-0x0A) ; add 'A'
 
     .done:
-    store a, (hl)
+    ; result in b register
     __epilogue
-; ****************************
+
 
 #bank rom
+;;
+; @function
+; @brief prints number to UART in hex format
+; @section description
+; takes a 1 byte unsigned integer and prints it to UART in hex format
+;    _______________________
+; -5 |_______.param8_c_______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_c input number
+;;
 uart_print_itoa_hex:
-    ; ******
-    ; itoa_hex takes a 1 byte param and prints to console.
-    ; ******
-
-    ;    _______________________
-    ; 5 |_______.param8_c_______|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ; 0 |_________~char~________| ephemeral  char passed to itoa_hex_nibble, then discarded
-
-
-
-    .param8_c = 5
+    .param8_c = -5
     .init:
     __prologue
     .msn:
@@ -143,7 +154,7 @@ uart_print_itoa_hex:
     call itoa_hex_nibble
     ; send ascii char to static_uart_putc function
     pop a
-    store a, static_uart_putc.char
+    store b, static_uart_putc.char
     call static_uart_putc
     .lsn:
     ; handle least significan nibble
@@ -154,14 +165,7 @@ uart_print_itoa_hex:
     call itoa_hex_nibble
     ; send ascii char to static_uart_putc function
     pop a
-    store a, static_uart_putc.char
+    store b, static_uart_putc.char
     call static_uart_putc
     .done:
     __epilogue
-
-; ****************************
-
-
-; ###
-; char_utils.asm begin
-; ###
