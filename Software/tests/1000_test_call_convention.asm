@@ -48,4 +48,5 @@ load b, (hl)
 add a, b
 
 __epilogue
+ret
 

@@ -42,12 +42,7 @@
 ;  7  |                       |
 ;  8  |_______________________|
 ;;
-add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
-    ; ******
-    ; add32 takes two 32 bit params and adds them.
-    ; WARNGING: this funciton contamintes the x var
-    ; ******
-
+add32:
     ; param stack indicies. points to MSBs
     .param16_outp = -14
     .param32_x_temp = -12
@@ -199,7 +194,7 @@ add32: ; x, y, result pointer, (SP+14, SP+10, SP+6)
         pop b ; save cf to b register
 
         __epilogue
-; **********************************
+        
   
 multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
     ; ******

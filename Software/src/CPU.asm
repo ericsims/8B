@@ -33,7 +33,7 @@
     ; 2. epilogue macro
     ;   2a. ;TODO: check SP=BP
     ;   2b. restore old BP
-    ;   2c. `ret` to return to function call 
+    ; 3. `ret` to return to function call 
     ;
     ; notes:
     ;  - stack grows up (address increases as values pushed to stack)
@@ -78,7 +78,6 @@
 
         popw hl ; restore old base pointer
         storew hl, BP
-        ret
     }
 
 

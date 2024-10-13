@@ -85,6 +85,7 @@ get_node_ptr:
 
     .done:
     __epilogue
+    ret
 
 
 get_node:
@@ -163,6 +164,7 @@ get_node:
 
     .done:
     __epilogue
+    ret
 
 
 print_nodes:
@@ -253,6 +255,7 @@ print_nodes:
     popw hl
     pop a
     __epilogue
+    ret
 
 
 
@@ -285,6 +288,7 @@ print_map_name:
     call static_uart_print
     call static_uart_print_newline
     __epilogue
+    ret
 
 str_1: #d "This program loads and parses a test map\n\0"
 str_2: #d "Loading map: \0"

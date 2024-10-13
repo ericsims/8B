@@ -462,6 +462,7 @@ dijkstra:
         pop a ; .next_node
         pop a ; u
         __epilogue
+        ret
     
     .error: ; error. call this if there is an error to halt
         load a, #0x00
