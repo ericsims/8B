@@ -12,7 +12,7 @@
 ; @section description
 ; takes two 32 bit params and adds them
 ; returns 32bit summation to result pointer. carry flag is left in b register.
-; @param .param32_z
+; @param .param16_outp result pointer
 ; @param .param32_x
 ; @param .param32_y
 ; @return carry_flag
@@ -194,40 +194,50 @@ add32:
         pop b ; save cf to b register
 
         __epilogue
+        ret
         
-  
-multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
-    ; ******
-    ; multiply8_fast takes two unsigned 8 bit params and multiplies them.
-    ; returns 16bit summation to result pointer
-    ; ******
 
-    ;    _______________________
-    ; 8 |_______.param8_x_______|
-    ; 7 |_______.param8_y_______|
-    ; 6 |   .param16_res_addr   |
-    ; 5 |_______________________|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ; 0 |______.local8_cf_______|
-    ;-1 |      .param16_z       |
-    ;-2 |_______________________|
-    ;-3 |__.local8_multiplier___|
-    ;-4 |______.local8_n________|
-    ;-5 |_.local8_overflow_temp_|
+;;
+; @function
+; @brief takes two unsigned 8 bit params and multiplies for a 16 bit unsigned result
+; @section description
+; takes two 8 bit unsigned fparamtesr
+; returns 16bit product to result pointer. carry flag is left in b register.
+; TODO: carry flag
+; @param .param8_x multiplicand
+; @param .param8_y multiplicand
+; @param .param16_res_addr result pointer
+; @return carry_flag
+;
+;    _______________________
+; -8 |_______.param8_x_______|
+; -7 |_______.param8_y_______|
+; -6 |   .param16_res_addr   |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |______.local8_cf_______|
+;  1 |      .param16_z       |
+;  2 |_______________________|
+;  3 |__.local8_multiplier___|
+;  4 |______.local8_n________|
+;  5 |_.local8_overflow_temp_|
+;;
+mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
+
 
     ; param stack indicies. points to MSBs
-    .param8_x = 8
-    .param8_y = 7
-    .param16_res_addr = 6 ; 5 thru 6
+    .param8_x = -8
+    .param8_y = -7
+    .param16_res_addr = -6
     ; local variables stack indicies. points to MSBs
     .local8_cf = 0
-    .param16_z = -1
-    .multipiler = -3
-    .local8_n = -4
-    .local8_overflow_temp = -5
+    .param16_z = 1
+    .multipiler = 3
+    .local8_n = 4
+    .local8_overflow_temp = 5
     __prologue
     push #0x00    ; init cf=0
     pushw #0x00   ; init z=0
@@ -259,17 +269,16 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         jnc .no_carry
     .carry:
         __store_local a, .param16_z
-        __load_local a, .param16_z-1
+        __load_local a, .param16_z+1
         rshift a
-        load b, #0x80
-        add a, b
-        __store_local a, .param16_z-1
+        add a, #0x80
+        __store_local a, .param16_z+1
         jmp .checkdone
     .no_carry:
         __store_local a, .param16_z
-        __load_local a, .param16_z-1
+        __load_local a, .param16_z+1
         rshift a
-        __store_local a, .param16_z-1
+        __store_local a, .param16_z+1
     .checkdone:
         ; right shift muliplier
         __load_local a, .multipiler
@@ -286,8 +295,7 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
 
 
         __load_local a, .local8_n ; load iteration
-        load b, #0x01
-        sub a, b
+        sub a, #0x01
         jnz .mult
     .done:
         pop a ; discared overflow_temp
@@ -295,7 +303,7 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         pop a ; discared multiplier
         __load_local a, .param16_res_addr
         push a
-        __load_local a, .param16_res_addr-1
+        __load_local a, .param16_res_addr+1
         push a
         popw hl
         addw hl, #0x01
@@ -304,120 +312,45 @@ multiply8_fast: ; x, y, result pointer, (SP+8, SP+7, SP+6))
 
         __load_local a, .param16_res_addr
         push a
-        __load_local a, .param16_res_addr-1
+        __load_local a, .param16_res_addr+1
         push a
         popw hl
         pop a
         store a, (hl)
 
-        pop a; discard cf
+        pop b; return cf in b register
 
         __epilogue
-; **********************************
+        ret
 
-multiply_repeat_add: ; x, y (addreses SP+6, SP+5)
-    ; param stack indicies
-    .param8_x = 6
-    .param8_y = 5
-    ; local variables stack indicies
-    .local8_y = 0
-    .param8_z = -1
-    __prologue
+;;
+; @function
+; @brief takes a 32bit word and rigth shifts by one
+; @section description
+; takes a 32bit word and right shifts by one
+; TODO: add return pointer
+; @param param32_x
+; @return carry_flag
+;
+;     _______________________
+; -8 |      .param32_x       |
+; -7 |                       |
+; -6 |                       |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |_______.local8_n_______|
+;  1 |_____.local8_carry_____|
+;  2 |__.local8_last_carry___|
+;;
+rshift_32:
 
-    push #0x00 ; init .local32_y = 0
-    push #0x00 ; init z=0
-
-    __load_local b, .param8_x
-    __load_local a, .param8_y
-    add a, #0
-    jmz .done
-    __store_local a, .local8_y
-    .run:
-        __load_local a, .param8_z
-        add a, b
-        __store_local a, .param8_z
-        
-        __load_local a, .local8_y
-        sub a, #1
-        jmz .done
-        __store_local a, .local8_y
-
-        jmp .run
-    .done:
-        pop a ; save z to a reg
-        pop b ; discard y_local
-        __epilogue
-
-; **********************************   
-
-multiply16_repeat_add: ; x, y, z (return)
-    ; param stack indicies
-    .param8_x = 8
-    .param8_y = 7
-    .param16_z = 5 ; word allocates 5, 6
-    ; local variables stack indicies
-    .local8_y = 0
-        __prologue   
-
-        ; TODO: check and swap params to make this faster
-        push #0x00 ; init .local8_y = 0
-
-        __load_local b, .param8_x
-        __load_local a, .param8_y
-        add a, #0
-        jmz .done
-        __store_local a, .local8_y
-    .run:
-        __load_local a, .param16_z
-        add a, b
-        jmc .carry
-        __store_local a, .param16_z
-        jmp .decrement
-
-    .carry:
-        __store_local a, .param16_z
-        __load_local a, .param16_z+1
-        add a, #0x01
-        __store_local a, .param16_z+1
-
-    .decrement:
-        __load_local a, .local8_y
-        sub a, #1
-        jmz .done
-        __store_local a, .local8_y
-
-        jmp .run
-    .done:
-        pop b ; discard y_local
-        __epilogue
-
-; **********************************
-
-rshift_32: ; x, (SP+8,7,6,5)
-    ; ******
-    ; rshift_32 takes a 32 bit params and right shifts by 1.
-    ; saves result inplace. leaves CF in b register
-    ; WARNGING: this funciton contamintes the x var
-    ; ******
-
-    ;    _______________________
-    ; 8 |      .param32_x       |
-    ; 7 |                       |
-    ; 6 |                       |
-    ; 5 |_______________________|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ; 0 |_______.local8_n_______|
-    ;-1 |_____.local8_carry_____|
-    ;-2 |__.local8_last_carry___|
-
-
-    .param32_x = 8
+    .param32_x = -8
     .local8_n = 0
-    .local8_carry = -1
-    .local8_last_carry = -2
+    .local8_carry = 1
+    .local8_last_carry = 2
     .init:
     __prologue
     push #0x00 ; n = 0
@@ -425,12 +358,13 @@ rshift_32: ; x, (SP+8,7,6,5)
     push #0x00 ; last_carry = 0
     .loop:
     __load_local b, .local8_n
-    ; load paramter byte into a reg
+    ; load parameter byte into a reg
+    halt
     loadw hl, BP
-    subw hl, b
-    addw hl, #.param32_x
+    addw hl, b
+    subw hl, #(.param32_x*-1)
     load a, (hl)
-    ; TODO: use pushw to save a cople clock cycles
+    ; TODO: use pushw to save a couple clock cycles
     ; pushw hl ; save the hl adress for later in .store, saves on redoing this math 
 
     ; right shift and then check carry flag
@@ -454,8 +388,8 @@ rshift_32: ; x, (SP+8,7,6,5)
     ; set destination ptr in hl
     __load_local b, .local8_n
     loadw hl, BP
-    subw hl, b
-    addw hl, #.param32_x
+    addw hl, b
+    subw hl, #(.param32_x*-1)
 
     store a, (hl)
     .update_last_carry:
@@ -475,8 +409,8 @@ rshift_32: ; x, (SP+8,7,6,5)
     pop a ; discard carry
     pop a ; discard n
     __epilogue
+    ret
 
-; **********************************
 
 ; ###
 ; math.asm end

@@ -29,42 +29,41 @@ get_distance:
     ; takes two params n0, n1. returns distance in b register
     ; calls get_node
     ;     _______________
-    ; 6  |______.n0______|
-    ; 5  |______.n1______|
-    ; 4  |_______?_______| RESERVED
-    ; 3  |_______?_______|    .
-    ; 2  |_______?_______|    .
-    ; 1  |_______?_______| RESERVED
-    ; 0  |_____.x_0______|
-    ;-1  |_____.y_0______|
-    ;-2  |_____.p0_0_____|
-    ;-3  |_____.p1_0_____|
-    ;-4  |_____.p2_0_____|
-    ;-5  |_____.p3_0_____|
-    ;-6  |_____.n_0______|
-    ;-7  |_____.x_1______|
-    ;-8  |_____.y_1______|
-    ;-9  |_____.p0_1_____|
-    ;-10 |_____.p1_1_____|
-    ;-11 |_____.p2_1_____|
-    ;-12 |_____.p3_1_____|
-    ;-13 |_____.n_1______|
-    ;-14 |     .dx^2     |
-    ;-15 |_______________|
-    ;-16 |     .dy^2     |
-    ;-17 |_______________|
-    ;-18 |_____.dist_____|
-    ;    |       ~       | additional ephemeral  stack usage for subcalls
+    ; -6  |______.n0______|
+    ; -5  |______.n1______|
+    ; -4  |_______?_______| RESERVED
+    ; -3  |_______?_______|    .
+    ; -2  |_______?_______|    .
+    ; -1  |_______?_______| RESERVED
+    ;  0  |_____.x_0______|
+    ;  1  |_____.y_0______|
+    ;  2  |_____.p0_0_____|
+    ;  3  |_____.p1_0_____|
+    ;  4  |_____.p2_0_____|
+    ;  5  |_____.p3_0_____|
+    ;  6  |_____.n_0______|
+    ;  7  |_____.x_1______|
+    ;  8  |_____.y_1______|
+    ;  9  |_____.p0_1_____|
+    ; 10  |_____.p1_1_____|
+    ; 11  |_____.p2_1_____|
+    ; 12  |_____.p3_1_____|
+    ; 13  |_____.n_1______|
+    ; 14  |     .dx^2     |
+    ; 15  |_______________|
+    ; 16  |     .dy^2     |
+    ; 17  |_______________|
+    ; 18  |_____.dist_____|
 
 
-    .n0 = 6
-    .n1 = 5
+    .n0 = -6
+    .n1 = -5
     .x_0 = 0
-    .y_0 = -1
-    .x_1 = -7
-    .y_1 = -8
-    .dx2 = -14
-    .dy2 = -16
+    .y_0 = 1
+    .x_1 = 7
+    .y_1 = 8
+    .dx2 = 14
+    .dy2 = 16
 
     .init:
     __prologue
@@ -96,7 +95,7 @@ get_distance:
     push a ; empherial x
     push a ; empherial y
     pushw #map_utils.scratch1 ; empherial desination reg
-    call multiply8_fast
+    call mult8
     popw hl ; discard scratch 1 pointer
     popw hl ; discard dx and dx
     pushw map_utils.scratch1 ; .dx^2
@@ -113,7 +112,7 @@ get_distance:
     push a ; empherial x
     push a ; empherial y
     pushw #map_utils.scratch1 ; empherial desination reg
-    call multiply8_fast
+    call mult8
     popw hl ; discard scratch 1 pointer
     popw hl ; discard dx and dx
     pushw map_utils.scratch1 ; .dy^2
@@ -155,6 +154,7 @@ get_distance:
     popw hl ; .p1_0, .p0_0
     popw hl ; .y_0, .x_0
     __epilogue
+    ret
 
 get_node_ptr:
     ; gets the addresss of a node
@@ -162,18 +162,18 @@ get_node_ptr:
     ; overwrites .param16_node_ptr with node address
     ; calls ?
 
-    ;    ________________________
-    ; 7 |   .param16_node_ptr   |
-    ; 6 |_______________________|
-    ; 5 |_______.param8_n_______|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ;   |           ~           | additional ephemeral  stack usage for subcalls
+    ;     _______________________
+    ; -7 |   .param16_node_ptr   |
+    ; -6 |_______________________|
+    ; -5 |_______.param8_n_______|
+    ; -4 |___________?___________| RESERVED
+    ; -3 |___________?___________|    .
+    ; -2 |___________?___________|    .
+    ; -1 |___________?___________| RESERVED
+    ;  0 |           ~           | additional ephemeral  stack usage for subcalls
 
-    .param16_node_ptr = 7
-    .param8_n = 5
+    .param16_node_ptr = -7
+    .param8_n = -5
  
     .init:
     __prologue
@@ -188,7 +188,7 @@ get_node_ptr:
     push a
     push #0x06
     pushw map_utils.scratch1 
-    call multiply8_fast
+    call mult8
     pop a   ; discard param
     pop a   ; discard param
     popw hl ; discard param
@@ -209,11 +209,12 @@ get_node_ptr:
     load a, static_z_32+2
     __store_local a, .param16_node_ptr
     load a, static_z_32+3
-    __store_local a, .param16_node_ptr-1
+    __store_local a, .param16_node_ptr+1
 
 
     .done:
     __epilogue
+    ret
 
 
 get_node:
@@ -221,27 +222,27 @@ get_node:
     ; takes three params. .n0 node index, .x and .y, and .p0-.p3
     ; overwrites .x and .y with node position, and .p0-.p3 with nodes
     ; calls get_node_ptr
-    ;    _______________
-    ;11 |______.x_______|
-    ;10 |______.y_______|
-    ; 9 |______.p0______|
-    ; 8 |______.p1______|
-    ; 7 |______.p2______|
-    ; 6 |______.p3______|
-    ; 5 |______.n_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;       _______________
+    ; -11 |______.x_______|
+    ; -10 |______.y_______|
+    ;  -9 |______.p0______|
+    ;  -8 |______.p1______|
+    ;  -7 |______.p2______|
+    ;  -6 |______.p3______|
+    ;  -5 |______.n_______|
+    ;  -4 |_______?_______| RESERVED
+    ;  -3 |_______?_______|    .
+    ;  -2 |_______?_______|    .
+    ;  -1 |_______?_______| RESERVED
+    ;   0 |       ~       | additional ephemeral stack usage for subcalls
 
-    .x  = 11
-    .y  = 10
-    .p0 = 9
-    .p1 = 8
-    .p2 = 7
-    .p3 = 6
-    .n  = 5
+    .x  = -11
+    .y  = -10
+    .p0 = -9
+    .p1 = -8
+    .p2 = -7
+    .p3 = -6
+    .n  = -5
 
     .init:
     __prologue
@@ -292,6 +293,7 @@ get_node:
 
     .done:
     __epilogue
+    ret
 
 
 print_nodes:
@@ -299,27 +301,27 @@ print_nodes:
     ; takes no params. doesnt return anything
     ; calls static_uart_print, uart_print_itoa_hex, static_uart_print_newline
 
-    ;    _______________
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ; 0 |______.n_______|
-    ;-1 |______.x_______|
-    ;-2 |______.y_______|
-    ;-3 |______.p0______|
-    ;-4 |______.p1______|
-    ;-5 |______.p2______|
-    ;-6 |______.p3______|
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;     _______________
+    ; -4 |_______?_______| RESERVED
+    ; -3 |_______?_______|    .
+    ; -2 |_______?_______|    .
+    ; -1 |_______?_______| RESERVED
+    ;  0 |______.n_______|
+    ;  1 |______.x_______|
+    ;  2 |______.y_______|
+    ;  3 |______.p0______|
+    ;  4 |______.p1______|
+    ;  5 |______.p2______|
+    ;  6 |______.p3______|
+    ;    |       ~       | additional ephemeral  stack usage for subcalls
 
     .n = 0 ; node index
-    .x = -1 ; x coord
-    .y = -2 ; y coord
-    .p0 = -3 ; p0
-    .p1 = -4 ; p1
-    .p2 = -5 ; p2
-    .p3 = -6 ; p3
+    .x = 1 ; x coord
+    .y = 2 ; y coord
+    .p0 = 3 ; p0
+    .p1 = 4 ; p1
+    .p2 = 5 ; p2
+    .p3 = 6 ; p3
     __prologue
     .init:
     push #0x00 ; n = 0
@@ -383,20 +385,21 @@ print_nodes:
     popw hl
     pop a
     __epilogue
+    ret
 
 
 
 print_map_name:
     ; prints the name of the map to the console
     ; takes no params. doesnt return anything
-    ; calls multiply8_fast, static_add32, static_uart_print
+    ; calls mult8, static_add32, static_uart_print
 
-    ;    _______________
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;     _______________
+    ; -4 |_______?_______| RESERVED
+    ; -3 |_______?_______|    .
+    ; -2 |_______?_______|    .
+    ; -1 |_______?_______| RESERVED
+    ;  0 |       ~       | additional ephemeral  stack usage for subcalls
 
     .init:
     __prologue
@@ -418,6 +421,7 @@ print_map_name:
     call static_uart_print
     call static_uart_print_newline
     __epilogue
+    ret
 
 
 #include "./static_math.asm"

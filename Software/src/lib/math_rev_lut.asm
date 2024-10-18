@@ -9,49 +9,50 @@
 
 #bank rom
 
- _rev_lut: ; result, val, rev_lut_addr
-    ; ******
-    ; _rev_lut takes a result_val placeholder, a 16 bit val, and an address pointer to the beginning of the lut
-    ; returns 8 bit value from the lut in results
-    ; call satic_add32
-    ; ******
+;;
+; @function
+; @brief reverse lookup table
+; @section description
+; reverse lookup table
+; calls static_add32
+; TODO: add return pointer
+; TODO: broken. off by one error changed when stack inverted!
+; @param param8_result return
+; @oaram param16_val input
+; @return void
+;
+;     _______________________
+; -9 |____.param8_result_____|
+; -8 |     .param16_val      |
+; -7 |_______________________|
+; -6 |   .param16_lut_addr   |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |           ~           | additional ephemeral  stack usage for subcalls
 
-    ;    _______________________
-    ; 9 |____.param8_result_____|
-    ; 8 |     .param16_val      |
-    ; 7 |_______________________|
-    ; 6 |   .param16_lut_addr   |
-    ; 5 |_______________________|
-    ; 4 |___________?___________| RESERVED
-    ; 3 |___________?___________|    .
-    ; 2 |___________?___________|    .
-    ; 1 |___________?___________| RESERVED
-    ;   |           ~           | additional ephemeral  stack usage for subcalls
-
-    .param8_result    =  9
-    .param16_val      =  8
-    .param16_lut_addr =  6
+;;
+ _rev_lut:
+    .param8_result    =  -9
+    .param16_val      =  -8
+    .param16_lut_addr =  -6
 
     .init:
         __prologue
 
     .init_ptr:
-        loadw hl, BP
-        addw hl, #{.param16_lut_addr}
-        load a, (hl)
+        load a, (BP), .param16_lut_addr
         store a, rev_lut_ptr
-        subw hl, #0x01
-        load a, (hl)
+        load a, (BP), .param16_lut_addr+1
         store a, rev_lut_ptr+1
 
         ; save val value, and sign extend
         storew #0x0000, static_y_32
-        loadw hl, BP
-        addw hl, #{.param16_val}
-        load a, (hl)
+        load a, (BP), .param16_val
         store a, static_y_32+2
-        subw hl, #0x01
-        load a, (hl)
+        load a, (BP), .param16_val
         store a, static_y_32+3
 
     .do_compare:
@@ -87,6 +88,7 @@
 
     .done:
         __epilogue
+        ret
 
 ; ###
 ; math_rev_lut.asm end

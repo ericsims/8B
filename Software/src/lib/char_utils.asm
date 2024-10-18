@@ -121,6 +121,7 @@ itoa_hex_nibble:
     .done:
     ; result in b register
     __epilogue
+    ret
 
 
 #bank rom
@@ -169,3 +170,4 @@ uart_print_itoa_hex:
     call static_uart_putc
     .done:
     __epilogue
+    ret

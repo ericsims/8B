@@ -91,7 +91,7 @@ loadw hl, #{imm: i16} =>
 
 ; loadw_hl_dir
 ; load hl register from direct address
-; usage: loadw hl, addresss[15:0]
+; usage: loadw hl, address[15:0]
 loadw hl, {addr: i16} =>
 {
   assert(addr >= 0)

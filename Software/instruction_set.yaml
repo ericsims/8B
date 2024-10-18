@@ -393,7 +393,7 @@ instructions:
     description: 'load hl register from direct address'
     duration: 12 # clock cycles
     operands: 2 # bytes (direct address)
-    usage: 'loadw hl, addresss[15:0]'
+    usage: 'loadw hl, address[15:0]'
     opcode: 0x0D
     asm_def: |
       loadw hl, {addr: i16} =>
@@ -461,7 +461,7 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI, MC, CE] # LSB into x register
+        - [HO, XI]         # LSB into x register
         - [YI, BO]         # load y register with b value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
         # if carry is true, increment MSB

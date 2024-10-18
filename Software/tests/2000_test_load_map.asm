@@ -33,18 +33,18 @@ get_node_ptr:
     ; overwrites .node_ptr with node address
     ; calls ?
 
-    ;    _______________
-    ; 7 |   .node_ptr   |
-    ; 6 |_______________|
-    ; 5 |______.n_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;     _______________
+    ; -7 |   .node_ptr   |
+    ; -6 |_______________|
+    ; -5 |______.n_______|
+    ; -4 |_______?_______| RESERVED
+    ; -3 |_______?_______|    .
+    ; -2 |_______?_______|    .
+    ; -1 |_______?_______| RESERVED
+    ;  0 |       ~       | additional ephemeral  stack usage for subcalls
 
-    .node_ptr = 7
-    .n = 5
+    .node_ptr = -7
+    .n = -5
  
     .init:
     __prologue
@@ -59,7 +59,7 @@ get_node_ptr:
     push a
     push #0x06
     pushw scratch1 
-    call multiply8_fast
+    call mult8
     pop a   ; discard param
     pop a   ; discard param
     popw hl ; discard param
@@ -80,7 +80,7 @@ get_node_ptr:
     load a, static_z_32+2
     __store_local a, .node_ptr
     load a, static_z_32+3
-    __store_local a, .node_ptr-1
+    __store_local a, .node_ptr+1
 
 
     .done:
@@ -94,26 +94,26 @@ get_node:
     ; overwrites .x and .y with node position, and .p0-.p3 with nodes
     ; calls ?
     ;    _______________
-    ;11 |______.x_______|
-    ;10 |______.y_______|
-    ; 9 |______.p0______|
-    ; 8 |______.p1______|
-    ; 7 |______.p2______|
-    ; 6 |______.p3______|
-    ; 5 |______.n_______|
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;-11 |______.x_______|
+    ;-10 |______.y_______|
+    ; -9 |______.p0______|
+    ; -8 |______.p1______|
+    ; -7 |______.p2______|
+    ; -6 |______.p3______|
+    ; -5 |______.n_______|
+    ; -4 |_______?_______| RESERVED
+    ; -3 |_______?_______|    .
+    ; -2 |_______?_______|    .
+    ; -1 |_______?_______| RESERVED
+    ;  0  |       ~       | additional ephemeral  stack usage for subcalls
 
-    .x  = 11
-    .y  = 10
-    .p0 = 9
-    .p1 = 8
-    .p2 = 7
-    .p3 = 6
-    .n  = 5
+    .x  = -11
+    .y  = -10
+    .p0 = -9
+    .p1 = -8
+    .p2 = -7
+    .p3 = -6
+    .n  = -5
 
     .init:
     __prologue
@@ -172,27 +172,27 @@ print_nodes:
     ; takes no params. doesnt return anything
     ; calls static_uart_print, uart_print_itoa_hex, static_uart_print_newline
 
-    ;    _______________
-    ; 4 |_______?_______| RESERVED
-    ; 3 |_______?_______|    .
-    ; 2 |_______?_______|    .
-    ; 1 |_______?_______| RESERVED
-    ; 0 |______.n_______|
-    ;-1 |______.x_______|
-    ;-2 |______.y_______|
-    ;-3 |______.p0______|
-    ;-4 |______.p1______|
-    ;-5 |______.p2______|
-    ;-6 |______.p3______|
-    ;   |       ~       | additional ephemeral  stack usage for subcalls
+    ;     _______________
+    ; -4 |_______?_______| RESERVED
+    ; -3 |_______?_______|    .
+    ; -2 |_______?_______|    .
+    ; -1 |_______?_______| RESERVED
+    ;  0 |______.n_______|
+    ;  1 |______.x_______|
+    ;  2 |______.y_______|
+    ;  3 |______.p0______|
+    ;  4 |______.p1______|
+    ;  5 |______.p2______|
+    ;  6 |______.p3______|
+    ;    |       ~       | additional ephemeral  stack usage for subcalls
 
     .n = 0 ; node index
-    .x = -1 ; x coord
-    .y = -2 ; y coord
-    .p0 = -3 ; p0
-    .p1 = -4 ; p1
-    .p2 = -5 ; p2
-    .p3 = -6 ; p3
+    .x = 1 ; x coord
+    .y = 2 ; y coord
+    .p0 = 3 ; p0
+    .p1 = 4 ; p1
+    .p2 = 5 ; p2
+    .p3 = 6 ; p3
     __prologue
     .init:
     push #0x00 ; n = 0
@@ -262,7 +262,7 @@ print_nodes:
 print_map_name:
     ; prints the name of the map to the console
     ; takes no params. doesnt return anything
-    ; calls multiply8_fast, static_add32, static_uart_print
+    ; calls mult8, static_uart_print
 
     ;    _______________
     ; 4 |_______?_______| RESERVED

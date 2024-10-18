@@ -61,45 +61,46 @@ dijkstra:
     ; find shortest path using dijkstra's algorithm
     ; takes two params n0 (start node), n1 (end node)
     ; calls get_node
-    ;      _______________
-    ; 6   |______.n0______|
-    ; 5   |______.n1______|
-    ; 4   |_______?_______| RESERVED
-    ; 3   |_______?_______|    .
-    ; 2   |_______?_______|    .
-    ; 1   |_______?_______| RESERVED
-    ; 0   |______.u_______|
-    ;-1   |__.next_node___|
-    ;-2   |__.path_index__|
-    ;-3   |    dist_0     |
-    ;            ...
-    ;     |____dist_[SIZE_OF_ARRAYS-1]___|
-    ;     |    prev_0     |
-    ;            ...
-    ;     |____prev_[SIZE_OF_ARRAYS-1]___|
-    ;     |    visit_0    |
-    ;            ...
-    ;     |___visit_[SIZE_OF_ARRAYS-1]___|
+    ;      _______________________________
+    ; -6   |______________.n0______________|
+    ; -5   |______________.n1______________|
+    ; -4   |______________?________________| RESERVED
+    ; -3   |______________?________________|    .
+    ; -2   |______________?________________|    .
+    ; -1   |______________?________________| RESERVED
+    ;  0   |______________.u_______________|
+    ;  1   |__________.next_node___________|
+    ;  2   |__________.path_index__________|
+    ;  3   |            dist_0             |
+    ;  .   |              ...              |
+    ;  .   |____dist_[SIZE_OF_ARRAYS-1]____|
+    ;  .   |            prev_0             |
+    ;  .   |              ...              |
+    ;  .   |____prev_[SIZE_OF_ARRAYS-1]____|
+    ;  .   |            visit_0            |
+    ;  .   |              ...              |
+    ;  .   |___visit_[SIZE_OF_ARRAYS-1]____|
+    ;      |_________.smallest_dist________|
 
     .SIZE_OF_ARRAYS   = 40 ; this needs to be >= to the NUM_NODES in the map, but less than 40ish, so stack manipulation works (i think)  i could probably do this dynamically from the NUM_NODES var
  
 
-    .n0            =  6
-    .n1            =  5
-    .u             =  0
-    .next_node     = -1
-    .path_index    = -2
-    .dist_start    = -3
-    .prev_start    = (.dist_start-.SIZE_OF_ARRAYS)
-    .visit_start   = (.dist_start-.SIZE_OF_ARRAYS*2)
-    .next_node_x   = (.dist_start-.SIZE_OF_ARRAYS*3)  ; unused
-    .next_node_y   = (.next_node_x-1)                 ; unused
-    .next_node_p0  = (.next_node_x-2)
-    .next_node_p1  = (.next_node_x-3)
-    .next_node_p2  = (.next_node_x-4)
-    .next_node_p3  = (.next_node_x-5)
+    .n0            = -6
+    .n1            = -5
+    .u             = 0
+    .next_node     = 1
+    .path_index    = 2
+    .dist_start    = 3
+    .prev_start    = (.dist_start)
+    .visit_start   = (.dist_start+.SIZE_OF_ARRAYS)
+    .next_node_x   = (.dist_start+.SIZE_OF_ARRAYS*2)  ; unused
+    .next_node_y   = (.next_node_x+1)                 ; unused
+    .next_node_p0  = (.next_node_x+2)
+    .next_node_p1  = (.next_node_x+3)
+    .next_node_p2  = (.next_node_x+4)
+    .next_node_p3  = (.next_node_x+5)
 
-    .smallest_dist = (.dist_start-.SIZE_OF_ARRAYS*3)
+    .smallest_dist = (.dist_start+.SIZE_OF_ARRAYS*3)
 
 #bank ram
     .scratch1: #res 2 ; 2 bytes of scratch to use during init
@@ -146,8 +147,8 @@ dijkstra:
         __store_local b, .u ; init .u=.n0
         ; set dist[.n0] = 0
         loadw hl, BP
-        subw hl, #({.dist_start})*-1
-        subw hl, b
+        addw hl, #.dist_start
+        addw hl, b
         load a, #0x00
         store a, (hl)
     ; .check_if_we_visted_all_nodes? why is this ncessasay?
@@ -156,8 +157,8 @@ dijkstra:
         ; set visit[.u] = 0x0E
         __load_local b, .u
         loadw hl, BP
-        subw hl, #({.visit_start})*-1
-        subw hl, b
+        addw hl, #.visit_start
+        addw hl, b
         load a, #0x0E
         store a, (hl)
     .check_done: ; if u == n1
@@ -178,8 +179,8 @@ dijkstra:
         ..check_valid_node:
             __load_local b, .path_index
             loadw hl, BP
-            subw hl, #({.next_node_p0})*-1
-            subw hl, b
+            addw hl, #.next_node_p0
+            addw hl, b
             load b, (hl)
             __store_local b, .next_node
             sub b, #0xFF
@@ -211,8 +212,8 @@ dijkstra:
                 ; next_dist = dist[.u] + dist_to_next_node
                 __load_local b, .u
                 loadw hl, BP
-                subw hl, #({.dist_start})*-1
-                subw hl, b
+                addw hl, #.dist_start
+                addw hl, b
                 load a, (hl)
                 pop b
                 add a, b
@@ -223,8 +224,8 @@ dijkstra:
                 ; start by saving dist[next_node], since its needed twice
                 __load_local b, .next_node
                 loadw hl, BP
-                subw hl, #({.dist_start})*-1
-                subw hl, b
+                addw hl, #.dist_start
+                addw hl, b
                 load a, (hl)
                 store a, .scratch1+1 ; dist[next_node] in .scratch1+1
 
@@ -245,15 +246,15 @@ dijkstra:
                 load a, .scratch1
                 __load_local b, .next_node
                 loadw hl, BP
-                subw hl, #({.dist_start})*-1
-                subw hl, b
+                addw hl, #.dist_start
+                addw hl, b
                 store a, (hl)
                 ; prev[next_node] = .u
                 __load_local a, .u
                 __load_local b, .next_node
                 loadw hl, BP
-                subw hl, #({.prev_start})*-1
-                subw hl, b
+                addw hl, #.prev_start
+                addw hl, b
                 store a, (hl)
             ...done_with_dist:
             
@@ -294,8 +295,8 @@ dijkstra:
             load a, #0x0E
             load b, .scratch1
             loadw hl, BP
-            subw hl, #({.visit_start})*-1
-            subw hl, b
+            addw hl, #.visit_start
+            addw hl, b
             load b, (hl)
             sub a, b
             jmz ..continue
@@ -350,8 +351,8 @@ dijkstra:
             ; clear visited array to reuse for reversing the path.
             load b, #(.SIZE_OF_ARRAYS-1)
             loadw hl, BP
-            subw hl, #({.visit_start})*-1
-            subw hl, b
+            addw hl, #.visit_start
+            addw hl, b
             store b, .scratch1+1
             ...update_data:
                 load a, #0xFF
@@ -365,9 +366,9 @@ dijkstra:
             __load_local a, .u
             ; save a to array in reverse order
             loadw hl, BP
-            subw hl, #({.visit_start})*-1
+            addw hl, #.visit_start
             load b, .scratch1+1
-            subw hl, b
+            addw hl, b
             store a, (hl)
             ; decrement counter and save for next loop
             sub b, #0x01
@@ -378,8 +379,8 @@ dijkstra:
             pop b
             ; load b, a
             loadw hl, BP
-            subw hl, #({.prev_start})*-1
-            subw hl, b
+            addw hl, #.prev_start
+            addw hl, b
             load a, (hl) ; a = prev[.u]
             load b, a
             sub a, #0xFF
@@ -410,9 +411,9 @@ dijkstra:
 
             ; get source byte
             loadw hl, BP
-            subw hl, #({.visit_start})*-1
+            addw hl, #.visit_start
             load b, .scratch1+1
-            subw hl, b
+            addw hl, b
             load a, (hl)
             ; increment counter and save for next loop
             add b, #0x01
