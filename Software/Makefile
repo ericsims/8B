@@ -86,13 +86,37 @@ $(coverage_report): $(IR_DOCS)
 	@echo generating instruction test coverage report...
 	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
 
+
+
+# hdl
+ADDR_DECODE_PRJ := hdl_test
+ADDR_DECODE_VHD_FILE := $(ADDR_DECODE_PRJ)/$(ADDR_DECODE_PRJ).vhd
+ADDR_DECODE_POF_FILE := $(ADDR_DECODE_PRJ)/output_files/$(ADDR_DECODE_PRJ).pof
+ADDR_DECODE_JED_FILE := $(ADDR_DECODE_PRJ)/output_files/$(ADDR_DECODE_PRJ).jed
+
+QUARTUS := c:/altera/13.0sp1/quartus/bin64/quartus_sh.exe
+POF2JED := C:/POF2JED/bin/POF2JED.exe
+CPLD := 1504as
+
+addr_decode: $(ADDR_DECODE_JED_FILE)
+
+$(ADDR_DECODE_POF_FILE): $(ADDR_DECODE_VHD_FILE)
+	@echo building VHDL using quartus_sh 
+	"$(QUARTUS)" --flow compile $(ADDR_DECODE_PRJ)/$(ADDR_DECODE_PRJ)
+
+$(ADDR_DECODE_JED_FILE): $(ADDR_DECODE_POF_FILE)
+	@echo converting POF to JED
+	"$(POF2JED)" -i $(ADDR_DECODE_POF_FILE) -device $(CPLD)
+
+
+
+
 clean:
 	@echo "***cleaning up***"
 	@rm -rf $(BIN_DIR)
 	@rm -rf $(IR_DOCS_DIR)
 	@rm -f $(INST_SET_OUT)
+	@rm -f $(ADDR_DECODE_POF_FILE)
+	@rm -f $(ADDR_DECODE_JED_FILE)
 	@echo "done cleaning..."
 	@echo ""
-
-# run:
-# make clean && make -j8 && make test -j8

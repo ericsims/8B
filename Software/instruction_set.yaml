@@ -2093,9 +2093,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [ADD, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't increment MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2171,9 +2168,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [SUB, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't decrement MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2249,9 +2243,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [ADD, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't increment MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2327,9 +2318,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [SUB, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't decrement MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2405,9 +2393,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [ADD, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't increment MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2483,9 +2468,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [SUB, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't decrement MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2561,9 +2543,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [ADD, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't increment MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
@@ -2643,9 +2622,6 @@ instructions:
         - [YI, KO]            # load y register with offset value
         - [SUB, FI, JI]       # save sum to J LSB and save flags
         # if carry is false, don't decrement MSB
-        - []                  #
-        - []                  #
-        - []                  #
         # load data
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
