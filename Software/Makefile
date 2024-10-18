@@ -89,34 +89,47 @@ $(coverage_report): $(IR_DOCS)
 
 
 # hdl
-ADDR_DECODE_PRJ := hdl_test
-ADDR_DECODE_VHD_FILE := $(ADDR_DECODE_PRJ)/$(ADDR_DECODE_PRJ).vhd
-ADDR_DECODE_POF_FILE := $(ADDR_DECODE_PRJ)/output_files/$(ADDR_DECODE_PRJ).pof
-ADDR_DECODE_JED_FILE := $(ADDR_DECODE_PRJ)/output_files/$(ADDR_DECODE_PRJ).jed
+AD_PRJ := hdl_test
+AD_VHD_FILE := $(AD_PRJ)/$(AD_PRJ).vhd
+AD_POF_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).pof
+AD_JED_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).jed
 
 QUARTUS := c:/altera/13.0sp1/quartus/bin64/quartus_sh.exe
 POF2JED := C:/POF2JED/bin/POF2JED.exe
 CPLD := 1504as
 
-addr_decode: $(ADDR_DECODE_JED_FILE)
+GHDL := ghdl
+GHDL_WORKDIR := $(AD_PRJ)/sim
 
-$(ADDR_DECODE_POF_FILE): $(ADDR_DECODE_VHD_FILE)
+addr_decode: $(AD_JED_FILE)
+
+$(AD_POF_FILE): $(AD_VHD_FILE)
 	@echo building VHDL using quartus_sh 
-	"$(QUARTUS)" --flow compile $(ADDR_DECODE_PRJ)/$(ADDR_DECODE_PRJ)
+	"$(QUARTUS)" --flow compile $(AD_PRJ)/$(AD_PRJ)
 
-$(ADDR_DECODE_JED_FILE): $(ADDR_DECODE_POF_FILE)
+$(AD_JED_FILE): $(AD_POF_FILE)
 	@echo converting POF to JED
-	"$(POF2JED)" -i $(ADDR_DECODE_POF_FILE) -device $(CPLD)
+	"$(POF2JED)" -i $(AD_POF_FILE) -device $(CPLD)
+
+.PHONY: addr_decode_sim
+addr_decode_sim:
+	@echo building address decoder sim...
+	@mkdir -p $(GHDL_WORKDIR)
+	@$(GHDL) -i --workdir=$(GHDL_WORKDIR)  $(AD_VHD_FILE)
+	@$(GHDL) -m --workdir=$(GHDL_WORKDIR) -o $(GHDL_WORKDIR)/$(AD_PRJ) $(AD_PRJ)
+	@echo running sim...
+	@$(GHDL_WORKDIR)/$(AD_PRJ) --vcd=$(GHDL_WORKDIR)/$(AD_PRJ).vcd
 
 
-
-
+.PHONY: clean clean_hdl
 clean:
 	@echo "***cleaning up***"
 	@rm -rf $(BIN_DIR)
 	@rm -rf $(IR_DOCS_DIR)
 	@rm -f $(INST_SET_OUT)
-	@rm -f $(ADDR_DECODE_POF_FILE)
-	@rm -f $(ADDR_DECODE_JED_FILE)
 	@echo "done cleaning..."
 	@echo ""
+
+clean_hdl:
+	@rm -f $(AD_POF_FILE)
+	@rm -f $(AD_JED_FILE)

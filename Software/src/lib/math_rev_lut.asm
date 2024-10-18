@@ -18,7 +18,7 @@
 ; TODO: add return pointer
 ; TODO: broken. off by one error changed when stack inverted!
 ; @param param8_result return
-; @oaram param16_val input
+; @param param16_val input
 ; @return void
 ;
 ;     _______________________

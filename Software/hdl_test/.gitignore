@@ -2,3 +2,4 @@
 db/
 incremental_db/
 atom_netlists/
+sim/
