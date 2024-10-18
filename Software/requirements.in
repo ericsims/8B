@@ -8,3 +8,4 @@ jupyter
 scikit-image
 tabulate
 yamllint
+memory_layout

@@ -1,0 +1,54 @@
+---
+defaults:
+  # Layout options
+  unit_size: 0x1000
+  unit_height: 0.325
+  min_height: 0.675
+  max_height: 3
+  discontinuity_height: 0.625
+  region_width: 1.5
+
+  # Presentation options
+  background: "#fff"
+  fill: '#C7E3EC'
+  outline: '#336DA5'
+
+  # Address labels
+  address_format: c
+  size_format: si
+
+automatic:
+  discontinuities:
+    fill: "#fff"
+    style: dashed
+  addresses:
+    side: right
+    start: true
+    end: false
+    size: false
+    final_end: true
+    end_exclusive: false
+
+layout:
+  0x0000:
+    size: 0x8000
+    label: "ROM"
+    labels:
+      "er,ic": "32 KiB"
+      "el,ib": "TEXT"
+    bank: true
+    fill: '#D7D3EC'
+  0x8000:
+    size: 0x4000
+    label: "SRAM"
+    labels:
+      "er,ic": "16 KiB"
+      "el,ib": "↑\nSTACK\nBSS"
+    bank: true
+    fill: "#C7F3DC"
+  0xD002:
+    size: 0x0002
+    label: "MOT"
+  0xD008:
+    size: 0x0002
+    label: "UART"

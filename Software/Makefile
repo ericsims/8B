@@ -20,6 +20,8 @@ IR_DOCS += $(patsubst $(LIB_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(LIB_SRCS))
 LUTS := $(BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
 INST_SET_IN := instruction_set.yaml
+MEM_MAP_OUT := $(DOCS_DIR)/mem_map.svg
+MEM_MAP_IN := memory_map.yaml
 
 parse_docs_script = ./scripts/parse_docs.py
 coverage_report_script = ./scripts/inst_coverage_report.py
@@ -46,12 +48,11 @@ deps: $(VENV_DIR)
 	)
 
 instruction: $(INST_SET_OUT)
-$(INST_SET_OUT): $(INST_SET_IN)
-	@echo "checking yaml syntax..."
-	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" instruction_set.yaml
+$(INST_SET_OUT): 
 	@echo "builing instruction set..."
+	@echo "checking yaml syntax..."
+	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" $(INST_SET_IN)
 	python parse_instruction_set.py || exit 1
-	@echo "done building instruction set..."
 	@echo ""
 
 luts: $(LUTS)
@@ -72,7 +73,7 @@ $(all_tests): %.test : %.bin
 	@echo "running test case $<"
 	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
 
-docs: coverage_report
+docs: coverage_report memory_map
 $(IR_DOCS_DIR)/%.yml: $(TEST_SRC_DIR)/%.asm
 	@mkdir -p $(IR_DOCS_DIR)
 	@$(parse_docs_script) $< $@
@@ -85,6 +86,14 @@ $(coverage_report): $(IR_DOCS)
 	@mkdir -p $(DOCS_DIR)
 	@echo generating instruction test coverage report...
 	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
+
+memory_map: $(MEM_MAP_OUT)
+$(MEM_MAP_OUT): $(MEM_MAP_IN)
+	@echo "builing memory map set..."
+	@echo "checking yaml syntax..."
+	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@mld --format=svg --output=$(MEM_MAP_OUT) $(MEM_MAP_IN)
+	@echo ""
 
 
 
