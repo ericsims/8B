@@ -251,7 +251,7 @@ and b, #{imm: i8} =>
 or a, b =>
 {
   0x24
-}  
+}
 
 ; or_a_imm
 ; Logical OR a register with imm value and save to a
@@ -279,7 +279,7 @@ or b, #{imm: i8} =>
 xor a, b =>
 {
   0x28
-}      
+}
 
 ; xor_a_imm
 ; Logical XOR a register with imm value and save to a
@@ -473,7 +473,7 @@ push ({addr: i16}) =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x3C @ addr`16
-} 
+}
 
 ; pushw_imm
 ; push immediate word to stack
@@ -501,7 +501,7 @@ pushw {addr: i16} =>
 pushw hl =>
 {
   0x50
-} 
+}
 
 ; popw_hl
 ; pop word off of stack into hl register
@@ -509,7 +509,7 @@ pushw hl =>
 popw hl =>
 {
   0x51
-} 
+}
 
 ; pop_a
 ; pop value off of stack into a register
@@ -517,7 +517,7 @@ popw hl =>
 pop a =>
 {
   0x52
-} 
+}
 
 ; pop_b
 ; pop value off of stack into b register
@@ -525,7 +525,7 @@ pop a =>
 pop b =>
 {
   0x53
-} 
+}
 
 ; move_dir_dir
 ; copy byte from source to destination

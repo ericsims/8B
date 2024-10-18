@@ -47,7 +47,9 @@ deps: $(VENV_DIR)
 
 instruction: $(INST_SET_OUT)
 $(INST_SET_OUT): $(INST_SET_IN)
-	@echo "***builing instruction set***"
+	@echo "checking yaml syntax..."
+	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" instruction_set.yaml
+	@echo "builing instruction set..."
 	python parse_instruction_set.py || exit 1
 	@echo "done building instruction set..."
 	@echo ""
