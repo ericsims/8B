@@ -20,7 +20,8 @@ IR_DOCS += $(patsubst $(LIB_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(LIB_SRCS))
 LUTS := $(BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
 INST_SET_IN := instruction_set.yaml
-MEM_MAP_OUT := $(DOCS_DIR)/mem_map.svg
+MEM_MAP_OUT := $(SRC_DIR)/mems.asm
+MEM_MAP_DOC := $(DOCS_DIR)/mem_map.svg
 MEM_MAP_IN := memory_map.yaml
 
 parse_docs_script = ./scripts/parse_docs.py
@@ -48,7 +49,7 @@ deps: $(VENV_DIR)
 	)
 
 instruction: $(INST_SET_OUT)
-$(INST_SET_OUT): 
+$(INST_SET_OUT): $(MEM_MAP_OUT)
 	@echo "builing instruction set..."
 	@echo "checking yaml syntax..."
 	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" $(INST_SET_IN)
@@ -87,12 +88,19 @@ $(coverage_report): $(IR_DOCS)
 	@echo generating instruction test coverage report...
 	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
 
-memory_map: $(MEM_MAP_OUT)
+memory_map: $(MEM_MAP_DOC)
+$(MEM_MAP_DOC): $(MEM_MAP_IN)
+	@echo "builing memory map set..."
+	@echo "checking yaml syntax..."
+	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@mld --format=svg --output=$(MEM_MAP_DOC) $(MEM_MAP_IN)
+	@echo ""
+
 $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
 	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
-	@mld --format=svg --output=$(MEM_MAP_OUT) $(MEM_MAP_IN)
+	@python parse_memory_map.py || exit 1
 	@echo ""
 
 
@@ -136,6 +144,7 @@ clean:
 	@rm -rf $(BIN_DIR)
 	@rm -rf $(IR_DOCS_DIR)
 	@rm -f $(INST_SET_OUT)
+	@rm -f $(MEM_MAP_OUT)
 	@echo "done cleaning..."
 	@echo ""
 
