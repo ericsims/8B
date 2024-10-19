@@ -106,8 +106,10 @@ $(MEM_MAP_OUT): $(MEM_MAP_IN)
 
 
 # hdl
-AD_PRJ := hdl_test
+AD_PRJ := addr_decode
 AD_VHD_FILE := $(AD_PRJ)/$(AD_PRJ).vhd
+AD_SRCS := $(wildcard $(AD_PRJ)/*.vhd)
+
 AD_POF_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).pof
 AD_JED_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).jed
 
@@ -116,26 +118,28 @@ POF2JED := C:/POF2JED/bin/POF2JED.exe
 CPLD := 1504as
 
 GHDL := ghdl
-GHDL_WORKDIR := $(AD_PRJ)/sim
+GHDL_FLAGS := --ieee=synopsys -fexplicit --std=08
 
-addr_decode: $(AD_JED_FILE)
+addr_decode: addr_decode_sim $(AD_JED_FILE)
 
 $(AD_POF_FILE): $(AD_VHD_FILE)
+	@echo
 	@echo building VHDL using quartus_sh 
 	"$(QUARTUS)" --flow compile $(AD_PRJ)/$(AD_PRJ)
+	@echo
 
 $(AD_JED_FILE): $(AD_POF_FILE)
+	@echo
 	@echo converting POF to JED
 	"$(POF2JED)" -i $(AD_POF_FILE) -device $(CPLD)
+	@echo
 
-.PHONY: addr_decode_sim
-addr_decode_sim:
-	@echo building address decoder sim...
-	@mkdir -p $(GHDL_WORKDIR)
-	@$(GHDL) -i --workdir=$(GHDL_WORKDIR)  $(AD_VHD_FILE)
-	@$(GHDL) -m --workdir=$(GHDL_WORKDIR) -o $(GHDL_WORKDIR)/$(AD_PRJ) $(AD_PRJ)
-	@echo running sim...
-	@$(GHDL_WORKDIR)/$(AD_PRJ) --vcd=$(GHDL_WORKDIR)/$(AD_PRJ).vcd
+addr_decode_sim: $(AD_PRJ)/sim_out.vcd
+$(AD_PRJ)/sim_out.vcd: $(AD_SRCS)
+	@echo
+	@echo running address decoder tests...
+	@cd $(AD_PRJ) && ../scripts/ghdl_run.py
+	@echo
 
 
 .PHONY: clean clean_hdl

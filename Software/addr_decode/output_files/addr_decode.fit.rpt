@@ -1,5 +1,5 @@
-Fitter report for hdl_test
-Sat Oct 19 14:23:14 2024
+Fitter report for addr_decode
+Sat Oct 19 14:25:01 2024
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
 
 
@@ -48,10 +48,10 @@ applicable agreement for further details.
 +-----------------------------------------------------------------------------+
 ; Fitter Summary                                                              ;
 +---------------------------+-------------------------------------------------+
-; Fitter Status             ; Successful - Sat Oct 19 14:23:14 2024           ;
+; Fitter Status             ; Successful - Sat Oct 19 14:25:01 2024           ;
 ; Quartus II 64-Bit Version ; 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition ;
-; Revision Name             ; hdl_test                                        ;
-; Top-level Entity Name     ; hdl_test                                        ;
+; Revision Name             ; addr_decode                                     ;
+; Top-level Entity Name     ; addr_decode                                     ;
 ; Family                    ; MAX7000AE                                       ;
 ; Device                    ; EPM7064AETC44-10                                ;
 ; Timing Models             ; Final                                           ;
@@ -94,7 +94,7 @@ Parallel compilation was disabled, but you have multiple processors available. E
 +--------------+
 ; Pin-Out File ;
 +--------------+
-The pin-out file can be found in D:/Users/erics/Documents/8B/Software/hdl_test/output_files/hdl_test.pin.
+The pin-out file can be found in D:/Users/erics/Documents/8B/Software/addr_decode/output_files/addr_decode.pin.
 
 
 +------------------------------------------------+
@@ -125,8 +125,8 @@ The pin-out file can be found in D:/Users/erics/Documents/8B/Software/hdl_test/o
 +------+-------+----------+-----+-----------------------+--------------------+--------+----------------+---------------+--------------+----------------------+
 ; Name ; Pin # ; I/O Bank ; LAB ; Combinational Fan-Out ; Registered Fan-Out ; Global ; Input Register ; Power Up High ; I/O Standard ; Location assigned by ;
 +------+-------+----------+-----+-----------------------+--------------------+--------+----------------+---------------+--------------+----------------------+
-; A    ; 2     ; --       ; 1   ; 1                     ; 0                  ; no     ; no             ; no            ; 3.3-V LVTTL  ; User                 ;
-; B    ; 3     ; --       ; 1   ; 1                     ; 0                  ; no     ; no             ; no            ; 3.3-V LVTTL  ; User                 ;
+; A    ; 35    ; --       ; 4   ; 1                     ; 0                  ; no     ; no             ; no            ; 3.3-V LVTTL  ; Fitter               ;
+; B    ; 42    ; --       ; 1   ; 1                     ; 0                  ; no     ; no             ; no            ; 3.3-V LVTTL  ; Fitter               ;
 +------+-------+----------+-----+-----------------------+--------------------+--------+----------------+---------------+--------------+----------------------+
 
 
@@ -135,7 +135,7 @@ The pin-out file can be found in D:/Users/erics/Documents/8B/Software/hdl_test/o
 +------+-------+----------+-----+-----------------+---------------+----------------+------------+---------------+--------------+----------------------+-------+----------------------+---------------------+
 ; Name ; Pin # ; I/O Bank ; LAB ; Output Register ; Power Up High ; Slow Slew Rate ; Open Drain ; TRI Primitive ; I/O Standard ; Location assigned by ; Load  ; Output Enable Source ; Output Enable Group ;
 +------+-------+----------+-----+-----------------+---------------+----------------+------------+---------------+--------------+----------------------+-------+----------------------+---------------------+
-; C    ; 5     ; --       ; 1   ; no              ; no            ; no             ; no         ; no            ; 3.3-V LVTTL  ; User                 ; 10 pF ; -                    ; -                   ;
+; C    ; 6     ; --       ; 1   ; no              ; no            ; no             ; no         ; no            ; 3.3-V LVTTL  ; Fitter               ; 10 pF ; -                    ; -                   ;
 +------+-------+----------+-----+-----------------+---------------+----------------+------------+---------------+--------------+----------------------+-------+----------------------+---------------------+
 
 
@@ -145,11 +145,11 @@ The pin-out file can be found in D:/Users/erics/Documents/8B/Software/hdl_test/o
 ; Location ; Pad Number ; I/O Bank ; Pin Name/Usage ; Dir.   ; I/O Standard ; Voltage ; User Assignment ;
 +----------+------------+----------+----------------+--------+--------------+---------+-----------------+
 ; 1        ; 6          ; --       ; TDI            ; input  ; 3.3-V LVTTL  ;         ; N               ;
-; 2        ; 7          ; --       ; A              ; input  ; 3.3-V LVTTL  ;         ; Y               ;
-; 3        ; 8          ; --       ; B              ; input  ; 3.3-V LVTTL  ;         ; Y               ;
+; 2        ; 7          ; --       ; GND*           ;        ;              ;         ;                 ;
+; 3        ; 8          ; --       ; GND*           ;        ;              ;         ;                 ;
 ; 4        ; 9          ; --       ; GND            ; gnd    ;              ;         ;                 ;
-; 5        ; 10         ; --       ; C              ; output ; 3.3-V LVTTL  ;         ; Y               ;
-; 6        ; 11         ; --       ; GND*           ;        ;              ;         ;                 ;
+; 5        ; 10         ; --       ; GND*           ;        ;              ;         ;                 ;
+; 6        ; 11         ; --       ; C              ; output ; 3.3-V LVTTL  ;         ; N               ;
 ; 7        ; 12         ; --       ; TMS            ; input  ; 3.3-V LVTTL  ;         ; N               ;
 ; 8        ; 13         ; --       ; GND*           ;        ;              ;         ;                 ;
 ; 9        ; 14         ; --       ; VCCIO          ; power  ;              ; 3.3V    ;                 ;
@@ -178,14 +178,14 @@ The pin-out file can be found in D:/Users/erics/Documents/8B/Software/hdl_test/o
 ; 32       ; 37         ; --       ; TDO            ; output ; 3.3-V LVTTL  ;         ; N               ;
 ; 33       ; 38         ; --       ; GND*           ;        ;              ;         ;                 ;
 ; 34       ; 39         ; --       ; GND*           ;        ;              ;         ;                 ;
-; 35       ; 40         ; --       ; GND*           ;        ;              ;         ;                 ;
+; 35       ; 40         ; --       ; A              ; input  ; 3.3-V LVTTL  ;         ; N               ;
 ; 36       ; 41         ; --       ; GND            ; gnd    ;              ;         ;                 ;
 ; 37       ; 42         ; --       ; GND+           ;        ;              ;         ;                 ;
 ; 38       ; 43         ; --       ; GND+           ;        ;              ;         ;                 ;
 ; 39       ; 0          ; --       ; GND+           ;        ;              ;         ;                 ;
 ; 40       ; 1          ; --       ; GND+           ;        ;              ;         ;                 ;
 ; 41       ; 2          ; --       ; VCCINT         ; power  ;              ; 3.3V    ;                 ;
-; 42       ; 3          ; --       ; GND*           ;        ;              ;         ;                 ;
+; 42       ; 3          ; --       ; B              ; input  ; 3.3-V LVTTL  ;         ; N               ;
 ; 43       ; 4          ; --       ; GND*           ;        ;              ;         ;                 ;
 ; 44       ; 5          ; --       ; GND*           ;        ;              ;         ;                 ;
 +----------+------------+----------+----------------+--------+--------------+---------+-----------------+
@@ -210,7 +210,7 @@ Note: User assignments will override these defaults. The user specified values a
 +----------------------------+------------+------+---------------------+--------------+
 ; Compilation Hierarchy Node ; Macrocells ; Pins ; Full Hierarchy Name ; Library Name ;
 +----------------------------+------------+------+---------------------+--------------+
-; |hdl_test                  ; 1          ; 7    ; |hdl_test           ; work         ;
+; |addr_decode               ; 1          ; 7    ; |addr_decode        ; work         ;
 +----------------------------+------------+------+---------------------+--------------+
 
 
@@ -250,7 +250,7 @@ Note: User assignments will override these defaults. The user specified values a
 +-----+------------+-------+--------+
 ; LAB ; Logic Cell ; Input ; Output ;
 +-----+------------+-------+--------+
-;  A  ; LC3        ; A, B  ; C      ;
+;  A  ; LC1        ; A, B  ; C      ;
 +-----+------------+-------+--------+
 
 
@@ -274,11 +274,11 @@ Note: User assignments will override these defaults. The user specified values a
 ; Fitter Messages ;
 +-----------------+
 Warning (20028): Parallel compilation is not licensed and has been disabled
-Info (119006): Selected device EPM7064AETC44-10 for design "hdl_test"
+Info (119006): Selected device EPM7064AETC44-10 for design "addr_decode"
 Info: Quartus II 64-Bit Fitter was successful. 0 errors, 1 warning
     Info: Peak virtual memory: 4678 megabytes
-    Info: Processing ended: Sat Oct 19 14:23:14 2024
+    Info: Processing ended: Sat Oct 19 14:25:01 2024
     Info: Elapsed time: 00:00:00
-    Info: Total CPU time (on all processors): 00:00:00
+    Info: Total CPU time (on all processors): 00:00:01
 
 

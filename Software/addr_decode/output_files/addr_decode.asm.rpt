@@ -1,5 +1,5 @@
-Assembler report for hdl_test
-Sat Oct 19 14:23:15 2024
+Assembler report for addr_decode
+Sat Oct 19 14:25:02 2024
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
 
 
@@ -10,7 +10,7 @@ Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edit
   2. Assembler Summary
   3. Assembler Settings
   4. Assembler Generated Files
-  5. Assembler Device Options: D:/Users/erics/Documents/8B/Software/hdl_test/output_files/hdl_test.pof
+  5. Assembler Device Options: D:/Users/erics/Documents/8B/Software/addr_decode/output_files/addr_decode.pof
   6. Assembler Messages
 
 
@@ -37,9 +37,9 @@ applicable agreement for further details.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Sat Oct 19 14:23:15 2024 ;
-; Revision Name         ; hdl_test                              ;
-; Top-level Entity Name ; hdl_test                              ;
+; Assembler Status      ; Successful - Sat Oct 19 14:25:02 2024 ;
+; Revision Name         ; addr_decode                           ;
+; Top-level Entity Name ; addr_decode                           ;
 ; Family                ; MAX7000AE                             ;
 ; Device                ; EPM7064AETC44-10                      ;
 +-----------------------+---------------------------------------+
@@ -74,24 +74,24 @@ applicable agreement for further details.
 +-----------------------------------------------------------------------------+----------+---------------+
 
 
-+-------------------------------------------------------------------------+
-; Assembler Generated Files                                               ;
-+-------------------------------------------------------------------------+
-; File Name                                                               ;
-+-------------------------------------------------------------------------+
-; D:/Users/erics/Documents/8B/Software/hdl_test/output_files/hdl_test.pof ;
-+-------------------------------------------------------------------------+
++-------------------------------------------------------------------------------+
+; Assembler Generated Files                                                     ;
++-------------------------------------------------------------------------------+
+; File Name                                                                     ;
++-------------------------------------------------------------------------------+
+; D:/Users/erics/Documents/8B/Software/addr_decode/output_files/addr_decode.pof ;
++-------------------------------------------------------------------------------+
 
 
-+---------------------------------------------------------------------------------------------------+
-; Assembler Device Options: D:/Users/erics/Documents/8B/Software/hdl_test/output_files/hdl_test.pof ;
-+----------------+----------------------------------------------------------------------------------+
-; Option         ; Setting                                                                          ;
-+----------------+----------------------------------------------------------------------------------+
-; Device         ; EPM7064AETC44-10                                                                 ;
-; JTAG usercode  ; 0x00000000                                                                       ;
-; Checksum       ; 0x000EA895                                                                       ;
-+----------------+----------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------+
+; Assembler Device Options: D:/Users/erics/Documents/8B/Software/addr_decode/output_files/addr_decode.pof ;
++----------------+----------------------------------------------------------------------------------------+
+; Option         ; Setting                                                                                ;
++----------------+----------------------------------------------------------------------------------------+
+; Device         ; EPM7064AETC44-10                                                                       ;
+; JTAG usercode  ; 0x00000000                                                                             ;
+; Checksum       ; 0x000EA6E6                                                                             ;
++----------------+----------------------------------------------------------------------------------------+
 
 
 +--------------------+
@@ -100,12 +100,12 @@ applicable agreement for further details.
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Assembler
     Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
-    Info: Processing started: Sat Oct 19 14:23:15 2024
-Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off hdl_test -c hdl_test
+    Info: Processing started: Sat Oct 19 14:25:02 2024
+Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off addr_decode -c addr_decode
 Info (115030): Assembler is generating device programming files
 Info: Quartus II 64-Bit Assembler was successful. 0 errors, 0 warnings
     Info: Peak virtual memory: 4513 megabytes
-    Info: Processing ended: Sat Oct 19 14:23:15 2024
+    Info: Processing ended: Sat Oct 19 14:25:02 2024
     Info: Elapsed time: 00:00:00
     Info: Total CPU time (on all processors): 00:00:00
 
