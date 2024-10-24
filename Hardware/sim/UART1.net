@@ -1,0 +1,73 @@
+* D:\Users\erics\Documents\8B\Hardware\sim\UART1.asc
+XU1 0 LOAD# vcc vcc 0 0 0 0 w0 w1 w2 N002 NC_01 NC_02 74hc193 params: 74HC193
+V1 vcc 0 5
+V2 LOAD# 0 PULSE(0 5 10u 1n 1n 10u 20u)
+XU2 0 NC_03 vcc vcc 0 0 0 0 r0 r1 r2 N001 NC_04 NC_05 74hc193 params: 74HC193
+XU3 r0 r1 r2 0 0 vcc rn0# rn1# rn2# rn3# rn4# rn5# rn6# rn7# VCC 0 74HC138 VCC=5 SPEED=1.0 TRIPDT=1e-9
+XU4 w0 w1 w2 0 0 vcc wn0# wn1# wn2# wn3# wn4# wn5# wn6# wn7# VCC 0 74HC138 VCC=5 SPEED=1.0 TRIPDT=1e-9
+XU5 rn0# wn0# d0 d1 d2 d3 d4 d5 d6 d7 rd0 rd1 rd2 rd3 rd4 rd5 rd6 rd7 VCC 0 74HC374 VCC=5 SPEED=1.0 TRIPDT=1e-9
+XU6 rn0# NC_06 d0 d1 d2 d3 d4 d5 d6 d7 rd0 rd1 rd2 rd3 rd4 rd5 rd6 rd7 VCC 0 74HC374 VCC=5 SPEED=1.0 TRIPDT=1e-9
+
+* block symbol definitions
+.subckt 74hc193 MR CP_U PL\ CP_D D0 D1 D2 D3 Q0 Q1 Q2 Q3 TC\_D TC\_U
+XX1 N004 N030 N010 N035 N024 tnotsrflipflopfromd
+XX2 N003 N029 N009 N034 N022 tnotsrflipflopfromd
+A1 0 N020 0 N021 0 N022 0 0 OR td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A2 0 N018 0 N023 0 N024 0 0 OR td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A5 0 N013 N008 N001 0 N009 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A6 0 N001 0 N009 0 N038 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A7 0 N014 N008 N001 0 N010 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A8 0 N001 0 N010 0 N039 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A9 0 N002 0 N003 0 0 N018 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A10 0 N029 0 N033 0 0 N023 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A11 N002 N003 N004 N005 N007 N006 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A12 N032 N031 N030 N029 N033 N042 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A13 N002 0 0 0 0 0 N020 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A14 N033 0 0 0 0 0 N021 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A15 CP_U 0 0 0 0 N002 0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A16 PL\ 0 0 0 0 N001 0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A17 CP_D 0 0 0 0 N033 0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A18 MR 0 0 0 0 N008 0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+XX3 N005 N031 N011 N036 N026 tnotsrflipflopfromd
+A19 0 N019 0 N025 0 N026 0 0 OR td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A21 0 N015 N008 N001 0 N011 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A22 0 N001 0 N011 0 N040 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A23 0 N002 N003 N004 0 0 N019 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A24 0 N030 N029 N033 0 0 N025 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+XX4 N007 N032 N012 N037 N028 tnotsrflipflopfromd
+A25 0 N017 0 N027 0 N028 0 0 OR td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A27 0 N016 N008 N001 0 N012 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A28 0 N001 0 N012 0 N041 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A29 0 N002 N003 N004 N005 0 N017 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A30 N031 0 N030 N029 N033 0 N027 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A31 D0 0 0 0 0 0 N013 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A32 D1 0 0 0 0 0 N014 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A33 D2 0 0 0 0 0 N015 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A34 D3 0 0 0 0 0 N016 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A35 N003 0 0 0 0 0 Q0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A36 N004 0 0 0 0 0 Q1 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A37 N005 0 0 0 0 0 Q2 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A38 N007 0 0 0 0 0 Q3 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A39 N042 0 0 0 0 0 TC\_D 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A40 N006 0 0 0 0 0 TC\_U 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A3 0 N008 0 N038 0 N034 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A4 0 N008 0 N039 0 N035 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A20 0 N008 0 N040 0 N036 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A26 0 N008 0 N041 0 N037 0 0 AND td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+.ends 74hc193
+
+.subckt tnotsrflipflopfromd Q Q\ S\ R T
+A1 N002 0 N003 N001 N004 Q\ Q 0 DFLOP td={tdgate2} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A2 0 T 0 Q 0 0 N002 0 XOR td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A3 T 0 0 0 0 0 N003 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A4 S\ 0 0 0 0 N001 0 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+A5 R 0 0 0 0 0 N004 0 BUF td={tdgate} tripdt={tripdtgate} vhigh={vhighgate} vlow={vlowgate}
+.ends tnotsrflipflopfromd
+
+.tran 10m
+.param tdgate=10n tdgate2=3*tdgate tripdtgate=1n vhighgate=5v vlowgate=0v
+* write pointer
+* read pointer
+.lib 74HC.lib
+.backanno
+.end

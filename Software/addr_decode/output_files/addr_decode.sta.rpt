@@ -1,5 +1,5 @@
 TimeQuest Timing Analyzer report for addr_decode
-Sat Oct 19 14:25:04 2024
+Sat Oct 19 15:38:44 2024
 Quartus II 64-Bit Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
 
 
@@ -111,24 +111,50 @@ No paths to report.
 No paths to report.
 
 
-+------------------------------------------------------+
-; Propagation Delay                                    ;
-+------------+-------------+--------+----+----+--------+
-; Input Port ; Output Port ; RR     ; RF ; FR ; FF     ;
-+------------+-------------+--------+----+----+--------+
-; A          ; C           ; 10.000 ;    ;    ; 10.000 ;
-; B          ; C           ; 10.000 ;    ;    ; 10.000 ;
-+------------+-------------+--------+----+----+--------+
++--------------------------------------------------------------+
+; Propagation Delay                                            ;
++------------+-------------+--------+--------+--------+--------+
+; Input Port ; Output Port ; RR     ; RF     ; FR     ; FF     ;
++------------+-------------+--------+--------+--------+--------+
+; addr[1]    ; cs[0]       ; 10.000 ;        ;        ; 10.000 ;
+; addr[2]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[3]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[4]    ; cs[0]       ; 10.900 ; 10.000 ; 10.000 ; 10.900 ;
+; addr[5]    ; cs[0]       ; 10.000 ; 10.900 ; 10.900 ; 10.000 ;
+; addr[6]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[7]    ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[8]    ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[9]    ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[10]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[11]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[12]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[13]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[14]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
+; addr[15]   ; cs[0]       ;        ; 10.900 ; 10.900 ;        ;
++------------+-------------+--------+--------+--------+--------+
 
 
-+------------------------------------------------------+
-; Minimum Propagation Delay                            ;
-+------------+-------------+--------+----+----+--------+
-; Input Port ; Output Port ; RR     ; RF ; FR ; FF     ;
-+------------+-------------+--------+----+----+--------+
-; A          ; C           ; 10.000 ;    ;    ; 10.000 ;
-; B          ; C           ; 10.000 ;    ;    ; 10.000 ;
-+------------+-------------+--------+----+----+--------+
++--------------------------------------------------------------+
+; Minimum Propagation Delay                                    ;
++------------+-------------+--------+--------+--------+--------+
+; Input Port ; Output Port ; RR     ; RF     ; FR     ; FF     ;
++------------+-------------+--------+--------+--------+--------+
+; addr[1]    ; cs[0]       ; 10.000 ;        ;        ; 10.000 ;
+; addr[2]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[3]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[4]    ; cs[0]       ; 10.900 ; 10.000 ; 10.000 ; 10.900 ;
+; addr[5]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[6]    ; cs[0]       ; 10.000 ; 10.000 ; 10.000 ; 10.000 ;
+; addr[7]    ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[8]    ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[9]    ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[10]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[11]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[12]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[13]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[14]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
+; addr[15]   ; cs[0]       ;        ; 10.000 ; 10.000 ;        ;
++------------+-------------+--------+--------+--------+--------+
 
 
 -------------------
@@ -156,10 +182,10 @@ No dedicated SERDES Receiver circuitry present in device or used in design
 +---------------------------------+-------+------+
 ; Illegal Clocks                  ; 0     ; 0    ;
 ; Unconstrained Clocks            ; 0     ; 0    ;
-; Unconstrained Input Ports       ; 2     ; 2    ;
-; Unconstrained Input Port Paths  ; 2     ; 2    ;
+; Unconstrained Input Ports       ; 15    ; 15   ;
+; Unconstrained Input Port Paths  ; 15    ; 15   ;
 ; Unconstrained Output Ports      ; 1     ; 1    ;
-; Unconstrained Output Port Paths ; 2     ; 2    ;
+; Unconstrained Output Port Paths ; 15    ; 15   ;
 +---------------------------------+-------+------+
 
 
@@ -169,7 +195,7 @@ No dedicated SERDES Receiver circuitry present in device or used in design
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit TimeQuest Timing Analyzer
     Info: Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
-    Info: Processing started: Sat Oct 19 14:25:03 2024
+    Info: Processing started: Sat Oct 19 15:38:43 2024
 Info: Command: quartus_sta addr_decode -c addr_decode
 Info: qsta_default_script.tcl version: #1
 Warning (20028): Parallel compilation is not licensed and has been disabled
@@ -193,7 +219,7 @@ Info (332102): Design is not fully constrained for setup requirements
 Info (332102): Design is not fully constrained for hold requirements
 Info: Quartus II 64-Bit TimeQuest Timing Analyzer was successful. 0 errors, 4 warnings
     Info: Peak virtual memory: 4506 megabytes
-    Info: Processing ended: Sat Oct 19 14:25:04 2024
+    Info: Processing ended: Sat Oct 19 15:38:44 2024
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:00
 
