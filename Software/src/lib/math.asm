@@ -226,8 +226,6 @@ add32:
 ;  5 |_.local8_overflow_temp_|
 ;;
 mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
-
-
     ; param stack indicies. points to MSBs
     .param8_x = -8
     .param8_y = -7
@@ -346,7 +344,6 @@ mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
 ;  2 |__.local8_last_carry___|
 ;;
 rshift_32:
-
     .param32_x = -8
     .local8_n = 0
     .local8_carry = 1

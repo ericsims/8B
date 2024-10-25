@@ -62,6 +62,7 @@ static_uart_print_hex_prefix:
 static_uart_print:
     ; load current char
     loadw hl, .data_pointer
+.loop:
     load a, (hl)
     ; check if char is 0
     add a, #0x00
@@ -71,10 +72,8 @@ static_uart_print:
     store a, static_uart_putc.char
     call static_uart_putc
     
-    ; loadw hl, .data_pointer ; dont need to load again
     addw hl, #0x01
-    storew hl, .data_pointer        
-    jmp static_uart_print
+    jmp .loop
     
     .done:
     ret
@@ -169,5 +168,55 @@ uart_print_itoa_hex:
     store b, static_uart_putc.char
     call static_uart_putc
     .done:
+    __epilogue
+    ret
+
+;;
+; @function
+; @brief prints memory to uart
+; @section description
+; takes a address pointer and length
+; @param .param16_ptr data address
+; @param .param8_len length
+;    _______________________
+; -7 |      .param16_ptr     |
+; -6 |_______________________|
+; -5 |______.param8_len______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |_______.local8_n_______|
+; @param .param8_c input number
+;;
+uart_dump_mem:
+    .param16_ptr = -7
+    .param8_len = -5
+    .init:
+        __prologue
+        push a, #0x00
+
+    .loop:
+        ; load address pointer and offset
+        loadw hl, (BP), .param16_ptr
+        load a, (BP), .local8_n
+        addw hl, a
+
+        ; load mem value into b
+        load b, (hl)
+        push b
+        call uart_print_itoa_hex
+        pop b
+
+        load a, (BP), .param8_len
+        load b, (BP), .local8_n
+        sub a, b
+        jmz .done
+        add b, #0x01
+        store b, (BP), .local8_n
+        jmp .loop
+
+    .done:
+    pop a
     __epilogue
     ret
