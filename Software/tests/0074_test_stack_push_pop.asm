@@ -14,7 +14,7 @@
 #bank rom
 
 top:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 
 
 ; push imm data
@@ -84,3 +84,8 @@ popw hl
 assert hl, #0xDEAD
 
 halt
+
+
+#bank ram
+STACK_BASE:
+    #res 0

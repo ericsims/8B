@@ -15,7 +15,7 @@
 #bank rom
 
 top:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 
 load a, #0xAA
 assert a, #0xAA
@@ -33,3 +33,8 @@ ret
 ; should never reach here
 load a, #0xCC
 assert a, #0x00
+
+
+#bank ram
+STACK_BASE:
+    #res 0

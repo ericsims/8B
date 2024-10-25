@@ -8,7 +8,7 @@ sum: #res 2 ;result poitbed
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 test_abs8:
@@ -59,3 +59,8 @@ halt
 
 
 #include "../src/lib/static_math.asm"
+
+
+#bank ram
+STACK_BASE:
+    #res 0

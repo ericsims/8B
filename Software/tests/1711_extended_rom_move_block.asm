@@ -4,7 +4,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 test_ext_rom_move:
@@ -23,3 +23,6 @@ halt
 test_length = 0x51 ; about the len of this progam
 dest:
     #res test_length ; random bytes 
+
+STACK_BASE:
+    #res 0

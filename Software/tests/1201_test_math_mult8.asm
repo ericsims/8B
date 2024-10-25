@@ -8,7 +8,7 @@ sum: #res 2 ;result poitbed
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 val_a=0xFF
@@ -35,5 +35,8 @@ assert hl, #(val_a*val_b)
 
 halt
 
-
 #include "../src/lib/math.asm"
+
+#bank ram
+STACK_BASE:
+    #res 0

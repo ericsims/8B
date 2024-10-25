@@ -262,7 +262,5 @@
 #bank ram
 BP: ; base pointer for function calls
     #res 2
-    
-DEFAULT_STACK   = 0x9000
 
 #bank rom

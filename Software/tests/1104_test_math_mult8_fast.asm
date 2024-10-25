@@ -3,7 +3,7 @@
 #bank rom
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 
@@ -28,3 +28,8 @@ halt
 
 
 #include "../src/lib/static_math.asm"
+
+
+#bank ram
+STACK_BASE:
+    #res 0

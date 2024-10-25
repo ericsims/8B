@@ -8,7 +8,7 @@ path:
 top:
 main:
     init_pointers:
-        loadw sp, #DEFAULT_STACK
+        loadw sp, #STACK_BASE
         storew #0x0000, BP
 
     get_map:
@@ -60,3 +60,7 @@ main:
 
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 
+
+#bank ram
+STACK_BASE:
+    #res 0

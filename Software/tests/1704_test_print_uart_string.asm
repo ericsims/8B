@@ -2,7 +2,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 
@@ -23,3 +23,8 @@ fun:
 halt
 
 #include "../src/lib/char_utils.asm"
+
+
+#bank ram
+STACK_BASE:
+    #res 0

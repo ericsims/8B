@@ -685,6 +685,16 @@ assert hl, #{imm: i16} =>
   0x7A @ imm`16
 }
 
+; assert_cf
+; Assert value of CF == imm value
+; usage: assert cf, #data[7:0]
+assert cf, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x7B @ imm`8
+}
+
 ; assert_zf
 ; Assert value of ZF == imm value
 ; usage: assert zf, #data[7:0]
@@ -693,6 +703,16 @@ assert zf, #{imm: i8} =>
   assert(imm >= 0)
   assert(imm <= 0xff)
   0x7C @ imm`8
+}
+
+; assert_nf
+; Assert value of NF == imm value
+; usage: assert nf, #data[7:0]
+assert nf, #{imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x7D @ imm`8
 }
 
 ; halt

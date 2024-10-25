@@ -741,6 +741,16 @@ def main():
                 print(f"pass, ZF = {flags['ZF']}")
               else:
                 raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+            elif ii.value == int(IS['instructions']['assert_cf']['opcode']):
+              if mems.get(addr) == flags['CF']:
+                print(f"pass, CF = {flags['CF']}")
+              else:
+                raise Exception(f"test case failed, CF = {flags['CF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+            elif ii.value == int(IS['instructions']['assert_nf']['opcode']):
+              if mems.get(addr) == flags['NF']:
+                print(f"pass, NF = {flags['NF']}")
+              else:
+                raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
 
         if GUI:
           if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:

@@ -9,7 +9,7 @@ scratch1:
 #bank rom
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 intro: ; print str_1
 storew #str_1, static_uart_print.data_pointer
@@ -303,3 +303,7 @@ str_4: #d ", y: \0"
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 
 halt ; dummy halt so i can see how big the program is
+
+#bank ram
+STACK_BASE:
+    #res 0

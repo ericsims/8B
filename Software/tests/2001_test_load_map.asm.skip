@@ -6,7 +6,7 @@
 top:
 main:
     init_pointers:
-        loadw sp, #DEFAULT_STACK
+        loadw sp, #STACK_BASE
         storew #0x0000, BP
 
     intro: ; print str_1
@@ -44,3 +44,8 @@ main:
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 
 str_1: #d "This program loads and parses a test map\nThen, it computes some example distances between nodes\0"
+
+
+#bank ram
+STACK_BASE:
+    #res 0

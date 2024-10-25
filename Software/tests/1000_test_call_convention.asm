@@ -4,7 +4,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0xABCD, BP
 
 
@@ -13,10 +13,10 @@ push #0x34
 
 call function
 
-pop b ; discard parameters
-pop b ; discard parameters
+pop a ; discard parameters
+pop a ; discard parameters
 
-assert a, #0x46
+assert b, #0x46
 
 halt
 
@@ -37,16 +37,15 @@ function: ; x, y (addreses SP+6, SP+5)
 
 __prologue
 
-loadw hl, BP
-subw hl, #6
-load a, (hl)
-
-loadw hl, BP
-subw hl, #5
-load b, (hl)
-
+load a, (BP), .param8_a
+load b, (BP), .param8_b
 add a, b
+load b, a
 
 __epilogue
 ret
 
+
+#bank ram
+STACK_BASE:
+    #res 0

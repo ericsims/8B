@@ -8,7 +8,7 @@ path:
 top:
 main:
     init_pointers:
-        loadw sp, #DEFAULT_STACK
+        loadw sp, #STACK_BASE
         storew #0x0000, BP
 
     intro: ; print str_1
@@ -568,3 +568,7 @@ str_3: #d " dist: \0"
 str_4: #d "finding next node...\n\0"
 str_5: #d " <-- \0"
 
+
+#bank ram
+STACK_BASE:
+    #res 0

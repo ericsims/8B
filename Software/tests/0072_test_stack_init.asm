@@ -14,8 +14,12 @@
 #bank rom
 
 top:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 loadw hl, sp
-assert hl, #DEFAULT_STACK
+assert hl, #STACK_BASE
 
 halt
+
+#bank ram
+STACK_BASE:
+    #res 0

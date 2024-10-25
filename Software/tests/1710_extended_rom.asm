@@ -17,7 +17,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 storew #0x0005, EXT_ROM+1
@@ -28,4 +28,9 @@ halt
 __load_ext_rom a, done
 
 done:
-halt 
+halt
+
+
+#bank ram
+STACK_BASE:
+    #res 0

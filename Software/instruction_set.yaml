@@ -77,7 +77,7 @@ control_signals:
         description: 'Logical Shift Right'
       - ONES:  # 8
         description: 'Output 0xFF'
-      - ZEROS:  # 9
+      - ZERO:  # 9
         description: 'Output 0x00'
       - ONE:  # 10
         description: 'Output 0x01'
@@ -451,10 +451,13 @@ instructions:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
-        - [HO, XI]         # load LSB into x register
+        - [HO, XI]         # LSB into x register
         - [YI, BO]         # load y register with b value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
@@ -489,7 +492,10 @@ instructions:
         - [HO, XI, MC, CE]  # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [ADD, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
@@ -522,7 +528,10 @@ instructions:
         - [HO, XI]         # load LSB into x register
         - [YI, BO]         # load y register with b value
         - [SUB, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
@@ -557,7 +566,10 @@ instructions:
         - [HO, XI, MC, CE]  # Increment MAR to point to imm data, and simultaneously load LSB into x register
         - [YI, MO]         # load y register with immediate value
         - [SUB, FI, HI]    # save sum to hl LSB and save flags
-        - [RU]             # ucode counter reset. has to be separate step to allow for flags to be checked
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
       true:
         - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
@@ -2016,6 +2028,26 @@ instructions:
       - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
       - [RU]                 # nop cycle for assert to take place
 
+  assert_cf:
+    description: 'Assert value of CF == imm value'
+    duration: 5  # clock cycles
+    operands: 1  # byte (imm data)
+    usage: 'assert cf, #data[7:0]'
+    opcode: 0x7B
+    asm_def: |
+      assert cf, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
+      - [RU]                 # nop cycle for assert to take place
+
   assert_zf:
     description: 'Assert value of ZF == imm value'
     duration: 5  # clock cycles
@@ -2024,6 +2056,26 @@ instructions:
     opcode: 0x7C
     asm_def: |
       assert zf, #{imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
+      - [RU]                 # nop cycle for assert to take place
+
+  assert_nf:
+    description: 'Assert value of NF == imm value'
+    duration: 5  # clock cycles
+    operands: 1  # byte (imm data)
+    usage: 'assert nf, #data[7:0]'
+    opcode: 0x7D
+    asm_def: |
+      assert nf, #{imm: i8} =>
       {
         assert(imm >= 0)
         assert(imm <= 0xff)

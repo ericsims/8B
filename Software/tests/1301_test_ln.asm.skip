@@ -4,7 +4,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 test_ln:
@@ -79,3 +79,8 @@ halt
 #include "../src/lib/static_math.asm"
 
 halt ; extra dummy byte to see program size
+
+
+#bank ram
+STACK_BASE:
+    #res 0

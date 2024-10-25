@@ -8,34 +8,34 @@ path:
 top:
 main:
     init_pointers:
-        loadw sp, #DEFAULT_STACK
+        loadw sp, #STACK_BASE
         storew #0x0000, BP
 
     get_map:
         call print_map_name
  
-    nav: ; 6 --> 11
-        push #0x06
-        push #0xB
+    nav: ; 0 --> 1
+        push #0x00
+        push #0x01
         call dijkstra
         pop a
         pop a
     
-    verify_result: ; [6, 0, 7, 3, 9, 10, 11]
+    verify_result: ; [0, 7, 3, 9, 10, 11, 1]
         load a, {path+0}
-        assert a, #0x06
-        load a, {path+1}
         assert a, #0x00
-        load a, {path+2}
+        load a, {path+1}
         assert a, #0x07
-        load a, {path+3}
+        load a, {path+2}
         assert a, #0x03
-        load a, {path+4}
+        load a, {path+3}
         assert a, #0x09
-        load a, {path+5}
+        load a, {path+4}
         assert a, #0x0A
-        load a, {path+6}
+        load a, {path+5}
         assert a, #0x0B
+        load a, {path+6}
+        assert a, #0x01
         load a, {path+7}
         assert a, #0xFF
 
@@ -50,3 +50,7 @@ main:
 
 map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 
+
+#bank ram
+STACK_BASE:
+    #res 0

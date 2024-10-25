@@ -6,7 +6,7 @@
 ; tests loading a register from b
 ;
 ; @section Test Coverage
-; @coverage load_a_b
+; @coverage load_a_b load_b_a
 ;
 ;;
 

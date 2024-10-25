@@ -2,7 +2,7 @@
 
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 main:
@@ -12,5 +12,9 @@ call static_uart_putc
 halt
 
 
-
 #include "../src/lib/char_utils.asm"
+
+
+#bank ram
+STACK_BASE:
+    #res 0

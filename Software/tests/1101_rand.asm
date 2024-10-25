@@ -3,7 +3,7 @@
 #bank rom
 top:
 init_pointers:
-loadw sp, #DEFAULT_STACK
+loadw sp, #STACK_BASE
 storew #0x0000, BP
 
 ; n=0
@@ -41,3 +41,8 @@ halt
 
 
 #include "../src/lib/rand.asm"
+
+
+#bank ram
+STACK_BASE:
+    #res 0
