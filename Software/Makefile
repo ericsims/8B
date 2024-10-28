@@ -38,21 +38,21 @@ $(VENV_DIR):
 
 deps: $(VENV_DIR)
 	@( \
-		echo activating venv...; \
-		source $(VENV_DIR)/Scripts/activate; \
-		echo installing pip-tools...; \
-		python -m pip install pip-tools; \
-		echo building requirements list...; \
-		pip-compile.exe $(REQ_FILE) -v; \
-		echo installing requirements...; \
-		pip install -r requirements.txt; \
+		echo activating venv... && \
+		source $(VENV_DIR)/Scripts/activate && \
+		echo installing pip-compile-multi... && \
+		python -m pip install pip-compile-multi && \
+		echo building requirements list... && \
+		pip-compile-multi -i $(REQ_FILE) -o requirements.txt --use-cache && \
+		echo installing requirements... && \
+		pip install -r requirements.txt \
 	)
 
 instruction: $(INST_SET_OUT)
 $(INST_SET_OUT): $(MEM_MAP_OUT)
 	@echo "builing instruction set..."
 	@echo "checking yaml syntax..."
-#	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" $(INST_SET_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" $(INST_SET_IN)
 	python parse_instruction_set.py || exit 1
 	@echo ""
 
@@ -62,7 +62,7 @@ $(BIN_DIR)/sin_lut.dat:
 	jupyter nbconvert --execute ./lib_dev/Trig/sin_lut.ipynb --inplace	
 
 tests: $(TEST_BINS)
-$(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm
+$(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm $(LIB_SRCS)
 	@mkdir -p $(@D)
 	${CC} -f binary -o $@ $<
 	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
@@ -92,14 +92,14 @@ memory_map: $(MEM_MAP_DOC)
 $(MEM_MAP_DOC): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
-#	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
 	@mld --format=svg --output=$(MEM_MAP_DOC) $(MEM_MAP_IN)
 	@echo ""
 
 $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
-#	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
 	@python parse_memory_map.py || exit 1
 	@echo ""
 

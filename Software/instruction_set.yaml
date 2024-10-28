@@ -434,6 +434,42 @@ instructions:
       - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       - [AI, BO, RU]         # load data into a register. ucode counter reset
 
+  addw_hl_a:
+    description: 'add a to hl word and save to hl word'
+    duration: 9  # clock cycles
+    operands: 0
+    usage: 'addw hl, a'
+    opcode: 0x14
+    asm_def: |
+      addw hl, a =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # LSB into x register
+        - [YI, AO]         # load y register with a value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # LSB into x register
+        - [YI, AO]         # load y register with a value
+        - [ADD, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+
   addw_hl_b:
     description: 'add b to hl word and save to hl word'
     duration: 9  # clock cycles
@@ -2554,6 +2590,156 @@ instructions:
         - [JO, MA, LM]        # load address out of scratch register into MAR
         - [JO, MA]            # load address out of scratch register into MAR
         - [MI, AO, RU]        # store data from a register
+
+  store_b_indir_poffset:
+    description: 'store b register to indirect (address) + offset'
+    duration: 26  # clock cycles
+    operands: 3
+    usage: 'store b, address[15:0], offset[7:0]'
+    opcode: 0x5A
+    asm_def: |
+      store b, ({addr: i16}), {offset: i8} =>
+      {
+        assert(offset >= 0x00)
+        assert(offset <= 0xFF)
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16  @ offset`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]        # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]            # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]        # Fetch cycle, increment PC, and load instruction into IR
+        # load indirect address
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC, CE]            # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # load offset
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, KI]            # load address MSB into K scratch register
+        # load direct address
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC]                # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # compute offset addr
+        - [XI, JO]            # load LSB into x register
+        - [YI, KO]            # load y register with offset value
+        - [ADD, FI, JI]       # save sum to J LSB and save flags
+        # if carry is false, don't increment MSB
+        # load data
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MI, BO, RU]        # store data from b register
+      true:
+        - [PO, MA, LM]        # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]            # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]        # Fetch cycle, increment PC, and load instruction into IR
+        # load indirect address
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC, CE]            # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # load offset
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, KI]            # load address MSB into K scratch register
+        # load direct address
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC]                # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # compute offset addr
+        - [XI, JO]            # load LSB into x register
+        - [YI, KO]            # load y register with offset value
+        - [ADD, FI, JI]       # save sum to J LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]           # load one into y register
+        - [XI, JO, LM]        # load msb into x register
+        - [ADD, FI, JI, LM]   # save sum to hl MSB and save flags. ucode counter reset
+        # load data
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MI, BO, RU]        # store data from b register
+
+  store_b_indir_noffset:
+    description: 'store b register to indirect (address) - offset'
+    duration: 26  # clock cycles
+    operands: 3
+    usage: 'store b, address[15:0], offset[7:0]'
+    opcode: 0x5B
+    asm_def: |
+      store b, ({addr: i16}), {offset: i8} =>
+      {
+        assert(offset < -0x00)
+        assert(offset >= -0xFF)
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16  @ (offset*-1)`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]        # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]            # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]        # Fetch cycle, increment PC, and load instruction into IR
+        # load indirect address
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC, CE]            # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # load offset
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, KI]            # load address MSB into K scratch register
+        # load direct address
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC]                # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # compute offset addr
+        - [XI, JO]            # load LSB into x register
+        - [YI, KO]            # load y register with offset value
+        - [SUB, FI, JI]       # save sum to J LSB and save flags
+        # if carry is false, don't decrement MSB
+        # load data
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MI, BO, RU]        # store data from b register
+      true:
+        - [PO, MA, LM]        # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]            # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]        # Fetch cycle, increment PC, and load instruction into IR
+        # load indirect address
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC, CE]            # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # load offset
+        - [MC, CE]            # Increment MAR to point to MSB of address. keep up with PC
+        - [MO, KI]            # load address MSB into K scratch register
+        # load direct address
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MO, JI, LM]        # load address MSB into J scratch register
+        - [MC]                # Increment MAR to point to LSB of address. keep up with PC
+        - [MO, JI]            # load address LSB into J scratch register
+        # compute offset addr
+        - [XI, JO]            # load LSB into x register
+        - [YI, KO]            # load y register with offset value
+        - [SUB, FI, JI]       # save sum to J LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]           # load one into y register
+        - [XI, JO, LM]        # load msb into x register
+        - [SUB, FI, JI, LM]   # save sum to hl MSB and save flags. ucode counter reset
+        # load data
+        - [JO, MA, LM]        # load address out of scratch register into MAR
+        - [JO, MA]            # load address out of scratch register into MAR
+        - [MI, BO, RU]        # store data from b register
 
   loadw_hl_indir_poffset:
     description: 'load hl register with value in (address) + offset'

@@ -107,6 +107,14 @@ load a, b =>
   0x13
 }
 
+; addw_hl_a
+; add a to hl word and save to hl word
+; usage: addw hl, a
+addw hl, a =>
+{
+  0x14
+}
+
 ; addw_hl_b
 ; add b to hl word and save to hl word
 ; usage: addw hl, b
@@ -793,6 +801,30 @@ store a, ({addr: i16}), {offset: i8} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x59 @ addr`16  @ (offset*-1)`8
+}
+
+; store_b_indir_poffset
+; store b register to indirect (address) + offset
+; usage: store b, address[15:0], offset[7:0]
+store b, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5A @ addr`16  @ offset`8
+}
+
+; store_b_indir_noffset
+; store b register to indirect (address) - offset
+; usage: store b, address[15:0], offset[7:0]
+store b, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5B @ addr`16  @ (offset*-1)`8
 }
 
 ; loadw_hl_indir_poffset

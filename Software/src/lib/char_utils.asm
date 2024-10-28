@@ -105,7 +105,6 @@ itoa_hex_nibble:
     ; mask nibble
     load b, (BP), .param8_c
     and b, #0x0F
-    ; store a, (hl) ; could use __store_local a, .param8_c, but addr still in hl
     ; if .param8_c is >= than 10, handle .hex, otherwise handle DEC
     load a, b
     sub a, #0x0A
@@ -143,7 +142,7 @@ uart_print_itoa_hex:
     __prologue
     .msn:
     ; handle most signifcant nibble
-    __load_local a, .param8_c
+    load a, (BP), .param8_c
     ; rshift x4 just keep upper 4 bits
     rshift a
     rshift a
@@ -158,7 +157,7 @@ uart_print_itoa_hex:
     call static_uart_putc
     .lsn:
     ; handle least significan nibble
-    __load_local a, .param8_c
+    load a, (BP), .param8_c
     ; send byte to itoa_hex_nibble function
     ; this function already masks for lower 4 bits
     push a
@@ -192,9 +191,10 @@ uart_print_itoa_hex:
 uart_dump_mem:
     .param16_ptr = -7
     .param8_len = -5
+    .local8_n = 0
     .init:
         __prologue
-        push a, #0x00
+        push #0x00
 
     .loop:
         ; load address pointer and offset
@@ -207,6 +207,8 @@ uart_dump_mem:
         push b
         call uart_print_itoa_hex
         pop b
+        store #" ", static_uart_putc.char
+        call static_uart_putc
 
         load a, (BP), .param8_len
         load b, (BP), .local8_n
@@ -217,6 +219,7 @@ uart_dump_mem:
         jmp .loop
 
     .done:
+    call static_uart_print_newline
     pop a
     __epilogue
     ret

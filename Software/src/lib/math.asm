@@ -219,100 +219,95 @@ add32:
 ; -2 |___________?___________|    .
 ; -1 |___________?___________| RESERVED
 ;  0 |______.local8_cf_______|
-;  1 |      .param16_z       |
+;  1 |      .local16_z       |
 ;  2 |_______________________|
 ;  3 |__.local8_multiplier___|
 ;  4 |______.local8_n________|
 ;  5 |_.local8_overflow_temp_|
 ;;
 mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
+
+
     ; param stack indicies. points to MSBs
     .param8_x = -8
     .param8_y = -7
     .param16_res_addr = -6
     ; local variables stack indicies. points to MSBs
     .local8_cf = 0
-    .param16_z = 1
-    .multipiler = 3
+    .local16_z = 1
+    .local8_multiplier = 3
     .local8_n = 4
     .local8_overflow_temp = 5
     __prologue
     push #0x00    ; init cf=0
     pushw #0x00   ; init z=0
-    __load_local a, .param8_y
-    push a        ;  init multipiler=.param8_y
+    load a, (BP), .param8_y
+    push a        ;  init multiplier=.param8_y
     push #0x08    ; init n=0
     push #0x00    ; init overflow_temp=0
     jmp .skip_load_mult
 
     .mult:
-        __store_local a, .local8_n ; save iteration
-        __load_local a, .multipiler
+        store a, (BP), .local8_n ; save iteration
+        load a, (BP), .local8_multiplier
     .skip_load_mult:
         rshift a
         jnc .next_skip_add; if no bit in ones place, jump to next interation
-        __load_local a, .param8_x
-        __load_local b, .param16_z
+        load a, (BP), .param8_x
+        load b, (BP), .local16_z
         add a, b
         jnc .next
-        __store_local a, .param16_z
+        store a, (BP), .local16_z
         load a, #0x80
-        __store_local a, .local8_overflow_temp
+        store a, (BP), .local8_overflow_temp
         jmp .next_skip_add
     .next:
-        __store_local a, .param16_z
+        store a, (BP), .local16_z
     .next_skip_add:
-        __load_local a, .param16_z
+        load a, (BP), .local16_z
         rshift a
         jnc .no_carry
     .carry:
-        __store_local a, .param16_z
-        __load_local a, .param16_z+1
+        store a, (BP), .local16_z
+        load a, (BP), .local16_z+1
         rshift a
         add a, #0x80
-        __store_local a, .param16_z+1
+        store a, (BP), .local16_z+1
         jmp .checkdone
     .no_carry:
-        __store_local a, .param16_z
-        __load_local a, .param16_z+1
+        store a, (BP), .local16_z
+        load a, (BP), .local16_z+1
         rshift a
-        __store_local a, .param16_z+1
+        store a, (BP), .local16_z+1
     .checkdone:
         ; right shift muliplier
-        __load_local a, .multipiler
+        load a, (BP), .local8_multiplier
         rshift a
-        store a, (hl) ; same as __store_local a, .multipiler
+        store a, (BP), .local8_multiplier
 
         ; add overflow bit back to z
-        __load_local a, .param16_z
-        __load_local b, .local8_overflow_temp
+        load a, (BP), .local16_z
+        load b, (BP), .local8_overflow_temp
         add a, b
-        __store_local a, .param16_z
+        store a, (BP), .local16_z
         load a, #0x00
-        __store_local a, .local8_overflow_temp
+        store a, (BP), .local8_overflow_temp
 
 
-        __load_local a, .local8_n ; load iteration
+        load a, (BP), .local8_n ; load iteration
         sub a, #0x01
         jnz .mult
     .done:
         pop a ; discared overflow_temp
         pop a ; discared n
         pop a ; discared multiplier
-        __load_local a, .param16_res_addr
-        push a
-        __load_local a, .param16_res_addr+1
-        push a
-        popw hl
+
+        loadw hl, (BP), .param16_res_addr
         addw hl, #0x01
         pop a
         store a, (hl)
 
-        __load_local a, .param16_res_addr
-        push a
-        __load_local a, .param16_res_addr+1
-        push a
-        popw hl
+        subw hl, #0x01
         pop a
         store a, (hl)
 
@@ -344,6 +339,7 @@ mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
 ;  2 |__.local8_last_carry___|
 ;;
 rshift_32:
+
     .param32_x = -8
     .local8_n = 0
     .local8_carry = 1
@@ -354,7 +350,7 @@ rshift_32:
     push #0x00 ; carry = 0
     push #0x00 ; last_carry = 0
     .loop:
-    __load_local b, .local8_n
+    load b, (BP), .local8_n
     ; load parameter byte into a reg
     halt
     loadw hl, BP
@@ -372,10 +368,10 @@ rshift_32:
     jnc .save_carry
     load b, #0x01
     .save_carry:
-    __store_local b, .local8_carry
+    store b, (BP), .local8_carry
 
     ; carry over last bit, if necessay
-    __load_local b, .local8_last_carry
+    load b, (BP), .local8_last_carry
     add b, #0x00
     jmz .store ; skip carrying if last_carry is zero
     or a, #0x80 ; set high bit from rshift carry
@@ -383,21 +379,21 @@ rshift_32:
     ; TODO: use popw to save a cople clock cycles
     ; popw hl ; pop saved address
     ; set destination ptr in hl
-    __load_local b, .local8_n
+    load b, (BP), .local8_n
     loadw hl, BP
     addw hl, b
     subw hl, #(.param32_x*-1)
 
     store a, (hl)
     .update_last_carry:
-    __load_local a, .local8_carry
-    __store_local a, .local8_last_carry
+    load a, (BP), .local8_carry
+    store a, (BP), .local8_last_carry
 
     ; check if iterated over entire 32b word
     .check_done:
-    __load_local b, .local8_n
+    load b, (BP), .local8_n
     add b, #0x01
-    __store_local b, .local8_n
+    store b, (BP), .local8_n
     sub b, #0x04
     jmz .done
     jmp .loop
