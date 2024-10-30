@@ -4,5 +4,10 @@ rpyc
 FreeSimpleGUI
 termcolor
 matplotlib
+jupyter
 scikit-image
 tabulate
+yamllint
+memory_layout
+vunit_hdl
+pip-licenses

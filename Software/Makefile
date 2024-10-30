@@ -4,7 +4,7 @@ SRC_DIR := src
 TEST_SRC_DIR := tests
 LIB_SRC_DIR := src/lib
 VENV_DIR := .venv
-REQ_FILE := requirements.in
+REQ_FILE := requirements_dev.in
 IR_DOCS_DIR := irdocs
 DOCS_DIR := docs
 

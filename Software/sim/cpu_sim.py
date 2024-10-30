@@ -223,18 +223,6 @@ def main():
     ],
     [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))],
     [sg.Image(key="-MAP-", size=(128,128))],
-    [sg.T('UART')],
-    [
-      sg.Multiline(
-        size=(30,24),
-        autoscroll=True,
-        font=('courier new',7),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_UART_'
-      )
-    ]
   ]
 
   layout_ctrl = [
@@ -258,7 +246,9 @@ def main():
         justification='left',
         text_color='black',
         background_color='white',
-        key='_DEBUG_'
+        key='_DEBUG_',
+        expand_y=True,
+        expand_x=True
       )]
     ], vertical_alignment='t' ),
     sg.Column([
@@ -270,9 +260,11 @@ def main():
         justification='left',
         text_color='black',
         background_color='white',
-        key='_CALLS_'
+        key='_CALLS_',
+        expand_y=True,
+        expand_x=True
       )]
-    ], vertical_alignment='t' ),
+    ], vertical_alignment='t', expand_y=True, expand_x=True),
   ]]
   layout_sram = [[
     sg.T(
@@ -296,9 +288,11 @@ def main():
         background_color='white',
         write_only = True,
         disabled = True,
-        key='_STACK_'
+        key='_STACK_',
+        expand_y=True,
+        expand_x=True
       )]
-    ], vertical_alignment='t'),
+    ], vertical_alignment='t', expand_y=True, expand_x=True),
     sg.Column([
       [
         sg.T('Current Usage   '),
@@ -341,9 +335,11 @@ def main():
         justification='left',
         text_color='black',
         background_color='white',
-        key='_LOC_VARS_'
+        key='_LOC_VARS_',
+        expand_y=True,
+        expand_x=True
       )]
-    ], vertical_alignment='t' )
+    ], vertical_alignment='t', expand_y=True, expand_x=True)
   ]]
   layout_vars = [[
     sg.Multiline(
@@ -354,7 +350,9 @@ def main():
       background_color='white',
       write_only = True,
       disabled = True,
-      key='_VARS_'
+      key='_VARS_',
+      expand_y=True,
+      expand_x=True
     )
   ]]
   layout_ext_rom = [
@@ -401,36 +399,54 @@ def main():
       background_color='white',
       write_only = True,
       disabled = True,
-      key='_TIME_ANALYSIS_'
+      key='_TIME_ANALYSIS_',
+      expand_y=True,
     )
   ]]
 
+
+  layout_uart = [[
+    sg.Multiline(
+      autoscroll=True,
+      font=('courier new',7),
+      justification='left',
+      text_color='black',
+      background_color='white',
+      key='_UART_',
+      expand_y = True,
+      expand_x = True,
+      password_char = "*"
+    )
+  ]]
+  
   tabs_layout = [[
     sg.TabGroup([[
-      sg.Tab('DEBUG', layout_debug),
-      sg.Tab('SRAM', layout_sram),
-      sg.Tab('STACK', layout_stack),
-      sg.Tab('VARS', layout_vars),
-      sg.Tab('EXT_ROM', layout_ext_rom),
-      sg.Tab('TIME', layout_time),
+      sg.Tab('DEBUG', layout_debug, expand_x=True, expand_y=True),
+      sg.Tab('SRAM', layout_sram, expand_x=True, expand_y=True),
+      sg.Tab('STACK', layout_stack, expand_x=True, expand_y=True),
+      sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
+      sg.Tab('EXT_ROM', layout_ext_rom, expand_x=True, expand_y=True),
+      sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
+      sg.Tab('UART', layout_uart, expand_x=True, expand_y=True),
       ]])
     ]]
 
   layout = [[
-    sg.Column(layout_regs,  vertical_alignment='t'),
-    sg.Column(layout_ctrl,  vertical_alignment='t'),
-    sg.Column(layout_flags, vertical_alignment='t'),
-    sg.Column(tabs_layout,  vertical_alignment='t')
+    sg.Column(layout_regs,  vertical_alignment='t', expand_y=True),
+    sg.Column(layout_ctrl,  vertical_alignment='t', expand_y=True),
+    sg.Column(layout_flags, vertical_alignment='t', expand_y=True),
+    sg.Column(tabs_layout,  vertical_alignment='t',expand_x=True, expand_y=True)
   ]]
 
   if GUI:
-    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11))
+    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True)
   else:
     window = None
 
   def update_uart(char):
     if GUI:
-      window['_UART_'].update(char, append=True)
+      # window['_UART_'].update(char, append=True)
+      window['_UART_'].print(char)
     else:
       pass
   mems.uart.callback = update_uart
