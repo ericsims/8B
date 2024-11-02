@@ -104,45 +104,7 @@ $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@echo ""
 
 
-
-# hdl
-AD_PRJ := addr_decode
-AD_VHD_FILE := $(AD_PRJ)/$(AD_PRJ).vhd
-AD_SRCS := $(wildcard $(AD_PRJ)/*.vhd)
-
-AD_POF_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).pof
-AD_JED_FILE := $(AD_PRJ)/output_files/$(AD_PRJ).jed
-
-QUARTUS := c:/altera/13.0sp1/quartus/bin64/quartus_sh.exe
-POF2JED := C:/POF2JED/bin/POF2JED.exe
-CPLD := 1504as
-
-GHDL := ghdl
-GHDL_FLAGS := --ieee=synopsys -fexplicit --std=08
-
-addr_decode: addr_decode_sim $(AD_JED_FILE)
-
-$(AD_POF_FILE): $(AD_VHD_FILE)
-	@echo
-	@echo building VHDL using quartus_sh 
-	"$(QUARTUS)" --flow compile $(AD_PRJ)/$(AD_PRJ)
-	@echo
-
-$(AD_JED_FILE): $(AD_POF_FILE)
-	@echo
-	@echo converting POF to JED
-	"$(POF2JED)" -i $(AD_POF_FILE) -device $(CPLD)
-	@echo
-
-addr_decode_sim: $(AD_PRJ)/sim_out.vcd
-$(AD_PRJ)/sim_out.vcd: $(AD_SRCS)
-	@echo
-	@echo running address decoder tests...
-	@cd $(AD_PRJ) && ../scripts/ghdl_run.py
-	@echo
-
-
-.PHONY: clean clean_hdl
+.PHONY: clean
 clean:
 	@echo "***cleaning up***"
 	@rm -rf $(BIN_DIR)
@@ -151,7 +113,3 @@ clean:
 	@rm -f $(MEM_MAP_OUT)
 	@echo "done cleaning..."
 	@echo ""
-
-clean_hdl:
-	@rm -f $(AD_POF_FILE)
-	@rm -f $(AD_JED_FILE)

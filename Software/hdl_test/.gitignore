@@ -1,5 +1,0 @@
-*.qws
-db/
-incremental_db/
-atom_netlists/
-vunit_out/
