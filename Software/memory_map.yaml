@@ -38,6 +38,7 @@ layout:
       "el,ib": "TEXT"
     bank: true
     fill: '#D7D3EC'
+    location: 1
   0x8000:
     size: 0x4000
     label: "RAM"
@@ -46,12 +47,16 @@ layout:
       "el,ib": "↑\nSTACK\nBSS"
     bank: true
     fill: "#C7F3DC"
+    location: 2
   0xD002:
     size: 0x0002
     label: "MOT"
+    location: 4
   0xD008:
     size: 0x0002
     label: "UART"
+    location: 3
   0xD00C:
     size: 1
     label: "EXT_ROM"
+    location: 5

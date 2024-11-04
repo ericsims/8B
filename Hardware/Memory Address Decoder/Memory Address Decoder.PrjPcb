@@ -1031,7 +1031,7 @@ L16=WWWWNWWNWWWNWWWNW
 L17=WWWWWWWWWWWWWWWWN
 
 [Annotate]
-SortOrder=3
+SortOrder=1
 SortLocation=0
 ReplaceSubparts=0
 MatchParameter1=Comment

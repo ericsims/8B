@@ -1,3 +1,4 @@
 Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=MAR|SchDesignator=MAR|FileName=Memory Address Register.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=Memory Address Register.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=MUX|SchDesignator=MUX|FileName=Address Mux.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=Address Mux.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
 Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=SAR|SchDesignator=SAR|FileName=Stack Address Register.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Stack Address Register.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
