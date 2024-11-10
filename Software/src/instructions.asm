@@ -861,7 +861,7 @@ loadw hl, ({addr: i16}), {offset: i8} =>
 
 ; loadw_hl_indir_noffset
 ; load hl register with value in (address) - offset
-; usage: loadw hl, address[15:0], offset[7:0]
+; usage: loadw hl, addr[15:0], offset[7:0]
 loadw hl, ({addr: i16}), {offset: i8} =>
 {
   assert(offset < -0x00)
@@ -869,6 +869,30 @@ loadw hl, ({addr: i16}), {offset: i8} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x5D @ addr`16  @ (offset*-1)`8
+}
+
+; storew_hl_indir_poffset
+; store hl register value in (address) + offset
+; usage: store hl, addr[15:0], offset[7:0]
+storew hl, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5E @ addr`16  @ offset`8
+}
+
+; storew_hl_indir_noffset
+; store hl register value in (address) - offset
+; usage: storew hl, (address[15:0]), offset[7:0]
+storew hl, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x5F @ addr`16  @ (offset*-1)`8
 }
 
 }

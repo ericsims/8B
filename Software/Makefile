@@ -52,7 +52,7 @@ instruction: $(INST_SET_OUT)
 $(INST_SET_OUT): $(MEM_MAP_OUT)
 	@echo "builing instruction set..."
 	@echo "checking yaml syntax..."
-	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" $(INST_SET_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, new-lines: {type: platform}}}" $(INST_SET_IN)
 	python parse_instruction_set.py || exit 1
 	@echo ""
 
@@ -92,14 +92,14 @@ memory_map: $(MEM_MAP_DOC)
 $(MEM_MAP_DOC): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
-	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable, new-lines: {type: platform}}}" $(MEM_MAP_IN)
 	@mld --format=svg --output=$(MEM_MAP_DOC) $(MEM_MAP_IN)
 	@echo ""
 
 $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
-	@yamllint -d "{extends: default, rules: {line-length: disable}}" $(MEM_MAP_IN)
+	@yamllint -d "{extends: default, rules: {line-length: disable, new-lines: {type: platform}}}" $(MEM_MAP_IN)
 	@python parse_memory_map.py || exit 1
 	@echo ""
 

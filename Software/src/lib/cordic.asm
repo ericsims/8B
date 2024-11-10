@@ -8,14 +8,16 @@
 
 ;;
 ; @function
-; @brief takes two 32 bit params and commputs the sum
+; @brief computes sin(x)
 ; @section description
-; takes two 32 bit params and adds them
-; returns 32bit summation to result pointer. carry flag is left in b register.
+; computes sin(x)
+; takes a 32 bit (16 bit fractional) signed input and returns the sine of this value to the location pointed to be the outp param
+; referneces:
+;  - https://github.com/francisrstokes/githublog/blob/main/2024/5/10/cordic.md
+;  - https://en.wikipedia.org/wiki/CORDIC
+;  - https://www.drdobbs.com/microcontrollers-cordic-methods/184404244
 ; @param .param16_outp result pointer
-; @param .param32_x
-; @param .param32_y
-; @return carry_flag
+; @param .param32_x input value
 ;
 ;      _______________________
 ;-10  |    .param16_outp      |
@@ -49,6 +51,13 @@
 ; 18  |                       |
 ; 19  |_______________________|
 ; 20  |_____.local8_iter______|
+; 21  |__.local8_shift_iter___|
+; 22  |  .local16_table_ptr   |
+; 23  |_______________________|
+; 24  |  .local32_table_val   |
+; 25  |                       |
+; 26  |                       |
+; 27  |_______________________|
 ;;
 cordic_sin:
     ; param stack indicies. points to MSBs
@@ -61,6 +70,9 @@ cordic_sin:
     .local32_y_next = 12
     .local32_z = 16
     .local8_iter = 20
+    .local8_shift_iter = 21
+    .local16_table_ptr = 22
+    .local32_table_val = 24
 
     .init:
         __prologue
@@ -69,16 +81,13 @@ cordic_sin:
         __push32 #0 ; .local32_x_next
         __push32 #0 ; .local32_y_next
         ; init .local32_z with input
-        load a, (BP), .param32_x
-        push a
-        load a, (BP), .param32_x+1
-        push a
-        load a, (BP), .param32_x+2
-        push a
-        load a, (BP), .param32_x+3
-        push a
-
-        push #16 ; .local8_iter
+        loadw hl, (BP), .param32_x
+        pushw hl
+        loadw hl, (BP), .param32_x+2
+        pushw hl
+        pushw #0 ; .local8_iter, .local8_shift_iter
+        pushw #cordic_sin_coeffs ;.local16_table_ptr
+        __push32 #0 ; .local32_table_val
         halt
     
     .iter:
@@ -93,38 +102,111 @@ cordic_sin:
     ; x = x_next
     ; y = y_next
 
+    ; right shift y and x first. use the x_next and y_next as placeholder
+    load b, (BP), .local8_iter
+    store b, (BP), .local8_shift_iter
+
+    loadw hl, (BP), .local32_x
+    pushw hl
+    loadw hl, (BP), .local32_x+2
+    pushw hl
+    .shift_x:
+    load b, (BP), .local8_shift_iter
+    add b, #0
+    jmz .done_shift_x
+    call rshift_32
+    load b, (BP), .local8_shift_iter
+    sub b, #1
+    store b, (BP), .local8_shift_iter
+    .done_shift_x:
+    popw hl
+    storew hl, (BP), .local32_x_next+2
+    popw hl
+    storew hl, (BP), .local32_x_next
+
+
+    load b, (BP), .local8_iter
+    store b, (BP), .local8_shift_iter
+
+    loadw hl, (BP), .local32_y
+    pushw hl
+    loadw hl, (BP), .local32_y+2
+    pushw hl
+    .shift_y:
+    load b, (BP), .local8_shift_iter
+    add b, #0
+    jmz .done_shift_y
+    call rshift_32
+    load b, (BP), .local8_shift_iter
+    sub b, #1
+    store b, (BP), .local8_shift_iter
+    .done_shift_y:
+    popw hl
+    storew hl, (BP), .local32_y_next+2
+    popw hl
+    storew hl, (BP), .local32_y_next
+    halt
+    ; load coeff table value
+    loadw hl, (BP), .local16_table_ptr
+    load a, (hl)
+    store a, (BP), .local32_table_val
+    addw hl, #1
+    load a, (hl)
+    store a, (BP), .local32_table_val+1
+    addw hl, #1
+    load a, (hl)
+    store a, (BP), .local32_table_val+2
+    addw hl, #1
+    load a, (hl)
+    store a, (BP), .local32_table_val+3
+
+
+    halt
+
     load a, (BP), .local32_z ; check sign of z
-    add a, #0x00
+    add a, #0
     jmn .zneg
     .zpos:
 
     .zneg:
         
-    
+    .store:
+        loadw hl, (BP), .local32_x_next
+        storew hl, (BP), .local32_x
+        loadw hl, (BP), .local32_x_next+2
+        storew hl, (BP), .local32_x+2
+        loadw hl, (BP), .local32_y_next
+        storew hl, (BP), .local32_y
+        loadw hl, (BP), .local32_y_next+2
+        storew hl, (BP), .local32_y+2
+
+        loadw hl, (BP), .local16_table_ptr
+        addw hl, #0x04
+        storew hl, (BP), .local16_table_ptr
 
     .done:
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
-        pop a
+        popw hl
+        popw hl
 
+        popw hl
+
+        popw hl
+
+        popw hl
+        popw hl
+
+        popw hl
+        popw hl
+
+        popw hl
+        popw hl
+
+        popw hl
+        popw hl
+
+        popw hl
+        popw hl
+        
         __epilogue
         ret
 
