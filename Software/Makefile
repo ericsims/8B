@@ -4,7 +4,7 @@ SRC_DIR := src
 TEST_SRC_DIR := tests
 LIB_SRC_DIR := src/lib
 VENV_DIR := .venv
-REQ_FILE := requirements_dev.in
+REQ_FILE := requirements_dev
 IR_DOCS_DIR := irdocs
 DOCS_DIR := docs
 
@@ -40,12 +40,12 @@ deps: $(VENV_DIR)
 	@( \
 		echo activating venv... && \
 		source $(VENV_DIR)/Scripts/activate && \
-		echo installing pip-compile-multi... && \
-		python -m pip install pip-compile-multi && \
+		echo installing pip-tools... && \
+		python -m pip install pip-tools && \
 		echo building requirements list... && \
-		pip-compile-multi -i $(REQ_FILE) -o requirements.txt --use-cache && \
+		pip-compile $(REQ_FILE).in -v && \
 		echo installing requirements... && \
-		pip install -r requirements.txt \
+		pip install -r $(REQ_FILE).txt \
 	)
 
 instruction: $(INST_SET_OUT)

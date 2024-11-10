@@ -645,6 +645,26 @@ jnc {addr: i16} =>
   0x70 @ addr`16
 }
 
+; jmn
+; Jump if Negative
+; usage: jnc address[15:0]
+jmn {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x71 @ addr`16
+}
+
+; jnn
+; Jump if not Negative
+; usage: jnc address[15:0]
+jnn {addr: i16} =>
+{
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x72 @ addr`16
+}
+
 ; call
 ; Call Subroutine
 ; usage: call address[15:0]

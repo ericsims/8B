@@ -20,7 +20,7 @@
 ;      ________________________
 ; -14 |    .param16_outp      |
 ; -13 |_______________________|
-; -12 |   .param32_x_temp     |
+; -12 |      .param32_x       |
 ; -11 |                       |
 ; -10 |                       |
 ; -9  |_______________________|
@@ -45,7 +45,7 @@
 add32:
     ; param stack indicies. points to MSBs
     .param16_outp = -14
-    .param32_x_temp = -12
+    .param32_x = -12
     .param32_y = -8
     ; local variables stack indicies. points to MSBs
     .local8_cf = 0
@@ -55,13 +55,13 @@ add32:
         __prologue
         push #0x00    ; init cf=0
         ; init localx with paramx
-        load a, (BP), .param32_x_temp
+        load a, (BP), .param32_x
         push a
-        load a, (BP), .param32_x_temp+1
+        load a, (BP), .param32_x+1
         push a
-        load a, (BP), .param32_x_temp+2
+        load a, (BP), .param32_x+2
         push a
-        load a, (BP), .param32_x_temp+3
+        load a, (BP), .param32_x+3
         push a
         __push32 #0x0000_0000 ; init local z = 0
 

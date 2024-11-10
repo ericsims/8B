@@ -239,11 +239,9 @@
         }
     }
 
-
-
-    __text {data} => 0`0 @ data
 }
 
+#fn float_to_fixed(value) => value<<16
 #bankdef ram
 {
     #bits 8

@@ -1952,6 +1952,66 @@ instructions:
         - [CE]             # Increment PC to skip destination address
         - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
 
+  jmn:
+    description: 'Jump if Negative'
+    duration: TBD  # clock cycles
+    operands: 2  # bytes (destination address)
+    usage: 'jnc address[15:0]'
+    opcode: 0x71
+    asm_def: |
+      jmn {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      conditions: [NF]
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [MC]             # Increment MAR to point to MSB of destination address
+        - [PI, MO, LM]     # load PC with MSB of destination address
+        - [MC]             # Increment MAR to point to LSB of destination address
+        - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
+
+  jnn:
+    description: 'Jump if not Negative'
+    duration: TBD  # clock cycles
+    operands: 2  # bytes (destination address)
+    usage: 'jnc address[15:0]'
+    opcode: 0x72
+    asm_def: |
+      jnn {addr: i16} =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      conditions: [NF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [MC]             # Increment MAR to point to MSB of destination address
+        - [PI, MO, LM]     # load PC with MSB of destination address
+        - [MC]             # Increment MAR to point to LSB of destination address
+        - [PI, MO, RU]     # load PC with LSB of destination address. ucode counter reset
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [CE]             # Increment PC to skip destination address
+        - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
+
   call:
     description: 'Call Subroutine'
     duration: 12  # clock cycles

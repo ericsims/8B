@@ -24,6 +24,8 @@ from parse_vars import *
 # TODO: call graph to include call/ret/jumps. add subgraph for subroutines
 # TODO: extended memory
 
+uart_print_buf = ""
+
 class dbg(Enum):
   CONTINUE = 1
   BREAK_IMM = 2
@@ -102,6 +104,7 @@ def main():
   addr = 0
   data = 0
   UCC = 0
+  
 
   flags = {
     'ZF' : 0,
@@ -405,19 +408,29 @@ def main():
   ]]
 
 
-  layout_uart = [[
-    sg.Multiline(
+  layout_uart = [
+    [
+      sg.Input(
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_UART_IN_',
+        expand_x = True
+      )
+    ],
+    [sg.Multiline(
       autoscroll=True,
-      font=('courier new',7),
+      font=('courier new',11),
       justification='left',
       text_color='black',
       background_color='white',
-      key='_UART_',
+      key='_UART_OUT_',
       expand_y = True,
       expand_x = True,
-      password_char = "*"
-    )
-  ]]
+      write_only=True,
+      disabled=True
+    )]
+  ]
   
   tabs_layout = [[
     sg.TabGroup([[
@@ -439,14 +452,16 @@ def main():
   ]]
 
   if GUI:
-    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True)
+    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
   else:
     window = None
 
   def update_uart(char):
     if GUI:
-      # window['_UART_'].update(char, append=True)
-      window['_UART_'].print(char)
+      global uart_print_buf
+      uart_print_buf = f"{uart_print_buf}{char}"
+      window['_UART_OUT_'].update(uart_print_buf)
+      # window['_UART_OUT_'].print(char,)
     else:
       pass
   mems.uart.callback = update_uart
