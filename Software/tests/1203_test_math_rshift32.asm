@@ -7,33 +7,45 @@ init_pointers:
 loadw sp, #STACK_BASE
 storew #0x0000, BP
 
-__push32 #0x1234_5678
+__store32 #0x1234_5678, input
 
+pushw #input
+pushw #output
 call rshift_32
+popw hl
+popw hl
+
 ; expect result of 0x091A_2B3C, with no carry out
-popw hl
-assert hl, #0x2B3C
-popw hl
+loadw hl, output
 assert hl, #0x091A
+loadw hl, output+2
+assert hl, #0x2B3C
 assert b, #0x00
 
 
-__push32 #0x1234_5677
+__store32 #0x1234_5677, input
 
+pushw #input
+pushw #output
 call rshift_32
+popw hl
+popw hl
 ; expect result of 0x091A_2B3B, with carry out
-popw hl
-assert hl, #0x2B3B
-popw hl
+loadw hl, output
 assert hl, #0x091A
+loadw hl, output+2
+assert hl, #0x2B3B
 assert b, #0x01
 
 halt
-
 
 #include "../src/lib/math.asm"
 
 
 #bank ram
+input:
+    #res 4
+output:
+    #res 4
 STACK_BASE:
     #res 0

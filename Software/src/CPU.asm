@@ -213,6 +213,19 @@
         }
     }
 
+    
+    ; store_imm
+    ; store immediate values for more than one byte to memory
+    __store32 #{imm: i32}, {addr: i16} =>
+    {
+        assert(imm <= 0xffff_ffff)
+        asm
+        {
+            storew #(({imm}>>16)`16), {addr}
+            storew #({imm}`16), {addr}+2
+        }
+    }
+
 
     ; push_pointer
     ; push immediate values for more than one byte to stack
@@ -238,6 +251,31 @@
             pushw hl
         }
     }
+
+
+    __push_pointer (BP), {offset: i8} =>
+    {
+        assert(offset >= 0x00)
+        assert(offset <= 0xFF)
+        asm
+        {
+            loadw hl, BP
+            addw hl, #({offset}`8)
+            pushw hl
+        }
+    }
+    __push_pointer (BP), {offset: i8} =>
+    {
+        assert(offset < 0x00)
+        assert(offset >= -0xFF)
+        asm
+        {
+            loadw hl, BP
+            subw hl, #({offset})*-1
+            pushw hl
+        }
+    }
+    
 
 }
 

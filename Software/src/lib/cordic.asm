@@ -17,12 +17,12 @@
 ;  - https://en.wikipedia.org/wiki/CORDIC
 ;  - https://www.drdobbs.com/microcontrollers-cordic-methods/184404244
 ; @param .param16_outp result pointer
-; @param .param32_x input value
+; @param .param32_z input value
 ;
 ;      _______________________
 ;-10  |    .param16_outp      |
 ; -9  |_______________________|
-; -8  |      .param32_x       |
+; -8  |      .param32_z       |
 ; -7  |                       |
 ; -6  |                       |
 ; -5  |_______________________|
@@ -62,7 +62,7 @@
 cordic_sin:
     ; param stack indicies. points to MSBs
     .param16_outp = -10
-    .param32_x = -8
+    .param32_z = -8
     ; local variables stack indicies. points to MSBs
     .local32_x = 0
     .local32_y = 4
@@ -81,110 +81,161 @@ cordic_sin:
         __push32 #0 ; .local32_x_next
         __push32 #0 ; .local32_y_next
         ; init .local32_z with input
-        loadw hl, (BP), .param32_x
+        loadw hl, (BP), .param32_z
         pushw hl
-        loadw hl, (BP), .param32_x+2
+        loadw hl, (BP), .param32_z+2
         pushw hl
         pushw #0 ; .local8_iter, .local8_shift_iter
         pushw #cordic_sin_coeffs ;.local16_table_ptr
         __push32 #0 ; .local32_table_val
-        halt
     
     .iter:
-    ; if z >= 0:
-    ;     x_next = x - (y >> i)
-    ;     y_next = y + (x >> i)
-    ;     z -= table[i]
-    ; else:
-    ;     x_next = x + (y >> i)
-    ;     y_next = y - (x >> i)
-    ;     z += table[i]
-    ; x = x_next
-    ; y = y_next
+        ; if z >= 0:
+        ;     x_next = x - (y >> i)
+        ;     y_next = y + (x >> i)
+        ;     z -= table[i]
+        ; else:
+        ;     x_next = x + (y >> i)
+        ;     y_next = y - (x >> i)
+        ;     z += table[i]
+        ; x = x_next
+        ; y = y_next
 
-    ; right shift y and x first. use the x_next and y_next as placeholder
-    load b, (BP), .local8_iter
-    store b, (BP), .local8_shift_iter
+        ; right shift x and y first. use the x_next and y_next as placeholder
+        .shift_x: ; for(local8_shift_iter = local8_iter; local8_shift_iter > 0; local8_shift_iter--)
+            ..init:
+                load b, (BP), .local8_iter
+                store b, (BP), .local8_shift_iter
 
-    loadw hl, (BP), .local32_x
-    pushw hl
-    loadw hl, (BP), .local32_x+2
-    pushw hl
-    .shift_x:
-    load b, (BP), .local8_shift_iter
-    add b, #0
-    jmz .done_shift_x
-    call rshift_32
-    load b, (BP), .local8_shift_iter
-    sub b, #1
-    store b, (BP), .local8_shift_iter
-    .done_shift_x:
-    popw hl
-    storew hl, (BP), .local32_x_next+2
-    popw hl
-    storew hl, (BP), .local32_x_next
+                ; init local32_x_next with local32_x
+                loadw hl, (BP), .local32_x
+                storew hl, (BP), .local32_x_next
+                loadw hl, (BP), .local32_x+2
+                storew hl, (BP), .local32_x_next+2
 
+                ; push local32_x_next as pointer for both inp and outp for rshift_32
+                __push_pointer (BP), .local32_x_next
+                pushw hl
+            ..loop:
+                load b, (BP), .local8_shift_iter
+                sub b, #1
+                jmn ..done_shift
+                store b, (BP), .local8_shift_iter
+                call rshift_32
+                jmp ..loop
+            ..done_shift:
+                ; discard pointers
+                popw hl
+                popw hl
 
-    load b, (BP), .local8_iter
-    store b, (BP), .local8_shift_iter
+        .shift_y: ; for(local8_shift_iter = local8_iter; local8_shift_iter > 0; local8_shift_iter--)
+            ..init:
+                load b, (BP), .local8_iter
+                store b, (BP), .local8_shift_iter
 
-    loadw hl, (BP), .local32_y
-    pushw hl
-    loadw hl, (BP), .local32_y+2
-    pushw hl
-    .shift_y:
-    load b, (BP), .local8_shift_iter
-    add b, #0
-    jmz .done_shift_y
-    call rshift_32
-    load b, (BP), .local8_shift_iter
-    sub b, #1
-    store b, (BP), .local8_shift_iter
-    .done_shift_y:
-    popw hl
-    storew hl, (BP), .local32_y_next+2
-    popw hl
-    storew hl, (BP), .local32_y_next
-    halt
-    ; load coeff table value
-    loadw hl, (BP), .local16_table_ptr
-    load a, (hl)
-    store a, (BP), .local32_table_val
-    addw hl, #1
-    load a, (hl)
-    store a, (BP), .local32_table_val+1
-    addw hl, #1
-    load a, (hl)
-    store a, (BP), .local32_table_val+2
-    addw hl, #1
-    load a, (hl)
-    store a, (BP), .local32_table_val+3
+                ; init local32_y_next with local32_y
+                loadw hl, (BP), .local32_y
+                storew hl, (BP), .local32_y_next
+                loadw hl, (BP), .local32_y+2
+                storew hl, (BP), .local32_y_next+2
 
+                ; push local32_y_next as pointer for both inp and outp for rshift_32
+                __push_pointer (BP), .local32_y_next
+                pushw hl
+            ..loop:
+                load b, (BP), .local8_shift_iter
+                sub b, #1
+                jmn ..done_shift
+                store b, (BP), .local8_shift_iter
+                call rshift_32
+                jmp ..loop
+            ..done_shift:
+                ; discard pointers
+                popw hl
+                popw hl
 
-    halt
-
-    load a, (BP), .local32_z ; check sign of z
-    add a, #0
-    jmn .zneg
-    .zpos:
-
-    .zneg:
         
-    .store:
-        loadw hl, (BP), .local32_x_next
-        storew hl, (BP), .local32_x
-        loadw hl, (BP), .local32_x_next+2
-        storew hl, (BP), .local32_x+2
-        loadw hl, (BP), .local32_y_next
-        storew hl, (BP), .local32_y
-        loadw hl, (BP), .local32_y_next+2
-        storew hl, (BP), .local32_y+2
+        .load_table_val:
+            ; load coeff table value
+            loadw hl, (BP), .local16_table_ptr
+            load a, (hl)
+            store a, (BP), .local32_table_val
+            addw hl, #1
+            load a, (hl)
+            store a, (BP), .local32_table_val+1
+            addw hl, #1
+            load a, (hl)
+            store a, (BP), .local32_table_val+2
+            addw hl, #1
+            load a, (hl)
+            store a, (BP), .local32_table_val+3
 
-        loadw hl, (BP), .local16_table_ptr
-        addw hl, #0x04
-        storew hl, (BP), .local16_table_ptr
+
+        load a, (BP), .local32_z ; check sign of z
+        add a, #0
+        jmn .zneg
+        .zpos:
+            __push_pointer (BP), .local32_table_val
+            pushw hl
+            call negate32
+            popw hl
+            popw hl
+
+            __push_pointer (BP), .local32_y_next
+            pushw hl
+            call negate32
+            popw hl
+            popw hl
+            jmp .compute_next
+
+        .zneg:
+            __push_pointer (BP), .local32_x_next
+            pushw hl
+            call negate32
+            popw hl
+            popw hl
+            jmp .compute_next
+        
+        .compute_next:
+            __push_pointer (BP), .local32_y_next
+            __push_pointer (BP), .local32_x
+            pushw hl
+            call add32
+            popw hl
+            popw hl
+            popw hl
+
+            __push_pointer (BP), .local32_x_next
+            __push_pointer (BP), .local32_y
+            pushw hl
+            call add32
+            popw hl
+            popw hl
+            popw hl
+            
+            __push_pointer (BP), .local32_table_val
+            __push_pointer (BP), .local32_z
+            pushw hl
+            call add32
+            popw hl
+            popw hl
+            popw hl
+            
+        .push_tbl_ptr:
+            loadw hl, (BP), .local16_table_ptr
+            addw hl, #0x04
+            storew hl, (BP), .local16_table_ptr
+
+        .doloop:
+            load b, (BP), .local8_iter
+            add b, #1
+            store b, (BP), .local8_iter
+            sub b, #14
+            jmz .done
+            jmp .iter
 
     .done:
+        halt
         popw hl
         popw hl
 

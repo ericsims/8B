@@ -2,13 +2,8 @@
 
 
 #bank ram
-input_x:
-    #res 4
-input_y:
-    #res 4
 result:
     #res 4
-
 #bank rom
 
 top:
@@ -16,39 +11,32 @@ init_pointers:
 loadw sp, #STACK_BASE
 storew #0x0000, BP
 
-__store32 #0x1234_5678, input_x ; x
-__store32 #0xFFAD_BEEF, input_y ; y
 
 
-pushw #input_x
-pushw #input_y
+pushw #input
 pushw #result
 
-call add32
+call negate32
 
 ; disacard params
 popw hl
 popw hl
-popw hl
 
-
-; check result is 0x11E2_1567
+; check result is 0xEDCB_A988
 load a, result
-assert a, #0x11
+assert a, #0xED
 load a, result+1
-assert a, #0xE2
+assert a, #0xCB
 load a, result+2
-assert a, #0x15
+assert a, #0xA9
 load a, result+3
-assert a, #0x67
-
-assert b, #0x01
+assert a, #0x88
 
 halt
 
+input: #d 0x12345678
 
 #include "../src/lib/math.asm"
-
 
 #bank ram
 STACK_BASE:

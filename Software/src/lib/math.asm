@@ -8,60 +8,78 @@
 
 ;;
 ; @function
-; @brief takes two 32 bit params and commputs the sum
+; @brief takes two 32 bit params and commputes the sum
 ; @section description
 ; takes two 32 bit params and adds them
 ; returns 32bit summation to result pointer. carry flag is left in b register.
-; @param .param16_outp result pointer
-; @param .param32_x
-; @param .param32_y
+; @param .param16_inp_x pointer to 32 bit input value x
+; @param .param16_inp_y pointer to 32 bit input value y
+; @param .param16_outp pointer to 32 bit result location
 ; @return carry_flag
 ;
 ;      ________________________
-; -14 |    .param16_outp      |
-; -13 |_______________________|
-; -12 |      .param32_x       |
-; -11 |                       |
-; -10 |                       |
-; -9  |_______________________|
-; -8  |      .param32_y       |
-; -7  |                       |
-; -6  |                       |
-; -5  |_______________________|
-; -4  |___________?___________| RESERVED
-; -3  |___________?___________|    .
-; -2  |___________?___________|    .
-; -1  |___________?___________| RESERVED
-;  0  |______.local8_cf_______|
-;  1  |      .local32_x       |
-;  2  |                       |
-;  3  |                       |
-;  4  |_______________________|
-;  5  |      .local32_z       |
-;  6  |                       |
-;  7  |                       |
-;  8  |_______________________|
+; -10 |    .param16_inp_x     |
+;  -9 |_______________________|
+;  -8 |    .param16_inp_y     |
+;  -7 |_______________________|
+;  -6 |     .param16_outp     |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;   0 |______.local8_cf_______|
+;   1 |      .local32_x       |
+;   2 |                       |
+;   3 |                       |
+;   4 |_______________________|
+;   5 |      .local32_y       |
+;   6 |                       |
+;   7 |                       |
+;   8 |_______________________|
+;   9 |      .local32_z       |
+;  10 |                       |
+;  11 |                       |
+;  12 |_______________________|
 ;;
 add32:
     ; param stack indicies. points to MSBs
-    .param16_outp = -14
-    .param32_x = -12
-    .param32_y = -8
+    .param16_inp_x = -10
+    .param16_inp_y = -8
+    .param16_outp = -6
     ; local variables stack indicies. points to MSBs
     .local8_cf = 0
     .local32_x = 1
-    .local32_z = 5
+    .local32_y = 5
+    .local32_z = 9
     .init:
         __prologue
         push #0x00    ; init cf=0
         ; init localx with paramx
-        load a, (BP), .param32_x
+        loadw hl, (BP), .param16_inp_x
+        load a, (hl)
         push a
-        load a, (BP), .param32_x+1
+        addw hl, #1
+        load a, (hl)
         push a
-        load a, (BP), .param32_x+2
+        addw hl, #1
+        load a, (hl)
         push a
-        load a, (BP), .param32_x+3
+        addw hl, #1
+        load a, (hl)
+        push a
+        ; init localy with paramy
+        loadw hl, (BP), .param16_inp_y
+        load a, (hl)
+        push a
+        addw hl, #1
+        load a, (hl)
+        push a
+        addw hl, #1
+        load a, (hl)
+        push a
+        addw hl, #1
+        load a, (hl)
         push a
         __push32 #0x0000_0000 ; init local z = 0
 
@@ -69,7 +87,7 @@ add32:
 
     .add_byte1:
         load b, (BP), .local32_x+3
-        load a, (BP), .param32_y+3
+        load a, (BP), .local32_y+3
         add a, b
         jmc .handle_first_carry1
         store a, (BP), .local32_z+3
@@ -106,7 +124,7 @@ add32:
 
     .add_byte2:
         load b, (BP), .local32_x+2
-        load a, (BP), .param32_y+2
+        load a, (BP), .local32_y+2
         add a, b
         jmc .handle_second_carry2
         store a, (BP), .local32_z+2
@@ -135,7 +153,7 @@ add32:
 
     .add_byte3:
         load b, (BP), .local32_x+1
-        load a, (BP), .param32_y+1
+        load a, (BP), .local32_y+1
         add a, b
         jmc .handle_third_carry3
         store a, (BP), .local32_z+1
@@ -156,7 +174,7 @@ add32:
 
     .add_byte4:
         load b, (BP), .local32_x
-        load a, (BP), .param32_y
+        load a, (BP), .local32_y
         add a, b
         jmc .handle_fourth_carry4
         store a, (BP), .local32_z
@@ -186,10 +204,11 @@ add32:
         pop a
         store a, (hl)
 
-        pop a
-        pop a
-        pop a
-        pop a
+        popw hl
+        popw hl
+
+        popw hl
+        popw hl
 
         pop b ; save cf to b register
 
@@ -316,91 +335,185 @@ mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
 
 ;;
 ; @function
-; @brief takes a 32bit word and rigth shifts by one
+; @brief takes a 32bit word and righth shifts by one
 ; @section description
 ; takes a 32bit word and right shifts by one
-; TODO: add return pointer
-; @param param32_x
+; @param .param16_inp pointer to 32 bit input value
+; @param .param16_outp pointer to 32 bit output result
 ; @return carry_flag
 ;
-;     _______________________
-; -8 |      .param32_x       |
-; -7 |                       |
-; -6 |                       |
-; -5 |_______________________|
-; -4 |___________?___________| RESERVED
-; -3 |___________?___________|    .
-; -2 |___________?___________|    .
-; -1 |___________?___________| RESERVED
-;  0 |_______.local8_n_______|
-;  1 |_____.local8_carry_____|
-;  2 |__.local8_last_carry___|
+;      _______________________
+;  -8 |     .param16_inp      |
+;  -7 |_______________________|
+;  -6 |     .param16_outp     |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;   0 |_______.local8_n_______|
+;   1 |_____.local8_carry_____|
+;   2 |__.local8_last_carry___|
 ;;
 rshift_32:
-    .param32_x = -8
+    .param16_inp = -8
+    .param16_outp = -6
     .local8_n = 0
     .local8_carry = 1
     .local8_last_carry = 2
     .init:
-    __prologue
-    push #0x00 ; n = 0
-    push #0x00 ; carry = 0
-    push #0x00 ; last_carry = 0
+        __prologue
+        push #0x00 ; n = 0
+        push #0x00 ; carry = 0
+        push #0x00 ; last_carry = 0
+
+        ; preserve sign
+        loadw hl, (BP), .param16_inp
+        load b, (hl)
+        and b, #0x80
+        jmz .loop
+        load b, #0x01
+        store b, (BP), .local8_last_carry
     .loop:
-    load b, (BP), .local8_n
-    ; load parameter byte into a reg
-    halt
-    loadw hl, BP
-    addw hl, b
-    subw hl, #(.param32_x*-1)
-    load a, (hl)
-    ; TODO: use pushw to save a couple clock cycles
-    ; pushw hl ; save the hl adress for later in .store, saves on redoing this math 
+        ; load parameter byte into a reg
+        loadw hl, (BP), .param16_inp
+        load b, (BP), .local8_n
+        addw hl, b
+        load a, (hl)
 
-    ; right shift and then check carry flag
-    rshift a
+        ; right shift and then check carry flag
+        rshift a
 
-    ; save temp carry value
-    load b, #0x00
-    jnc .save_carry
-    load b, #0x01
+        ; save temp carry value
+        load b, #0x00
+        jnc .save_carry
+        load b, #0x01
     .save_carry:
-    store b, (BP), .local8_carry
+        store b, (BP), .local8_carry
 
-    ; carry over last bit, if necessay
-    load b, (BP), .local8_last_carry
-    add b, #0x00
-    jmz .store ; skip carrying if last_carry is zero
-    or a, #0x80 ; set high bit from rshift carry
+        ; carry over last bit, if necessay
+        load b, (BP), .local8_last_carry
+        add b, #0x00
+        jmz .store ; skip carrying if last_carry is zero
+        or a, #0x80 ; set high bit from rshift carry
     .store:
-    ; TODO: use popw to save a cople clock cycles
-    ; popw hl ; pop saved address
-    ; set destination ptr in hl
-    load b, (BP), .local8_n
-    loadw hl, BP
-    addw hl, b
-    subw hl, #(.param32_x*-1)
-
-    store a, (hl)
+        ; set destination ptr in hl
+        loadw hl, (BP), .param16_outp
+        load b, (BP), .local8_n
+        addw hl, b
+        store a, (hl)
     .update_last_carry:
-    load a, (BP), .local8_carry
-    store a, (BP), .local8_last_carry
+        load a, (BP), .local8_carry
+        store a, (BP), .local8_last_carry
 
     ; check if iterated over entire 32b word
     .check_done:
-    load b, (BP), .local8_n
-    add b, #0x01
-    store b, (BP), .local8_n
-    sub b, #0x04
-    jmz .done
-    jmp .loop
+        load b, (BP), .local8_n
+        add b, #0x01
+        store b, (BP), .local8_n
+        sub b, #0x04
+        jmz .done
+        jmp .loop
     .done:
-    pop b ; save last_carry in b reg
-    pop a ; discard carry
-    pop a ; discard n
-    __epilogue
-    ret
+        pop b ; save last_carry in b reg
+        pop a ; discard carry
+        pop a ; discard n
+        __epilogue
+        ret
 
+
+;;
+; @function
+; @brief takes a 32 bit value and computes the two's compliment. Returns to result pointer.
+; @section description
+; takes a 32 bit number and returns the two's comlement 32 bit signed number to the result pointer.
+; *outp = -(*x)
+; @param .param16_inp pointer to 32 bit input value
+; @param .param16_outp pointer to 32 bit output result
+; @return none
+;      _______________________
+;  -8 |     .param16_inp      |
+;  -7 |_______________________|
+;  -6 |     .param16_outp     |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;   0 |      .local32_x       |
+;   1 |                       |
+;   2 |                       |
+;   3 |_______________________|
+;;
+negate32:
+    .param16_inp = -8
+    .param16_outp = -6
+    .local32_x = 0
+
+    .init:
+        __prologue
+        loadw hl, (BP), .param16_inp
+        load b, (hl)
+        push b
+        addw hl, #1
+        load b, (hl)
+        push b
+        addw hl, #1
+        load b, (hl)
+        push b
+        addw hl, #1
+        load b, (hl)
+        push b
+
+        loadw hl, (BP), .param16_outp
+        addw hl, #3
+        
+
+    ; invert LSB to MSB
+    .byte3:
+        ; byte 3 invert and add one
+        load a, (BP), .local32_x+3
+        xor a, #0xFF
+        add a, #0x01
+        store a, (hl)
+        ; save cf to b reg
+        load b, #0x00
+        jnc .byte2
+        load b, #0x01
+    .byte2:
+        subw hl, #1
+        ; byte 2 invert and add one
+        load a, (BP), .local32_x+2
+        xor a, #0xFF
+        add a, b
+        store a, (hl)
+        ; save cf to b reg
+        load b, #0x00
+        jnc .byte1
+        load b, #0x01
+    .byte1:
+        subw hl, #1
+        ; byte 1 invert and add one
+        load a, (BP), .local32_x+1
+        xor a, #0xFF
+        add a, b
+        store a, (hl)
+        ; save cf to b reg
+        load b, #0x00
+        jnc .byte0
+        load b, #0x01
+    .byte0:
+        subw hl, #1
+        ; byte 0 invert and add one
+        load a, (BP), .local32_x
+        xor a, #0xFF
+        add a, b
+        store a, (hl)
+    .done:
+        popw hl
+        popw hl
+        __epilogue
+        ret
 
 ; ###
 ; math.asm end
