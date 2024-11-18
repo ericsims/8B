@@ -1,11 +1,5 @@
 #include "../src/CPU.asm"
 
-#bank ram
-num_nodes: ; number of nodes in map
-    #res 1
-scratch1:
-    #res 2
-
 #bank rom
 top:
 init_pointers:
@@ -305,5 +299,6 @@ map: #d inchexstr("../lib_dev/Localize/Maps/map.dat")
 halt ; dummy halt so i can see how big the program is
 
 #bank ram
-STACK_BASE:
-    #res 0
+num_nodes: #res 1 ; number of nodes in map
+scratch1: #res 2
+STACK_BASE: #res 0

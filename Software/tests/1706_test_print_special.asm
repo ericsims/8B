@@ -1,5 +1,5 @@
-#include "../src/CPU.asm"
-
+; program entry
+#bank rom
 top:
 init_pointers:
     loadw sp, #STACK_BASE
@@ -11,11 +11,13 @@ main:
     
     halt
 
+; constants
+data_test: #d "abc\x08def\n\0"
+
+; includes
+#include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
 
-data_test:
-#d "abc\x08def\n\0"
-
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

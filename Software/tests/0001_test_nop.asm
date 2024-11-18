@@ -10,9 +10,17 @@
 ;
 ;;
 
+; program entry
+#bank rom
+top:
+    nop
+    halt
+
+; constants
+; -- none --
+
+; includes
 #include "../src/CPU.asm"
 
-#bank rom
-
-nop
-halt
+; global vars
+; -- none --

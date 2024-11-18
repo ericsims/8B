@@ -10,31 +10,34 @@
 ;
 ;;
 
-#include "../src/CPU.asm"
-
+; program entry
 #bank rom
-
 top:
-loadw sp, #STACK_BASE
+    loadw sp, #STACK_BASE
 
-load a, #0xAA
-assert a, #0xAA
+    load a, #0xAA
+    assert a, #0xAA
 
-call func
-assert a, #0xBB
-halt
+    call func
+    assert a, #0xBB
 
+    halt
 
 func:
-load a, #0xBB
-assert a, #0xBB
-ret
+    load a, #0xBB
+    assert a, #0xBB
+    ret
 
 ; should never reach here
 load a, #0xCC
 assert a, #0x00
 
+; constants
+; -- none --
 
+; includes
+#include "../src/CPU.asm"
+
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

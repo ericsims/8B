@@ -1,34 +1,33 @@
-#include "../src/CPU.asm"
-
+; program entry
 #bank rom
 top:
 init_pointers:
-loadw sp, #STACK_BASE
-storew #0x0000, BP
+    loadw sp, #STACK_BASE
+    storew #0x0000, BP
 
-; n=0
-store #0x01, static_rand_lfsr8_x ; init lfsr prng
-load a, static_rand_lfsr8_x
-assert a, #0x01
+test:
+    ; n=0
+    store #0x01, static_rand_lfsr8_x ; init lfsr prng
+    load a, static_rand_lfsr8_x
+    assert a, #0x01
 
-; n=1
-call static_rand_lfsr8
-load a, static_rand_lfsr8_x
-assert a, #0xAD
+    ; n=1
+    call static_rand_lfsr8
+    load a, static_rand_lfsr8_x
+    assert a, #0xAD
 
-; n=2
-call static_rand_lfsr8
-load a, static_rand_lfsr8_x
-assert a, #0x4C
+    ; n=2
+    call static_rand_lfsr8
+    load a, static_rand_lfsr8_x
+    assert a, #0x4C
 
-; n=3
-call static_rand_lfsr8
-load a, static_rand_lfsr8_x
-assert a, #0x3E
+    ; n=3
+    call static_rand_lfsr8
+    load a, static_rand_lfsr8_x
+    assert a, #0x3E
 
+    halt
 
-
-halt
 ; simulated sequnece from libdev/xorshift.py
 ; 0 0x01
 ; 1 0xAD 
@@ -39,10 +38,13 @@ halt
 ; 6 0xBA 
 ; ...
 
+; constants
+; -- none --
 
+; includes
+#include "../src/CPU.asm"
 #include "../src/lib/rand.asm"
 
-
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

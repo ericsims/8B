@@ -9,17 +9,22 @@
 ; @coverage loadw_sp_imm loadw_hl_sp
 ;
 ;;
+
+; program entry
+#bank rom
+top:
+    loadw sp, #STACK_BASE
+    loadw hl, sp
+    assert hl, #STACK_BASE
+
+    halt
+
+; constants
+; -- none --
+
+; includes
 #include "../src/CPU.asm"
 
-#bank rom
-
-top:
-loadw sp, #STACK_BASE
-loadw hl, sp
-assert hl, #STACK_BASE
-
-halt
-
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

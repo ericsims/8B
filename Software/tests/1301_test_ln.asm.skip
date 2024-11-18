@@ -82,5 +82,4 @@ halt ; extra dummy byte to see program size
 
 
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

@@ -1,61 +1,46 @@
-#include "../src/CPU.asm"
-
-
-#bank ram
-result:
-    #res 4
+; program entry
 #bank rom
-
 top:
 init_pointers:
-loadw sp, #STACK_BASE
-storew #0x0000, BP
+    loadw sp, #STACK_BASE
+    storew #0x0000, BP
 
+test:
+    __store32 #0x1234_5678, inx
+    __store32 #0xFFAD_BEEF, iny
 
+    pushw #inx
+    pushw #iny
+    pushw #result
+    call add32
+    popw hl
+    popw hl
+    popw hl
 
-; __push32 #0x0000_0000 ; allocate result placeholder
-; __push_pointer_sp -4 ; push pointer to address of result
+    ; check result is 0x11E2_1567
+    load a, result
+    assert a, #0x11
+    load a, result+1
+    assert a, #0xE2
+    load a, result+2
+    assert a, #0x15
+    load a, result+3
+    assert a, #0x67
 
-pushw #result
-__push32 #0x1234_5678 ; x
-__push32 #0xFFAD_BEEF ; y
+    assert b, #0x01
 
+    halt
 
+; constants
+; -- none --
 
-call add32
-
-; disacard params
-pop a
-pop a
-pop a
-pop a
-
-pop a
-pop a
-pop a
-pop a
-
-pop a
-pop a
-
-; check result is 0x11E2_1567
-load a, result
-assert a, #0x11
-load a, result+1
-assert a, #0xE2
-load a, result+2
-assert a, #0x15
-load a, result+3
-assert a, #0x67
-
-assert b, #0x01
-
-halt
-
-
+; includes
+#include "../src/CPU.asm"
 #include "../src/lib/math.asm"
 
-
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+inx: #res 4
+iny: #res 4
+result: #res 4
+STACK_BASE: #res 0

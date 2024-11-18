@@ -5,7 +5,6 @@
 #once
 
 #bank rom
-
 ;;
 ; @function
 ; @brief print character to UART
@@ -19,8 +18,7 @@ static_uart_putc:
     ret
 
 #bank ram
-    .char:      ; char to print to uart
-        #res 1
+    .char: #res 1 ; char to print to uart
 
 
 #bank rom
@@ -79,8 +77,7 @@ static_uart_print:
     ret
     
 #bank ram
-    .data_pointer:  ; pointer to begining of string. MSB, LSB
-        #res 2
+    .data_pointer: #res 2 ; pointer to begining of string. MSB, LSB
 
 
 #bank rom

@@ -5,7 +5,6 @@
 #once
 
 #bank rom
-
 ;;
 ; @function
 ; @brief computes sin(x)

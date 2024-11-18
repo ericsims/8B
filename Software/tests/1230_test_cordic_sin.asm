@@ -1,7 +1,5 @@
-#include "../src/CPU.asm"
-
+; program entry
 #bank rom
-
 top:
 init_pointers:
     loadw sp, #STACK_BASE
@@ -11,15 +9,15 @@ main:
     __push32 #59978
     call cordic_sin
 
+    halt
 
+; constants
+; -- none --
 
-
-halt
-
-
+; includes
+#include "../src/CPU.asm"
 #include "../src/lib/cordic.asm"
 
-
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

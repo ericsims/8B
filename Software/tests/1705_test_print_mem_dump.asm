@@ -1,5 +1,5 @@
-#include "../src/CPU.asm"
-
+; program entry
+#bank rom
 top:
 init_pointers:
     loadw sp, #STACK_BASE
@@ -14,8 +14,9 @@ main:
 
     halt
 
-#include "../src/lib/char_utils.asm"
 
+
+; constants
 data_test:
 #d "THIS IS A VERY LONG DATA BLOCK"
 #d "THIS IS A VERY LONG DATA BLOCK"
@@ -34,6 +35,10 @@ data_test:
 #d "THIS IS A VERY LONG DATA BLOCK"
 #d "THIS IS A VERY LONG DATA BLOCK"
 
+; includes
+#include "../src/CPU.asm"
+#include "../src/lib/char_utils.asm"
+
+; global vars
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

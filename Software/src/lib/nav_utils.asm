@@ -5,7 +5,6 @@
 #once
 
 #bank rom
-
 dijkstra:
     ; find shortest path using dijkstra's algorithm
     ; takes two params n0 (start node), n1 (end node)
@@ -52,8 +51,8 @@ dijkstra:
 
 #bank ram
     .scratch1: #res 2 ; 2 bytes of scratch to use during init
-#bank rom
 
+#bank rom
      .init:
         __prologue
         push #0xFF ; u = FF

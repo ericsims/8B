@@ -4,11 +4,9 @@
 #once
 
 #bank ram
-    rev_lut_ptr:
-        #res 2
+rev_lut_ptr: #res 2
 
 #bank rom
-
 ;;
 ; @function
 ; @brief reverse lookup table

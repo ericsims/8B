@@ -1,9 +1,5 @@
 #include "../src/CPU.asm"
 
-
-#bank ram
-result:
-    #res 4
 #bank rom
 
 top:
@@ -39,5 +35,5 @@ input: #d 0x12345678
 #include "../src/lib/math.asm"
 
 #bank ram
-STACK_BASE:
-    #res 0
+result: #res 4
+STACK_BASE: #res 0

@@ -1,20 +1,15 @@
 ; ###
-; math.asm begin
+; ext_mem_utils.asm begin
 ; ###
 
 #once
-#bank rom
 
 #bank ram
-static_ext_move_block_len: ; length
-    #res 2
-static_ext_move_block_src: ; source pointer (in ext mem space)
-    #res 2
-static_ext_move_block_dst: ; desination pointer (in mem space)
-    #res 2
-
+static_ext_move_block_len: #res 2 ; length
+static_ext_move_block_src: #res 2 ; source pointer (in ext mem space)
+static_ext_move_block_dst: #res 2 ; desination pointer (in mem space)
+   
 #bank rom
-
 static_ext_move_block:
     ; source pointer (in ext mem space), desination pointer (in mem space), length
     ; this contaminates all parameters
@@ -53,11 +48,6 @@ static_ext_move_block:
         ret
 
 
-#bank rom
-
-
-
-
 ; ###
-; math.asm end
+; ext_mem_utils.asm end
 ; ###

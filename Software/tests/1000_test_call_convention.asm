@@ -1,24 +1,22 @@
-#include "../src/CPU.asm"
-
+; program entry
 #bank rom
-
 top:
 init_pointers:
-loadw sp, #STACK_BASE
-storew #0xABCD, BP
+    loadw sp, #STACK_BASE
+    storew #0xABCD, BP
 
+test:
+    push #0x12
+    push #0x34
 
-push #0x12
-push #0x34
+    call function
 
-call function
+    pop a ; discard parameters
+    pop a ; discard parameters
 
-pop a ; discard parameters
-pop a ; discard parameters
+    assert b, #0x46
 
-assert b, #0x46
-
-halt
+    halt
 
 ; @function
 ; @section description
@@ -32,20 +30,26 @@ halt
 ; -1   |__________?__________| RESERVED
 function: ; x, y (addreses SP+6, SP+5)
 
-.param8_a = -6
-.param8_b = -5
+    .param8_a = -6
+    .param8_b = -5
 
-__prologue
+    __prologue
 
-load a, (BP), .param8_a
-load b, (BP), .param8_b
-add a, b
-load b, a
+    load a, (BP), .param8_a
+    load b, (BP), .param8_b
+    add a, b
+    load b, a
 
-__epilogue
-ret
+    __epilogue
+    ret
 
+; constants
+; -- none --
+
+; includes
+#include "../src/CPU.asm"
+
+; global vars
 
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

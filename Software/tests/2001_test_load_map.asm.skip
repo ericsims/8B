@@ -1,7 +1,5 @@
 #include "../src/CPU.asm"
 
-#bank ram
-
 #bank rom
 top:
 main:
@@ -47,5 +45,4 @@ str_1: #d "This program loads and parses a test map\nThen, it computes some exam
 
 
 #bank ram
-STACK_BASE:
-    #res 0
+STACK_BASE: #res 0

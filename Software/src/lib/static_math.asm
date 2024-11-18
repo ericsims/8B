@@ -5,17 +5,12 @@
 #once
 
 #bank ram
-static_x_32: ; input x
-    #res 4
-static_y_32: ; input y
-    #res 4
-static_z_32: ; input z
-    #res 4
-static_cf: ; carry flag
-    #res 1
+static_x_32: #res 4 ; input x
+static_y_32: #res 4 ; input y
+static_z_32: #res 4 ; input z
+static_cf: #res 1 ; carry flag
 
 #bank rom
-
 static_abs8: ; x=abs(x)
     ; ******
     ; static_abs8 returns the abosslute value of an 8 bit input

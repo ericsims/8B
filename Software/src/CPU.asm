@@ -279,7 +279,6 @@
 
 }
 
-#fn float_to_fixed(value) => value<<16
 #bankdef ram
 {
     #bits 8
@@ -296,7 +295,4 @@
 }
 
 #bank ram
-BP: ; base pointer for function calls
-    #res 2
-
-#bank rom
+BP: #res 2 ; base pointer for function calls

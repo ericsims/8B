@@ -43,9 +43,6 @@ halt
 
 
 #bank ram
-input:
-    #res 4
-output:
-    #res 4
-STACK_BASE:
-    #res 0
+input: #res 4
+output: #res 4
+STACK_BASE: #res 0

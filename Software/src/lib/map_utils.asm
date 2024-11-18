@@ -6,13 +6,10 @@
 
 #bank ram
 map_utils:
-.num_nodes: ; number of nodes in map
-    #res 1
-.scratch1: ; scrach var used for math
-    #res 2
+.num_nodes: #res 1 ; number of nodes in map
+.scratch1: #res 2 ; scrach var used for math
 
 #bank rom
-
 .str_2: #d "Loading map: \0"
 .str_5: #d "n: \0"
 .str_3: #d " x: \0"
