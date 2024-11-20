@@ -503,6 +503,16 @@ pushw {addr: i16} =>
   0x4D @ addr`16
 }
 
+; dalloc
+; dallocate n bytes from stack
+; usage: disc data[7:0]
+dalloc {imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x4E @ imm`8
+}
+
 ; pushw_hl
 ; push hl register onto stack
 ; usage: push hl

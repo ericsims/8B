@@ -9,15 +9,8 @@ test:
     push #{val_a}
     push #{val_b}
     pushw #sum
-
     call mult8
-
-    ; disacard params
-    ; TODO: there is probably a faster way to write to the SP to discard these... each "pop a" is 5 clock cycles
-    pop a
-    pop a
-    pop a
-    pop a
+    dalloc 4
 
     loadw hl, sum
 

@@ -11,12 +11,8 @@ storew #0x0000, BP
 
 pushw #input
 pushw #result
-
 call negate32
-
-; disacard params
-popw hl
-popw hl
+dalloc 4
 
 ; check result is 0xEDCB_A988
 load a, result

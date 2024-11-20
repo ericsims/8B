@@ -124,8 +124,7 @@ cordic_sin:
                 jmp ..loop
             ..done_shift:
                 ; discard pointers
-                popw hl
-                popw hl
+                dalloc 4
 
         .shift_y: ; for(local8_shift_iter = local8_iter; local8_shift_iter > 0; local8_shift_iter--)
             ..init:
@@ -150,8 +149,7 @@ cordic_sin:
                 jmp ..loop
             ..done_shift:
                 ; discard pointers
-                popw hl
-                popw hl
+                dalloc 4
 
         
         .load_table_val:
@@ -177,22 +175,19 @@ cordic_sin:
             __push_pointer (BP), .local32_table_val
             pushw hl
             call negate32
-            popw hl
-            popw hl
+            dalloc 4
 
             __push_pointer (BP), .local32_y_next
             pushw hl
             call negate32
-            popw hl
-            popw hl
+            dalloc 4
             jmp .compute_next
 
         .zneg:
             __push_pointer (BP), .local32_x_next
             pushw hl
             call negate32
-            popw hl
-            popw hl
+            dalloc 4
             jmp .compute_next
         
         .compute_next:
@@ -200,25 +195,19 @@ cordic_sin:
             __push_pointer (BP), .local32_x
             pushw hl
             call add32
-            popw hl
-            popw hl
-            popw hl
+            dalloc 6
 
             __push_pointer (BP), .local32_x_next
             __push_pointer (BP), .local32_y
             pushw hl
             call add32
-            popw hl
-            popw hl
-            popw hl
+            dalloc 6
             
             __push_pointer (BP), .local32_table_val
             __push_pointer (BP), .local32_z
             pushw hl
             call add32
-            popw hl
-            popw hl
-            popw hl
+            dalloc 6
             
         .push_tbl_ptr:
             loadw hl, (BP), .local16_table_ptr
@@ -235,27 +224,7 @@ cordic_sin:
 
     .done:
         halt
-        popw hl
-        popw hl
-
-        popw hl
-
-        popw hl
-
-        popw hl
-        popw hl
-
-        popw hl
-        popw hl
-
-        popw hl
-        popw hl
-
-        popw hl
-        popw hl
-
-        popw hl
-        popw hl
+        dalloc 28
         
         __epilogue
         ret

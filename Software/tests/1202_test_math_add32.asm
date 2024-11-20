@@ -13,9 +13,7 @@ test:
     pushw #iny
     pushw #result
     call add32
-    popw hl
-    popw hl
-    popw hl
+    dalloc 6
 
     ; check result is 0x11E2_1567
     load a, result

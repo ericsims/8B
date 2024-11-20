@@ -1509,6 +1509,44 @@ instructions:
       - [DO, SI]             # save data LSB from D scratch register to stack
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
+  dalloc:
+    description: 'dallocate n bytes from stack'
+    duration: 9  # clock cycles
+    operands: 0
+    usage: 'disc data[7:0]'
+    opcode: 0x4E
+    asm_def: |
+      dalloc {imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - ['NO', XI, CE, MC]  # load LSB into x register
+        - [YI, MO]         # load y register with b value
+        - [SUB, FI, NI]    # save sum to SP LSB and save flags
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]        # load zero into y register
+        - [XI, 'NO', LM]    # load msb into x register
+        - [SUB, FI, NI, LM, RU]  # save sum to SP MSB and save flags. ucode counter reset
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - ['NO', XI, CE, MC]  # load LSB into x register
+        - [YI, MO]         # load y register with b value
+        - [SUB, FI, NI]    # save sum to SP LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, 'NO', LM]   # load msb into x register
+        - [SUB, FI, NI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+
   pushw_hl:
     description: 'push hl register onto stack'
     duration: 7  # clock cycles

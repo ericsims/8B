@@ -33,7 +33,7 @@ main:
         call static_uart_print_hex_prefix
         call uart_print_itoa_hex
         call static_uart_print_newline
-        pop a
+        dalloc 1
     }
 }
 

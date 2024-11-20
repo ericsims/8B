@@ -203,11 +203,7 @@ add32:
         pop a
         store a, (hl)
 
-        popw hl
-        popw hl
-
-        popw hl
-        popw hl
+        dalloc 8
 
         pop b ; save cf to b register
 
@@ -314,9 +310,7 @@ mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         sub a, #0x01
         jnz .mult
     .done:
-        pop a ; discared overflow_temp
-        pop a ; discared n
-        pop a ; discared multiplier
+        dalloc 3
 
         loadw hl, (BP), .param16_res_addr
         addw hl, #0x01
@@ -415,8 +409,7 @@ rshift_32:
         jmp .loop
     .done:
         pop b ; save last_carry in b reg
-        pop a ; discard carry
-        pop a ; discard n
+        dalloc 2
         __epilogue
         ret
 
@@ -509,8 +502,7 @@ negate32:
         add a, b
         store a, (hl)
     .done:
-        popw hl
-        popw hl
+        dalloc 4
         __epilogue
         ret
 

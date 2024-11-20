@@ -856,7 +856,7 @@ def main():
 
             stack_values = ""
             for n in range(stack.starting_addr,stack.starting_addr+stack.pointer):
-              stack_values += f"0x{n:04X}: {mems.get(n):02X} {n-bf:02X} {' <-- BP' if n==bf else ''}\n"
+              stack_values += f"0x{n:04X}: {mems.get(n,ignore_uninit=True):02X} {n-bf:02X} {' <-- BP' if n==bf else ''}\n"
 
             window['_STACK_'].update(stack_values)
             window['_STACK_USAGE_'].update(stack.pointer)
