@@ -57,6 +57,7 @@
 ; 25  |                       |
 ; 26  |                       |
 ; 27  |_______________________|
+; 28          alloc top
 ;;
 cordic_sin:
     ; param stack indicies. points to MSBs
@@ -72,6 +73,7 @@ cordic_sin:
     .local8_shift_iter = 21
     .local16_table_ptr = 22
     .local32_table_val = 24
+    .alloc_top = 28
 
     .init:
         __prologue
@@ -224,8 +226,7 @@ cordic_sin:
 
     .done:
         halt
-        dalloc 28
-        
+        dalloc .alloc_top
         __epilogue
         ret
 

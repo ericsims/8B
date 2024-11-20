@@ -7,24 +7,35 @@ init_pointers:
 
 test:
     ; n=0
-    store #0x01, static_rand_lfsr8_x ; init lfsr prng
-    load a, static_rand_lfsr8_x
-    assert a, #0x01
+    store #0x01, rand_a ; init lfsr prng
+
+    pushw #rand_a
 
     ; n=1
-    call static_rand_lfsr8
-    load a, static_rand_lfsr8_x
-    assert a, #0xAD
+    call rand_lfsr8
+    assert b, #0xAD
 
     ; n=2
-    call static_rand_lfsr8
-    load a, static_rand_lfsr8_x
-    assert a, #0x4C
+    call rand_lfsr8
+    assert b, #0x4C
 
     ; n=3
-    call static_rand_lfsr8
-    load a, static_rand_lfsr8_x
-    assert a, #0x3E
+    call rand_lfsr8
+    assert b, #0x3E
+
+    ; n=4
+    call rand_lfsr8
+    assert b, #0xC7
+
+    ; n=5
+    call rand_lfsr8
+    assert b, #0x6D
+
+    ; n=5
+    call rand_lfsr8
+    assert b, #0xBA
+
+    dalloc 2
 
     halt
 
@@ -47,4 +58,5 @@ test:
 
 ; global vars
 #bank ram
+rand_a: #res 1
 STACK_BASE: #res 0

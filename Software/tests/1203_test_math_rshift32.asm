@@ -27,8 +27,8 @@ __store32 #0x1234_5677, input
 pushw #input
 pushw #output
 call rshift_32
-popw hl
-popw hl
+dalloc 4
+
 ; expect result of 0x091A_2B3B, with carry out
 loadw hl, output
 assert hl, #0x091A
