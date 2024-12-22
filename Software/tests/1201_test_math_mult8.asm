@@ -10,7 +10,7 @@ test:
     push #{val_b}
     pushw #sum
     call mult8
-    dalloc 4
+    dealloc 4
 
     loadw hl, sum
 

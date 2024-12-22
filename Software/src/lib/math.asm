@@ -203,7 +203,7 @@ add32:
         pop a
         store a, (hl)
 
-        dalloc 8
+        dealloc 8
 
         pop b ; save cf to b register
 
@@ -310,7 +310,7 @@ mult8: ; x, y, result pointer, (SP+8, SP+7, SP+6))
         sub a, #0x01
         jnz .mult
     .done:
-        dalloc 3
+        dealloc 3
 
         loadw hl, (BP), .param16_res_addr
         addw hl, #0x01
@@ -409,7 +409,7 @@ rshift_32:
         jmp .loop
     .done:
         pop b ; save last_carry in b reg
-        dalloc 2
+        dealloc 2
         __epilogue
         ret
 
@@ -418,7 +418,7 @@ rshift_32:
 ; @function
 ; @brief takes a 32 bit value and computes the two's compliment. Returns to result pointer.
 ; @section description
-; takes a 32 bit number and returns the two's comlement 32 bit signed number to the result pointer.
+; takes a 32 bit number and returns the two's complement 32 bit signed number to the result pointer.
 ; *outp = -(*x)
 ; @param .param16_inp pointer to 32 bit input value
 ; @param .param16_outp pointer to 32 bit output result
@@ -502,7 +502,7 @@ negate32:
         add a, b
         store a, (hl)
     .done:
-        dalloc 4
+        dealloc 4
         __epilogue
         ret
 

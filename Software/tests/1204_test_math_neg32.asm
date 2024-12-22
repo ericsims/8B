@@ -12,7 +12,7 @@ storew #0x0000, BP
 pushw #input
 pushw #result
 call negate32
-dalloc 4
+dealloc 4
 
 ; check result is 0xEDCB_A988
 load a, result

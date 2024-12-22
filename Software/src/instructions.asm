@@ -503,14 +503,24 @@ pushw {addr: i16} =>
   0x4D @ addr`16
 }
 
-; dalloc
-; dallocate n bytes from stack
-; usage: disc data[7:0]
-dalloc {imm: i8} =>
+; alloc
+; allocate n bytes on stack
+; usage: alloc data[7:0]
+alloc {imm: i8} =>
 {
   assert(imm >= 0)
   assert(imm <= 0xff)
   0x4E @ imm`8
+}
+
+; dealloc
+; deallocate n bytes from stack
+; usage: dealloc data[7:0]
+dealloc {imm: i8} =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x4F @ imm`8
 }
 
 ; pushw_hl
@@ -612,7 +622,7 @@ jmp {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x6C @ addr`16
+  0x64 @ addr`16
 }
 
 ; jmz
@@ -622,7 +632,7 @@ jmz {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x6D @ addr`16
+  0x65 @ addr`16
 }
 
 ; jnz
@@ -632,7 +642,7 @@ jnz {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x6E @ addr`16
+  0x66 @ addr`16
 }
 
 ; jmc
@@ -642,7 +652,7 @@ jmc {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x6F @ addr`16
+  0x67 @ addr`16
 }
 
 ; jnc
@@ -652,7 +662,7 @@ jnc {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x70 @ addr`16
+  0x68 @ addr`16
 }
 
 ; jmn
@@ -662,7 +672,7 @@ jmn {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x71 @ addr`16
+  0x69 @ addr`16
 }
 
 ; jnn
@@ -672,7 +682,7 @@ jnn {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x72 @ addr`16
+  0x6A @ addr`16
 }
 
 ; call
@@ -682,7 +692,7 @@ call {addr: i16} =>
 {
   assert(addr >= 0)
   assert(addr <= 0xffff)
-  0x73 @ addr`16
+  0x6B @ addr`16
 }
 
 ; ret

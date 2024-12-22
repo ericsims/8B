@@ -13,7 +13,7 @@ test:
     pushw #iny
     pushw #result
     call add32
-    dalloc 6
+    dealloc 6
 
     ; check result is 0x11E2_1567
     load a, result

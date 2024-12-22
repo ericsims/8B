@@ -9,7 +9,7 @@ main:
     pushw #data_test
     push #255
     call uart_dump_mem
-    dalloc 3
+    dealloc 3
 
     halt
 

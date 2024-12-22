@@ -35,7 +35,7 @@ test:
     call rand_lfsr8
     assert b, #0xBA
 
-    dalloc 2
+    dealloc 2
 
     halt
 

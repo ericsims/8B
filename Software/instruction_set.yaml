@@ -1509,14 +1509,14 @@ instructions:
       - [DO, SI]             # save data LSB from D scratch register to stack
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
-  dalloc:
-    description: 'dallocate n bytes from stack'
+  alloc:
+    description: 'allocate n bytes on stack'
     duration: 9  # clock cycles
     operands: 0
-    usage: 'disc data[7:0]'
+    usage: 'alloc data[7:0]'
     opcode: 0x4E
     asm_def: |
-      dalloc {imm: i8} =>
+      alloc {imm: i8} =>
       {
         assert(imm >= 0)
         assert(imm <= 0xff)
@@ -1529,7 +1529,45 @@ instructions:
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
         - ['NO', XI, CE, MC]  # load LSB into x register
-        - [YI, MO]         # load y register with b value
+        - [YI, MO]         # load y register with imm value
+        - [ADD, FI, NI]    # save sum to SP LSB and save flags
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]        # load zero into y register
+        - [XI, 'NO', LM]    # load msb into x register
+        - [ADD, FI, NI, LM, RU]  # save sum to SP MSB and save flags. ucode counter reset
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - ['NO', XI, CE, MC]  # load LSB into x register
+        - [YI, MO]         # load y register with imm value
+        - [ADD, FI, NI]    # save sum to SP LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, 'NO', LM]   # load msb into x register
+        - [ADD, FI, NI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+
+  dealloc:
+    description: 'deallocate n bytes from stack'
+    duration: 9  # clock cycles
+    operands: 0
+    usage: 'dealloc data[7:0]'
+    opcode: 0x4F
+    asm_def: |
+      dealloc {imm: i8} =>
+      {
+        assert(imm >= 0)
+        assert(imm <= 0xff)
+        {OPCODE} @ imm`8
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - ['NO', XI, CE, MC]  # load LSB into x register
+        - [YI, MO]         # load y register with imm value
         - [SUB, FI, NI]    # save sum to SP LSB and save flags
         # if carry is false, don't increment MSB
         - [YI, ZERO]        # load zero into y register
@@ -1540,7 +1578,7 @@ instructions:
         - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
         - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
         - ['NO', XI, CE, MC]  # load LSB into x register
-        - [YI, MO]         # load y register with b value
+        - [YI, MO]         # load y register with imm value
         - [SUB, FI, NI]    # save sum to SP LSB and save flags
         # if carry is true, increment MSB
         - [YI, ONE]        # load one into y register
@@ -1854,7 +1892,7 @@ instructions:
     duration: 7  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jmp address[15:0]'
-    opcode: 0x6C
+    opcode: 0x64
     asm_def: |
       jmp {addr: i16} =>
       {
@@ -1876,7 +1914,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jmz address[15:0]'
-    opcode: 0x6D
+    opcode: 0x65
     asm_def: |
       jmz {addr: i16} =>
       {
@@ -1905,7 +1943,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jnz address[15:0]'
-    opcode: 0x6E
+    opcode: 0x66
     asm_def: |
       jnz {addr: i16} =>
       {
@@ -1935,7 +1973,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jmc address[15:0]'
-    opcode: 0x6F
+    opcode: 0x67
     asm_def: |
       jmc {addr: i16} =>
       {
@@ -1965,7 +2003,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jnc address[15:0]'
-    opcode: 0x70
+    opcode: 0x68
     asm_def: |
       jnc {addr: i16} =>
       {
@@ -1995,7 +2033,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jnc address[15:0]'
-    opcode: 0x71
+    opcode: 0x69
     asm_def: |
       jmn {addr: i16} =>
       {
@@ -2025,7 +2063,7 @@ instructions:
     duration: TBD  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jnc address[15:0]'
-    opcode: 0x72
+    opcode: 0x6A
     asm_def: |
       jnn {addr: i16} =>
       {
@@ -2055,7 +2093,7 @@ instructions:
     duration: 12  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'call address[15:0]'
-    opcode: 0x73
+    opcode: 0x6B
     asm_def: |
       call {addr: i16} =>
       {

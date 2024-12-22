@@ -12,7 +12,7 @@ __store32 #0x1234_5678, input
 pushw #input
 pushw #output
 call rshift_32
-dalloc 4
+dealloc 4
 
 ; expect result of 0x091A_2B3C, with no carry out
 loadw hl, output
@@ -27,7 +27,7 @@ __store32 #0x1234_5677, input
 pushw #input
 pushw #output
 call rshift_32
-dalloc 4
+dealloc 4
 
 ; expect result of 0x091A_2B3B, with carry out
 loadw hl, output

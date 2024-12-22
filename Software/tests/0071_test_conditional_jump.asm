@@ -4,10 +4,9 @@
 ;
 ; @section Description
 ; tests conditional jumps
-; tests jmz, jmc, jnz. does not test jnc, jmn, jnn
 ;
 ; @section Test Coverage
-; @coverage jmz jmc jnz
+; @coverage jmz jnz jmc jnc jmn jnn
 ;
 ;;
 
@@ -15,126 +14,208 @@
 #bank rom
 top:
     ; ** jmz tests ***
-    ; first test case
-    test1:
-        load a, #0xAA
-        assert a, #0xAA
-        add a, #0x00
-
-        ; jump if zero. should evaluate to false
-        jmz .b
-
-        ; assert a reg is still correct
-        assert a, #0xAA
-
-        ; go to next test case
-        jmp test2
-
-        ; if we jump here, we should error out
-        .b:
-            load a, #0x00
-            assert a, #0xBB;
-
-
-    ; second test case
-    test2:
+    jmz_true:
+        load b, #0x01
         load a, #0x00
-        assert a, #0x00
-        add a, #0x00
+        add a, #0x00 ; update flags with add op
 
-        ; jump if zero. should evaluate to true
-        jmz .b
+        ; jump if zero. should evaluate to "true"
+        jmz .a
 
-        ; we should error out if we end up here
-        assert a, #0xFF
-        halt
+        ; program should skip this
+        load b, #0xFF
 
-        ; jump here is correct
-        .b:
-            load a, #0xCC
-            assert a, #0xCC
-
-
-    ; ** JMC tests ***
-    ; third test case
-    test3:
-        load a, #0xAA
-        assert a, #0xAA
-        add a, #0x00
-
-        ; jump if carry. should evaluate to false
-        jmc .b
-
-        ; assert a reg is still correct
-        assert a, #0xAA
-
-        ; go to next test case
-        jmp test4
-
-        ; if we jump here, we should error out
-        .b:
-            load a, #0x00
-            assert a, #0xBB;
-
-
-    ; fourth test case
-    test4:
-        load a, #0xFF
-        assert a, #0xFF
-        add a, #0x01
-
-        ; jump if carry. should evaluate to true
-        jmc .b
-
-        ; we should error out if we end up here
-        assert a, #0x12
-        halt
-
-        ; jump here is correct
-        .b:
-            load a, #0xDD
-            assert a, #0xDD
-
-
-    ; ** JNZ tests ***
-    ; fifth test case
-    test5:
-        load a, #0x00
-        assert a, #0x00
-        add a, #0x00
-
-        ; jump if not zero. should evaluate to false
-        jnz .b
-
-        ; assert a reg is still correct
-        assert a, #0x00
-
-        ; go to next test case
-        jmp test6
-
-        ; if we jump here, we should error out
-        .b:
-            load a, #0x00
-            assert a, #0x05;
-
-
-    ; sixth test case
-    test6:
+        ; program should jump here
+        .a:
+            assert b, #0x01
+        .next:
+    
+    jmz_false:
+        load b, #0x02
         load a, #0x01
-        assert a, #0x01
-        add a, #0x00
+        add a, #0x00 ; update flags with add op
+        
+        ; jump if zero. should evaluate to "false"
+        jmz .a
 
-        ; jump if not zero. should evaluate to true
-        jnz .b
+        ; check program did not jump
+        assert b, #0x02
+        jmp .next
 
-        ; we should error out if we end up here
-        assert a, #0x06
-        halt
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
+    
+    ; ** jnz tests ***
+    jnz_true:
+        load b, #0x03
+        load a, #0x01
+        add a, #0x00 ; update flags with add op
 
-        ; jump here is correct
-        .b:
-            load a, #0x06
-            assert a, #0x06
+        ; jump if not zero. should evaluate to "true"
+        jnz .a
+
+        ; program should skip this
+        load b, #0xFF
+
+        ; program should jump here
+        .a:
+            assert b, #0x03
+        .next:
+    
+    jnz_false:
+        load b, #0x04
+        load a, #0x00
+        add a, #0x00 ; update flags with add op
+        
+        ; jump if not zero. should evaluate to "false"
+        jnz .a
+
+        ; check program did not jump
+        assert b, #0x04
+        jmp .next
+
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
+
+    ; ** jmc tests ***
+    jmc_true:
+        load b, #0x05
+        load a, #0xFF
+        add a, #0x01 ; update flags with add op
+
+        ; jump if carry. should evaluate to "true"
+        jmc .a
+
+        ; program should skip this
+        load b, #0xFF
+
+        ; program should jump here
+        .a:
+            assert b, #0x05
+        .next:
+    
+    jmc_false:
+        load b, #0x06
+        load a, #0xFF
+        add a, #0x00 ; update flags with add op
+        
+        ; jump if zero. should evaluate to "false"
+        jmc .a
+
+        ; check program did not jump
+        assert b, #0x06
+        jmp .next
+
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
+
+    ; ** jnc tests ***
+    jnc_true:
+        load b, #0x07
+        load a, #0xFF
+        add a, #0x00 ; update flags with add op
+
+        ; jump if no carry. should evaluate to "true"
+        jnc .a
+
+        ; program should skip this
+        load b, #0xFF
+
+        ; program should jump here
+        .a:
+            assert b, #0x07
+        .next:
+
+    jnc_false:
+        load b, #0x08
+        load a, #0xFF
+        add a, #0x01 ; update flags with add op
+        
+        ; jump if no carry. should evaluate to "false"
+        jnc .a
+
+        ; check program did not jump
+        assert b, #0x08
+        jmp .next
+
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
+
+    ; ** jmn tests ***
+    jmn_true:
+        load b, #0x09
+        load a, #0x80
+        add a, #0x00 ; update flags with add op
+
+        ; jump if negative. should evaluate to "true"
+        jmn .a
+
+        ; program should skip this
+        load b, #0xFF
+
+        ; program should jump here
+        .a:
+            assert b, #0x09
+        .next:
+
+    jmn_false:
+        load b, #0x0A
+        load a, #0x7F
+        add a, #0x00 ; update flags with add op
+        
+        ; jump if negative. should evaluate to "false"
+        jmn .a
+
+        ; check program did not jump
+        assert b, #0x0A
+        jmp .next
+
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
+
+    ; ** jnn tests ***
+    jnn_true:
+        load b, #0x0B
+        load a, #0x7F
+        add a, #0x00 ; update flags with add op
+
+        ; jump if not negative. should evaluate to "true"
+        jnn .a
+
+        ; program should skip this
+        load b, #0xFF
+
+        ; program should jump here
+        .a:
+            assert b, #0x0B
+        .next:
+
+    jnn_false:
+        load b, #0x0C
+        load a, #0x80
+        add a, #0x00 ; update flags with add op
+        
+        ; jump if not negative. should evaluate to "false"
+        jnn .a
+
+        ; check program did not jump
+        assert b, #0x0C
+        jmp .next
+
+        ; program should NOT jump here
+        .a:
+            assert b, #0xFF
+        .next:
 
     halt
 
