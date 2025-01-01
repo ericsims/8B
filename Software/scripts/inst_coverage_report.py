@@ -29,6 +29,7 @@ with open(args['instruction_set'], 'r') as f:
                 if not isinstance(l, dict): continue
                 if 'coverage' in l.keys():
                     for inst in l['coverage']:
+                        if inst not in report.keys(): continue
                         report[inst].append(Path(doc_f).stem)
 
 

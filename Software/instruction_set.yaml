@@ -1160,6 +1160,40 @@ instructions:
       # save data
       - [BO, MI, RU]         # store data from B reg to memory. ucode counter reset
 
+  store_b_indir:
+    description: 'store b register to indirect address'
+    duration: 15  # clock cycles
+    operands: 2  # bytes (indirect address)
+    usage: 'store b, (address[15:0])'
+    opcode: 0x33
+    asm_def: |
+      store b, ({addr: i16}) =>
+      {
+        assert(addr >= 0)
+        assert(addr <= 0xffff)
+        {OPCODE} @ addr`16
+      }
+    ucode:
+      # fetch
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load indirect address
+      - [MC, CE]             # Increment MAR to point to MSB of address. keep up with PC
+      - [MO, JI, LM]         # load address MSB into J scratch register
+      - [MC, CE]             # Increment MAR to point to LSB of address. keep up with PC
+      - [MO, JI]             # load address LSB into J scratch register
+      - [JO, MA, LM]         # load address out of scratch register into MAR
+      - [JO, MA]             # load address out of scratch register into MAR
+      # load direct address
+      - [MO, JI, LM]         # load address MSB into J scratch register
+      - [MC]                 # Increment MAR to point to LSB of address
+      - [MO, JI]             # load address LSB into J scratch register
+      - [JO, MA, LM]         # load address out of scratch register into MAR
+      - [JO, MA]             # load address out of scratch register into MAR
+      # store data
+      - [MI, BO, RU]         # store data in B reg to memory. ucode counter reset
+
   storew_hl_dir:
     description: 'Store hl register value to direct address'
     duration: 12  # clock cycles
