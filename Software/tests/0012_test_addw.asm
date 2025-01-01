@@ -6,7 +6,7 @@
 ; tests 16bit adds
 ;
 ; @section Test Coverage
-; @coverage addw_hl_imm subw_hl_imm addw_hl_a addw_hl_b
+; @coverage addw_hl_imm subw_hl_imm subw_hl_a subw_hl_b addw_hl_a addw_hl_b
 ;
 ;;
 
@@ -96,6 +96,91 @@ top:
     assert nf, #1
     assert cf, #1
 
+    ; 16 bit subtract a register
+    loadw hl, #0x1234
+    load b, #0x00
+    subw hl, b
+    assert hl, #0x1234
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0x1234
+    load b, #0x45
+    subw hl, b
+    assert hl, #0x11EF
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0xFFFF
+    load b, #0xFF
+    subw hl, b
+    assert hl, #0xFF00
+    assert nf, #1
+    assert cf, #0
+
+    loadw hl, #0xFFFE
+    load b, #0xFF
+    subw hl, b
+    assert hl, #0xFEFF
+    assert nf, #1
+    assert cf, #0
+
+    loadw hl, #0x0000
+    load b, #0x00
+    subw hl, b
+    assert hl, #0x0000
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0x0000
+    load b, #0x01
+    subw hl, b
+    assert hl, #0xFFFF
+    assert nf, #1
+    assert cf, #1
+
+    ; 16 bit subtract b register
+    loadw hl, #0x1234
+    load a, #0x00
+    subw hl, a
+    assert hl, #0x1234
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0x1234
+    load a, #0x45
+    subw hl, a
+    assert hl, #0x11EF
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0xFFFF
+    load a, #0xFF
+    subw hl, a
+    assert hl, #0xFF00
+    assert nf, #1
+    assert cf, #0
+
+    loadw hl, #0xFFFE
+    load a, #0xFF
+    subw hl, a
+    assert hl, #0xFEFF
+    assert nf, #1
+    assert cf, #0
+
+    loadw hl, #0x0000
+    load a, #0x00
+    subw hl, a
+    assert hl, #0x0000
+    assert nf, #0
+    assert cf, #0
+
+    loadw hl, #0x0000
+    load a, #0x01
+    subw hl, a
+    assert hl, #0xFFFF
+    assert nf, #1
+    assert cf, #1
 
     ; 16 bit add a register
     loadw hl, #0x1234

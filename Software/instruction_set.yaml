@@ -544,6 +544,42 @@ instructions:
         - [XI, HO, LM]     # load msb into x register
         - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
+  subw_hl_a:
+    description: 'subtract a byte from hl word and save to hl word'
+    duration: 9  # clock cycles
+    operands: 0
+    usage: 'subw hl, a'
+    opcode: 0x1C
+    asm_def: |
+      subw hl, a =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      conditions: [CF]
+      false:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # load LSB into x register
+        - [YI, AO]         # load y register with a value
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is false, don't increment MSB
+        - [YI, ZERO]       # load zero into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+      true:
+        - [PO, MA, LM]     # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]         # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]     # Fetch cycle, increment PC, and load instruction into IR
+        - [HO, XI]         # load LSB into x register
+        - [YI, AO]         # load y register with a value
+        - [SUB, FI, HI]    # save sum to hl LSB and save flags
+        # if carry is true, increment MSB
+        - [YI, ONE]        # load one into y register
+        - [XI, HO, LM]     # load msb into x register
+        - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
+
   subw_hl_b:
     description: 'subtract b byte from hl word and save to hl word'
     duration: 9  # clock cycles

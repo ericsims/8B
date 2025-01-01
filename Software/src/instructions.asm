@@ -133,6 +133,14 @@ addw hl, #{imm: i8} =>
   0x16 @ imm`8
 }
 
+; subw_hl_a
+; subtract a byte from hl word and save to hl word
+; usage: subw hl, a
+subw hl, a =>
+{
+  0x1C
+}
+
 ; subw_hl_b
 ; subtract b byte from hl word and save to hl word
 ; usage: subw hl, b

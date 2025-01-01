@@ -6,7 +6,7 @@
 ; tests moving data
 ;
 ; @section Test Coverage
-; @coverage move_dir_dir move_indir_dir move_dir_indir move_indir_indir
+; @coverage move_dir_dir move_indir_dir move_dir_indir move_indir_indir movew_dir_dir
 ;
 ;;
 
@@ -40,6 +40,12 @@ top:
     load a, location2
     assert a, #0x45
 
+    ; test move work from direct address to direct address
+    storew #0xBEEF, location1
+    movew location1, location2
+    loadw hl, location2
+    assert hl, #0xBEEF
+
     halt
 
 ; constants
@@ -50,7 +56,7 @@ top:
 
 ; global vars
 #bank ram
-location1: #res 1
-location2: #res 1
+location1: #res 2
+location2: #res 2
 pointer1: #res 2
 pointer2: #res 2

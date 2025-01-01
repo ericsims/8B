@@ -6,7 +6,7 @@
 ; tests stack maniuplation
 ;
 ; @section Test Coverage
-; @coverage push_imm pop_a pop_b push_a push_b pushw_imm popw_hl pushw_hl
+; @coverage push_imm pop_a pop_b push_a push_b pushw_imm popw_hl pushw_hl push_dir pushw_dir
 ;
 ;;
 
@@ -67,6 +67,13 @@ top:
     pop b
     assert b, #0xCC
 
+    ; push data from direct address
+    store #0xAB, var8
+    push var8
+    ; pop and check
+    pop a
+    assert a, #0xAB
+
     ; push imm data word
     pushw #0x1234
     pushw #0x4567
@@ -81,6 +88,17 @@ top:
     popw hl
     assert hl, #0xDEAD
 
+    ; push word from direct address
+    storew #0x1234, var16
+    pushw var16
+    storew #0x4567, var16
+    pushw var16
+    popw hl
+    assert hl, #0x4567
+    popw hl
+    assert hl, #0x1234
+
+
     halt
 
 ; constants
@@ -91,4 +109,6 @@ top:
 
 ; global vars
 #bank ram
+var8: #res 1
+var16: #res 2
 STACK_BASE: #res 0
