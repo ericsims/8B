@@ -3,7 +3,7 @@
 ; @author Eric Sims
 ;
 ; @section Description
-; tests stack maniuplation
+; tests stack manipulation
 ;
 ; @section Test Coverage
 ; @coverage push_imm pop_a pop_b push_a push_b pushw_imm popw_hl pushw_hl push_dir pushw_dir
