@@ -34,12 +34,12 @@ all: tests docs
 
 $(VENV_DIR):
 	@echo makeing python venv... 
-	@python -m venv .venv
+	@python3 -m venv .venv
 
 deps: $(VENV_DIR)
 	@( \
 		echo activating venv... && \
-		source $(VENV_DIR)/Scripts/activate && \
+		. $(VENV_DIR)/bin/activate && \
 		echo installing pip-tools... && \
 		python -m pip install pip-tools && \
 		echo building requirements list... && \

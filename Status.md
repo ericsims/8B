@@ -7,6 +7,8 @@
 - [x] teardrops
 - [x] run out jobs
 - [x] quote
+- [x] order
+- [x] assemble
 
 # ALU Ctrl
 
@@ -17,6 +19,8 @@
 - [x] teardrops
 - [x] run out jobs
 - [x] quote
+- [x] order
+- [x] assemble
 
 # ALU Logic
 
@@ -27,6 +31,8 @@
 - [x] teardrops
 - [x] run out jobs
 - [x] quote
+- [x] order
+- [x] assemble
 
 # ALU Adder
 
@@ -37,16 +43,20 @@
 - [x] polygons
 - [x] run out jobs
 - [x] quote
+- [x] order
+- [x] assemble
 
 # Registers
 
-- [ ] board keep out
-- [ ] silkscreen
-- [ ] part number/date
-- [ ] teardrops
-- [ ] polygons
-- [ ] run out jobs
-- [ ] quote
+- [x] board keep out
+- [x] silkscreen
+- [x] part number/date
+- [x] teardrops
+- [x] polygons
+- [x] run out jobs
+- [x] quote
+- [ ] order
+- [ ] assemble
 
 # Scratch
 
@@ -57,16 +67,20 @@
 - [x] polygons
 - [x] run out jobs
 - [x] quote
+- [ ] order
+- [ ] assemble
 
 # Program Counter
 
-- [ ] board keep out
-- [ ] silkscreen
-- [ ] part number/date
-- [ ] teardrops
-- [ ] polygons
-- [ ] run out jobs
-- [ ] quote
+- [x] board keep out
+- [x] silkscreen
+- [x] part number/date
+- [x] teardrops
+- [x] polygons
+- [x] run out jobs
+- [x] quote
+- [ ] order
+- [ ] assemble
 
 # Memory Proto
 
@@ -77,6 +91,20 @@
 - [x] polygons
 - [x] run out jobs
 - [x] quote
+- [x] order
+- [x] assemble
+
+# SRAM
+
+- [x] board keep out
+- [x] silkscreen
+- [x] part number/date
+- [x] teardrops
+- [x] polygons
+- [x] run out jobs
+- [x] quote
+- [ ] order
+- [ ] assemble
 
 # Clock Proto
 
@@ -87,3 +115,5 @@
 - [ ] polygons
 - [ ] run out jobs
 - [ ] quote
+- [ ] order
+- [ ] assemble

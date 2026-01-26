@@ -1,7 +1,7 @@
 Protel Design System Design Rule Check
-PCB File : D:\Users\erics\Documents\8B\Hardware\Scratch\Scratch.PcbDoc
-Date     : 11/26/2023
-Time     : 4:57:16 PM
+PCB File : E:\05_work\00_dev\8B\Hardware\Scratch\Scratch.PcbDoc
+Date     : 1/25/2026
+Time     : 9:47:33 PM
 
 Processing Rule : Clearance Constraint (Gap=25mil) (InPoly),(All)
 Rule Violations :0
@@ -27,7 +27,7 @@ Rule Violations :0
 Processing Rule : Power Plane Connect Rule(Relief Connect )(Expansion=20mil) (Conductor Width=10mil) (Air Gap=10mil) (Entries=4) (All)
 Rule Violations :0
 
-Processing Rule : Hole Size Constraint (Min=1mil) (Max=120mil) (All)
+Processing Rule : Hole Size Constraint (Min=12mil) (Max=120mil) (All)
 Rule Violations :0
 
 Processing Rule : Hole To Hole Clearance (Gap=10mil) (All),(All)
@@ -45,7 +45,7 @@ Rule Violations :0
 Processing Rule : Net Antennae (Tolerance=0mil) (All)
 Rule Violations :0
 
-Processing Rule : Board Clearance Constraint (Gap=0mil) (All)
+Processing Rule : Board Clearance Constraint (Gap=0mil) (not IsKeepOut)
 Rule Violations :0
 
 Processing Rule : Height Constraint (Min=0mil) (Max=1000mil) (Prefered=500mil) (All)

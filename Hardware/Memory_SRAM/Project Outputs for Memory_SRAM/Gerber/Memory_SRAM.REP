@@ -2,68 +2,27 @@
 FileName = Memory_SRAM.GBR
 AutoAperture = True
 *************************************************************
-Generating : Bottom Paste
-      File : Memory_SRAM.GBP
+Generating : Top Layer
+      File : Memory_SRAM.GTL
 
-    Adding Layer      : Bottom Paste
-
-    Adding Layer      : Bottom Layer
+    Adding Layer      : Top Layer
 
     Adding Layer      : Multi-Layer
 
 
 Used DCodes :
-*************************************************************
-
-*************************************************************
-Generating : Bottom Solder
-      File : Memory_SRAM.GBS
-
-    Adding Layer      : Bottom Solder
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D14
-    D15
-    D16
-    D17
-    D18
-    D19
-    D20
-    D21
-*************************************************************
-
-*************************************************************
-Generating : Bottom Layer
-      File : Memory_SRAM.GBL
-
-    Adding Layer      : Bottom Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D22
-    D23
-    D24
     D25
     D26
     D27
     D28
-*************************************************************
-
-*************************************************************
-Generating : Keep-Out Layer
-      File : Memory_SRAM.GKO
-
-    Adding Layer      : Keep-Out Layer
-
-
-Used DCodes :
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
 *************************************************************
 
 *************************************************************
@@ -74,48 +33,7 @@ Generating : Bottom Overlay
 
 
 Used DCodes :
-    D11
-*************************************************************
-
-*************************************************************
-Generating : Top Layer
-      File : Memory_SRAM.GTL
-
-    Adding Layer      : Top Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D22
-    D23
-    D24
-    D25
-    D26
-    D27
-    D28
-*************************************************************
-
-*************************************************************
-Generating : Top Solder
-      File : Memory_SRAM.GTS
-
-    Adding Layer      : Top Solder
-
-    Adding Layer      : Top Layer
-
-    Adding Layer      : Multi-Layer
-
-
-Used DCodes :
-    D14
-    D15
-    D16
-    D17
-    D18
-    D19
-    D20
-    D21
+    D12
 *************************************************************
 
 *************************************************************
@@ -144,5 +62,103 @@ Used DCodes :
     D11
     D12
     D13
+    D14
+*************************************************************
+
+*************************************************************
+Generating : Top Solder
+      File : Memory_SRAM.GTS
+
+    Adding Layer      : Top Solder
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+*************************************************************
+
+*************************************************************
+Generating : Keep-Out Layer
+      File : Memory_SRAM.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+    D26
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : Memory_SRAM.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+    D22
+    D23
+    D24
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : Memory_SRAM.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+*************************************************************
+
+*************************************************************
+Generating : Bottom Paste
+      File : Memory_SRAM.GBP
+
+    Adding Layer      : Bottom Paste
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
 *************************************************************
 

@@ -1,2 +1,2 @@
 Record=TopLevelDocument|FileName=Top.SchDoc|SheetNumber=1
-Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=Designator|SchDesignator=Designator|FileName=Memory_SRAM.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Memory_SRAM.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=Top.SchDoc|Designator=MEM|SchDesignator=MEM|FileName=Memory_SRAM.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=Memory_SRAM.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 

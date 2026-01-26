@@ -5,8 +5,8 @@ a simple 8 bit CISC computer built using TTL logic
 
 ### python setup
 
-`python -m venv .venv`
-`source .venv/Scripts/activate`
+`python3 -m venv .venv`
+`source .venv/bin/activate`
 `python -m pip install pip-tools`
 `pip-compile.exe requirements.in`
 `pip install -r requirements.txt`

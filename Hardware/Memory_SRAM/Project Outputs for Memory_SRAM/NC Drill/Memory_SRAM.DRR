@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------------------------
-NCDrill File Report For: Memory_SRAM.PcbDoc   7/31/2022  2:00:46 PM
+NCDrill File Report For: Memory_SRAM.PcbDoc   1/25/2026  9:40:24 PM
 ----------------------------------------------------------------------------------------------------------------------------------
 
 Layer Pair : Top Layer to Bottom Layer
@@ -7,12 +7,13 @@ ASCII RoundHoles File : Memory_SRAM.TXT
 
 Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
 ----------------------------------------------------------------------------------------------------------------------------------
-T1      28mil (0.7mm)                                             Round             2         PTH        0.30inch (7.62mm)
-T2      33mil (0.85mm)                                            Round             2         PTH        0.30inch (7.62mm)
-T3      35mil (0.9mm)                                             Round             116       PTH        16.48inch (418.50mm)
-T4      63mil (1.6mm)                                             Round             6         PTH        4.19inch (106.52mm)
-T5      109mil (2.769mm)                                          Round             2         PTH        1.80inch (45.72mm)
+T1      20mil (0.508mm)                                           Round             168       PTH        0.00inch (0.00mm)
+T2      30mil (0.75mm)                                            Round             12        PTH        0.00inch (0.00mm)
+T3      33mil (0.85mm)                                            Round             2         PTH        0.00inch (0.00mm)
+T4      35mil (0.9mm)                                             Round             116       PTH        0.00inch (0.00mm)
+T5      63mil (1.6mm)                                             Round             7         PTH        0.00inch (0.00mm)
+T6      109mil (2.769mm)                                          Round             2         PTH        0.00inch (0.00mm)
 ----------------------------------------------------------------------------------------------------------------------------------
-Totals                                                                              128
+Totals                                                                              307
 
 Total Processing Time (hh:mm:ss) : 00:00:00

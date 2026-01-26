@@ -1,5 +1,5 @@
-DRC Rules Export File for PCB: D:\Users\erics\Documents\16B\Memory_SRAM\Memory_SRAM.PcbDoc
+DRC Rules Export File for PCB: E:\05_work\00_dev\8B\Hardware\Memory_SRAM\Memory_SRAM.PcbDoc
 RuleKind=SolderMaskExpansion|RuleName=SolderMaskExpansion|Scope=Board|Minimum=4.00
-RuleKind=Width|RuleName=Width|Scope=Board|Minimum=10.00
-RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=10.00
+RuleKind=Width|RuleName=Width|Scope=Board|Minimum=8.00
+RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=8.00
 RuleKind=ShortCircuit|RuleName=ShortCircuit|Scope=Board|Allowed=0
