@@ -220,3 +220,66 @@ uart_dump_mem:
     pop a
     __epilogue
     ret
+
+
+#bank rom
+;;
+; @function
+; @brief returns 1 if character is whitespace
+; @section description
+; takes a 1 byte ASCII character
+;     _______________________
+; -5 |_____.param8_char______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_char input character
+;;
+isspace:
+    .param8_char = -5
+    .init:
+    __prologue
+    load a, (BP), .param8_char
+
+    ; test Space
+    load b, a
+    sub b, #0x20
+    jmz .is_whitespace
+
+    ; test Horizontal Tab
+    load b, a
+    sub b, #0x09
+    jmz .is_whitespace
+
+    ; test Line Feed
+    load b, a
+    sub b, #0x0A
+    jmz .is_whitespace
+    
+    ; test Vertical Tab
+    load b, a
+    sub b, #0x0B
+    jmz .is_whitespace
+    
+    ; test 	Form Feed
+    load b, a
+    sub b, #0x0C
+    jmz .is_whitespace
+    
+    ; test Carriage Return
+    load b, a
+    sub b, #0x0D
+    jmz .is_whitespace
+
+    ; char is not whitespace
+    load b, #0
+    jmp .done
+
+    .is_whitespace:
+    load b, #1
+    jmp .done
+
+    .done:
+    __epilogue
+    ret

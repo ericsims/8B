@@ -1,0 +1,15 @@
+{
+    "id": "https://api.weather.gov/",
+    "thing": "Feature",
+    "properties": {
+        "@id": "https://api.weather.gov/points/42.3555,-71.0565",
+        "@type": "wx:Point",
+        "cwa": "BOX",
+        "type": "land",
+        "morestuff": {
+            "thisguy": "abc",
+            "moredudes": "def"
+        }
+    },
+    "thing2": "Feature2"
+}
