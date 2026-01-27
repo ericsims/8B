@@ -61,7 +61,7 @@ class STACK:
             else:
                 raise Exception("invalid PC byte")
             if newp:
-                print(f"{self.get_pointer():04X} {newp:04X} {self.get_pointer()-newp:04X}") 
+                # print(f"{self.get_pointer():04X} {newp:04X} {self.get_pointer()-newp:04X}")
                 self.pointer -= self.get_pointer()-newp
         else:
             if L == 0:

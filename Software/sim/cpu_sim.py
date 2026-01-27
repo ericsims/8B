@@ -19,7 +19,6 @@ from MEMS import MEMS
 
 from parse_vars import *
 
-
 # TODO: dead code analysis
 # TODO: call graph to include call/ret/jumps. add subgraph for subroutines
 # TODO: extended memory
@@ -79,7 +78,7 @@ def main():
     conn = None
 
   print(f"running ${FILE_NAME}")
-
+  
   pc = PC()
   mar = MAR()
   ii = II()
