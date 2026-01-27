@@ -283,3 +283,74 @@ isspace:
     .done:
     __epilogue
     ret
+
+
+#bank rom
+;;
+; @function
+; @brief returns 0 if strings are the same
+; @section description
+; takes a 2 string pointers and compares the contents
+;     _______________________
+; -8 |   .param16_str1_in    |
+; -7 |_______________________|
+; -6 |   .param16_str2_in    |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |     .param16_str1     |
+;  1 |_______________________|
+;  2 |     .param16_str2     |
+;  3 |_______________________| 
+; @param .param8_char input character
+;;
+strcmp:
+    .param16_str1_in = -8
+    .param16_str2_in = -6
+    .param16_str1 = 0
+    .param16_str2 = 2
+    .init:
+        __prologue
+        ; copy inputs to local variables
+        loadw hl, (BP), .param16_str1_in
+        pushw hl
+        loadw hl, (BP), .param16_str2_in
+        pushw hl
+
+    .test:
+        ; load character from str1
+        loadw hl, (BP), .param16_str1
+        load a, (hl)
+        ; increment and store pointer
+        addw hl, #1
+        storew hl, (BP), .param16_str1
+
+        ; load character from str2
+        loadw hl, (BP), .param16_str2
+        load b, (hl)
+        ; increment and store pointer
+        addw hl, #1
+        storew hl, (BP), .param16_str2
+
+        ; test for mismatch
+        sub a, b
+        jnz .mismatch
+        
+        ; test for end of string.
+        sub b, #0
+        jmz .done
+
+        ; loop
+        jmp .test
+
+
+    .mismatch:
+        load b, #1
+        ; fall through to done
+
+    .done:
+        dealloc 4
+        __epilogue
+        ret
