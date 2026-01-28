@@ -322,6 +322,66 @@ isdigit:
 #bank rom
 ;;
 ; @function
+; @brief returns 1 if character is a numeral digit '0'-'9', '.', '-', '+', 'e', and 'E'
+; @section description
+; takes a 1 byte ASCII character
+;     _______________________
+; -5 |_____.param8_char______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_char input character
+;;
+isjsondigit:
+    .param8_char = -5
+    .init:
+    __prologue
+    load a, (BP), .param8_char
+    load b, a
+
+    ; digits are 0x30 to 0x39 in ASCII
+    sub b, #0x30
+    jmn .continue_test ; not a digit if < 0x30
+    sub b, #0x0A
+    jnn .continue_test ; not a digit if > 0x39
+
+    jmp .is_a_digit
+
+    .continue_test:
+    load b, a
+    sub b, #"."
+    jmz .is_a_digit
+
+    load b, a
+    sub b, #"-"
+    jmz .is_a_digit
+
+    load b, a
+    sub b, #"+"
+    jmz .is_a_digit
+
+    load b, a
+    sub b, #"e"
+    jmz .is_a_digit
+
+    load b, a
+    sub b, #"E"
+    jmz .is_a_digit
+
+    .is_not_a_digit:
+    load b, #0
+    __epilogue
+    ret
+    .is_a_digit:
+    load b, #1
+    __epilogue
+    ret
+
+
+#bank rom
+;;
+; @function
 ; @brief returns 0 if strings are the same
 ; @section description
 ; takes a 2 string pointers and compares the contents

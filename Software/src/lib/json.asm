@@ -57,7 +57,7 @@ json_print:
         store b, (BP), .local8_type
 
         load b, (BP), .param8_isarr
-        sub b, #0
+        add b, #0
         jmz .tokenize
         
         ;if array set type to 1
@@ -71,7 +71,7 @@ json_print:
         load a, (hl)
 
         ; test end of string
-        sub a, #0x00
+        add a, #0x00
         jmz .done
 
         pushw hl ; save pointer on stack
@@ -93,7 +93,7 @@ json_print:
         ..check_key:
             ; check if we are expecting key
             load b, (BP), .local8_type
-            sub b, #0
+            add b, #0
             jnz ...next_test
             ; check for quote
             load b, a
@@ -323,7 +323,7 @@ json_print:
         ..check_number:
             pushw hl
             push a
-            call isdigit
+            call isjsondigit
             pop a
             popw hl
             add b, #0
@@ -349,20 +349,20 @@ json_print:
             load b, #1
             store b, (BP), .local8_type
             ...save_number:
-                load a, (hl)
                 pushw hl
                 push a
-                call isdigit
+                call isjsondigit
                 pop a
                 popw hl
                 add b, #0
                 jmz ...end_of_number
                 store a, static_uart_putc.char
                 call static_uart_putc
+                load a, (hl)
                 addw hl, #0x01
                 jmp ...save_number
             ...end_of_number:
-                addw hl, #0x01
+                subw hl, #0x01
                 call static_uart_print_newline
                 jmp .tokenizer_init
             ...next_test:
@@ -384,11 +384,11 @@ json_print:
         __epilogue
         ret
     
-    ; helper function
+    ; helper functions with no calling convention
     .__arr_update_name_and_incr:
         pushw hl
         load a, (BP), .param8_isarr
-        sub a, #0
+        add a, #0
         jmz ..done
 
         ; add '[NN]'
