@@ -348,15 +348,11 @@ isjsondigit:
     sub b, #"e"
     jmz .is_a_digit
 
-    ; load b, a
-    ; sub b, #"E"
-    ; jmz .is_a_digit
-
     .is_not_a_digit:
     load b, #0
     __epilogue
     ret
-    
+
     .is_a_digit:
     load b, #1
     __epilogue
@@ -417,7 +413,7 @@ strcmp:
         jnz .mismatch
         
         ; test for end of string.
-        sub b, #0
+        test b
         jmz .done
 
         ; loop

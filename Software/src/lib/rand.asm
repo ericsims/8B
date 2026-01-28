@@ -9,9 +9,6 @@
 
 #once
 
-#bank ram
-static_rand_lfsr8_x: #res 1
-
 #bank rom
 ;;
 ; @function

@@ -386,7 +386,7 @@ rshift_32:
 
         ; carry over last bit, if necessay
         load b, (BP), .local8_last_carry
-        add b, #0x00
+        test b
         jmz .store ; skip carrying if last_carry is zero
         or a, #0x80 ; set high bit from rshift carry
     .store:
