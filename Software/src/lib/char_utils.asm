@@ -247,38 +247,20 @@ isspace:
     sub b, #0x20
     jmz .is_whitespace
 
-    ; test Horizontal Tab
+    ; 0x09-0x0D are all white space chars
     load b, a
-    sub b, #0x09
-    jmz .is_whitespace
-
-    ; test Line Feed
-    load b, a
-    sub b, #0x0A
-    jmz .is_whitespace
-    
-    ; test Vertical Tab
-    load b, a
-    sub b, #0x0B
-    jmz .is_whitespace
-    
-    ; test Form Feed
-    load b, a
-    sub b, #0x0C
-    jmz .is_whitespace
-    
-    ; test Carriage Return
-    load b, a
-    sub b, #0x0D
-    jmz .is_whitespace
-
-    .is_not_whitespace:
-    load b, #0
-    __epilogue
-    ret
+    sub a, #0x09
+    jmn .is_not_whitespace ; not whitesapce if < 0x09
+    sub a, #(0x0D-0x09+1)
+    jnn .is_not_whitespace ; not a digit if > 0x0D
 
     .is_whitespace:
     load b, #1
+    __epilogue
+    ret
+
+    .is_not_whitespace:
+    load b, #0
     __epilogue
     ret
 
@@ -359,18 +341,22 @@ isjsondigit:
     sub b, #"+"
     jmz .is_a_digit
 
+    ; test for both capitol and lower case E
+    ; bitmasking to remove bit 7 will convert
     load b, a
+    or b, #0x20
     sub b, #"e"
     jmz .is_a_digit
 
-    load b, a
-    sub b, #"E"
-    jmz .is_a_digit
+    ; load b, a
+    ; sub b, #"E"
+    ; jmz .is_a_digit
 
     .is_not_a_digit:
     load b, #0
     __epilogue
     ret
+    
     .is_a_digit:
     load b, #1
     __epilogue

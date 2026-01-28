@@ -40,6 +40,21 @@ main:
     call isspace
     pop a
     assert b, #1
+
+    push #0x0C ; form feed kek
+    call isspace
+    pop a
+    assert b, #1
+    
+    push #0x08 ; backspace, test because its near the whitespace caracter range
+    call isspace
+    pop a
+    assert b, #0
+
+    push #0x0E ; shift out, test because its near the whitespace caracter range
+    call isspace
+    pop a
+    assert b, #0
     
     halt
 
