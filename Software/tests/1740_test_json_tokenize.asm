@@ -9,9 +9,11 @@ main:
     pushw #data_test
     pushw #token_name
     pushw #token_name
+    push #0
     call json_print
-    dealloc 6
-    
+    dealloc 7
+
+    assert b, #0
     halt
 
 ; includes
@@ -19,9 +21,9 @@ main:
 #include "../src/lib/char_utils.asm"
 #include "../src/lib/json.asm"
 
-data_test: #d incbin("./json_test_data3.json"), 0x00
+data_test: #d incbin("./json_test_data4.json"), 0x00
 
 ; global vars
 #bank ram
 token_name: #res 128
-STACK_BASE: #res 0
+STACK_BASE: #res 1024

@@ -285,6 +285,40 @@ isspace:
     ret
 
 
+
+#bank rom
+;;
+; @function
+; @brief returns 1 if character is a numeral digit
+; @section description
+; takes a 1 byte ASCII character
+;     _______________________
+; -5 |_____.param8_char______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_char input character
+;;
+isdigit:
+    .param8_char = -5
+    .init:
+    __prologue
+    load b, #0
+    load a, (BP), .param8_char
+
+    ; digits are 0x30 to 0x39 in ASCII
+    sub a, #0x30
+    jmn .done ; not a digit if < 0x30
+    sub a, #0x0A
+    jnn .done ; not a digit if > 0x39
+
+    load b, #1
+    .done:
+    __epilogue
+    ret
+
+
 #bank rom
 ;;
 ; @function

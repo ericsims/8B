@@ -10,37 +10,64 @@
 ; @brief ?
 ; @section description
 ;      _______________________
-; -10 |    .param16_str_in    |
-;  -9 |_______________________|
-;  -8 |.param16_base_name_ptr |
-;  -7 |_______________________|
-;  -6 |   .param16_name_ptr   |
-;  -5 |_______________________|
+; -11 |    .param16_str_in    |
+; -10 |_______________________|
+;  -9 |.param16_base_name_ptr |
+;  -8 |_______________________|
+;  -7 |   .param16_name_ptr   |
+;  -6 |_______________________|
+;  -5 |_____.param8_isarr_____|
 ;  -4 |___________?___________| RESERVED
 ;  -3 |___________?___________|    .
 ;  -2 |___________?___________|    .
 ;  -1 |___________?___________| RESERVED
 ;   0 |_____.local8_type______|
 ;   1 |__.local8_name_offset__|
+;   2 |_____.local8_arr_n_____|
+;   3 |______.local8_err______|
 ;
 ; @param .param16_str_in pointer to string
 ;;
 json_print:
-    .param16_str_in = -10
-    .param16_base_name_ptr= -8
-    .param16_name_ptr= -6
+    .param16_str_in = -11
+    .param16_base_name_ptr= -9
+    .param16_name_ptr= -7
+    .param8_isarr = -5
     .local8_type = 0
         ; 0: key
-        ; 1: value
+        ; nonzero: value
     .local8_name_offset = 1;
+    .local8_arr_n = 2;
+    .local8_err = 3;
+
     .init:
         __prologue
         loadw hl, (BP), .param16_str_in
-        push #0
-        push #0
+        push #0 ; type = 0
+        push #0 ; name_offset = 0
+        push #0 ; arr_n = 0
+        push #0 ; arr_n = 0
+        
+        ; if this is an array, change expected type to value, and init name
+        call .__arr_update_name_and_incr ; no calling convention
+
+    .tokenizer_init:
+        ; if array, expect another value, otherwise expect a key
+        load b, #0
+        store b, (BP), .local8_type
+
+        load b, (BP), .param8_isarr
+        sub b, #0
+        jmz .tokenize
+        
+        ;if array set type to 1
+        load b, #1
+        store b, (BP), .local8_type
+        jmp .tokenize
 
     ; tokenize function is main loop. it will discard white space until a token is found
     .tokenize:
+        ; load a reg with character
         load a, (hl)
 
         ; test end of string
@@ -53,15 +80,15 @@ json_print:
         push a
         call isspace
         pop a
+
         popw hl ; restore pointer from stack
         addw hl, #0x01
-        sub b, #0x00
+        add b, #0x00
         jmz .token_found
         jmp .tokenize
 
-    ; token_found is a bit if/else for the type of tokens we are expecting
+    ; token_found is a big if/else for the type of tokens
     .token_found:    
-
         ; check if this token is a key. this token is only accepted if the tokenizer is expecting a key, and not a value
         ..check_key:
             ; check if we are expecting key
@@ -114,15 +141,6 @@ json_print:
                 addw hl, b
                 load b, #0
                 store b, (hl)
-                ; print key
-                loadw hl, (BP), .param16_base_name_ptr
-                storew hl, static_uart_print.data_pointer
-                call static_uart_print
-                store #":", static_uart_putc.char
-                call static_uart_putc
-                store #" ", static_uart_putc.char
-                call static_uart_putc
-                ; continue tokenization
                 pop a
                 popw hl
                 jmp .tokenize
@@ -146,13 +164,17 @@ json_print:
             load b, a
             sub b, #","
             jnz ...next_test
-            
-            load b, #0
-            load b, (BP), .local8_type
 
-            addw hl, #0x01
-            jmp .tokenize
+            ; backspace last 4 chars of key name
+            load b, (BP), .local8_name_offset
+            sub b, #4
+            store b, (BP), .local8_name_offset
+
+            call .__arr_update_name_and_incr ; no calling convention
+            jmp .tokenizer_init
             ...next_test:
+            
+        ; these following types are all for values
 
         ; test for the start of an object '{' this will cause this function to recurse into the object
         ..check_obj:
@@ -180,15 +202,18 @@ json_print:
                 load b, (BP), .local8_name_offset
                 addw hl, b
                 pushw hl
+                push #0
                 call json_print
-                dealloc 4 ; discard nameptr, base name ptr
+                dealloc 5 ; discard params
                 popw hl
+                ; test return code
+                add b, #0
+                jmz ....no_error
+                load b, #1
+                store b, (BP), .local8_err 
+                ....no_error:
 
-                ; reset tokenizer
-                load b, #0
-                store b, (BP), .local8_type
-
-                jmp .tokenize
+                jmp .tokenizer_init
             ...next_test:
 
         ; test for the end of an object '}' this will cause this function to return to allow the recusion to complete
@@ -197,7 +222,7 @@ json_print:
             sub b, #"}"
             jnz ...next_test
             ...end_object:
-                addw hl, #0x01
+                ; addw hl, #0x01
                 push a
                 pushw hl
                 storew #.type_obj_end_str, static_uart_print.data_pointer
@@ -207,7 +232,54 @@ json_print:
                 jmp .done
             ...next_test:
 
-        ; these following types are all for values
+        ; test for the start of an array '['
+        ..check_arr:
+            load b, a
+            sub b, #"["
+            jnz ...next_test
+            ...new_arr:
+                pushw hl
+
+                storew #.type_arr_str, static_uart_print.data_pointer
+                ;call static_uart_print
+                
+                ; recurse into new object
+                loadw hl, (BP), .param16_base_name_ptr
+                pushw hl
+                loadw hl, (BP), .param16_name_ptr
+                load b, (BP), .local8_name_offset
+                addw hl, b
+                pushw hl
+                push #1
+                call json_print
+                dealloc 5 ; discard params
+                popw hl
+                ; test return code
+                add b, #0
+                jmz ....no_error
+                load b, #1
+                store b, (BP), .local8_err 
+                ....no_error:
+
+                jmp .tokenizer_init
+            ...next_test:
+
+        ; test for the end of an array ']' this will cause this function to return to allow the recusion to complete
+        ..check_arr_end:
+            load b, a
+            sub b, #"]"
+            jnz ...next_test
+            ...end_arr:
+                addw hl, #0x01
+                push a
+                pushw hl
+                storew #.type_arr_end_str, static_uart_print.data_pointer
+                ;call static_uart_print
+                popw hl
+                pop a
+                jmp .done
+            ...next_test:
+    
         ; test for a " character to determine this is a string type
         ..check_string:
             load b, a
@@ -215,6 +287,17 @@ json_print:
             jnz ...next_test
             push a
             pushw hl
+
+            ; print key
+            loadw hl, (BP), .param16_base_name_ptr
+            storew hl, static_uart_print.data_pointer
+            call static_uart_print
+            store #":", static_uart_putc.char
+            call static_uart_putc
+            store #" ", static_uart_putc.char
+            call static_uart_putc
+
+
             storew #.type_str_str, static_uart_print.data_pointer
             call static_uart_print
             popw hl
@@ -233,14 +316,61 @@ json_print:
             ...end_of_string:
                 addw hl, #0x01
                 call static_uart_print_newline
-                ; reset tokenizer
-                load b, #0
-                store b, (BP), .local8_type
-                jmp .tokenize
+                jmp .tokenizer_init
+            ...next_test:
+
+        ; test for a number digit character to determine this is a number
+        ..check_number:
+            pushw hl
+            push a
+            call isdigit
+            pop a
+            popw hl
+            add b, #0
+            jmz ...next_test
+
+            halt
+            push a
+            pushw hl
+
+            ; print key
+            loadw hl, (BP), .param16_base_name_ptr
+            storew hl, static_uart_print.data_pointer
+            call static_uart_print
+            store #":", static_uart_putc.char
+            call static_uart_putc
+            store #" ", static_uart_putc.char
+            call static_uart_putc
+
+            storew #.type_num_str, static_uart_print.data_pointer
+            call static_uart_print
+            popw hl
+            pop a
+            load b, #1
+            store b, (BP), .local8_type
+            ...save_number:
+                load a, (hl)
+                pushw hl
+                push a
+                call isdigit
+                pop a
+                popw hl
+                add b, #0
+                jmz ...end_of_number
+                store a, static_uart_putc.char
+                call static_uart_putc
+                addw hl, #0x01
+                jmp ...save_number
+            ...end_of_number:
+                addw hl, #0x01
+                call static_uart_print_newline
+                jmp .tokenizer_init
             ...next_test:
 
         ; fall though, this is not an expected token
         ..continue:
+            load b, #1
+            store b, (BP), .local8_err
             store a, static_uart_putc.char
             call static_uart_putc
             store #"*", static_uart_putc.char
@@ -249,11 +379,75 @@ json_print:
 
     .done:
         storew hl, (BP), .param16_str_in
-        dealloc 2
+        load b, (BP), .local8_err
+        dealloc 4
         __epilogue
         ret
+    
+    ; helper function
+    .__arr_update_name_and_incr:
+        pushw hl
+        load a, (BP), .param8_isarr
+        sub a, #0
+        jmz ..done
+
+        ; add '[NN]'
+        load b, (BP), .local8_name_offset
+        loadw hl, (BP), .param16_name_ptr
+        addw hl, b
+
+        ; assume length of string added
+        add b, #4
+        store b, (BP), .local8_name_offset
+        
+        load b, #"["
+        store b, (hl)
+        addw hl, #1
+
+        pushw hl
+        load a, (BP), .local8_arr_n
+        ; rshift x4 just keep upper 4 bits
+        rshift a
+        rshift a
+        rshift a
+        rshift a
+        push a
+        call itoa_hex_nibble
+        pop a
+        popw hl
+        store b, (hl)
+        addw hl, #1
+
+        pushw hl
+        load a, (BP), .local8_arr_n
+        push a
+        ; increment array index, while we have it in a reg
+        add a, #1
+        store a, (BP), .local8_arr_n
+        call itoa_hex_nibble
+        pop a
+        popw hl
+        store b, (hl)
+        addw hl, #1
+
+        load b, #"]"
+        store b, (hl)
+        addw hl, #1
+        
+        load b, #0
+        store b, (hl)
+        
+        ..done:
+            popw hl
+            ret
+
 
     .type_obj_str: #d "NEW OBJ\n\0"
     .type_obj_end_str: #d "END OBJ\n\0"
     .type_str_str: #d "STR \0"
+    .type_num_str: #d "NUM \0"
     .type_key_str: #d "KEY \0"
+    .type_arr_str: #d "ARR \0"
+    .type_arr_end_str: #d "END ARR\n\0"
+
+#include "./char_utils.asm"
