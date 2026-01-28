@@ -329,7 +329,6 @@ json_print:
             add b, #0
             jmz ...next_test
 
-            halt
             push a
             pushw hl
 

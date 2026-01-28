@@ -262,7 +262,7 @@ isspace:
     sub b, #0x0B
     jmz .is_whitespace
     
-    ; test 	Form Feed
+    ; test Form Feed
     load b, a
     sub b, #0x0C
     jmz .is_whitespace
@@ -272,15 +272,13 @@ isspace:
     sub b, #0x0D
     jmz .is_whitespace
 
-    ; char is not whitespace
+    .is_not_whitespace:
     load b, #0
-    jmp .done
+    __epilogue
+    ret
 
     .is_whitespace:
     load b, #1
-    jmp .done
-
-    .done:
     __epilogue
     ret
 

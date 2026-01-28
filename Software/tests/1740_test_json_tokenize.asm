@@ -16,6 +16,8 @@ main:
     assert b, #0
     halt
 
+jmp 0
+
 ; includes
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
