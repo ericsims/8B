@@ -53,16 +53,14 @@ json_print:
 
     .tokenizer_init:
         ; if array, expect another value, otherwise expect a key
-        load b, #0
-        store b, (BP), .local8_type
+        store #0, (BP), .local8_type
 
         load b, (BP), .param8_isarr
-        add b, #0
+        test b
         jmz .tokenize
         
         ;if array set type to 1
-        load b, #1
-        store b, (BP), .local8_type
+        store #1, (BP), .local8_type
         jmp .tokenize
 
     ; tokenize function is main loop. it will discard white space until a token is found
@@ -71,7 +69,7 @@ json_print:
         load a, (hl)
 
         ; test end of string
-        add a, #0x00
+        test a
         jmz .done
 
         pushw hl ; save pointer on stack
@@ -83,7 +81,7 @@ json_print:
 
         popw hl ; restore pointer from stack
         addw hl, #0x01
-        add b, #0x00
+        test b
         jmz .token_found
         jmp .tokenize
 
@@ -93,23 +91,21 @@ json_print:
         ..check_key:
             ; check if we are expecting key
             load b, (BP), .local8_type
-            add b, #0
+            test b
             jnz ...next_test
             ; check for quote
             load b, a
             sub b, #0x22 ; double quote
             jnz ...next_test
-            push a
-            pushw hl
-            storew #.type_key_str, static_uart_print.data_pointer
+            ; push a
+            ; pushw hl
+            ; storew #.type_key_str, static_uart_print.data_pointer
             ; call static_uart_print
-            popw hl
-            pop a
-            load b, #1
-            store b, (BP), .local8_type
+            ; popw hl
+            ; pop a
+            store #1, (BP), .local8_type
             ; zero the destination pointer offset
-            load b, #0
-            store b, (BP), .local8_name_offset
+            store #0, (BP), .local8_name_offset
 
             ...save_key:
                 ; check if current char is a double quote, which would be end of string
@@ -134,14 +130,11 @@ json_print:
             ...end_of_key:
                 addw hl, #0x01
                 pushw hl
-                push a
                 ; zero terminate key string
                 load b, (BP), .local8_name_offset
                 loadw hl, (BP), .param16_name_ptr
                 addw hl, b
-                load b, #0
-                store b, (hl)
-                pop a
+                store #0, (hl)
                 popw hl
                 jmp .tokenize
             ...next_test:
@@ -152,8 +145,7 @@ json_print:
             sub b, #":"
             jnz ...next_test
             
-            load b, #1
-            load b, (BP), .local8_type
+            store #1, (BP), .local8_type
 
             addw hl, #0x01
             jmp .tokenize
@@ -189,11 +181,10 @@ json_print:
                 addw hl, b
                 add b, #1
                 store b, (BP), .local8_name_offset
-                load b, #"."
-                store b, (hl)
+                store #".", (hl)
 
-                storew #.type_obj_str, static_uart_print.data_pointer
-                ;call static_uart_print
+                ; storew #.type_obj_str, static_uart_print.data_pointer
+                ; call static_uart_print
                 
                 ; recurse into new object
                 loadw hl, (BP), .param16_base_name_ptr
@@ -207,12 +198,10 @@ json_print:
                 dealloc 5 ; discard params
                 popw hl
                 ; test return code
-                add b, #0
+                test b
                 jmz ....no_error
-                load b, #1
-                store b, (BP), .local8_err 
+                store #1, (BP), .local8_err 
                 ....no_error:
-
                 jmp .tokenizer_init
             ...next_test:
 
@@ -223,12 +212,12 @@ json_print:
             jnz ...next_test
             ...end_object:
                 ; addw hl, #0x01
-                push a
-                pushw hl
-                storew #.type_obj_end_str, static_uart_print.data_pointer
-                ;call static_uart_print
-                popw hl
-                pop a
+                ; push a
+                ; pushw hl
+                ; storew #.type_obj_end_str, static_uart_print.data_pointer
+                ; call static_uart_print
+                ; popw hl
+                ; pop a
                 jmp .done
             ...next_test:
 
@@ -240,8 +229,8 @@ json_print:
             ...new_arr:
                 pushw hl
 
-                storew #.type_arr_str, static_uart_print.data_pointer
-                ;call static_uart_print
+                ; storew #.type_arr_str, static_uart_print.data_pointer
+                ; call static_uart_print
                 
                 ; recurse into new object
                 loadw hl, (BP), .param16_base_name_ptr
@@ -255,10 +244,9 @@ json_print:
                 dealloc 5 ; discard params
                 popw hl
                 ; test return code
-                add b, #0
+                test b
                 jmz ....no_error
-                load b, #1
-                store b, (BP), .local8_err 
+                store #1, (BP), .local8_err 
                 ....no_error:
 
                 jmp .tokenizer_init
@@ -271,12 +259,12 @@ json_print:
             jnz ...next_test
             ...end_arr:
                 addw hl, #0x01
-                push a
-                pushw hl
-                storew #.type_arr_end_str, static_uart_print.data_pointer
-                ;call static_uart_print
-                popw hl
-                pop a
+                ; push a
+                ; pushw hl
+                ; storew #.type_arr_end_str, static_uart_print.data_pointer
+                ; call static_uart_print
+                ; popw hl
+                ; pop a
                 jmp .done
             ...next_test:
     
@@ -302,8 +290,7 @@ json_print:
             call static_uart_print
             popw hl
             pop a
-            load b, #1
-            store b, (BP), .local8_type
+            store #1, (BP), .local8_type
             ...save_string:
                 load a, (hl)
                 load b, a
@@ -326,7 +313,7 @@ json_print:
             call isjsondigit
             pop a
             popw hl
-            add b, #0
+            test b
             jmz ...next_test
 
             push a
@@ -345,15 +332,14 @@ json_print:
             call static_uart_print
             popw hl
             pop a
-            load b, #1
-            store b, (BP), .local8_type
+            store #1, (BP), .local8_type
             ...save_number:
                 pushw hl
                 push a
                 call isjsondigit
                 pop a
                 popw hl
-                add b, #0
+                test b
                 jmz ...end_of_number
                 store a, static_uart_putc.char
                 call static_uart_putc
@@ -368,9 +354,7 @@ json_print:
 
         ; fall though, this is not an expected token
         ..continue:
-            load b, #1
-            store b, (BP), .local8_err
-            store a, static_uart_putc.char
+            store #1, static_uart_putc.char
             call static_uart_putc
             store #"*", static_uart_putc.char
             call static_uart_putc
@@ -387,7 +371,7 @@ json_print:
     .__arr_update_name_and_incr:
         pushw hl
         load a, (BP), .param8_isarr
-        add a, #0
+        test a
         jmz ..done
 
         ; add '[NN]'
@@ -399,8 +383,7 @@ json_print:
         add b, #4
         store b, (BP), .local8_name_offset
         
-        load b, #"["
-        store b, (hl)
+        store #"[", (hl)
         addw hl, #1
 
         pushw hl
@@ -429,16 +412,14 @@ json_print:
         store b, (hl)
         addw hl, #1
 
-        load b, #"]"
-        store b, (hl)
+        store #"]", (hl)
         addw hl, #1
         
-        load b, #0
-        store b, (hl)
+        store #0, (hl)
         
         ..done:
-            popw hl
-            ret
+        popw hl
+        ret
 
 
     .type_obj_str: #d "NEW OBJ\n\0"

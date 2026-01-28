@@ -439,6 +439,16 @@ push b =>
   0x39
 }
 
+; store_imm_hl_indir
+; store imm value to indirect address in hl register
+; usage: store #data[7:0], (hl)
+store #{imm: i8}, (hl) =>
+{
+  assert(imm >= 0)
+  assert(imm <= 0xff)
+  0x3F @ imm`8
+}
+
 ; load_a_hl_indir
 ; load a register from indirect address in hl register
 ; usage: load a, (hl)
@@ -713,6 +723,22 @@ call {addr: i16} =>
   0x6B @ addr`16
 }
 
+; test_a
+; tests value in a register and updates flags
+; usage: test a
+test a =>
+{
+  0x6C
+}
+
+; test_b
+; tests value in ab register and updates flags
+; usage: test b
+test b =>
+{
+  0x6D
+}
+
 ; ret
 ; Return from Subroutine
 ; usage: ret
@@ -931,6 +957,30 @@ storew hl, ({addr: i16}), {offset: i8} =>
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x5F @ addr`16  @ (offset*-1)`8
+}
+
+; store_imm_indir_poffset
+; store imm value to indirect (address) + offset
+; usage: store #data[7:0], address[15:0], offset[7:0]
+store #{imm: i8}, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset >= 0x00)
+  assert(offset <= 0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x60 @ imm`8 @ addr`16  @ offset`8
+}
+
+; store_imm_indir_noffset
+; store imm value to indirect (address) - offset
+; usage: store #data[7:0], address[15:0], offset[7:0]
+store #{imm: i8}, ({addr: i16}), {offset: i8} =>
+{
+  assert(offset < -0x00)
+  assert(offset >= -0xFF)
+  assert(addr >= 0)
+  assert(addr <= 0xffff)
+  0x61 @ addr`16  @ (offset*-1)`8
 }
 
 }

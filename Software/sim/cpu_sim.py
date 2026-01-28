@@ -624,7 +624,8 @@ def main():
             # Right Shift 1
             flags['CF'] = X.value & 0x01
           else:
-            raise Exception("should only update CF on ALU operation")
+            flags['CF'] = 1 # pullup
+            # raise Exception("should only update CF on ALU operation")
 
         # CLK
         if ctrl['HT']:
