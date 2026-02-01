@@ -79,6 +79,14 @@ load b, ({addr: i16}) =>
   0x0A @ addr`16
 }
 
+; loadw_hl_hl_indir
+; load hl register with word from indirect address in hl register
+; usage: loadw hl, (hl)
+loadw hl, (hl) =>
+{
+  0x0B
+}
+
 ; loadw_hl_imm
 ; load hl register with immediate word
 ; usage: loadw hl, #data[15:0]

@@ -365,6 +365,34 @@ instructions:
       # load data
       - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
 
+
+  loadw_hl_hl_indir:
+    description: 'load hl register with word from indirect address in hl register'
+    duration: 10  # clock cycles
+    operands: 0  # bytes
+    usage: 'loadw hl, (hl)'
+    opcode: 0x0B
+    asm_def: |
+      loadw hl, (hl) =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      # fetch
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # store direct address
+      - [HO, JI, LM]         # Load address out of hl register into j scratch register
+      - [HO, JI]
+      # load MSB
+      - [JO, MA, LM]         # Load address out of hl register into MAR
+      - [JO, MA]
+      - [MO, HI, LM]         # Load MSB of data in hl register
+      # load LSB
+      - [MC]
+      - [MO, HI, RU]         # Load LSB of data in hl register. ucode counter reset
+
   loadw_hl_imm:
     description: 'load hl register with immediate word'
     duration: 7  # clock cycles

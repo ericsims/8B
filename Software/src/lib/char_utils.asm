@@ -63,7 +63,7 @@ static_uart_print:
 .loop:
     load a, (hl)
     ; check if char is 0
-    add a, #0x00
+    test a
     jmz .done
     
     ; put c
@@ -79,6 +79,39 @@ static_uart_print:
 #bank ram
     .data_pointer: #res 2 ; pointer to begining of string. MSB, LSB
 
+#bank rom
+;;
+; @function
+; @brief print null terminated string to UART
+; @section description
+; static function
+; TODO: this function doesn't check if the UART is ready to send
+;;
+static_uart_print_len:
+    ; load current char
+    loadw hl, static_uart_print.data_pointer
+    load b, .data_len
+.loop:
+    load a, (hl)
+    ; check if char is 0
+    test a
+    jmz .done
+    test b
+    jmz .done
+    sub b, #0x01
+    
+    ; put c
+    store a, static_uart_putc.char
+    call static_uart_putc
+    
+    addw hl, #0x01
+    jmp .loop
+    
+    .done:
+    ret
+    
+#bank ram
+    .data_len: #res 1 ; max length
 
 #bank rom
 ;;

@@ -1,5 +1,5 @@
 ; ###
-; json.asm begin
+; json_print.asm begin
 ; ###
 
 #once
@@ -146,8 +146,6 @@ json_print:
             jnz ...next_test
             
             store #1, (BP), .local8_type
-
-            addw hl, #0x01
             jmp .tokenize
             ...next_test:
 
@@ -205,19 +203,13 @@ json_print:
                 jmp .tokenizer_init
             ...next_test:
 
-        ; test for the end of an object '}' this will cause this function to return to allow the recusion to complete
+        ; test for the end of an object '}' or end of array ']' this will cause this function to return to allow the recusion to complete
         ..check_obj_end:
             load b, a
+            or b, #0x20 ; convert ']' to '}'
             sub b, #"}"
             jnz ...next_test
             ...end_object:
-                ; addw hl, #0x01
-                ; push a
-                ; pushw hl
-                ; storew #.type_obj_end_str, static_uart_print.data_pointer
-                ; call static_uart_print
-                ; popw hl
-                ; pop a
                 jmp .done
             ...next_test:
 
@@ -248,24 +240,7 @@ json_print:
                 jmz ....no_error
                 store #1, (BP), .local8_err 
                 ....no_error:
-
                 jmp .tokenizer_init
-            ...next_test:
-
-        ; test for the end of an array ']' this will cause this function to return to allow the recusion to complete
-        ..check_arr_end:
-            load b, a
-            sub b, #"]"
-            jnz ...next_test
-            ...end_arr:
-                addw hl, #0x01
-                ; push a
-                ; pushw hl
-                ; storew #.type_arr_end_str, static_uart_print.data_pointer
-                ; call static_uart_print
-                ; popw hl
-                ; pop a
-                jmp .done
             ...next_test:
     
         ; test for a " character to determine this is a string type
@@ -422,12 +397,11 @@ json_print:
         ret
 
 
-    .type_obj_str: #d "NEW OBJ\n\0"
-    .type_obj_end_str: #d "END OBJ\n\0"
+    ; .type_obj_str: #d "NEW OBJ\n\0"
+    ; .type_obj_end_str: #d "END OBJ\n\0"
     .type_str_str: #d "STR \0"
     .type_num_str: #d "NUM \0"
     .type_key_str: #d "KEY \0"
-    .type_arr_str: #d "ARR \0"
-    .type_arr_end_str: #d "END ARR\n\0"
+    ; .type_arr_str: #d "ARR \0"
 
 #include "./char_utils.asm"
