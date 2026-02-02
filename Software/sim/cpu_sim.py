@@ -1024,7 +1024,6 @@ def main():
         print(f"  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}")
       print(f"  {pc.value:04X} <-- PC")
       print()
-      window.Read()
 
 
 

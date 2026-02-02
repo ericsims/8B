@@ -92,7 +92,6 @@ exp_res2: #d "https://api.weather.gov/offices/BOX\0"
 search_str3: #d ".properties.relativeLocation.geometry.coordinates[01]\0"
 exp_res3: #d "42.33196\0"
 
-
 ; global vars
 #bank ram
 json_key_buf: #res 128
