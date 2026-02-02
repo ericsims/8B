@@ -3,25 +3,35 @@
 ; ROM
 ; MEM slot 1
 ROM              = 0x0000
-ROM_SIZE         = 0x8000
+ROM_SIZE         = 0x4000
 
 ; RAM
 ; MEM slot 2
-RAM              = 0x8000
-RAM_SIZE         = 0x4000
+RAM              = 0x4000
+RAM_SIZE         = 0x8000
 
-; MOT
-; MEM slot 4
-MOT              = 0xD002
-MOT_SIZE         = 0x0002
+; EXRAM
+; MEM slot 3
+EXRAM            = 0xC000
+EXRAM_SIZE       = 0x2002
 
 ; UART
-; MEM slot 3
-UART             = 0xD008
+; MEM slot 5
+UART             = 0xE002
 UART_SIZE        = 0x0002
 
-; EXT_ROM
-; MEM slot 5
-EXT_ROM          = 0xD00C
-EXT_ROM_SIZE     = 0x0001
+; MOT
+; MEM slot 6
+MOT              = 0xE004
+MOT_SIZE         = 0x0002
+
+; SDCARD
+; MEM slot 4
+SDCARD           = 0xE006
+SDCARD_SIZE      = 0x0002
+
+; ETH
+; MEM slot 7
+ETH              = 0xE400
+ETH_SIZE         = 0x0400
 

@@ -31,32 +31,42 @@ automatic:
 
 layout:
   0x0000:
-    size: 0x8000
+    size: 0x4000
     label: "ROM"
     labels:
-      "er,ic": "32 KiB"
+      "er,ic": "16 KiB"
       "el,ib": "TEXT"
     bank: true
     fill: '#D7D3EC'
     location: 1
-  0x8000:
-    size: 0x4000
+  0x4000:
+    size: 0x8000
     label: "RAM"
     labels:
-      "er,ic": "16 KiB"
+      "er,ic": "32 KiB"
       "el,ib": "↑\nSTACK\nBSS"
     bank: true
     fill: "#C7F3DC"
     location: 2
-  0xD002:
-    size: 0x0002
-    label: "MOT"
-    location: 4
-  0xD008:
+  0xC000:
+    size: 0x2002
+    label: "EXRAM"
+    labels:
+      "er,ic": "8 KiB x 256\n(2 MiB)"
+    location: 3
+  0xE002:
     size: 0x0002
     label: "UART"
-    location: 3
-  0xD00C:
-    size: 1
-    label: "EXT_ROM"
     location: 5
+  0xE004:
+    size: 0x0002
+    label: "MOT"
+    location: 6
+  0xE006:
+    size: 0x0002
+    label: "SDCARD"
+    location: 4
+  0xE400:
+    size: 0x400
+    label: "ETH"
+    location: 7

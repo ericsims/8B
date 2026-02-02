@@ -88,7 +88,7 @@ $(coverage_report): $(IR_DOCS)
 	@echo generating instruction test coverage report...
 	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
 
-memory_map: $(MEM_MAP_DOC)
+memory_map: $(MEM_MAP_DOC) 
 $(MEM_MAP_DOC): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."

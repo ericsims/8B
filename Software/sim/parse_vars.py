@@ -39,7 +39,7 @@ def parse_vars(file_name):
                     # print(f"l: {dat}")
                     addr = int(dat[1], 16)
                     # TODO: RAM range is hard coded
-                    if addr >= 0x8000 and addr <= 0xBFFF:
+                    if addr >= 0x4000 and addr <= 0xBFFF:
                         # print(f"{symbols[addr]}")
                         vars.append({labels[addr]: addr})
                     else:

@@ -51,7 +51,7 @@ def main():
   GUI = True
   DEAD_CODE = False
 
-  BP_ADDR = 0x8000
+  BP_ADDR = 0x4000
 
   # process flags
 
@@ -78,7 +78,8 @@ def main():
 
   except getopt.error as err:
     # output error, and return with an error code
-    print(str(err))
+    print(str(err), file=sys.stderr)
+    return 2
 
   if SIM:
     try:
@@ -369,41 +370,6 @@ def main():
       expand_x=True
     )
   ]]
-  layout_ext_rom = [
-    [
-      sg.T('EXT ROM Addr Ptr   '),
-      sg.T(
-        text='',
-        size=(6,1),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_EXT_ROM_ADDR_'
-      )
-    ],
-    [
-      sg.T('EXT ROM Current Val'),
-      sg.T(
-        text='',
-        size=(4,1),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_EXT_ROM_VAL_'
-      )
-    ],
-    [
-      sg.T(
-        text='',
-        size=(32*3+10,65),
-        font=('courier new',6),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_EXT_ROM_'
-      )
-    ]
-  ]
   layout_time = [[
     sg.Multiline(
       size=(100,70),
@@ -449,7 +415,6 @@ def main():
       sg.Tab('SRAM', layout_sram, expand_x=True, expand_y=True),
       sg.Tab('STACK', layout_stack, expand_x=True, expand_y=True),
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
-      sg.Tab('EXT_ROM', layout_ext_rom, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
       sg.Tab('UART', layout_uart, expand_x=True, expand_y=True),
       ]])
@@ -489,8 +454,6 @@ def main():
       break
     mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
     eeprom_usage += 1
-    # TODO: load real ext_rom bin
-    mems.ext_eeprom.value[eep_ptr] = ord(byte) & 0xFF
     eep_ptr+=1
 
   file.close()
@@ -856,7 +819,7 @@ def main():
               else:
                 sram_values += f"{mems.sram.value[n]:02X}"
               # TODO: sram address is hard coded...
-              if (n == stack.get_pointer()-0x8000-1):
+              if (n == stack.get_pointer()-0x4000-1):
                 sram_values += "*"
               else:
                 sram_values += " "
@@ -930,29 +893,7 @@ def main():
             else:
               window['_INST_NAME_'].update("?")
 
-
-            window['_EXT_ROM_ADDR_'].update(f"0x{mems.ext_eeprom.addr_reg:04X}")
-            window['_EXT_ROM_VAL_'].update(f"0x{mems.ext_eeprom.get(0x00):02X}")
-
-            ext_rom_values = ""
-            ext_rom_base_addr = mems.ext_eeprom.addr_reg & (~(2**11-1))
-            for n in range(2**11):
-              rom_addr = ext_rom_base_addr + n
-              if n%32 == 0:
-                ext_rom_values += f"\n {rom_addr:04X} "
-              elif(n)%8 == 0:
-                ext_rom_values += " "
-              if (rom_addr == mems.ext_eeprom.addr_reg):
-                ext_rom_values += "*"
-              else:
-                ext_rom_values += " "
-              if mems.ext_eeprom.value[rom_addr] is None:
-                ext_rom_values += "--"
-              else:
-                ext_rom_values += f"{mems.ext_eeprom.value[rom_addr]:02X}"
-
-            window['_EXT_ROM_'].update(ext_rom_values)
-            
+          
 
             inst_stats_str = ""
             for x in sorted(inst_stats.items(), key=lambda item: item[1]['calls'], reverse=True):
@@ -1015,17 +956,19 @@ def main():
         window.close()
 
     except yaml.YAMLError as exc:
-      print(exc)
+      print(exc, file=sys.stderr)
+      return 2
     
     except Exception as exc:
-      print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}")      
-      print("stack trace")
+      print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}", file=sys.stderr)
+      print("stack trace", file=sys.stderr)
       for call in call_graph[current_call]['stack_trace']:
-        print(f"  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}")
-      print(f"  {pc.value:04X} <-- PC")
-      print()
+        print(f"  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}", file=sys.stderr)
+      print(f"  {pc.value:04X} <-- PC", file=sys.stderr)
+      print("", file=sys.stderr)
+      return 1
 
 
 
 if __name__ == "__main__":
-  main()
+  sys.exit(main())
