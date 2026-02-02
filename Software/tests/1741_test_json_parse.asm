@@ -76,6 +76,7 @@ print_key_val:
     storew #json_value_buf, static_uart_print.data_pointer
     call static_uart_print
     call static_uart_print_newline
+    ret
 
 ; includes
 #include "../src/CPU.asm"

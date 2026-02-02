@@ -23,6 +23,18 @@ from parse_vars import *
 # TODO: call graph to include call/ret/jumps. add subgraph for subroutines
 # TODO: extended memory
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 uart_print_buf = ""
 
 class dbg(Enum):
@@ -504,7 +516,7 @@ def main():
   inst_names = {}
   inst_stats = {}
   current_call = 0
-  call_graph = [{'addr': 0, 'symbol': 'entry_point', 'stack_trace': [0], 'qty': 1, 'bk_on_ret': False}]
+  call_graph = [{'addr': 0, 'symbol': 'entry_point', 'stack_trace': [0], 'qty': 1, 'bk_on_ret': False, 'called_from':0}]
 
   with open('instruction_set.yaml', 'r') as stream:
     try:
@@ -698,34 +710,36 @@ def main():
         elif ctrl['NI']:
           stack.set(data,ctrl['LM'])
 
-        if GUI:
-          # check if this is a jmp/call/ret instruction
-          if ctrl['PI'] and ctrl['RU']:
-            if ii.value == 0x6B: # call)
-              dup = None
-              stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
-              for k in range(len(call_graph)):
-                test_trace = [call_graph[n]['addr'] for n in call_graph[k]['stack_trace']]
-                # print(f"  {k} {stack_trace}")
-                if test_trace == stack_trace:
-                  dup = k
-                  break
+        # check if this is a jmp/call/ret instruction
+        if ctrl['PI'] and ctrl['RU']:
+          if ii.value == 0x6B: # call)
+            dup = None
+            stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
+            for k in range(len(call_graph)):
+              test_trace = [call_graph[n]['addr'] for n in call_graph[k]['stack_trace']]
+              # print(f"  {k} {stack_trace}")
+              if test_trace == stack_trace:
+                dup = k
+                break
 
-              if dup is None:
-                call_graph.append({'addr':pc.value, 'symbol':labels[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False})
-                current_call = len(call_graph)-1
-              else:
-                current_call = dup
-                call_graph[current_call]['qty'] += 1
-              # print("call")
-            elif ii.value == 0x74: # return
-              if call_graph[current_call]['bk_on_ret']: 
-                call_graph[current_call]['bk_on_ret'] = False
-                dbg_state = dbg.BREAK_IMM
-              current_call = call_graph[current_call]['stack_trace'][-2]
-              # print("return")
-            else: # some kind of jump
-              pass
+            call_addr = mems.get(stack.get_pointer()-2,ignore_uninit=True)*256+mems.get(stack.get_pointer()-1,ignore_uninit=True)-3
+            if dup is None:
+              call_graph.append({'addr':pc.value, 'symbol':labels[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False, 'called_from':call_addr})
+              current_call = len(call_graph)-1
+            else:
+              current_call = dup
+              call_graph[current_call]['qty'] += 1
+              call_graph[current_call]['called_from'] = call_addr
+            # print(f"called {call_graph[current_call]['symbol']} from {call_addr:04X}")
+            # print("call")
+          elif ii.value == 0x74: # return
+            if call_graph[current_call]['bk_on_ret']: 
+              call_graph[current_call]['bk_on_ret'] = False
+              dbg_state = dbg.BREAK_IMM
+            current_call = call_graph[current_call]['stack_trace'][-2]
+            # print("return")
+          else: # some kind of jump
+            pass
 
         # U CODE
         UCC = (UCC + 1) & 0x1F
@@ -756,32 +770,32 @@ def main():
               if mems.get(addr) == A.value:
                 print(f"pass, a = 0x{A.value:02X}")
               else:
-                raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\n")
             elif ii.value == int(IS['instructions']['assert_b']['opcode']):
               if mems.get(addr) == B.value:
                 print(f"pass, b = 0x{B.value:02X}")
               else:
-                raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\n")
             elif ii.value == int(IS['instructions']['assert_hl']['opcode']):
               if (mems.get(addr-1)<<8)+(mems.get(addr)) == HL.value:
                 print(f"pass, HL = 0x{HL.value:04X}")
               else:
-                raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\n")
             elif ii.value == int(IS['instructions']['assert_zf']['opcode']):
               if mems.get(addr) == flags['ZF']:
                 print(f"pass, ZF = {flags['ZF']}")
               else:
-                raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\n")
             elif ii.value == int(IS['instructions']['assert_cf']['opcode']):
               if mems.get(addr) == flags['CF']:
                 print(f"pass, CF = {flags['CF']}")
               else:
-                raise Exception(f"test case failed, CF = {flags['CF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, CF = {flags['CF']}, expected {mems.get(addr)}\n")
             elif ii.value == int(IS['instructions']['assert_nf']['opcode']):
               if mems.get(addr) == flags['NF']:
                 print(f"pass, NF = {flags['NF']}")
               else:
-                raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\nPC=0x{pc.value:04X}")
+                raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\n")
 
         if GUI:
           if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:
@@ -1002,6 +1016,17 @@ def main():
 
     except yaml.YAMLError as exc:
       print(exc)
+    
+    except Exception as exc:
+      print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}")      
+      print("stack trace")
+      for call in call_graph[current_call]['stack_trace']:
+        print(f"  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}")
+      print(f"  {pc.value:04X} <-- PC")
+      print()
+      window.Read()
+
+
 
 if __name__ == "__main__":
   main()

@@ -13,8 +13,7 @@
 ;;
 static_uart_putc:
     ; TODO: check if UART is ready
-    load a, .char
-    store a, UART
+    move .char, UART
     ret
 
 #bank ram
@@ -29,8 +28,8 @@ static_uart_putc:
 ; static function
 ;;
 static_uart_print_newline:
-    store #"\n", static_uart_putc.char
-    call static_uart_putc
+    ; TODO: check if UART is ready
+    store #"\n", UART
     ret
 
 
@@ -67,8 +66,8 @@ static_uart_print:
     jmz .done
     
     ; put c
-    store a, static_uart_putc.char
-    call static_uart_putc
+    ; TODO: check if UART is ready
+    store a, UART
     
     addw hl, #0x01
     jmp .loop
@@ -101,8 +100,8 @@ static_uart_print_len:
     sub b, #0x01
     
     ; put c
-    store a, static_uart_putc.char
-    call static_uart_putc
+    ; TODO: check if UART is ready
+    store a, UART
     
     addw hl, #0x01
     jmp .loop
@@ -136,17 +135,17 @@ itoa_hex_nibble:
     load b, (BP), .param8_c
     and b, #0x0F
     ; if .param8_c is >= than 10, handle .hex, otherwise handle DEC
-    load a, b
-    sub a, #0x0A
+    sub b, #0x0A
     jnc .hex
 
     .dec:
-    add b, #0x30 ; add '0'
-    jmp .done
-    .hex:
-    add b, #(0x41-0x0A) ; add 'A'
+    add b, #(0x30+0x0A) ; add '0'
+    ; result in b register
+    __epilogue
+    ret
 
-    .done:
+    .hex:
+    add b, #(0x41-0x0A+0x0A) ; add 'A'
     ; result in b register
     __epilogue
     ret
@@ -215,7 +214,6 @@ uart_print_itoa_hex:
 ; -3 |___________?___________|    .
 ; -2 |___________?___________|    .
 ; -1 |___________?___________| RESERVED
-;  0 |_______.local8_n_______|
 ; @param .param8_c input number
 ;;
 uart_dump_mem:
@@ -224,33 +222,92 @@ uart_dump_mem:
     .local8_n = 0
     .init:
         __prologue
-        push #0x00
 
-    .loop:
-        ; load address pointer and offset
-        loadw hl, (BP), .param16_ptr
-        load a, (BP), .local8_n
-        addw hl, a
+    .loop_row:
+        ; check if loop has reached end of length
+        load a, (BP), .param8_len
+        test a
+        jmz .done ; len=0
+        sub a, #1
+        store a, (BP), .param8_len
 
-        ; load mem value into b
-        load b, (hl)
+        ; print the label
+        load b, (BP), .param16_ptr
         push b
         call uart_print_itoa_hex
         pop b
+        load b, (BP), .param16_ptr+1
+        push b
+        call uart_print_itoa_hex
+        pop b
+
+        store #":", static_uart_putc.char
+        call static_uart_putc
         store #" ", static_uart_putc.char
         call static_uart_putc
 
-        load a, (BP), .param8_len
-        load b, (BP), .local8_n
-        sub a, b
-        jmz .done
-        add b, #0x01
-        store b, (BP), .local8_n
-        jmp .loop
+        ; print out contents in hex
+        push #0x10
+        loadw hl, (BP), .param16_ptr
+        ..loop_col:
+            ; print mem contents
+            load b, (hl)
+            pushw hl
+            push b
+            call uart_print_itoa_hex
+            pop b
+            popw hl
+
+            store #" ", static_uart_putc.char
+            call static_uart_putc
+
+            addw hl, #1
+            pop a
+            sub a, #1
+            jmz ..end_of_col
+            push a
+            jmp ..loop_col
+        ..end_of_col:
+
+        store #" ", static_uart_putc.char
+        call static_uart_putc
+
+        ; print out contents in ASCII
+        push #0x10
+        loadw hl, (BP), .param16_ptr
+        ..loop_col_ascii:
+
+            ; print mem contents
+            load a, (hl)
+            pushw hl
+            push a
+            call isprintable
+            pop a
+            popw hl
+            
+            store #".", static_uart_putc.char
+            test b ; is this char printable?
+            jmz ...skip_char
+            store a, static_uart_putc.char
+            ...skip_char:
+
+            call static_uart_putc
+
+            addw hl, #1
+            pop a
+            sub a, #1
+            jmz ..end_of_col_ascii
+            push a
+            jmp ..loop_col_ascii
+        ..end_of_col_ascii:
+        storew hl, (BP), .param16_ptr
+
+        call static_uart_print_newline
+
+        jmp .loop_row
 
     .done:
     call static_uart_print_newline
-    pop a
     __epilogue
     ret
 
@@ -461,3 +518,36 @@ strcmp:
         dealloc 4
         __epilogue
         ret
+
+
+#bank rom
+;;
+; @function
+; @brief returns 1 if character is a printable ascii character
+; @section description
+; takes a 1 byte ASCII character
+;     _______________________
+; -5 |_____.param8_char______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_char input character
+;;
+isprintable:
+    .param8_char = -5
+    .init:
+    __prologue
+    load b, #0
+    load a, (BP), .param8_char
+
+    ; printable ASCII from 0x20 to 0x7E, inclusive
+    sub a, #0x20
+    jmn .done ; not printable if < 0x20
+    sub a, #(0x7E-0x20)+1
+    jnn .done ; not printable if > 0x7E
+
+    load b, #1
+    .done:
+    __epilogue
+    ret
