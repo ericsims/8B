@@ -9,9 +9,9 @@ class STACK:
     def get_pointer(self):
         return self.starting_addr+self.pointer
 
-    def push(self,V):
+    def push(self,V, log=False):
         if self.stack_ptr_initialized:
-            self.mems.set(self.starting_addr+self.pointer, V)
+            self.mems.set(self.starting_addr+self.pointer, V,log=log)
         else:
             self.stack_ptr_not_init()
 
@@ -32,11 +32,11 @@ class STACK:
             self.stack_ptr_not_init()
 
 
-    def pop(self):
+    def pop(self, log=False):
         if self.stack_ptr_initialized:
             if self.pointer < 0:
                 raise Exception("pop from stack when empty")
-            v = self.mems.get(self.starting_addr+self.pointer)
+            v = self.mems.get(self.starting_addr+self.pointer,log=log)
             #self.mems.set(self.starting_addr-self.pointer, 0)
             return v
         else:

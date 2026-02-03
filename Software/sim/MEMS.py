@@ -13,29 +13,29 @@ class MEMS:
         self.uart = UART()
         self.motor = MOTOR(self.sim)
                
-    def get(self,addr,ignore_uninit=False):
+    def get(self,addr,ignore_uninit=False,log=False):
         addr = addr & 0xFFFF
         if addr >=0x0000 and addr < 0x0000+0x4000:
             return self.eeprom.get(addr)
         elif addr >= 0x4000 and addr < 0x4000+0x8000:
-            return self.sram.get(addr,ignore_uninit=ignore_uninit)
+            return self.sram.get(addr,ignore_uninit=ignore_uninit,log=log)
         elif addr >= 0xE004 and addr < 0xE004+0x002:
-            return self.motor.get(addr)
+            return self.motor.get(addr,log)
         elif addr >= 0xE002 and addr < 0xE002+0x002:
             return self.uart.get(addr)
         elif not ignore_uninit:
             raise Exception("Tried to read mem at invalid addr 0x{:04X}".format(addr))
 
-    def set(self,addr,V):
+    def set(self,addr,V,log=False):
         addr = addr & 0xFFFF
         if addr >=0x0000 and addr < 0x0000+0x4000:
             return self.eeprom.set(addr,V)
         elif addr >= 0x4000 and addr < 0x4000+0x8000:
-            return self.sram.set(addr,V)
+            return self.sram.set(addr,V,log=log)
         elif addr >= 0xE004 and addr < 0xE004+0x002:
             return self.motor.set(addr,V)
         elif addr >= 0xE002 and addr < 0xE002+0x002:
-            return self.uart.set(addr,V)
+            return self.uart.set(addr,V,)
         else:
             raise Exception("Tried to write mem at invalid addr 0x{:04X}".format(addr))
             

@@ -43,6 +43,14 @@ class dbg(Enum):
   BREAK_AFTER_INST = 3
   BREAK_AFTER_RET = 4
 
+
+def get_sram_char_pos(addr):
+  row_num = int((addr-0x4000)/32)
+  col_num = ((addr-0x4000)-row_num*32)*3
+  col_num += int(col_num/3/8)
+  col_num += 4
+  return row_num,col_num
+
 def main():
 
   FILE_NAME = 'bin/001_test_a_reg.bin' # default file
@@ -236,7 +244,6 @@ def main():
       font=('courier new',7),
       key='_INST_NAME_')
     ],
-    [sg.Image(key="-IMAGE-", size=(IMG_WID,IMG_HEI))],
     [sg.Image(key="-MAP-", size=(128,128))],
   ]
 
@@ -282,15 +289,18 @@ def main():
     ], vertical_alignment='t', expand_y=True, expand_x=True),
   ]]
   layout_sram = [[
-    sg.T(
-      text='',
-      size=(128*3+16,128),
-      font=('courier new',6),
-      justification='left',
-      text_color='black',
-      background_color='white',
-      key='_SRAM_'
-    )
+    sg.Column([
+      [sg.Multiline(
+        size=(138,70),
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_SRAM_',
+        expand_y=True,
+        expand_x=True
+      )]
+    ], vertical_alignment='t', expand_y=False, expand_x=False),
   ]]
   layout_stack = [[
     sg.Column([
@@ -429,6 +439,8 @@ def main():
 
   if GUI:
     window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
+    window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
+    window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
   else:
     window = None
 
@@ -524,7 +536,7 @@ def main():
         if ctrl['PO']:
           data = pc.get(ctrl['LM'])
         elif ctrl['MO']:
-          data = mems.get(addr)
+          data = mems.get(addr,log=GUI)
           # store dead code info
           # TODO: this is very slow
           if DEAD_CODE:
@@ -547,7 +559,7 @@ def main():
         elif ctrl['DO']:
           data = D.get(ctrl['LM'])
         elif ctrl['SO']:
-          data = stack.pop()
+          data = stack.pop(log=GUI)
         elif ctrl['ADD']:
           # Add
           data = (X.value+Y.value) & 0xFF
@@ -629,7 +641,7 @@ def main():
 
         # MEM
         if ctrl['MI']:
-          mems.set(addr, data)
+          mems.set(addr, data, log=GUI)
 
         # INST
         if ctrl['II']:
@@ -665,7 +677,7 @@ def main():
 
         # STACK
         if ctrl['SI']:
-          stack.push(data)
+          stack.push(data,log=GUI)
         elif ctrl['IS']:
           stack.inc()
         elif ctrl['DS']:
@@ -730,32 +742,32 @@ def main():
           # handle the assert instructions. Only do anything on the last cycle
           if ctrl['RU']:
             if ii.value == int(IS['instructions']['assert_a']['opcode']):
-              if mems.get(addr) == A.value:
+              if mems.get(addr,log=GUI) == A.value:
                 print(f"pass, a = 0x{A.value:02X}")
               else:
                 raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\n")
             elif ii.value == int(IS['instructions']['assert_b']['opcode']):
-              if mems.get(addr) == B.value:
+              if mems.get(addr,log=GUI) == B.value:
                 print(f"pass, b = 0x{B.value:02X}")
               else:
                 raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\n")
             elif ii.value == int(IS['instructions']['assert_hl']['opcode']):
-              if (mems.get(addr-1)<<8)+(mems.get(addr)) == HL.value:
+              if (mems.get(addr-1,log=GUI)<<8)+(mems.get(addr,log=GUI)) == HL.value:
                 print(f"pass, HL = 0x{HL.value:04X}")
               else:
                 raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\n")
             elif ii.value == int(IS['instructions']['assert_zf']['opcode']):
-              if mems.get(addr) == flags['ZF']:
+              if mems.get(addr,log=GUI) == flags['ZF']:
                 print(f"pass, ZF = {flags['ZF']}")
               else:
                 raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\n")
             elif ii.value == int(IS['instructions']['assert_cf']['opcode']):
-              if mems.get(addr) == flags['CF']:
+              if mems.get(addr,log=GUI) == flags['CF']:
                 print(f"pass, CF = {flags['CF']}")
               else:
                 raise Exception(f"test case failed, CF = {flags['CF']}, expected {mems.get(addr)}\n")
             elif ii.value == int(IS['instructions']['assert_nf']['opcode']):
-              if mems.get(addr) == flags['NF']:
+              if mems.get(addr,log=GUI) == flags['NF']:
                 print(f"pass, NF = {flags['NF']}")
               else:
                 raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\n")
@@ -812,21 +824,32 @@ def main():
 
             window['_CNT_'].update(f"{clk_counter:,}")
 
-            sram_values = ""
-            for n in range(2**14):
-              if mems.sram.value[n] is None:
-                sram_values += "--"
-              else:
-                sram_values += f"{mems.sram.value[n]:02X}"
-              # TODO: sram address is hard coded...
-              if (n == stack.get_pointer()-0x4000-1):
-                sram_values += "*"
-              else:
-                sram_values += " "
-              if (n+1)%8 == 0:
-                sram_values += " "
 
-            window['_SRAM_'].update(sram_values)
+            sram_values = [
+              f"{i:04X} "
+              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i:i+8]])}  "
+              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+8:i+16]])}  "
+              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+16:i+24]])}  "
+              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+24:i+32]])}  "
+              +f"{"".join([f"{chr(x)}" if x is not None and x >= 0x20 and x <= 0x7E else "." for x in mems.sram.value[i:i+32]])}"
+              for i in range(0x4000,0x4000+0x8000,32)]
+
+            # mark stack pointer with '*'
+            row,col = get_sram_char_pos(stack.get_pointer())
+            sram_values[row] = sram_values[row][0:col]+"*"+sram_values[row][col+1:]
+
+            window['_SRAM_'].update("\n".join(sram_values))
+
+            for read in mems.sram.reads:
+              row,col = get_sram_char_pos(read)
+              window['_SRAM_'].Widget.tag_add('READS', f'1.0 + {row*138+col} chars', f'1.0 + {row*138+col+3} chars')
+            for write in mems.sram.writes:
+              row,col = get_sram_char_pos(write)
+              window['_SRAM_'].Widget.tag_add('WRITES', f'1.0 + {row*138+col} chars', f'1.0 + {row*138+col+3} chars')
+            mems.sram.clear_read_write_log()
+
+
+
 
             # STACK
             bf = (mems.get(BP_ADDR,ignore_uninit=True)<<8)+mems.get(BP_ADDR+1,ignore_uninit=True)
@@ -901,19 +924,6 @@ def main():
               stats = x[1]
               inst_stats_str += f"{name:<20} {stats}\n"
             window['_TIME_ANALYSIS_'].update(inst_stats_str)  
-
-            img = Image.new('L', [IMG_WID,IMG_HEI], 255)
-            pixels = img.load()
-
-            for row in range(IMG_HEI):
-              for col in range(IMG_WID):
-                dr_addr = int(row/8)+col*10
-                v = 100
-                if mems.dpram.value[dr_addr] is not None:
-                  v = ((mems.dpram.value[dr_addr] >> (row%8)) & 0x01) * 255
-                pixels[col,row] = v
-            window["-IMAGE-"].update(data=ImageTk.PhotoImage(image=img))
-
 
             mp = Image.new('L', [128,128], 255)
             mp_pixels = mp.load()
