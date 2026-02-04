@@ -4,28 +4,31 @@ disk_size=64M
 disk_name=virt_disk
 mnt_point=/mnt/8b_disk
 
+loop=$(losetup -f)
 
 if [ ! -f ${disk_name} ]; then
     touch ${disk_name}
     truncate -s ${disk_size} ${disk_name}
     echo "$disk_name created"
     sfdisk ${disk_name} < sd.sfdisk
-    sudo losetup -D /dev/loop0
-    sudo losetup -P /dev/loop0 ${disk_name}
-    sudo mkfs.fat -F 16 /dev/loop0p1
+    sudo losetup -D
+    sudo losetup -P ${loop} ${disk_name}
+    sudo mkfs.fat -F 16 ${loop}p1
     echo "Filesystem created"
     
 else
     echo "Filesystem exists"
+    sudo losetup -D
+    sudo losetup -P ${loop} ${disk_name}
 fi
 
 
-sudo losetup -D /dev/loop0
-sudo losetup -P /dev/loop0 ${disk_name}
 sudo mkdir -p ${mnt_point}
-sudo mount -o loop /dev/loop0p1 ${mnt_point} -o uid=`id -u`,gid=`id -g`
+sudo mount -o loop ${loop}p1 ${mnt_point} -o uid=`id -u`,gid=`id -g`
 
-echo "${disk_size} filesystem mounted at ${mnt_point} "
+echo "${disk_size} filesystem mounted at ${mnt_point} using ${loop}"
 
 echo "Hello World!" > ${mnt_point}/HELLO.TXT
+echo "this is some text in file 1" > ${mnt_point}/FILE1.TXT
+echo "even more text, located in file 2" > ${mnt_point}/FILE2.TXT
 echo "Created test file on disk"
