@@ -7,6 +7,7 @@ init_pointers:
 
 main:
     call fs_read_mbr
+    assert b, #0
     halt
 
 

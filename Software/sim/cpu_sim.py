@@ -54,17 +54,19 @@ def get_sram_char_pos(addr):
 def main():
 
   FILE_NAME = 'bin/001_test_a_reg.bin' # default file
+  DISK = None
   EXIT_ON_HALT = False
   SIM = True
   GUI = True
   DEAD_CODE = False
+  IGNORE_UNINIT = False
 
   BP_ADDR = 0x4000
 
   # process flags
 
   OPTIONS = "f:" #TODO: no abbreviated options.
-  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code']
+  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code', 'disk =', 'ignore-uninit-mem']
 
   try:
     # grab flags
@@ -83,6 +85,10 @@ def main():
         SIM = False
       elif arg_ in ("--dead-code"):
         DEAD_CODE = True
+      elif arg_ in ("--disk"):
+        DISK = val_
+      elif arg_ in ("--ignore-uninit-mem"):
+        IGNORE_UNINIT = True
 
   except getopt.error as err:
     # output error, and return with an error code
@@ -462,26 +468,7 @@ def main():
     sg.Column(layout_flags, vertical_alignment='t', expand_y=True),
     sg.Column(tabs_layout,  vertical_alignment='t',expand_x=True, expand_y=True)
   ]]
-
-  if GUI:
-    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
-    window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
-    window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
-  else:
-    window = None
-
-  def update_uart(char):
-    if GUI:
-      global uart_print_buf
-      uart_print_buf = f"{uart_print_buf}{char}"
-      window['_UART_OUT_'].update(uart_print_buf)
-      # window['_UART_OUT_'].print(char,)
-    else:
-      pass
-  mems.uart.callback = update_uart
-
-  INDC_COLOR = ['gray', 'green']
-
+  
   eeprom_usage = 0
   with open(FILE_NAME, 'rb') as file:
     eep_ptr = 0
@@ -493,15 +480,38 @@ def main():
       eeprom_usage += 1
       eep_ptr+=1
   
-  with open('./sim/virt_disk', 'rb') as file:
-    sd_ptr = 0
-    while 1:
-      byte = file.read(1)
-      if not byte:
-        break
-      mems.sdcard.value[sd_ptr] = ord(byte) & 0xFF
-      sd_ptr+=1
-      if sd_ptr >= 0x200000: break # only load first 2MB for now
+  if DISK is not None:
+    with open(DISK, 'rb') as file:
+      sd_ptr = 0
+      while 1:
+        byte = file.read(1)
+        if not byte:
+          break
+        mems.sdcard.value[sd_ptr] = ord(byte) & 0xFF
+        sd_ptr+=1
+        if sd_ptr >= 0x200000: break # only load first 2MB for now
+
+
+
+  if GUI:
+    window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
+    window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
+    window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
+  else:
+    window = None
+
+  def update_uart(char):
+    if GUI:
+      global uart_print_buf
+      # TODO: this leaks memory, trim at some length please
+      uart_print_buf = f"{uart_print_buf}{char}"
+      window['_UART_OUT_'].update(uart_print_buf)
+    else:
+      print(f"{bcolors.OKBLUE}{char}{bcolors.ENDC}", end='')
+      pass
+  mems.uart.callback = update_uart
+
+  INDC_COLOR = ['gray', 'green']
 
   vars, labels, symbols, code = parse_vars(FILE_NAME)
   list_addrs = list(enumerate([c['addr'] for c in code]))
@@ -569,7 +579,7 @@ def main():
         if ctrl['PO']:
           data = pc.get(ctrl['LM'])
         elif ctrl['MO']:
-          data = mems.get(addr,log=GUI)
+          data = mems.get(addr,ignore_uninit=IGNORE_UNINIT,log=GUI)
           # store dead code info
           # TODO: this is very slow
           if DEAD_CODE:

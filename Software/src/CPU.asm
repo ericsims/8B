@@ -32,16 +32,17 @@
     ; for return
     ; 1. set return value in b register
     ; 2. epilogue macro
-    ;   2a. ;TODO: check SP=BP
+    ;   2a. ;TODO: check SP=BP ?
     ;   2b. restore old BP
     ; 3. `ret` to return to function call 
     ;
     ; notes:
     ;  - stack grows up (address increases as values pushed to stack)
     ;  - b register for return value
-    ;  - registers are not preserved during function calls
+    ;  - registers and flags are not preserved during function calls
     ;  - all values are big endian
-    ;  - don't overwrite parameters, use a pointer to set return value
+    ;  - parameters may be modified, so be careful of using the value after a function
+    ;  - pass a pointer to set return value
     ;
     ; ex. fnc(param32, param16, param8)
     ;
@@ -81,126 +82,6 @@
         storew hl, BP
     }
 
-
-; loads
-    __load_local a, {index: i8} =>
-    {
-        assert(index == 0)
-        asm
-        {
-            load a, (BP)
-        }
-    }
-    __load_local a, {index: i8} =>
-    {
-        assert(index < 0)
-        asm
-        {
-            loadw hl, BP
-            subw hl, #({index})*-1
-            load a, (hl)
-        }
-    }
-    __load_local a, {index: i8} =>
-    {
-        assert(index > 0)
-        asm
-        {
-            loadw hl, BP
-            addw hl, #{index}
-            load a, (hl)
-        }
-    }
-    __load_local b, {index: i8} =>
-    {
-        assert(index == 0)
-        asm
-        {
-            loadw hl, BP
-            load b, (hl)
-        }
-    }
-    __load_local b, {index: i8} =>
-    {
-        assert(index < 0)
-        asm
-        {
-            loadw hl, BP
-            subw hl, #({index})*-1
-            load b, (hl)
-        }
-    }
-    __load_local b, {index: i8} =>
-    {
-        assert(index > 0)
-        asm
-        {
-            loadw hl, BP
-            addw hl, #{index}
-            load b, (hl)
-        }
-    }
-
-
-; store
-    __store_local a, {index: i8} =>
-    {
-        assert(index == 0)
-        asm
-        {
-            store a, (BP)
-        }
-    }
-    __store_local a, {index: i8} =>
-    {
-        assert(index < 0)
-        asm
-        {
-            loadw hl, BP
-            subw hl, #({index})*-1
-            store a, (hl)
-        }
-    }
-    __store_local a, {index: i8} =>
-    {
-        assert(index > 0)
-        asm
-        {
-            loadw hl, BP
-            addw hl, #{index}
-            store a, (hl)
-        }
-    }
-    __store_local b, {index: i8} =>
-    {
-        assert(index == 0)
-        asm
-        {
-            loadw hl, BP
-            store b, (hl)
-        }
-    }
-    __store_local b, {index: i8} =>
-    {
-        assert(index < 0)
-        asm
-        {
-            loadw hl, BP
-            subw hl, #({index})*-1
-            store b, (hl)
-        }
-    }
-    __store_local b, {index: i8} =>
-    {
-        assert(index > 0)
-        asm
-        {
-            loadw hl, BP
-            addw hl, #{index}
-            store b, (hl)
-        }
-    }
-
     ; push_imm
     ; push immediate values for more than one byte to stack
     __push32 #{imm: i32} =>
@@ -213,7 +94,6 @@
         }
     }
 
-    
     ; store_imm
     ; store immediate values for more than one byte to memory
     __store32 #{imm: i32}, {addr: i16} =>
@@ -225,7 +105,6 @@
             storew #({imm}`16), {addr}+2
         }
     }
-
 
     ; push_pointer
     ; push immediate values for more than one byte to stack

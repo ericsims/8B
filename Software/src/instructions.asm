@@ -16,8 +16,6 @@ nop =>
 ; usage: load a, #data[7:0]
 load a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x04 @ imm`8
 }
 
@@ -54,8 +52,6 @@ loadw hl, sp =>
 ; usage: load b, #data[7:0]
 load b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x08 @ imm`8
 }
 
@@ -136,8 +132,6 @@ addw hl, b =>
 ; usage: addw hl, #data[7:0]
 addw hl, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x16 @ imm`8
 }
 
@@ -162,8 +156,6 @@ subw hl, b =>
 ; usage: subw hl, #data[7:0]
 subw hl, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x1E @ imm`8
 }
 
@@ -198,8 +190,6 @@ add a, b =>
 ; usage: add a, #data[7:0]
 add a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x11 @ imm`8
 }
 
@@ -208,8 +198,6 @@ add a, #{imm: i8} =>
 ; usage: add b, #data[7:0]
 add b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x12 @ imm`8
 }
 
@@ -226,8 +214,6 @@ sub a, b =>
 ; usage: sub a, #data[7:0]
 sub a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x19 @ imm`8
 }
 
@@ -236,8 +222,6 @@ sub a, #{imm: i8} =>
 ; usage: sub b, #data[7:0]
 sub b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x1A @ imm`8
 }
 
@@ -254,8 +238,6 @@ and a, b =>
 ; usage: and a, #data[7:0]
 and a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x21 @ imm`8
 }
 
@@ -264,8 +246,6 @@ and a, #{imm: i8} =>
 ; usage: and b, #data[7:0]
 and b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x22 @ imm`8
 }
 
@@ -282,8 +262,6 @@ or a, b =>
 ; usage: or a, #data[7:0]
 or a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x25 @ imm`8
 }
 
@@ -292,8 +270,6 @@ or a, #{imm: i8} =>
 ; usage: or b, #data[7:0]
 or b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x26 @ imm`8
 }
 
@@ -310,8 +286,6 @@ xor a, b =>
 ; usage: xor a, #data[7:0]
 xor a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x29 @ imm`8
 }
 
@@ -320,8 +294,6 @@ xor a, #{imm: i8} =>
 ; usage: xor b, #data[7:0]
 xor b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x2A @ imm`8
 }
 
@@ -412,8 +384,6 @@ storew hl, {addr: i16} =>
 ; usage: store #data[7:0], address[15:0]
 store #{imm: i8}, {addr: i16} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   assert(addr >= 0)
   assert(addr <= 0xffff)
   0x3D @imm`8 @ addr`16
@@ -452,8 +422,6 @@ push b =>
 ; usage: store #data[7:0], (hl)
 store #{imm: i8}, (hl) =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x3F @ imm`8
 }
 
@@ -494,8 +462,6 @@ store b, (hl) =>
 ; usage: push #data[7:0]
 push #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x3A @ imm`8
 }
 
@@ -524,8 +490,6 @@ push ({addr: i16}) =>
 ; usage: pushw #data[15:0]
 pushw #{imm: i16} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xffff)
   0x4C @ imm`16
 }
 

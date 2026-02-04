@@ -151,7 +151,7 @@ itoa_hex_nibble:
     ret
 
 
-#bank rom
+
 ;;
 ; @function
 ; @brief prints number to UART in hex format
@@ -165,39 +165,164 @@ itoa_hex_nibble:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_c input number
 ;;
+#bank rom
 uart_print_itoa_hex:
     .param8_c = -5
     .init:
-    __prologue
-    .msn:
-    ; handle most signifcant nibble
-    load a, (BP), .param8_c
-    ; rshift x4 just keep upper 4 bits
-    rshift a
-    rshift a
-    rshift a
-    rshift a
-    ; send nibble to itoa_hex_nibble function
-    push a
-    call itoa_hex_nibble
-    ; send ascii char to static_uart_putc function
-    pop a
-    store b, static_uart_putc.char
-    call static_uart_putc
-    .lsn:
-    ; handle least significan nibble
-    load a, (BP), .param8_c
-    ; send byte to itoa_hex_nibble function
-    ; this function already masks for lower 4 bits
-    push a
-    call itoa_hex_nibble
-    ; send ascii char to static_uart_putc function
-    pop a
-    store b, static_uart_putc.char
-    call static_uart_putc
+        __prologue
+    .convert:
+        load a, (BP), .param8_c
+        call .__msn
+        load a, (BP), .param8_c
+        call .__lsn
     .done:
-    __epilogue
-    ret
+        __epilogue
+        ret
+    ; helper functions for each nibble
+    .__msn:
+        ; most signficant nibble
+        ; rshift x4 just keep upper 4 bits
+        rshift a
+        rshift a
+        rshift a
+        rshift a
+        ; send nibble to itoa_hex_nibble function
+        push a
+        call itoa_hex_nibble
+        ; send ascii char to static_uart_putc function
+        pop a
+        store b, static_uart_putc.char
+        call static_uart_putc
+        ret
+    .__lsn:
+        ; leas signficant nibble
+        ; send byte to itoa_hex_nibble function
+        ; this function already masks for lower 4 bits
+        push a
+        call itoa_hex_nibble
+        ; send ascii char to static_uart_putc function
+        pop a
+        store b, static_uart_putc.char
+        call static_uart_putc
+        ret
+
+;;
+; @function
+; @brief prints number to UART in hex format
+; @section description
+; takes a 2 byte unsigned integer and prints it to UART in hex format
+;     _______________________
+; -6 |       .param16_c      |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param16_c input number
+;;
+#bank rom
+uart_print_itoa_hex16:
+    .param8_c = -6
+    .init:
+        __prologue
+
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__lsn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__lsn
+
+    .done:
+        __epilogue
+        ret
+    
+
+;;
+; @function
+; @brief prints number to UART in hex format
+; @section description
+; takes a 3 byte unsigned integer and prints it to UART in hex format
+;     _______________________
+; -7 |       .param16_c      |
+; -6 |                       |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param16_c input number
+;;
+#bank rom
+uart_print_itoa_hex24:
+    .param8_c = -7
+    .init:
+        __prologue
+
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__lsn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__lsn
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__lsn
+
+    .done:
+        __epilogue
+        ret
+
+;;
+; @function
+; @brief prints number to UART in hex format
+; @section description
+; takes a 4 byte unsigned integer and prints it to UART in hex format
+;     _______________________
+; -8 |       .param16_c      |
+; -7 |                       |
+; -6 |                       |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param16_c input number
+;;
+#bank rom
+uart_print_itoa_hex32:
+    .param8_c = -8
+    .init:
+        __prologue
+
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__lsn
+
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__lsn
+    
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__lsn
+
+    load a, (BP), .param8_c+3
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+3
+    call uart_print_itoa_hex.__lsn
+
+    .done:
+        __epilogue
+        ret
 
 ;;
 ; @function

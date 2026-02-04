@@ -190,8 +190,6 @@ instructions:
     asm_def: |
       load a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -292,8 +290,6 @@ instructions:
     asm_def: |
       load b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -543,8 +539,6 @@ instructions:
     asm_def: |
       addw hl, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -653,8 +647,6 @@ instructions:
     asm_def: |
       subw hl, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -749,8 +741,6 @@ instructions:
     asm_def: |
       add a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -770,8 +760,6 @@ instructions:
     asm_def: |
       add b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -810,8 +798,6 @@ instructions:
     asm_def: |
       sub a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -831,8 +817,6 @@ instructions:
     asm_def: |
       sub b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -871,8 +855,6 @@ instructions:
     asm_def: |
       and a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -892,8 +874,6 @@ instructions:
     asm_def: |
       and b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -932,8 +912,6 @@ instructions:
     asm_def: |
       or a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -953,8 +931,6 @@ instructions:
     asm_def: |
       or b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -993,8 +969,6 @@ instructions:
     asm_def: |
       xor a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -1014,8 +988,6 @@ instructions:
     asm_def: |
       xor b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -1261,8 +1233,6 @@ instructions:
     asm_def: |
       store #{imm: i8}, {addr: i16} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         assert(addr >= 0)
         assert(addr <= 0xffff)
         {OPCODE} @imm`8 @ addr`16
@@ -1371,8 +1341,6 @@ instructions:
     asm_def: |
       store #{imm: i8}, (hl) =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -1486,8 +1454,6 @@ instructions:
     asm_def: |
       push #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -1579,8 +1545,6 @@ instructions:
     asm_def: |
       pushw #{imm: i16} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xffff)
         {OPCODE} @ imm`16
       }
     ucode:
