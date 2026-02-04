@@ -27,5 +27,5 @@ sudo mount -o loop /dev/loop0p1 ${mnt_point} -o uid=`id -u`,gid=`id -g`
 
 echo "${disk_size} filesystem mounted at ${mnt_point} "
 
-echo "Hello World!" > ${mnt_point}/hello.txt
+echo "Hello World!" > ${mnt_point}/HELLO.TXT
 echo "Created test file on disk"

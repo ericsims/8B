@@ -98,9 +98,11 @@ fs_read_mbr:
     NUM_FATS = 0x02
     BYTES_PER_SECTOR = 0x0200
     ROOT_DIR_SECTOR_NUM = SECTORS_PER_FAT*NUM_FATS+RESERVED_SECTORS
-    ROOT_DIR_START_ADDR = P1_START_ADDR + (ROOT_DIR_SECTOR_NUM)*BYTES_PER_SECTOR
     
-    __store32 #ROOT_DIR_START_ADDR, SDCARD_ADDR
+    pushw #ROOT_DIR_SECTOR_NUM
+    call fs_print_file_info
+    dealloc 2
+
 
     .done:
     __epilogue
@@ -393,5 +395,58 @@ fs_print_bpb:
     .str_reserved_sectors: #d "reserved sectors: \0"
     .str_num_fats: #d "number of FAT: \0"
     .str_sectors_per_fat: #d "sectors per FAT: \0"
+
+
+#bank rom
+;;
+; @function
+; @brief ?
+; @section description
+;      _________________________
+;  -6 |   .param16_sector_num   |
+;  -5 |_________________________|
+;  -4 |____________?____________| RESERVED
+;  -3 |____________?____________|    .
+;  -2 |____________?____________|    .
+;  -1 |____________?____________| RESERVED
+;
+;;
+fs_print_file_info:
+    .param16_sector_num = -6
+    ; hard coded for now
+    DIR_START_ADDR = P1_START_ADDR + (ROOT_DIR_SECTOR_NUM)*BYTES_PER_SECTOR
+    .init:
+    __prologue
+
+    __store32 #DIR_START_ADDR, SDCARD_ADDR
+    storew #.fileinfo, .ptr
+
+    load b, #31
+    .loop_read:
+    move SDCARD_DATA, (.ptr)
+    loadw hl, .ptr
+    addw hl, #1
+    storew hl, .ptr
+    loadw hl, SDCARD_ADDR+2
+    addw hl, #1
+    storew hl, SDCARD_ADDR+2
+    sub b, #1
+    jmc ..break
+    jmp .loop_read
+        ..break:
+    
+    .print_file_name:
+    storew #.fileinfo, static_uart_print.data_pointer
+    call static_uart_print
+    call static_uart_print_newline
+
+    .done:
+    __epilogue
+    ret
+
+#bank ram
+    .fileinfo: #res 32
+    .ptr: #res 2
+
 
 #include "./char_utils.asm"
