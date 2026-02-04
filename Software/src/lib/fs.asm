@@ -442,12 +442,12 @@ fs_read_mbr:
             dealloc 4
 
             call static_uart_print_newline
-
-    pushw root_dir_sector
-    call fs_print_dir_info
-    dealloc 2
-
-
+        call static_uart_print_newline
+    
+    .prase_root_dir:
+        pushw root_dir_sector
+        call fs_print_dir_info
+        dealloc 2
 
     load b, #0
 
@@ -737,41 +737,126 @@ seek_to_sector:
 fs_print_dir_info:
     .param16_sector_num = -6
     .init:
-    __prologue
+        __prologue
 
-    loadw hl, (BP), .param16_sector_num 
-    pushw hl
-    call seek_to_sector
-    popw hl
+        loadw hl, (BP), .param16_sector_num 
+        pushw hl
+        call seek_to_sector
+        popw hl
 
-    storew #.fileinfo, .ptr
-
-    load b, #31
-    .loop_read:
-    move SDCARD_DATA, (.ptr)
-    loadw hl, .ptr
-    addw hl, #1
-    storew hl, .ptr
-    loadw hl, SDCARD_ADDR+2
-    addw hl, #1
-    storew hl, SDCARD_ADDR+2
-    sub b, #1
-    jmc ..break
-    jmp .loop_read
-        ..break:
+    .load:
+        loadw hl, SDCARD_ADDR
+        pushw hl
+        loadw hl, SDCARD_ADDR+2
+        pushw hl
+        pushw #.fileinfo
+        pushw #0x0020
+        call sd_mem_copy
+        dealloc 8
     
-    .print_file_name:
-    storew #.fileinfo, static_uart_print.data_pointer
-    call static_uart_print
-    call static_uart_print_newline
+        ..fix_endianenss:
+            load a, .fileinfo.creation_time
+            load b, .fileinfo.creation_time+1
+            store a, .fileinfo.creation_time+1
+            store b, .fileinfo.creation_time
+
+            load a, .fileinfo.creation_date
+            load b, .fileinfo.creation_date+1
+            store a, .fileinfo.creation_date+1
+            store b, .fileinfo.creation_date
+
+            load a, .fileinfo.last_access_date
+            load b, .fileinfo.last_access_date+1
+            store a, .fileinfo.last_access_date+1
+            store b, .fileinfo.last_access_date
+
+            load a, .fileinfo.last_write_time
+            load b, .fileinfo.last_write_time+1
+            store a, .fileinfo.last_write_time+1
+            store b, .fileinfo.last_write_time
+
+            load a, .fileinfo.last_write_date
+            load b, .fileinfo.last_write_date+1
+            store a, .fileinfo.last_write_date+1
+            store b, .fileinfo.last_write_date
+
+            load a, .fileinfo.starting_cluser
+            load b, .fileinfo.starting_cluser+1
+            store a, .fileinfo.starting_cluser+1
+            store b, .fileinfo.starting_cluser
+
+            load a, .fileinfo.file_size
+            load b, .fileinfo.file_size+3
+            store a, .fileinfo.file_size+3
+            store b, .fileinfo.file_size
+            load a, .fileinfo.file_size+1
+            load b, .fileinfo.file_size+2
+            store a, .fileinfo.file_size+2
+            store b, .fileinfo.file_size+1
+
+    .print_file_line:
+        load a, .fileinfo
+        test a
+        jmz .done ; last file
+        sub a, #0xE5
+        jmz .load ; skip this file, it is empty
+
+        storew #.fileinfo.name, static_uart_print.data_pointer
+        store #(8+3), static_uart_print_len.data_len ; 8 char file name + 3 char extension
+        call static_uart_print_len
+
+        store #" ", static_uart_putc.char
+        call static_uart_putc
+        call static_uart_putc
+
+        pushw .fileinfo.file_size
+        pushw .fileinfo.file_size+2
+        call uart_print_itoa_hex32
+        dealloc 4
+
+        store #" ", static_uart_putc.char
+        call static_uart_putc
+        call static_uart_putc
+
+        push .fileinfo.attributes
+        call uart_print_itoa_hex
+        pop a
+
+        store #" ", static_uart_putc.char
+        call static_uart_putc
+        call static_uart_putc
+
+        pushw .fileinfo.starting_cluser
+        call uart_print_itoa_hex16
+        popw hl
+
+        call static_uart_print_newline
+
+        jmp .load ; continue to next file in directory
 
     .done:
+    call static_uart_print_newline
     __epilogue
     ret
 
+
+
 #bank ram
-    .fileinfo: #res 32
-    .ptr: #res 2
+    .fileinfo: ; 32 bytes
+    ..name: #res 8
+    ..ext: #res 3
+    ..attributes: #res 1
+    ..reserved_0C: #res 1
+    ..creation_milli: #res 1
+    ..creation_time: #res 2
+    ..creation_date: #res 2
+    ..last_access_date: #res 2
+    ..reserved_14: #res 2
+    ..last_write_time: #res 2
+    ..last_write_date: #res 2
+    ..starting_cluser: #res 2
+    ..file_size: #res 4
+
 
 
 #include "./char_utils.asm"
