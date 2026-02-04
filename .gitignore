@@ -15,3 +15,6 @@ requirements_dev.txt
 
 # autogen
 irdocs/
+
+# virtual sd card
+virt_disk

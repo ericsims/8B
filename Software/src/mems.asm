@@ -27,8 +27,8 @@ MOT_SIZE         = 0x0002
 
 ; SDCARD
 ; MEM slot 4
-SDCARD           = 0xE006
-SDCARD_SIZE      = 0x0002
+SDCARD           = 0xE010
+SDCARD_SIZE      = 0x0008
 
 ; ETH
 ; MEM slot 7

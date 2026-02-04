@@ -418,6 +418,31 @@ def main():
       disabled=True
     )]
   ]
+  layout_sdcard = [[
+    sg.Column([
+      [
+        sg.T('ADDR POINTER   '),
+        sg.T(
+          text='',
+          size=(8,1),
+          justification='left',
+          text_color='black',
+          background_color='white',
+          key='_SDCARD_ADDR_'
+        )
+      ],
+      [sg.Multiline(
+        size=(138,70),
+        font=('courier new',8),
+        justification='left',
+        text_color='black',
+        background_color='white',
+        key='_SDCARD_',
+        expand_y=True,
+        expand_x=True
+      )]
+    ], vertical_alignment='t', expand_y=False, expand_x=False),
+  ]]
   
   tabs_layout = [[
     sg.TabGroup([[
@@ -427,6 +452,7 @@ def main():
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
       sg.Tab('UART', layout_uart, expand_x=True, expand_y=True),
+      sg.Tab('SDCARD', layout_sdcard, expand_x=True, expand_y=True),
       ]])
     ]]
 
@@ -457,18 +483,25 @@ def main():
   INDC_COLOR = ['gray', 'green']
 
   eeprom_usage = 0
-
-  file = open(FILE_NAME, 'rb')
-  eep_ptr = 0
-  while 1:
-    byte = file.read(1)
-    if not byte:
-      break
-    mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
-    eeprom_usage += 1
-    eep_ptr+=1
-
-  file.close()
+  with open(FILE_NAME, 'rb') as file:
+    eep_ptr = 0
+    while 1:
+      byte = file.read(1)
+      if not byte:
+        break
+      mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
+      eeprom_usage += 1
+      eep_ptr+=1
+  
+  with open('./sim/virt_disk', 'rb') as file:
+    sd_ptr = 0
+    while 1:
+      byte = file.read(1)
+      if not byte:
+        break
+      mems.sdcard.value[sd_ptr] = ord(byte) & 0xFF
+      sd_ptr+=1
+      if sd_ptr >= 0x200000: break # only load first 2MB for now
 
   vars, labels, symbols, code = parse_vars(FILE_NAME)
   list_addrs = list(enumerate([c['addr'] for c in code]))
@@ -938,9 +971,12 @@ def main():
                 mp_pixels[col,row] = v
             window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
 
+            # SD CARD
+            window['_SDCARD_ADDR_'].update(f"{mems.sdcard.addr_reg:08X}")
+
       print()
       print(f"max stack usage {stack.max_used} bytes")
-      print(f"eeprom usage {eeprom_usage}/{mems.eeprom.size} bytes ({eeprom_usage/mems.eeprom.size*100:0.2f}%)")
+      print(f"eeprom usage {eeprom_usage}/{mems.eeprom.size} bytes ({eeprom_usage/2**16*100:0.2f}%)")
       print(f"clk cycles {clk_counter}")
 
 
