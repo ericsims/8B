@@ -8,6 +8,9 @@ init_pointers:
 main:
     call fs_read_mbr
     assert b, #0
+    pushw #3
+    call load_file
+    dealloc 2
     halt
 
 

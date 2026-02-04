@@ -370,11 +370,11 @@ fs_read_mbr:
 
 
     .find_root_dir:
-        ; ROOT_DIR_SECTOR_NUM = SECTORS_PER_FAT * NUM_FATS + RESERVED_SECTORS
+        ; root_dir_sector = sectors_per_fat * num_fats + reserved_sectors
         storew #0x0000, root_dir_sector
         load a, fat16_boot_sector.num_fats
         ..compute_root_dir:
-            ; SECTORS_PER_FAT * NUM_FATS 
+            ; sectors_per_fat * num_fats 
             sub a, #1
             jmc ...break
             push a
@@ -401,7 +401,7 @@ fs_read_mbr:
             ...break:
 
             ...offset:
-            ; root_dir_sector += RESERVED_SECTORS
+            ; root_dir_sector += reserved_sectors
                 load b, root_dir_sector+1
                 load a, fat16_boot_sector.reserved_sectors+1
                 add a, b
@@ -620,6 +620,14 @@ fs_print_boot_sector:
     call uart_print_itoa_hex16
     dealloc 2
     call static_uart_print_newline
+
+    .print_num_possible_root_entries:
+    storew #.str_num_root_entries, static_uart_print.data_pointer
+    call static_uart_print
+    pushw fat16_boot_sector.num_possible_root_entries
+    call uart_print_itoa_hex16
+    dealloc 2
+    call static_uart_print_newline
     
     .print_ext_boot_sig:
     storew #.str_ext_boot_sig, static_uart_print.data_pointer
@@ -670,6 +678,7 @@ fs_print_boot_sector:
     .str_reserved_sectors: #d "\treserved sectors: \0"
     .str_num_fats: #d "\tnumber of FATs: \0"
     .str_sectors_per_fat: #d "\tsectors per FAT: \0"
+    .str_num_root_entries: #d "\tnumber of root entries: \0"
     .str_ext_boot_sig: #d "\textended boot signature: \0"
     .str_volume_serial: #d "\tvolume serial number: \0"
     .str_volume_label: #d "\tvolume label: \0"
@@ -695,7 +704,7 @@ seek_to_sector:
         __prologue
 
     .seek:
-        ; addr = partition_start_addr + (ROOT_DIR_SECTOR_NUM)*BYTES_PER_SECTOR
+        ; addr = partition_start_addr + (sector_number)*bytes_per_sector
         store #0x00, static_x_32
         load a, (BP), .param16_sector_num
         lshift a
@@ -839,8 +848,6 @@ fs_print_dir_info:
     __epilogue
     ret
 
-
-
 #bank ram
     .fileinfo: ; 32 bytes
     ..name: #res 8
@@ -857,6 +864,79 @@ fs_print_dir_info:
     ..starting_cluser: #res 2
     ..file_size: #res 4
 
+;;
+; @function
+; @brief ?
+; @section description
+;      _________________________
+;  -6 |  .param16_cluster_num   |
+;  -5 |_________________________|
+;  -4 |____________?____________| RESERVED
+;  -3 |____________?____________|    .
+;  -2 |____________?____________|    .
+;  -1 |____________?____________| RESERVED
+;     |
+;
+;;
+#bank rom
+load_file:
+    .param16_cluster_num = -6
+    .init:
+    __prologue
+
+    ; data_start_sector = root_dir_sector + 32 (dir size)
+    storew #0x0000, static_x_32
+    movew root_dir_sector, static_x_32+2
+    storew #0x0000, static_y_32
+    storew #0x0020, static_y_32+2
+    call static_add32
+
+    ; data_sector = data_start_sector+(cluster-2)*4
+    storew #0x0000, static_y_32
+    loadw hl, (BP), .param16_cluster_num
+    subw hl, #2 ; first two clusters are not used
+    storew hl, static_y_32+2
+
+    movew static_z_32, static_x_32
+    movew static_z_32+2, static_x_32+2
+    call static_add32
+    movew static_z_32, static_x_32
+    movew static_z_32+2, static_x_32+2
+    call static_add32
+    movew static_z_32, static_x_32
+    movew static_z_32+2, static_x_32+2
+    call static_add32
+    movew static_z_32, static_x_32
+    movew static_z_32+2, static_x_32+2
+    call static_add32
+
+    pushw static_z_32+2
+    call seek_to_sector
+    popw hl
+
+    .load:
+        loadw hl, SDCARD_ADDR
+        pushw hl
+        loadw hl, SDCARD_ADDR+2
+        pushw hl
+        pushw #.filebuf
+        pushw #0x0200
+        call sd_mem_copy
+        dealloc 8
+
+    .print:
+        ; debug
+        pushw #.filebuf
+        push #10
+        call uart_dump_mem
+        dealloc 3
+
+    .done:
+    __epilogue
+    ret
+#bank ram
+    #align 8*32
+    .filebuf: #res 512
 
 
 #include "./char_utils.asm"
