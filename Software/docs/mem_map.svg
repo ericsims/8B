@@ -25,7 +25,7 @@
     <text x="1.580in" y="0.050in" style="dominant-baseline: hanging;">0xE7FF</text>
     <path fill="none" stroke="#336DA5" stroke-width="0.028in" stroke-linecap="square" d="M 0 64.80 L 144 64.80 M 0 124.80 L 144 124.80"/>
     <path fill="none" stroke="#336DA5" stroke-width="0.028in" stroke-linecap="square" stroke-dasharray="0.111in,0.056in" d="M 0 64.80 L 0 124.80 M 144 64.80 L 144 124.80"/>
-    <text x="1.580in" y="1.300in" style="dominant-baseline: middle;">0xE014</text>
+    <text x="1.580in" y="1.300in" style="dominant-baseline: middle;">0xE018</text>
     <text x="0.750in" y="1.638in" style="text-anchor: middle; dominant-baseline: middle;">SDCARD</text>
     <text x="1.580in" y="1.975in" style="dominant-baseline: middle;">0xE010</text>
     <path fill="none" stroke="#336DA5" stroke-width="0.028in" stroke-linecap="square" d="M 0 189.60 L 144 189.60 M 0 249.60 L 144 249.60"/>

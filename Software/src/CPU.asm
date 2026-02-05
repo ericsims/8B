@@ -165,6 +165,14 @@
     #size RAM_SIZE
 }
 
+; #bankdef rom
+; {
+;     #bits 8
+;     #addr RAM+0x1000
+;     #size RAM_SIZE-0x1000
+;     #outp 0x10000*8
+; }
+
 #bankdef rom
 {
     #bits 8

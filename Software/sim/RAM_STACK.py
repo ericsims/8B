@@ -50,9 +50,8 @@ class STACK:
         else:
             self.stack_ptr_not_init()
 
-    def set(self,V,L=0):
-        
-        if self.stack_ptr_initialized == 3:
+    def set(self,V,L=0,reinit=False):
+        if self.stack_ptr_initialized == 3 and not reinit:
             newp = None
             if L == 0:
                 newp = ((self.get_pointer() & 0xFF00) | V) & 0xFFFF
@@ -64,6 +63,8 @@ class STACK:
                 # print(f"{self.get_pointer():04X} {newp:04X} {self.get_pointer()-newp:04X}")
                 self.pointer -= self.get_pointer()-newp
         else:
+            # print("reinit stack pointer")
+            self.pointer = 0
             if L == 0:
                 self.starting_addr = ((self.starting_addr & 0xFF00) | V) & 0xFFFF
                 self.stack_ptr_initialized |= 0x01
@@ -72,7 +73,6 @@ class STACK:
                 self.stack_ptr_initialized |= 0x02
             else:
                 raise Exception("invalid PC byte")
-        # self.pointer = 0
 
     def stack_ptr_not_init(self):
         raise Exception("tried to do a stack operation without initializing the SP first")

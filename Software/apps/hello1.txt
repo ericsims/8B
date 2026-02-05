@@ -1,0 +1,328 @@
+    outp | addr | data (base 16)
+
+    --:- | 4000 |                ; BP:
+    --:- | 4002 |                ; .char:
+    --:- | 4003 |                ; .data_pointer:
+    --:- | 4005 |                ; .data_len:
+    --:- | 4006 |                ; STACK_BASE:
+ 10000:0 | 5000 |                ; top:
+ 10000:0 | 5000 |                ; init_pointers:
+ 10000:0 | 5000 | 1b 40 06       ; loadw sp, #STACK_BASE
+ 10003:0 | 5003 | 3e 00 00 40 00 ; storew #0x0000, BP
+ 10008:0 | 5008 |                ; main:
+ 10008:0 | 5008 | 3e 50 11 40 03 ; storew #str_1, static_uart_print.data_pointer
+ 1000d:0 | 500d | 6b 50 39       ; call static_uart_print
+ 10010:0 | 5010 | 7f             ; halt
+ 10011:0 | 5011 |                ; str_1:
+ 10011:0 | 5011 | 68 65 6c 6c 6f 20 77 6f 72 6c 64 21 0a 00 ; "hello world!\n\0"
+ 1001f:0 | 501f |                ; static_uart_putc:
+ 1001f:0 | 501f | 44 40 02 e0 02 ; move .char, UART
+ 10024:0 | 5024 | 74             ; ret
+ 10025:0 | 5025 |                ; static_uart_print_newline:
+ 10025:0 | 5025 | 3d 0a e0 02    ; store #"\n", UART
+ 10029:0 | 5029 | 74             ; ret
+ 1002a:0 | 502a |                ; static_uart_print_hex_prefix:
+ 1002a:0 | 502a | 3d 30 40 02    ; store #"0", static_uart_putc.char
+ 1002e:0 | 502e | 6b 50 1f       ; call static_uart_putc
+ 10031:0 | 5031 | 3d 78 40 02    ; store #"x", static_uart_putc.char
+ 10035:0 | 5035 | 6b 50 1f       ; call static_uart_putc
+ 10038:0 | 5038 | 74             ; ret
+ 10039:0 | 5039 |                ; static_uart_print:
+ 10039:0 | 5039 | 0d 40 03       ; loadw hl, .data_pointer
+ 1003c:0 | 503c |                ; .loop:
+ 1003c:0 | 503c | 40             ; load a, (hl)
+ 1003d:0 | 503d | 6c             ; test a
+ 1003e:0 | 503e | 65 50 49       ; jmz .done
+ 10041:0 | 5041 | 30 e0 02       ; store a, UART
+ 10044:0 | 5044 | 16 01          ; addw hl, #0x01
+ 10046:0 | 5046 | 64 50 3c       ; jmp .loop
+ 10049:0 | 5049 |                ; .done:
+ 10049:0 | 5049 | 74             ; ret
+ 1004a:0 | 504a |                ; static_uart_print_len:
+ 1004a:0 | 504a | 0d 40 03       ; loadw hl, static_uart_print.data_pointer
+ 1004d:0 | 504d | 09 40 05       ; load b, .data_len
+ 10050:0 | 5050 |                ; .loop:
+ 10050:0 | 5050 | 40             ; load a, (hl)
+ 10051:0 | 5051 | 6c             ; test a
+ 10052:0 | 5052 | 65 50 63       ; jmz .done
+ 10055:0 | 5055 | 6d             ; test b
+ 10056:0 | 5056 | 65 50 63       ; jmz .done
+ 10059:0 | 5059 | 1a 01          ; sub b, #0x01
+ 1005b:0 | 505b | 30 e0 02       ; store a, UART
+ 1005e:0 | 505e | 16 01          ; addw hl, #0x01
+ 10060:0 | 5060 | 64 50 50       ; jmp .loop
+ 10063:0 | 5063 |                ; .done:
+ 10063:0 | 5063 | 74             ; ret
+ 10064:0 | 5064 |                ; itoa_hex_nibble:
+ 10064:0 | 5064 |                ; .init:
+ 10064:0 | 5064 | 4d 40 00 07 34 40 00 ; __prologue
+ 1006b:0 | 506b | 57 40 00 05    ; load b, (BP), .param8_c
+ 1006f:0 | 506f | 22 0f          ; and b, #0x0F
+ 10071:0 | 5071 | 1a 0a          ; sub b, #0x0A
+ 10073:0 | 5073 | 68 50 7d       ; jnc .hex
+ 10076:0 | 5076 |                ; .dec:
+ 10076:0 | 5076 | 12 3a          ; add b, #(0x30+0x0A)
+ 10078:0 | 5078 | 51 34 40 00    ; __epilogue
+ 1007c:0 | 507c | 74             ; ret
+ 1007d:0 | 507d |                ; .hex:
+ 1007d:0 | 507d | 12 41          ; add b, #(0x41-0x0A+0x0A)
+ 1007f:0 | 507f | 51 34 40 00    ; __epilogue
+ 10083:0 | 5083 | 74             ; ret
+ 10084:0 | 5084 |                ; uart_print_itoa_hex:
+ 10084:0 | 5084 |                ; .init:
+ 10084:0 | 5084 | 4d 40 00 07 34 40 00 ; __prologue
+ 1008b:0 | 508b |                ; .convert:
+ 1008b:0 | 508b | 55 40 00 05    ; load a, (BP), .param8_c
+ 1008f:0 | 508f | 6b 50 9e       ; call .__msn
+ 10092:0 | 5092 | 55 40 00 05    ; load a, (BP), .param8_c
+ 10096:0 | 5096 | 6b 50 ae       ; call .__lsn
+ 10099:0 | 5099 |                ; .done:
+ 10099:0 | 5099 | 51 34 40 00    ; __epilogue
+ 1009d:0 | 509d | 74             ; ret
+ 1009e:0 | 509e |                ; .__msn:
+ 1009e:0 | 509e | 2e             ; rshift a
+ 1009f:0 | 509f | 2e             ; rshift a
+ 100a0:0 | 50a0 | 2e             ; rshift a
+ 100a1:0 | 50a1 | 2e             ; rshift a
+ 100a2:0 | 50a2 | 38             ; push a
+ 100a3:0 | 50a3 | 6b 50 64       ; call itoa_hex_nibble
+ 100a6:0 | 50a6 | 52             ; pop a
+ 100a7:0 | 50a7 | 32 40 02       ; store b, static_uart_putc.char
+ 100aa:0 | 50aa | 6b 50 1f       ; call static_uart_putc
+ 100ad:0 | 50ad | 74             ; ret
+ 100ae:0 | 50ae |                ; .__lsn:
+ 100ae:0 | 50ae | 38             ; push a
+ 100af:0 | 50af | 6b 50 64       ; call itoa_hex_nibble
+ 100b2:0 | 50b2 | 52             ; pop a
+ 100b3:0 | 50b3 | 32 40 02       ; store b, static_uart_putc.char
+ 100b6:0 | 50b6 | 6b 50 1f       ; call static_uart_putc
+ 100b9:0 | 50b9 | 74             ; ret
+ 100ba:0 | 50ba |                ; uart_print_itoa_hex16:
+ 100ba:0 | 50ba |                ; .init:
+ 100ba:0 | 50ba | 4d 40 00 07 34 40 00 ; __prologue
+ 100c1:0 | 50c1 | 55 40 00 06    ; load a, (BP), .param8_c
+ 100c5:0 | 50c5 | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 100c8:0 | 50c8 | 55 40 00 06    ; load a, (BP), .param8_c
+ 100cc:0 | 50cc | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 100cf:0 | 50cf | 55 40 00 05    ; load a, (BP), .param8_c+1
+ 100d3:0 | 50d3 | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 100d6:0 | 50d6 | 55 40 00 05    ; load a, (BP), .param8_c+1
+ 100da:0 | 50da | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 100dd:0 | 50dd |                ; .done:
+ 100dd:0 | 50dd | 51 34 40 00    ; __epilogue
+ 100e1:0 | 50e1 | 74             ; ret
+ 100e2:0 | 50e2 |                ; uart_print_itoa_hex24:
+ 100e2:0 | 50e2 |                ; .init:
+ 100e2:0 | 50e2 | 4d 40 00 07 34 40 00 ; __prologue
+ 100e9:0 | 50e9 | 55 40 00 07    ; load a, (BP), .param8_c
+ 100ed:0 | 50ed | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 100f0:0 | 50f0 | 55 40 00 07    ; load a, (BP), .param8_c
+ 100f4:0 | 50f4 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 100f7:0 | 50f7 | 55 40 00 06    ; load a, (BP), .param8_c+1
+ 100fb:0 | 50fb | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 100fe:0 | 50fe | 55 40 00 06    ; load a, (BP), .param8_c+1
+ 10102:0 | 5102 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 10105:0 | 5105 | 55 40 00 05    ; load a, (BP), .param8_c+2
+ 10109:0 | 5109 | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 1010c:0 | 510c | 55 40 00 05    ; load a, (BP), .param8_c+2
+ 10110:0 | 5110 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 10113:0 | 5113 |                ; .done:
+ 10113:0 | 5113 | 51 34 40 00    ; __epilogue
+ 10117:0 | 5117 | 74             ; ret
+ 10118:0 | 5118 |                ; uart_print_itoa_hex32:
+ 10118:0 | 5118 |                ; .init:
+ 10118:0 | 5118 | 4d 40 00 07 34 40 00 ; __prologue
+ 1011f:0 | 511f | 55 40 00 08    ; load a, (BP), .param8_c
+ 10123:0 | 5123 | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 10126:0 | 5126 | 55 40 00 08    ; load a, (BP), .param8_c
+ 1012a:0 | 512a | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 1012d:0 | 512d | 55 40 00 07    ; load a, (BP), .param8_c+1
+ 10131:0 | 5131 | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 10134:0 | 5134 | 55 40 00 07    ; load a, (BP), .param8_c+1
+ 10138:0 | 5138 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 1013b:0 | 513b | 55 40 00 06    ; load a, (BP), .param8_c+2
+ 1013f:0 | 513f | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 10142:0 | 5142 | 55 40 00 06    ; load a, (BP), .param8_c+2
+ 10146:0 | 5146 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 10149:0 | 5149 | 55 40 00 05    ; load a, (BP), .param8_c+3
+ 1014d:0 | 514d | 6b 50 9e       ; call uart_print_itoa_hex.__msn
+ 10150:0 | 5150 | 55 40 00 05    ; load a, (BP), .param8_c+3
+ 10154:0 | 5154 | 6b 50 ae       ; call uart_print_itoa_hex.__lsn
+ 10157:0 | 5157 |                ; .done:
+ 10157:0 | 5157 | 51 34 40 00    ; __epilogue
+ 1015b:0 | 515b | 74             ; ret
+ 1015c:0 | 515c |                ; uart_dump_mem:
+ 1015c:0 | 515c |                ; .init:
+ 1015c:0 | 515c | 4d 40 00 07 34 40 00 ; __prologue
+ 10163:0 | 5163 |                ; .loop_row:
+ 10163:0 | 5163 | 55 40 00 05    ; load a, (BP), .param8_len
+ 10167:0 | 5167 | 6c             ; test a
+ 10168:0 | 5168 | 65 51 eb       ; jmz .done
+ 1016b:0 | 516b | 19 01          ; sub a, #1
+ 1016d:0 | 516d | 59 40 00 05    ; store a, (BP), .param8_len
+ 10171:0 | 5171 | 57 40 00 07    ; load b, (BP), .param16_ptr
+ 10175:0 | 5175 | 39             ; push b
+ 10176:0 | 5176 | 6b 50 84       ; call uart_print_itoa_hex
+ 10179:0 | 5179 | 53             ; pop b
+ 1017a:0 | 517a | 57 40 00 06    ; load b, (BP), .param16_ptr+1
+ 1017e:0 | 517e | 39             ; push b
+ 1017f:0 | 517f | 6b 50 84       ; call uart_print_itoa_hex
+ 10182:0 | 5182 | 53             ; pop b
+ 10183:0 | 5183 | 3d 3a 40 02    ; store #":", static_uart_putc.char
+ 10187:0 | 5187 | 6b 50 1f       ; call static_uart_putc
+ 1018a:0 | 518a | 3d 20 40 02    ; store #" ", static_uart_putc.char
+ 1018e:0 | 518e | 6b 50 1f       ; call static_uart_putc
+ 10191:0 | 5191 | 3a 10          ; push #0x10
+ 10193:0 | 5193 | 5d 40 00 07    ; loadw hl, (BP), .param16_ptr
+ 10197:0 | 5197 |                ; ..loop_col:
+ 10197:0 | 5197 | 41             ; load b, (hl)
+ 10198:0 | 5198 | 50             ; pushw hl
+ 10199:0 | 5199 | 39             ; push b
+ 1019a:0 | 519a | 6b 50 84       ; call uart_print_itoa_hex
+ 1019d:0 | 519d | 53             ; pop b
+ 1019e:0 | 519e | 51             ; popw hl
+ 1019f:0 | 519f | 3d 20 40 02    ; store #" ", static_uart_putc.char
+ 101a3:0 | 51a3 | 6b 50 1f       ; call static_uart_putc
+ 101a6:0 | 51a6 | 16 01          ; addw hl, #1
+ 101a8:0 | 51a8 | 52             ; pop a
+ 101a9:0 | 51a9 | 19 01          ; sub a, #1
+ 101ab:0 | 51ab | 65 51 b2       ; jmz ..end_of_col
+ 101ae:0 | 51ae | 38             ; push a
+ 101af:0 | 51af | 64 51 97       ; jmp ..loop_col
+ 101b2:0 | 51b2 |                ; ..end_of_col:
+ 101b2:0 | 51b2 | 3d 20 40 02    ; store #" ", static_uart_putc.char
+ 101b6:0 | 51b6 | 6b 50 1f       ; call static_uart_putc
+ 101b9:0 | 51b9 | 3a 10          ; push #0x10
+ 101bb:0 | 51bb | 5d 40 00 07    ; loadw hl, (BP), .param16_ptr
+ 101bf:0 | 51bf |                ; ..loop_col_ascii:
+ 101bf:0 | 51bf | 40             ; load a, (hl)
+ 101c0:0 | 51c0 | 50             ; pushw hl
+ 101c1:0 | 51c1 | 38             ; push a
+ 101c2:0 | 51c2 | 6b 52 b7       ; call isprintable
+ 101c5:0 | 51c5 | 52             ; pop a
+ 101c6:0 | 51c6 | 51             ; popw hl
+ 101c7:0 | 51c7 | 3d 2e 40 02    ; store #".", static_uart_putc.char
+ 101cb:0 | 51cb | 6d             ; test b
+ 101cc:0 | 51cc | 65 51 d2       ; jmz ...skip_char
+ 101cf:0 | 51cf | 30 40 02       ; store a, static_uart_putc.char
+ 101d2:0 | 51d2 |                ; ...skip_char:
+ 101d2:0 | 51d2 | 6b 50 1f       ; call static_uart_putc
+ 101d5:0 | 51d5 | 16 01          ; addw hl, #1
+ 101d7:0 | 51d7 | 52             ; pop a
+ 101d8:0 | 51d8 | 19 01          ; sub a, #1
+ 101da:0 | 51da | 65 51 e1       ; jmz ..end_of_col_ascii
+ 101dd:0 | 51dd | 38             ; push a
+ 101de:0 | 51de | 64 51 bf       ; jmp ..loop_col_ascii
+ 101e1:0 | 51e1 |                ; ..end_of_col_ascii:
+ 101e1:0 | 51e1 | 5f 40 00 07    ; storew hl, (BP), .param16_ptr
+ 101e5:0 | 51e5 | 6b 50 25       ; call static_uart_print_newline
+ 101e8:0 | 51e8 | 64 51 63       ; jmp .loop_row
+ 101eb:0 | 51eb |                ; .done:
+ 101eb:0 | 51eb | 6b 50 25       ; call static_uart_print_newline
+ 101ee:0 | 51ee | 51 34 40 00    ; __epilogue
+ 101f2:0 | 51f2 | 74             ; ret
+ 101f3:0 | 51f3 |                ; isspace:
+ 101f3:0 | 51f3 |                ; .init:
+ 101f3:0 | 51f3 | 4d 40 00 07 34 40 00 ; __prologue
+ 101fa:0 | 51fa | 55 40 00 05    ; load a, (BP), .param8_char
+ 101fe:0 | 51fe | 17             ; load b, a
+ 101ff:0 | 51ff | 1a 20          ; sub b, #0x20
+ 10201:0 | 5201 | 65 52 0f       ; jmz .is_whitespace
+ 10204:0 | 5204 | 17             ; load b, a
+ 10205:0 | 5205 | 19 09          ; sub a, #0x09
+ 10207:0 | 5207 | 69 52 16       ; jmn .is_not_whitespace
+ 1020a:0 | 520a | 19 05          ; sub a, #(0x0D-0x09+1)
+ 1020c:0 | 520c | 6a 52 16       ; jnn .is_not_whitespace
+ 1020f:0 | 520f |                ; .is_whitespace:
+ 1020f:0 | 520f | 08 01          ; load b, #1
+ 10211:0 | 5211 | 51 34 40 00    ; __epilogue
+ 10215:0 | 5215 | 74             ; ret
+ 10216:0 | 5216 |                ; .is_not_whitespace:
+ 10216:0 | 5216 | 08 00          ; load b, #0
+ 10218:0 | 5218 | 51 34 40 00    ; __epilogue
+ 1021c:0 | 521c | 74             ; ret
+ 1021d:0 | 521d |                ; isdigit:
+ 1021d:0 | 521d |                ; .init:
+ 1021d:0 | 521d | 4d 40 00 07 34 40 00 ; __prologue
+ 10224:0 | 5224 | 08 00          ; load b, #0
+ 10226:0 | 5226 | 55 40 00 05    ; load a, (BP), .param8_char
+ 1022a:0 | 522a | 19 30          ; sub a, #0x30
+ 1022c:0 | 522c | 69 52 36       ; jmn .done
+ 1022f:0 | 522f | 19 0a          ; sub a, #0x0A
+ 10231:0 | 5231 | 6a 52 36       ; jnn .done
+ 10234:0 | 5234 | 08 01          ; load b, #1
+ 10236:0 | 5236 |                ; .done:
+ 10236:0 | 5236 | 51 34 40 00    ; __epilogue
+ 1023a:0 | 523a | 74             ; ret
+ 1023b:0 | 523b |                ; isjsondigit:
+ 1023b:0 | 523b |                ; .init:
+ 1023b:0 | 523b | 4d 40 00 07 34 40 00 ; __prologue
+ 10242:0 | 5242 | 55 40 00 05    ; load a, (BP), .param8_char
+ 10246:0 | 5246 | 17             ; load b, a
+ 10247:0 | 5247 | 1a 30          ; sub b, #0x30
+ 10249:0 | 5249 | 69 52 54       ; jmn .continue_test
+ 1024c:0 | 524c | 1a 0a          ; sub b, #0x0A
+ 1024e:0 | 524e | 6a 52 54       ; jnn .continue_test
+ 10251:0 | 5251 | 64 52 75       ; jmp .is_a_digit
+ 10254:0 | 5254 |                ; .continue_test:
+ 10254:0 | 5254 | 17             ; load b, a
+ 10255:0 | 5255 | 1a 2e          ; sub b, #"."
+ 10257:0 | 5257 | 65 52 75       ; jmz .is_a_digit
+ 1025a:0 | 525a | 17             ; load b, a
+ 1025b:0 | 525b | 1a 2d          ; sub b, #"-"
+ 1025d:0 | 525d | 65 52 75       ; jmz .is_a_digit
+ 10260:0 | 5260 | 17             ; load b, a
+ 10261:0 | 5261 | 1a 2b          ; sub b, #"+"
+ 10263:0 | 5263 | 65 52 75       ; jmz .is_a_digit
+ 10266:0 | 5266 | 17             ; load b, a
+ 10267:0 | 5267 | 26 20          ; or b, #0x20
+ 10269:0 | 5269 | 1a 65          ; sub b, #"e"
+ 1026b:0 | 526b | 65 52 75       ; jmz .is_a_digit
+ 1026e:0 | 526e |                ; .is_not_a_digit:
+ 1026e:0 | 526e | 08 00          ; load b, #0
+ 10270:0 | 5270 | 51 34 40 00    ; __epilogue
+ 10274:0 | 5274 | 74             ; ret
+ 10275:0 | 5275 |                ; .is_a_digit:
+ 10275:0 | 5275 | 08 01          ; load b, #1
+ 10277:0 | 5277 | 51 34 40 00    ; __epilogue
+ 1027b:0 | 527b | 74             ; ret
+ 1027c:0 | 527c |                ; strcmp:
+ 1027c:0 | 527c |                ; .init:
+ 1027c:0 | 527c | 4d 40 00 07 34 40 00 ; __prologue
+ 10283:0 | 5283 | 5d 40 00 08    ; loadw hl, (BP), .param16_str1_in
+ 10287:0 | 5287 | 50             ; pushw hl
+ 10288:0 | 5288 | 5d 40 00 06    ; loadw hl, (BP), .param16_str2_in
+ 1028c:0 | 528c | 50             ; pushw hl
+ 1028d:0 | 528d |                ; .test:
+ 1028d:0 | 528d | 5c 40 00 00    ; loadw hl, (BP), .param16_str1
+ 10291:0 | 5291 | 40             ; load a, (hl)
+ 10292:0 | 5292 | 16 01          ; addw hl, #1
+ 10294:0 | 5294 | 5e 40 00 00    ; storew hl, (BP), .param16_str1
+ 10298:0 | 5298 | 5c 40 00 02    ; loadw hl, (BP), .param16_str2
+ 1029c:0 | 529c | 41             ; load b, (hl)
+ 1029d:0 | 529d | 16 01          ; addw hl, #1
+ 1029f:0 | 529f | 5e 40 00 02    ; storew hl, (BP), .param16_str2
+ 102a3:0 | 52a3 | 18             ; sub a, b
+ 102a4:0 | 52a4 | 66 52 ae       ; jnz .mismatch
+ 102a7:0 | 52a7 | 6d             ; test b
+ 102a8:0 | 52a8 | 65 52 b0       ; jmz .done
+ 102ab:0 | 52ab | 64 52 8d       ; jmp .test
+ 102ae:0 | 52ae |                ; .mismatch:
+ 102ae:0 | 52ae | 08 01          ; load b, #1
+ 102b0:0 | 52b0 |                ; .done:
+ 102b0:0 | 52b0 | 4f 04          ; dealloc 4
+ 102b2:0 | 52b2 | 51 34 40 00    ; __epilogue
+ 102b6:0 | 52b6 | 74             ; ret
+ 102b7:0 | 52b7 |                ; isprintable:
+ 102b7:0 | 52b7 |                ; .init:
+ 102b7:0 | 52b7 | 4d 40 00 07 34 40 00 ; __prologue
+ 102be:0 | 52be | 08 00          ; load b, #0
+ 102c0:0 | 52c0 | 55 40 00 05    ; load a, (BP), .param8_char
+ 102c4:0 | 52c4 | 19 20          ; sub a, #0x20
+ 102c6:0 | 52c6 | 69 52 d0       ; jmn .done
+ 102c9:0 | 52c9 | 19 5f          ; sub a, #(0x7E-0x20)+1
+ 102cb:0 | 52cb | 6a 52 d0       ; jnn .done
+ 102ce:0 | 52ce | 08 01          ; load b, #1
+ 102d0:0 | 52d0 |                ; .done:
+ 102d0:0 | 52d0 | 51 34 40 00    ; __epilogue
+ 102d4:0 | 52d4 | 74             ; ret

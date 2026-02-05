@@ -70,14 +70,14 @@ fileinfo: ; 32 bytes
     .file_size: #res 4
     .END:
 
+#addr RAM+0x1000
 file_handle:
+    .buf: #res 0x200
     .name: #res 11
     .next_cluster: #res 2
     .file_ptr: #res 4
     .file_size: #res 4
     .file_length_remanding: #res 4
-    #align 8*32
-    .buf: #res 0x200
     .END:
 
 ;;

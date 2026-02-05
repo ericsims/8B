@@ -69,10 +69,16 @@ $(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm $(LIB_SRCS)
 	@echo ""
 $(TEST_SRCS): instruction luts
 
-test: $(all_tests) 
+
+
+bin/1760_test_parse_mbr.test: extr_test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+bin/1770_test_run_file_from_disk.test: extr_test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+
+test: $(all_tests)
 $(all_tests): %.test : %.bin
-	@echo "running test case $<"
-	@python sim/cpu_sim.py --no-sim --no-gui -f $< >> /dev/null || exit 1
+	@echo running test case $<   $(extr_test_flags)
+	@python sim/cpu_sim.py --no-sim --no-gui -f $< $(extr_test_flags) >> /dev/null || exit 1
+
 
 docs: coverage_report memory_map
 $(IR_DOCS_DIR)/%.yml: $(TEST_SRC_DIR)/%.asm

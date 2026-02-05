@@ -2199,9 +2199,9 @@ instructions:
       - [CE]                 # Increment PC to skip LSB of destination address
       # save PC to stack
       - [PO, SI, LM]         # save PC MSB to stack
-      - [IS]                 # decrement stack pointer
+      - [IS]                 # increment stack pointer
       - [PO, SI]             # save PC LSB to stack
-      - [IS]                 # decrement stack pointer
+      - [IS]                 # increment stack pointer
       # jump
       - [PI, MO, LM]         # load PC with MSB of destination address
       - [MC]                 # Increment MAR to point to LSB of destination address

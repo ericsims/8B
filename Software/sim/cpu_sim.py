@@ -2,13 +2,14 @@
 import sys
 import getopt
 import warnings
-import rpyc
 import json
 import yaml
+import traceback
 from enum import Enum
-from PIL import Image, ImageTk
 import FreeSimpleGUI as sg
 from termcolor import colored
+# import rpyc
+# from PIL import Image, ImageTk
 
 from PC import PC
 from II import II
@@ -726,7 +727,7 @@ def main():
         elif ctrl['DS']:
           stack.dec()
         elif ctrl['NI']:
-          stack.set(data,ctrl['LM'])
+          stack.set(data,ctrl['LM'],reinit=(ii.value==0x1B))
 
         # check if this is a jmp/call/ret instruction
         if ctrl['PI'] and ctrl['RU']:
@@ -742,7 +743,10 @@ def main():
 
             call_addr = mems.get(stack.get_pointer()-2,ignore_uninit=True)*256+mems.get(stack.get_pointer()-1,ignore_uninit=True)-3
             if dup is None:
-              call_graph.append({'addr':pc.value, 'symbol':labels[pc.value], 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False, 'called_from':call_addr})
+              symbol = "???"
+              if pc.value in labels:
+                symbol = labels[pc.value] 
+              call_graph.append({'addr':pc.value, 'symbol':symbol, 'stack_trace':call_graph[current_call]['stack_trace']+[len(call_graph)], 'qty':1, 'bk_on_ret':False, 'called_from':call_addr})
               current_call = len(call_graph)-1
             else:
               current_call = dup
@@ -1020,11 +1024,12 @@ def main():
       return 2
     
     except Exception as exc:
-      print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}", file=sys.stderr)
-      print("stack trace", file=sys.stderr)
+      print(f"{bcolors.FAIL}{traceback.format_exc()}{bcolors.ENDC}", file=sys.stderr)
+      # print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}", file=sys.stderr)
+      print(f"{bcolors.FAIL}stack trace{bcolors.ENDC}", file=sys.stderr)
       for call in call_graph[current_call]['stack_trace']:
-        print(f"  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}", file=sys.stderr)
-      print(f"  {pc.value:04X} <-- PC", file=sys.stderr)
+        print(f"{bcolors.FAIL}  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}{bcolors.ENDC}", file=sys.stderr)
+      print(f"{bcolors.FAIL}  {pc.value:04X} <-- PC{bcolors.ENDC}", file=sys.stderr)
       print("", file=sys.stderr)
       return 1
 
