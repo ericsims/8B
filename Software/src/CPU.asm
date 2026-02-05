@@ -158,21 +158,28 @@
 
 }
 
+; if building an app that gets loaded from disk
+; change rom address to be in runtime ram
+; #bankdef ram
+; {
+;     #bits 8
+;     #addr RAM
+;     #size 0x1000
+; }
+; #bankdef rom
+; {
+;     #bits 8
+;     #addr RAM+0x1000
+;     #size RAM_SIZE-0x1000
+;     #outp 0x0000
+; }
+
 #bankdef ram
 {
     #bits 8
     #addr RAM
     #size RAM_SIZE
 }
-
-; #bankdef rom
-; {
-;     #bits 8
-;     #addr RAM+0x1000
-;     #size RAM_SIZE-0x1000
-;     #outp 0x10000*8
-; }
-
 #bankdef rom
 {
     #bits 8

@@ -71,13 +71,13 @@ $(TEST_SRCS): instruction luts
 
 
 
-bin/1760_test_parse_mbr.test: extr_test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
-bin/1770_test_run_file_from_disk.test: extr_test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+bin/1760_test_parse_mbr.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+bin/1770_test_run_file_from_disk.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
 
 test: $(all_tests)
 $(all_tests): %.test : %.bin
-	@echo running test case $<   $(extr_test_flags)
-	@python sim/cpu_sim.py --no-sim --no-gui -f $< $(extr_test_flags) >> /dev/null || exit 1
+	@echo running test case $<   $(test_flags)
+	@python sim/cpu_sim.py --no-sim --no-gui -f $< $(test_flags) >> /dev/null || exit 1
 
 
 docs: coverage_report memory_map

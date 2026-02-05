@@ -24,7 +24,6 @@ fname: #d "HELLO1  BIN \0"
 
 ; includes
 #bank rom
-#addr 0x1000
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
 #include "../src/lib/fs.asm"
