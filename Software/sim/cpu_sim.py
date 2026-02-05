@@ -507,7 +507,7 @@ def main():
       uart_print_buf = f"{uart_print_buf}{char}"
       window['_UART_OUT_'].update(uart_print_buf)
     else:
-      print(f"{bcolors.OKBLUE}{char}{bcolors.ENDC}", end='')
+      print(f"{bcolors.OKCYAN}{char}{bcolors.ENDC}", end='')
       pass
   mems.uart.callback = update_uart
 
@@ -880,8 +880,9 @@ def main():
             # mark stack pointer with '*'
             row,col = get_sram_char_pos(stack.get_pointer())
             sram_values[row] = sram_values[row][0:col]+"*"+sram_values[row][col+1:]
-
+            sram_scroll_pos = window['_SRAM_'].Widget.yview()[0]
             window['_SRAM_'].update("\n".join(sram_values))
+            window['_SRAM_'].Widget.yview_moveto(sram_scroll_pos)
 
             for read in mems.sram.reads:
               row,col = get_sram_char_pos(read)
@@ -901,7 +902,10 @@ def main():
             for n in range(stack.starting_addr,stack.starting_addr+stack.pointer):
               stack_values += f"0x{n:04X}: {mems.get(n,ignore_uninit=True):02X} {n-bf:02X} {' <-- BP' if n==bf else ''}\n"
 
+
+            stack_scroll_pos = window['_STACK_'].Widget.yview()[0]
             window['_STACK_'].update(stack_values)
+            window['_STACK_'].Widget.yview_moveto(stack_scroll_pos)
             window['_STACK_USAGE_'].update(stack.pointer)
             window['_STACK_MAX_USAGE_'].update(stack.max_used)
             window['_CUR_FUNC_'].update(call_graph[current_call]['symbol'])

@@ -6,19 +6,6 @@ SDCARD_ADDR = SDCARD+0
 SDCARD_DATA = SDCARD+4
 SDCARD_CTRL = SDCARD+5
 
-
-#bank ram
-mbr_parition_entry: ; 16 bytes, stored big-endian
-.status: #res 1
-.chs_start: #res 3
-.partition_type: #res 1
-.chs_end: #res 3
-.lba_start: #res 4
-.num_sectors: #res 4
-.END:
-
-partition_start_addr: #res 4
-
 MBR_START_ADDR = 0x00000000
 MBR_PART1_ADDR = MBR_START_ADDR + 0x1BE
 MBR_PART2_ADDR = MBR_PART1_ADDR + 0x020
@@ -29,32 +16,69 @@ MBR_BOOT_SIGNATURE = MBR_START_ADDR + 0x1FE
 FS_TYPE_EMPTY = 0x00
 FS_TYPE_FAT16 = 0x06
 
+#bank ram
+mbr_parition_entry: ; 16 bytes, stored big-endian
+    .status: #res 1
+    .chs_start: #res 3
+    .partition_type: #res 1
+    .chs_end: #res 3
+    .lba_start: #res 4
+    .num_sectors: #res 4
+    .END:
+
+partition_start_addr: #res 4
 
 fat16_boot_sector: ; 62 bytes, stored big-endian
-.code: #res 3
-.os_name: #res 8
-.bytes_per_sector: #res 2
-.sectors_per_cluser: #res 1
-.reserved_sectors: #res 2
-.num_fats: #res 1
-.num_possible_root_entries: #res 2
-.num_small_sectors: #res 2
-.media_descriptor: #res 1
-.sectors_per_fat: #res 2
-.sectors_per_track: #res 2
-.num_heads: #res 2
-.hidden_sectors: #res 4
-.num_large_sectors: #res 4
-.drive_num: #res 1
-.res_25: #res 1
-.ext_boot_sig: #res 1
-.volume_serial: #res 4
-.volume_label: #res 11
-.fs_type: #res 8
-.END:
+    .code: #res 3
+    .os_name: #res 8
+    .bytes_per_sector: #res 2
+    .sectors_per_cluser: #res 1
+    .reserved_sectors: #res 2
+    .num_fats: #res 1
+    .num_possible_root_entries: #res 2
+    .num_small_sectors: #res 2
+    .media_descriptor: #res 1
+    .sectors_per_fat: #res 2
+    .sectors_per_track: #res 2
+    .num_heads: #res 2
+    .hidden_sectors: #res 4
+    .num_large_sectors: #res 4
+    .drive_num: #res 1
+    .res_25: #res 1
+    .ext_boot_sig: #res 1
+    .volume_serial: #res 4
+    .volume_label: #res 11
+    .fs_type: #res 8
+    .END:
 
 root_dir_sector: #res 2
 root_dir_addr: #res 4
+
+fileinfo: ; 32 bytes
+    .name: #res 8
+    .ext: #res 3
+    .attributes: #res 1
+    .reserved_0C: #res 1
+    .creation_milli: #res 1
+    .creation_time: #res 2
+    .creation_date: #res 2
+    .last_access_date: #res 2
+    .reserved_14: #res 2
+    .last_write_time: #res 2
+    .last_write_date: #res 2
+    .starting_cluser: #res 2
+    .file_size: #res 4
+    .END:
+
+file_handle:
+    .name: #res 11
+    .next_cluster: #res 2
+    .file_ptr: #res 4
+    .file_size: #res 4
+    .file_length_remanding: #res 4
+    #align 8*32
+    .buf: #res 0x200
+    .END:
 
 ;;
 ; @function
@@ -444,7 +468,7 @@ fs_read_mbr:
             call static_uart_print_newline
         call static_uart_print_newline
     
-    .prase_root_dir:
+    .list_root_dir:
         pushw root_dir_sector
         call fs_print_dir_info
         dealloc 2
@@ -729,6 +753,62 @@ seek_to_sector:
         ret
 
 
+fs_read_direcorty_entry:
+    .init:
+    __prologue
+    .load:
+        loadw hl, SDCARD_ADDR
+        pushw hl
+        loadw hl, SDCARD_ADDR+2
+        pushw hl
+        pushw #fileinfo
+        pushw #0x0020
+        call sd_mem_copy
+        dealloc 8
+    
+        ..fix_endianenss:
+            load a, fileinfo.creation_time
+            load b, fileinfo.creation_time+1
+            store a, fileinfo.creation_time+1
+            store b, fileinfo.creation_time
+
+            load a, fileinfo.creation_date
+            load b, fileinfo.creation_date+1
+            store a, fileinfo.creation_date+1
+            store b, fileinfo.creation_date
+
+            load a, fileinfo.last_access_date
+            load b, fileinfo.last_access_date+1
+            store a, fileinfo.last_access_date+1
+            store b, fileinfo.last_access_date
+
+            load a, fileinfo.last_write_time
+            load b, fileinfo.last_write_time+1
+            store a, fileinfo.last_write_time+1
+            store b, fileinfo.last_write_time
+
+            load a, fileinfo.last_write_date
+            load b, fileinfo.last_write_date+1
+            store a, fileinfo.last_write_date+1
+            store b, fileinfo.last_write_date
+
+            load a, fileinfo.starting_cluser
+            load b, fileinfo.starting_cluser+1
+            store a, fileinfo.starting_cluser+1
+            store b, fileinfo.starting_cluser
+
+            load a, fileinfo.file_size
+            load b, fileinfo.file_size+3
+            store a, fileinfo.file_size+3
+            store b, fileinfo.file_size
+            load a, fileinfo.file_size+1
+            load b, fileinfo.file_size+2
+            store a, fileinfo.file_size+2
+            store b, fileinfo.file_size+1
+    .done:
+        __epilogue
+        ret
+
 #bank rom
 ;;
 ; @function
@@ -754,63 +834,16 @@ fs_print_dir_info:
         popw hl
 
     .load:
-        loadw hl, SDCARD_ADDR
-        pushw hl
-        loadw hl, SDCARD_ADDR+2
-        pushw hl
-        pushw #.fileinfo
-        pushw #0x0020
-        call sd_mem_copy
-        dealloc 8
-    
-        ..fix_endianenss:
-            load a, .fileinfo.creation_time
-            load b, .fileinfo.creation_time+1
-            store a, .fileinfo.creation_time+1
-            store b, .fileinfo.creation_time
-
-            load a, .fileinfo.creation_date
-            load b, .fileinfo.creation_date+1
-            store a, .fileinfo.creation_date+1
-            store b, .fileinfo.creation_date
-
-            load a, .fileinfo.last_access_date
-            load b, .fileinfo.last_access_date+1
-            store a, .fileinfo.last_access_date+1
-            store b, .fileinfo.last_access_date
-
-            load a, .fileinfo.last_write_time
-            load b, .fileinfo.last_write_time+1
-            store a, .fileinfo.last_write_time+1
-            store b, .fileinfo.last_write_time
-
-            load a, .fileinfo.last_write_date
-            load b, .fileinfo.last_write_date+1
-            store a, .fileinfo.last_write_date+1
-            store b, .fileinfo.last_write_date
-
-            load a, .fileinfo.starting_cluser
-            load b, .fileinfo.starting_cluser+1
-            store a, .fileinfo.starting_cluser+1
-            store b, .fileinfo.starting_cluser
-
-            load a, .fileinfo.file_size
-            load b, .fileinfo.file_size+3
-            store a, .fileinfo.file_size+3
-            store b, .fileinfo.file_size
-            load a, .fileinfo.file_size+1
-            load b, .fileinfo.file_size+2
-            store a, .fileinfo.file_size+2
-            store b, .fileinfo.file_size+1
+        call fs_read_direcorty_entry
 
     .print_file_line:
-        load a, .fileinfo
+        load a, fileinfo
         test a
         jmz .done ; last file
         sub a, #0xE5
         jmz .load ; skip this file, it is empty
 
-        storew #.fileinfo.name, static_uart_print.data_pointer
+        storew #fileinfo.name, static_uart_print.data_pointer
         store #(8+3), static_uart_print_len.data_len ; 8 char file name + 3 char extension
         call static_uart_print_len
 
@@ -818,8 +851,8 @@ fs_print_dir_info:
         call static_uart_putc
         call static_uart_putc
 
-        pushw .fileinfo.file_size
-        pushw .fileinfo.file_size+2
+        pushw fileinfo.file_size
+        pushw fileinfo.file_size+2
         call uart_print_itoa_hex32
         dealloc 4
 
@@ -827,7 +860,7 @@ fs_print_dir_info:
         call static_uart_putc
         call static_uart_putc
 
-        push .fileinfo.attributes
+        push fileinfo.attributes
         call uart_print_itoa_hex
         pop a
 
@@ -835,7 +868,7 @@ fs_print_dir_info:
         call static_uart_putc
         call static_uart_putc
 
-        pushw .fileinfo.starting_cluser
+        pushw fileinfo.starting_cluser
         call uart_print_itoa_hex16
         popw hl
 
@@ -848,41 +881,86 @@ fs_print_dir_info:
     __epilogue
     ret
 
-#bank ram
-    .fileinfo: ; 32 bytes
-    ..name: #res 8
-    ..ext: #res 3
-    ..attributes: #res 1
-    ..reserved_0C: #res 1
-    ..creation_milli: #res 1
-    ..creation_time: #res 2
-    ..creation_date: #res 2
-    ..last_access_date: #res 2
-    ..reserved_14: #res 2
-    ..last_write_time: #res 2
-    ..last_write_date: #res 2
-    ..starting_cluser: #res 2
-    ..file_size: #res 4
+;;
+; @function
+; @brief finds a file by filename
+; @section description
+;      _________________________
+;  -6 |    .param16_name_ptr    |
+;  -5 |_________________________|
+;  -4 |____________?____________| RESERVED
+;  -3 |____________?____________|    .
+;  -2 |____________?____________|    .
+;  -1 |____________?____________| RESERVED
+;
+;;
+#bank rom
+fs_find_file:
+    .param16_name_ptr = -6
+    .init:
+        __prologue
+
+        movew root_dir_addr, SDCARD_ADDR
+        movew root_dir_addr+2, SDCARD_ADDR+2
+
+    .load:
+        call fs_read_direcorty_entry
+
+    .print_file_line:
+        load a, fileinfo
+        test a
+        jmz .no_match ; last file
+        sub a, #0xE5
+        jmz .load ; skip this file, it is empty
+
+        loadw hl, (BP), .param16_name_ptr
+        pushw hl
+        pushw #fileinfo.name
+        call strcmp
+        dealloc 4
+        test b
+        jmz .match
+
+        jmp .load ; continue to next file in directory
+    
+    .match:
+        movew fileinfo.file_size, file_handle.file_size
+        movew fileinfo.file_size+2, file_handle.file_size+2
+        movew fileinfo.starting_cluser, file_handle.next_cluster
+        movew fileinfo.name, file_handle.name
+        movew fileinfo.name+2, file_handle.name+2
+        movew fileinfo.name+4, file_handle.name+4
+        movew fileinfo.name+6, file_handle.name+6
+        movew fileinfo.name+8, file_handle.name+8
+        move fileinfo.name+10, file_handle.name+10
+        load b, #0
+        __epilogue
+        ret
+        
+    .no_match:
+        load b, #1
+        __epilogue
+        ret
+
 
 ;;
 ; @function
 ; @brief ?
 ; @section description
 ;      _________________________
-;  -6 |  .param16_cluster_num   |
-;  -5 |_________________________|
 ;  -4 |____________?____________| RESERVED
 ;  -3 |____________?____________|    .
 ;  -2 |____________?____________|    .
 ;  -1 |____________?____________| RESERVED
-;     |
 ;
 ;;
 #bank rom
 load_file:
-    .param16_cluster_num = -6
     .init:
     __prologue
+
+    storew #.str_loading_file, static_uart_print.data_pointer
+    call static_uart_print
 
     ; data_start_sector = root_dir_sector + 32 (dir size)
     storew #0x0000, static_x_32
@@ -893,7 +971,7 @@ load_file:
 
     ; data_sector = data_start_sector+(cluster-2)*4
     storew #0x0000, static_y_32
-    loadw hl, (BP), .param16_cluster_num
+    loadw hl, file_handle.next_cluster
     subw hl, #2 ; first two clusters are not used
     storew hl, static_y_32+2
 
@@ -919,14 +997,14 @@ load_file:
         pushw hl
         loadw hl, SDCARD_ADDR+2
         pushw hl
-        pushw #.filebuf
-        pushw #0x0200
+        pushw #file_handle.buf
+        pushw #0x200
         call sd_mem_copy
         dealloc 8
 
     .print:
         ; debug
-        pushw #.filebuf
+        pushw #file_handle.buf
         push #10
         call uart_dump_mem
         dealloc 3
@@ -934,9 +1012,9 @@ load_file:
     .done:
     __epilogue
     ret
-#bank ram
-    #align 8*32
-    .filebuf: #res 512
+
+    .str_loading_file: #d "loading file...\n\0"
+
 
 
 #include "./char_utils.asm"
