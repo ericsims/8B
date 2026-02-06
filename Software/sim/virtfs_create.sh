@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 disk_size=64M
 disk_name=virt_disk
@@ -31,4 +32,10 @@ echo "${disk_size} filesystem mounted at ${mnt_point} using ${loop}"
 echo "Hello World!" > ${mnt_point}/HELLO.TXT
 echo "this is some text in file 1" > ${mnt_point}/FILE1.TXT
 echo "even more text, located in file 2" > ${mnt_point}/FILE2.TXT
+sync
 echo "Created test file on disk"
+
+echo "Copying apps to disk..."
+for file in ../apps/*.bin ; do cp -v "${file^^}" "${mnt_point}"; done
+sync
+echo "done"
