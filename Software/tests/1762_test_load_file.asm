@@ -9,10 +9,25 @@ main:
     call fs_read_mbr
     assert b, #0
 
+    pushw #fname
+    call fs_find_file
+    dealloc 2
+    assert b, #0
+
+    call load_file
+    assert b, #0
+
+    storew #file_handle.buf, static_uart_print.data_pointer
+    call static_uart_print
+
     halt
+
+fname: #d "HELLO   TXT \0"
+
 
 ; includes
 #include "../src/CPU.asm"
+#include "../src/lib/char_utils.asm"
 #include "../src/lib/fs.asm"
 
 ; global vars

@@ -9,7 +9,7 @@ from enum import Enum
 import FreeSimpleGUI as sg
 from termcolor import colored
 # import rpyc
-# from PIL import Image, ImageTk
+from PIL import Image, ImageTk
 
 from PC import PC
 from II import II
@@ -871,14 +871,13 @@ def main():
 
             window['_CNT_'].update(f"{clk_counter:,}")
 
-
             sram_values = [
               f"{i:04X} "
-              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i:i+8]])}  "
-              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+8:i+16]])}  "
-              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+16:i+24]])}  "
-              +f"{" ".join([f"{x:02X}" if x is not None else "--" for x in mems.sram.value[i+24:i+32]])}  "
-              +f"{"".join([f"{chr(x)}" if x is not None and x >= 0x20 and x <= 0x7E else "." for x in mems.sram.value[i:i+32]])}"
+              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i:i+8]])}  "
+              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+8:i+16]])}  "
+              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+16:i+24]])}  "
+              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+24:i+32]])}  "
+              +f"{''.join([f'{chr(x)}' if x is not None and x >= 0x20 and x <= 0x7E else '.' for x in mems.sram.value[i:i+32]])}"
               for i in range(0x4000,0x4000+0x8000,32)]
 
             # mark stack pointer with '*'
