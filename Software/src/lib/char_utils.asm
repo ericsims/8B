@@ -151,6 +151,52 @@ itoa_hex_nibble:
     ret
 
 
+;;
+; @function
+; @brief converts hex character to a single nibble number. returns -1 if an error
+; @section description
+;
+;     _______________________
+; -5 |_______.param8_c_______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_c input char
+; @return out_num, -1 on error
+;;
+#bank rom
+atoi_hex_nibble:
+    .param8_char = -5
+    .init:
+    __prologue
+    load b, #-1
+    load a, (BP), .param8_char
+
+    ; digits are 0x30 to 0x39 in ASCII
+    sub a, #0x30
+    jmn .check_hex ; not a digit if < 0x30
+    sub a, #0x39-0x30+1
+    jnn .check_hex ; not a digit if > 0x39
+    ; this is a decimal digit
+    add a, #0x39-0x30+1
+    load b, a
+    __epilogue
+    ret
+    
+    .check_hex:
+    ; 'A'-'F' are 0x41 to 0x46 in ASCII
+    load a, (BP), .param8_char
+    sub a, #0x41
+    jmn .done ; not a hex digit if < 0x41
+    sub a, #0x46-0x41+1
+    jnn .done ; not a hex digit if > 0x46
+    add a, #0x46-0x41+1+0x0A
+    
+    load b, a
+    .done:
+    __epilogue
+    ret
 
 ;;
 ; @function
@@ -513,6 +559,52 @@ isdigit:
     __epilogue
     ret
 
+    
+
+#bank rom
+;;
+; @function
+; @brief returns 1 if character is a numeral hex digit '0'-'9','A'-'F'
+; @section description
+; takes a 1 byte ASCII character
+;     _______________________
+; -5 |_____.param8_char______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_char input character
+;;
+ishexdigit:
+    .param8_char = -5
+    .init:
+    __prologue
+    load b, #0
+    load a, (BP), .param8_char
+
+    ; digits are 0x30 to 0x39 in ASCII
+    sub a, #0x30
+    jmn .check_hex ; not a digit if < 0x30
+    sub a, #0x39-0x30+1
+    jnn .check_hex ; not a digit if > 0x39
+    ; this is a decimal digit
+    load b, #1
+    __epilogue
+    ret
+    
+    .check_hex:
+    ; 'A'-'F' are 0x41 to 0x46 in ASCII
+    load a, (BP), .param8_char
+    sub a, #0x41
+    jmn .done ; not a hex digit if < 0x41
+    sub a, #0x46-0x41+1
+    jnn .done ; not a hex digit if > 0x46
+    
+    load b, #1
+    .done:
+    __epilogue
+    ret
+
 
 #bank rom
 ;;
@@ -676,3 +768,138 @@ isprintable:
     .done:
     __epilogue
     ret
+
+
+
+#bank rom
+;;
+; @function
+; @brief converts string to integer
+; @section description
+; takes a pointer to a null terminated string, and returns a signed 32bit number to the result pointer
+; return is number of bits of return type, negative for error 
+;     _______________________
+; -8 |  .param16_string_ptr  |
+; -7 |_______________________|
+; -6 |  .param16_result_ptr  |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |___.local8_bits_count__|
+;  1 |____.local8_str_len____|
+; @param .param16_string_ptr input string pointer
+; @param .param16_result_ptr pointer to result location
+; @return num_bytes number of bits of return type, negative for error 
+;;
+atoi_hex:
+    .param16_string_ptr = -8
+    .param16_result_ptr = -6
+    .local8_bits_count = 0
+    .local8_str_len = 1
+    .init:
+        __prologue
+        push #0
+        push #0
+
+    ; .test_for_sign_char:
+    ;     loadw hl, (BP), .param16_string_ptr
+    ;     load a, (hl)
+    ;     test a
+    ;     jmz .done ; null termination
+    ;     sub a, #"+" ; ignore preceeding '+'
+    ;     jmz .next_char
+    ;     load a, (hl)
+    ;     sub a, #"-" ; handle negative sign
+    ;     jnz .test_char
+    ;     ; handle negative sign
+    ;     assert a, #1 ; fail, this isn't handled yet
+    ; .next_char:
+    ;     loadw hl, (BP), .param16_string_ptr
+    ;     addw hl, #1
+    ;     storew hl, (BP), .param16_string_ptr
+    ;     jmp .find_length
+    loadw hl, (BP), .param16_string_ptr
+    load b, #0
+    .find_length:
+        load a, (hl)
+        test a
+        jmz .found_end ; null termination
+        add b, #1
+        addw hl, #1
+        jmp .find_length
+    .found_end:
+        store b, (BP), .local8_str_len
+        subw hl, #1
+        storew hl, (BP), .param16_string_ptr
+    .convert:
+        load b, (BP), .local8_str_len
+        test b
+        jmz .done ; end of str
+        loadw hl, (BP), .param16_string_ptr
+        load a, (hl)
+        push a
+        call atoi_hex_nibble
+        pop a
+        test b
+        jmn .error ; b<0, this isn't a digit!
+        ; this is a digit
+        ; compute desination address
+        push b
+        load a, #3
+        load b, (BP), .local8_bits_count
+        rshift b
+        rshift b
+        rshift b
+        jnc ..lower_nibble; if we carried out a bit, then this must be the lower nibble
+        sub a, b
+        loadw hl, (BP), .param16_result_ptr
+        addw hl, a
+        ; x |= b<<4
+        pop b
+        lshift b
+        lshift b
+        lshift b
+        lshift b
+        load a, (hl)
+        or a, b
+        store a, (hl)
+        jmp ..continue
+        ..lower_nibble:
+        sub a, b
+        loadw hl, (BP), .param16_result_ptr
+        addw hl, a
+        pop b
+        store b, (hl)
+        ..continue:
+
+        ; increment number of bits
+        load b, (BP), .local8_bits_count
+        add b, #4
+        store b, (BP), .local8_bits_count
+        
+        ; decrement remaining string length
+        load b, (BP), .local8_str_len
+        sub b, #1
+        store b, (BP), .local8_str_len
+
+            
+    .next_char:
+        loadw hl, (BP), .param16_string_ptr
+        subw hl, #1
+        storew hl, (BP), .param16_string_ptr
+        jmp .convert
+
+    .done:
+        load b, (BP), .local8_bits_count
+        dealloc 2
+        __epilogue
+        ret
+    
+    .error:
+        dealloc 2
+        load b, #-1
+        __epilogue
+        ret
+
