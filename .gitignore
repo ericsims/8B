@@ -18,3 +18,6 @@ irdocs/
 
 # virtual sd card
 virt_disk
+
+# FreeCAD
+*.FCBak
