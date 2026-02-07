@@ -803,23 +803,8 @@ atoi_hex:
         push #0
         push #0
 
-    ; .test_for_sign_char:
-    ;     loadw hl, (BP), .param16_string_ptr
-    ;     load a, (hl)
-    ;     test a
-    ;     jmz .done ; null termination
-    ;     sub a, #"+" ; ignore preceeding '+'
-    ;     jmz .next_char
-    ;     load a, (hl)
-    ;     sub a, #"-" ; handle negative sign
-    ;     jnz .test_char
-    ;     ; handle negative sign
-    ;     assert a, #1 ; fail, this isn't handled yet
-    ; .next_char:
-    ;     loadw hl, (BP), .param16_string_ptr
-    ;     addw hl, #1
-    ;     storew hl, (BP), .param16_string_ptr
-    ;     jmp .find_length
+    ; TODO: handle "-" or "+"
+
     loadw hl, (BP), .param16_string_ptr
     load b, #0
     .find_length:
@@ -831,10 +816,14 @@ atoi_hex:
         jmp .find_length
     .found_end:
         store b, (BP), .local8_str_len
+        load a, b
+        sub a, #9 ; if length is greater than 8, return error
+        jnn .error
         subw hl, #1
         storew hl, (BP), .param16_string_ptr
     .convert:
-        load b, (BP), .local8_str_len
+        ; load b, (BP), .local8_str_len
+        ; b reg already contains .local8_str_len
         test b
         jmz .done ; end of str
         loadw hl, (BP), .param16_string_ptr

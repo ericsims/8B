@@ -72,6 +72,8 @@ $(TEST_SRCS): instruction luts
 
 
 bin/1760_test_parse_mbr.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+bin/1761_test_find_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+bin/1762_test_load_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
 bin/1770_test_run_file_from_disk.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
 
 test: $(all_tests)

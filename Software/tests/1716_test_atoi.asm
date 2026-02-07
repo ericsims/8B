@@ -150,6 +150,50 @@ main:
     load a, res_ptr+3
     assert a, #0xEF
 
+    jmp test13    
+    test13_str: #d "ABCDEF9\0"
+    test13:
+    pushw #test13_str
+    pushw #res_ptr
+    call atoi_hex
+    dealloc 4
+    assert b, #28
+    load a, res_ptr
+    assert a, #0x0A
+    load a, res_ptr+1
+    assert a, #0xBC
+    load a, res_ptr+2
+    assert a, #0xDE
+    load a, res_ptr+3
+    assert a, #0xF9
+
+    jmp test14
+    test14_str: #d "ABCDEF98\0"
+    test14:
+    pushw #test14_str
+    pushw #res_ptr
+    call atoi_hex
+    dealloc 4
+    assert b, #32
+    load a, res_ptr
+    assert a, #0xAB
+    load a, res_ptr+1
+    assert a, #0xCD
+    load a, res_ptr+2
+    assert a, #0xEF
+    load a, res_ptr+3
+    assert a, #0x98
+
+    ; this one should be two many bits!
+    jmp test15
+    test15_str: #d "ABCDEF987\0"
+    test15:
+    pushw #test15_str
+    pushw #res_ptr
+    call atoi_hex
+    dealloc 4
+    assert b, #0xFF
+
     halt
 
 ; constants

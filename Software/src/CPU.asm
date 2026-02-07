@@ -158,33 +158,34 @@
 
 }
 
-; if building an app that gets loaded from disk
-; change rom address to be in runtime ram
-; #bankdef ram
-; {
-;     #bits 8
-;     #addr RAM
-;     #size 0x1000
-; }
-; #bankdef rom
-; {
-;     #bits 8
-;     #addr RAM+0x1000
-;     #size RAM_SIZE-0x1000
-;     #outp 0x0000
-; }
-
+DYNAMIC_LOAD = 0
+#if DYNAMIC_LOAD == 1 ; set this with command line -dDYNAMIC_LOAD=1
+{
+    ; if building an app that gets loaded from disk
+    ; change rom address to be in runtime ram
+    __RAM = RAM
+    __RAM_SIZE = 0x1000
+    __ROM = RAM+0x1000
+    __ROM_SIZE = RAM_SIZE-0x1000
+}
+#else
+{
+    __RAM = RAM
+    __RAM_SIZE = RAM_SIZE
+    __ROM = ROM
+    __ROM_SIZE = ROM_SIZE
+}
 #bankdef ram
 {
-    #bits 8
-    #addr RAM
-    #size RAM_SIZE
+    bits = 8
+    addr = __RAM
+    size = __RAM_SIZE
 }
 #bankdef rom
 {
     #bits 8
-    #addr ROM
-    #size ROM_SIZE
+    #addr __ROM
+    #size __ROM_SIZE
     #outp 0x0000
 }
 
