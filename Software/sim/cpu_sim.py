@@ -731,7 +731,7 @@ def main():
 
         # check if this is a jmp/call/ret instruction
         if ctrl['PI'] and ctrl['RU']:
-          if ii.value == 0x6B: # call)
+          if ii.value == 0x6B or ii.value == 0x63: # call
             dup = None
             stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
             for k in range(len(call_graph)):

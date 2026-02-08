@@ -625,6 +625,22 @@ jmp {addr: i16} =>
   0x64 @ addr`16
 }
 
+; jmp_hl
+; Jump to address in hl register
+; usage: jmp hl
+jmp hl =>
+{
+  0x62
+}
+
+; call_hl
+; Call Subroutine in hl register
+; usage: call hl
+call hl =>
+{
+  0x63
+}
+
 ; jmz
 ; Jump if Zero
 ; usage: jmz address[15:0]

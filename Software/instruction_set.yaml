@@ -1998,6 +1998,49 @@ instructions:
       - [MC]                 # Increment MAR to point to LSB of destination address
       - [PI, MO, RU]         # load PC with LSB of destination address. ucode counter reset
 
+  jmp_hl:
+    description: 'Jump to address in hl register'
+    duration: 5  # clock cycles
+    operands: 0  # bytes
+    usage: 'jmp hl'
+    opcode: 0x62
+    asm_def: |
+      jmp hl =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      - [PI, HO, LM]         # load PC with MSB of destination address
+      - [PI, HO, RU]         # load PC with LSB of destination address. ucode counter reset
+
+  call_hl:
+    description: 'Call Subroutine in hl register'
+    duration: 10  # clock cycles
+    operands: 0  # bytes
+    usage: 'call hl'
+    opcode: 0x63
+    asm_def: |
+      call hl =>
+      {
+        {OPCODE}
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # save PC to stack
+      - [PO, SI, LM]         # save PC MSB to stack
+      - [IS]                 # increment stack pointer
+      - [PO, SI]             # save PC LSB to stack
+      - [IS]                 # increment stack pointer
+      # jump
+      - [PI, HO, LM]         # load PC with MSB of destination address
+      - [MC]                 # Increment MAR to point to LSB of destination address
+      - [PI, HO, RU]         # load PC with LSB of destination address. ucode counter reset
+
   jmz:
     description: 'Jump if Zero'
     duration: TBD  # clock cycles
