@@ -113,6 +113,50 @@ test12:
     dealloc 2
     assert b, #0
 
+test13:
+    pushw #str
+    pushw #test_str13
+    call strcpy
+    dealloc 4
+    
+    pushw #str
+    call cli_parse_cmd
+    dealloc 2
+    assert b, #0
+
+    load a, 0x5000
+    assert a, #0xAB
+
+test14:
+    pushw #str
+    pushw #test_str14
+    call strcpy
+    dealloc 4
+    
+    pushw #str
+    call cli_parse_cmd
+    dealloc 2
+    assert b, #0
+
+    loadw hl, 0x5000
+    assert hl, #0xABCD
+
+test15:
+    pushw #str
+    pushw #test_str15
+    call strcpy
+    dealloc 4
+    
+    pushw #str
+    call cli_parse_cmd
+    dealloc 2
+    assert b, #0
+
+    loadw hl, 0x5000
+    assert hl, #0xDEAD
+    loadw hl, 0x5002
+    assert hl, #0xBEEF
+
 halt:
     halt
 
@@ -128,7 +172,10 @@ test_str8: #d "READ8 1000 \0" ; this should error out, since it has an extra par
 test_str9: #d "READ16 1000\0" ; this should print a 5445 for 'TE'. b = 0
 test_str10: #d "READ32 1000\0" ; this should print a 54455354 for 'TEST'. b = 0
 test_str11: #d "PRINT 1000\0" ; this should print a "TEST1". b = 0
-test_str12: #d "DUMP 1000 04\0" ; this should dump 0x04 lines of memory at address 0x1000
+test_str12: #d "DUMP 1000 04\0" ; this should dump 0x04 lines of memory at address 0x1000. b = 0
+test_str13: #d "WRITE8 5000 AB\0" ; write 0xAB to 0x5000. b = 0
+test_str14: #d "WRITE16 5000 ABCD\0" ; write 0xABCD to 0x5000. b = 0
+test_str15: #d "WRITE32 5000 DEADBEEF\0" ; write 0xDEADBEEF to 0x5000. b = 0
 
 
 ; includes
@@ -140,3 +187,5 @@ test_str12: #d "DUMP 1000 04\0" ; this should dump 0x04 lines of memory at addre
 #bank ram
 str: #res 256
 STACK_BASE: #res 1024
+#addr 0x5000
+test_addr: #res 4

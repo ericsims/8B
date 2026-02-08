@@ -10,8 +10,7 @@ cli_table:
     ; struct
     .CMD_POS = 0
     .HELP_POS = .CMD_POS+2
-    .PARAMS_POS = .HELP_POS+2
-    .JMP_POS = .PARAMS_POS+1
+    .JMP_POS = .HELP_POS+2
     ; consts
     .ENTRY_SIZE = .JMP_POS+2
     .NUM_ENTRIES = (._end - cli_table) / .ENTRY_SIZE
@@ -19,47 +18,50 @@ cli_table:
     .test2:
         ..cmd_str_ptr: #d16 cli_strings.test2_cmd
         ..help_str_ptr: #d16 cli_strings.test2_help
-        ..params: #d8 0
         ..jmp: #d16 cli_parse_cmd.test2
     .test1:
         ..cmd_str_ptr: #d16 cli_strings.test1_cmd
         ..help_str_ptr: #d16 cli_strings.test1_help
-        ..params: #d8 0
         ..jmp: #d16 cli_parse_cmd.test1
     .rtn_code_cmd:
         ..cmd_str_ptr: #d16 cli_strings.rtn_code_cmd
         ..help_str_ptr: #d16 cli_strings.rtn_code_help
-        ..params: #d8 0
         ..jmp: #d16 cli_parse_cmd.print_return_code
     .help_cmd:
         ..cmd_str_ptr: #d16 cli_strings.help_cmd
         ..help_str_ptr: #d16 cli_strings.help_help
-        ..params: #d8 0
         ..jmp: #d16 cli_parse_cmd.print_help
     .dump_cmd:
         ..cmd_str_ptr: #d16 cli_strings.dump_cmd
         ..help_str_ptr: #d16 cli_strings.dump_help
-        ..params: #d8 2
         ..jmp: #d16 cli_parse_cmd.dump
     .print_cmd:
         ..cmd_str_ptr: #d16 cli_strings.print_cmd
         ..help_str_ptr: #d16 cli_strings.print_help
-        ..params: #d8 1
         ..jmp: #d16 cli_parse_cmd.print
+    .write32_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.write32_cmd
+        ..help_str_ptr: #d16 cli_strings.write32_help
+        ..jmp: #d16 cli_parse_cmd.write32
+    .write16_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.write16_cmd
+        ..help_str_ptr: #d16 cli_strings.write16_help
+        ..jmp: #d16 cli_parse_cmd.write16
+    .write8_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.write8_cmd
+        ..help_str_ptr: #d16 cli_strings.write8_help
+        ..jmp: #d16 cli_parse_cmd.write8
     .read32_cmd:
         ..cmd_str_ptr: #d16 cli_strings.read32_cmd
         ..help_str_ptr: #d16 cli_strings.read32_help
-        ..params: #d8 1
         ..jmp: #d16 cli_parse_cmd.read32
     .read16_cmd:
         ..cmd_str_ptr: #d16 cli_strings.read16_cmd
         ..help_str_ptr: #d16 cli_strings.read16_help
-        ..params: #d8 1
         ..jmp: #d16 cli_parse_cmd.read16
     .read8_cmd:
         ..cmd_str_ptr: #d16 cli_strings.read8_cmd
         ..help_str_ptr: #d16 cli_strings.read8_help
-        ..params: #d8 1
         ..jmp: #d16 cli_parse_cmd.read8
     ._end:
 cli_strings:
@@ -77,6 +79,12 @@ cli_strings:
     .read16_help: #d " <ADDR16> read half word at address\0"
     .read32_cmd: #d "READ32\0"
     .read32_help: #d " <ADDR16> read word at address\0"
+    .write8_cmd: #d "WRITE8\0"
+    .write8_help: #d " <ADDR16> <VAL8> write byte to address\0"
+    .write16_cmd: #d "WRITE16\0"
+    .write16_help: #d " <ADDR16> <VAL16> write half word to address\0"
+    .write32_cmd: #d "WRITE32\0"
+    .write32_help: #d " <ADDR16> <VAL32> word word to address\0"
     .dump_cmd: #d "DUMP\0"
     .dump_help: #d " <ADDR16> <LEN8> dumps memory at addr of LEN8*16\0"
     .print_cmd: #d "PRINT\0"
@@ -419,6 +427,239 @@ cli_parse_cmd:
 ;  17 |_________________________|
 ;  18 |  ..local16_token_ptr    |
 ;  19 |_________________________|
+.write8:
+    ..local32_atoi_res1 = 7
+    ..local32_atoi_res2 = 11
+    ..init:
+        alloc 8 ; atoi_res1 and atoi_res2
+    
+    ..find_addr:
+        push #" "
+        loadw hl, (BP), .local16_next_token_ptr
+        pushw hl        
+        pushw #0
+        call strtok
+        sub b, #1
+        jnz ..error ; expect more tokens, b=1
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res1
+        pushw hl
+
+        ; convert addressing string to int
+        call atoi_hex
+        popw hl
+        sub b, #16
+        jnz ..error ; expect 16 bit address
+        
+    ..find_val:
+        call strtok
+        test b
+        jnz ..error ; expect no more tokens, b = 0
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res2
+        pushw hl
+
+        ; convert value string to int
+        call atoi_hex
+        popw hl
+        sub b, #8
+        jnz ..error ; expect 8 bit value
+
+        ; load 16 bit address and len
+        loadw hl, (BP), ..local32_atoi_res1+2
+        load a, (BP), ..local32_atoi_res2+3
+        
+        ; write value
+        store a, (hl)
+
+        load b, #0
+        jmp ..done
+
+    ..error:
+        load b, #-1
+    ..done:
+        dealloc 13
+        ret
+
+
+;      _________________________
+;   7 |   ..local32_atoi_res1   |
+;   8 |                         |
+;   9 |                         |
+;  10 |_________________________|
+;  11 |   ..local32_atoi_res2   |
+;  12 |                         |
+;  13 |                         |
+;  14 |_________________________|
+;  15 |__..local8_delim_char____|
+;  16 |..local16_next_token_ptr |
+;  17 |_________________________|
+;  18 |  ..local16_token_ptr    |
+;  19 |_________________________|
+.write16:
+    ..local32_atoi_res1 = 7
+    ..local32_atoi_res2 = 11
+    ..init:
+        alloc 8 ; atoi_res1 and atoi_res2
+    
+    ..find_addr:
+        push #" "
+        loadw hl, (BP), .local16_next_token_ptr
+        pushw hl        
+        pushw #0
+        call strtok
+        sub b, #1
+        jnz ..error ; expect more tokens, b=1
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res1
+        pushw hl
+
+        ; convert addressing string to int
+        call atoi_hex
+        popw hl
+        sub b, #16
+        jnz ..error ; expect 16 bit address
+        
+    ..find_val:
+        call strtok
+        test b
+        jnz ..error ; expect no more tokens, b = 0
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res2
+        pushw hl
+
+        ; convert value string to int
+        call atoi_hex
+        popw hl
+        sub b, #16
+        jnz ..error ; expect 16 bit value
+
+        ; load 16 bit address
+        loadw hl, (BP), ..local32_atoi_res1+2
+        ; write MSB
+        load a, (BP), ..local32_atoi_res2+2
+        store a, (hl)
+        ; write LSB
+        addw hl, #1
+        load a, (BP), ..local32_atoi_res2+3
+        store a, (hl)
+
+        load b, #0
+        jmp ..done
+
+    ..error:
+        load b, #-1
+    ..done:
+        dealloc 13
+        ret
+
+
+
+;      _________________________
+;   7 |   ..local32_atoi_res1   |
+;   8 |                         |
+;   9 |                         |
+;  10 |_________________________|
+;  11 |   ..local32_atoi_res2   |
+;  12 |                         |
+;  13 |                         |
+;  14 |_________________________|
+;  15 |__..local8_delim_char____|
+;  16 |..local16_next_token_ptr |
+;  17 |_________________________|
+;  18 |  ..local16_token_ptr    |
+;  19 |_________________________|
+.write32:
+    ..local32_atoi_res1 = 7
+    ..local32_atoi_res2 = 11
+    ..init:
+        alloc 8 ; atoi_res1 and atoi_res2
+    
+    ..find_addr:
+        push #" "
+        loadw hl, (BP), .local16_next_token_ptr
+        pushw hl        
+        pushw #0
+        call strtok
+        sub b, #1
+        jnz ..error ; expect more tokens, b=1
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res1
+        pushw hl
+
+        ; convert addressing string to int
+        call atoi_hex
+        popw hl
+        sub b, #16
+        jnz ..error ; expect 16 bit address
+        
+    ..find_val:
+        call strtok
+        test b
+        jnz ..error ; expect no more tokens, b = 0
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res2
+        pushw hl
+
+        ; convert value string to int
+        call atoi_hex
+        popw hl
+        sub b, #32
+        jnz ..error ; expect 32 bit value
+
+        ; load 16 bit address
+        loadw hl, (BP), ..local32_atoi_res1+2
+        ; write byte 0
+        load a, (BP), ..local32_atoi_res2
+        store a, (hl)
+        ; write byte 1
+        addw hl, #1
+        load a, (BP), ..local32_atoi_res2+1
+        store a, (hl)
+        ; write byte 2
+        addw hl, #1
+        load a, (BP), ..local32_atoi_res2+2
+        store a, (hl)
+        ; write byte 3
+        addw hl, #1
+        load a, (BP), ..local32_atoi_res2+3
+        store a, (hl)
+
+        load b, #0
+        jmp ..done
+
+    ..error:
+        load b, #-1
+    ..done:
+        dealloc 13
+        ret
+    
+;      _________________________
+;   7 |   ..local32_atoi_res1   |
+;   8 |                         |
+;   9 |                         |
+;  10 |_________________________|
+;  11 |   ..local32_atoi_res2   |
+;  12 |                         |
+;  13 |                         |
+;  14 |_________________________|
+;  15 |__..local8_delim_char____|
+;  16 |..local16_next_token_ptr |
+;  17 |_________________________|
+;  18 |  ..local16_token_ptr    |
+;  19 |_________________________|
 .dump:
     ..local32_atoi_res1 = 7
     ..local32_atoi_res2 = 11
@@ -459,7 +700,7 @@ cli_parse_cmd:
         call atoi_hex
         popw hl
         sub b, #8
-        jnz ..error ; expect 16 bit len
+        jnz ..error ; expect 8 bit len
 
         ; load 16 bit address and len
         loadw hl, (BP), ..local32_atoi_res1+2
