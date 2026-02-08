@@ -761,8 +761,4 @@ cli_parse_cmd:
         dealloc 9
         ret
 
-
-
-
-
 #include "./char_utils.asm"
