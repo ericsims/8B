@@ -740,8 +740,6 @@ ret  =>
 ; usage: assert a, #data[7:0]
 assert a, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x78 @ imm`8
 }
 
@@ -750,8 +748,6 @@ assert a, #{imm: i8} =>
 ; usage: assert b, #data[7:0]
 assert b, #{imm: i8} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xff)
   0x79 @ imm`8
 }
 
@@ -760,8 +756,6 @@ assert b, #{imm: i8} =>
 ; usage: assert hl, #data[15:0]
 assert hl, #{imm: i16} =>
 {
-  assert(imm >= 0)
-  assert(imm <= 0xffff)
   0x7A @ imm`16
 }
 

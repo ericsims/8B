@@ -2314,8 +2314,6 @@ instructions:
     asm_def: |
       assert a, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -2334,8 +2332,6 @@ instructions:
     asm_def: |
       assert b, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
         {OPCODE} @ imm`8
       }
     ucode:
@@ -2354,8 +2350,6 @@ instructions:
     asm_def: |
       assert hl, #{imm: i16} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xffff)
         {OPCODE} @ imm`16
       }
     ucode:

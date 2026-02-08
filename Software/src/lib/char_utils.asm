@@ -4,13 +4,14 @@
 
 #once
 
-#bank rom
+
 ;;
 ; @function
 ; @brief print character to UART
 ; @section description
 ; static function
 ;;
+#bank rom
 static_uart_putc:
     ; TODO: check if UART is ready
     move .char, UART
@@ -20,26 +21,26 @@ static_uart_putc:
     .char: #res 1 ; char to print to uart
 
 
-#bank rom
 ;;
 ; @function
 ; @brief print newline '\n' character to UART
 ; @section description
 ; static function
 ;;
+#bank rom
 static_uart_print_newline:
     ; TODO: check if UART is ready
     store #"\n", UART
     ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief print hex prefix '0x' to UART
 ; @section description
 ; static function
 ;;
+#bank rom
 static_uart_print_hex_prefix:
     store #"0", static_uart_putc.char
     call static_uart_putc
@@ -48,7 +49,6 @@ static_uart_print_hex_prefix:
     ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief print null terminated string to UART
@@ -56,6 +56,7 @@ static_uart_print_hex_prefix:
 ; static function
 ; TODO: this function doesn't check if the UART is ready to send
 ;;
+#bank rom
 static_uart_print:
     ; load current char
     loadw hl, .data_pointer
@@ -78,7 +79,8 @@ static_uart_print:
 #bank ram
     .data_pointer: #res 2 ; pointer to begining of string. MSB, LSB
 
-#bank rom
+
+
 ;;
 ; @function
 ; @brief print null terminated string to UART
@@ -86,6 +88,7 @@ static_uart_print:
 ; static function
 ; TODO: this function doesn't check if the UART is ready to send
 ;;
+#bank rom
 static_uart_print_len:
     ; load current char
     loadw hl, static_uart_print.data_pointer
@@ -112,7 +115,8 @@ static_uart_print_len:
 #bank ram
     .data_len: #res 1 ; max length
 
-#bank rom
+
+
 ;;
 ; @function
 ; @brief converts one nibble of number to string
@@ -127,6 +131,7 @@ static_uart_print_len:
 ; @param .param8_c input number
 ; @return out_char
 ;;
+#bank rom
 itoa_hex_nibble:
     .param8_c = -5
     .init:
@@ -241,7 +246,7 @@ uart_print_itoa_hex:
         call static_uart_putc
         ret
     .__lsn:
-        ; leas signficant nibble
+        ; leas significant nibble
         ; send byte to itoa_hex_nibble function
         ; this function already masks for lower 4 bits
         push a
@@ -387,6 +392,7 @@ uart_print_itoa_hex32:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_c input number
 ;;
+#bank rom
 uart_dump_mem:
     .param16_ptr = -7
     .param8_len = -5
@@ -483,7 +489,6 @@ uart_dump_mem:
     ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 1 if character is whitespace
@@ -497,6 +502,7 @@ uart_dump_mem:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_char input character
 ;;
+#bank rom
 isspace:
     .param8_char = -5
     .init:
@@ -527,7 +533,6 @@ isspace:
 
 
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 1 if character is a numeral digit
@@ -541,6 +546,7 @@ isspace:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_char input character
 ;;
+#bank rom
 isdigit:
     .param8_char = -5
     .init:
@@ -561,7 +567,6 @@ isdigit:
 
     
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 1 if character is a numeral hex digit '0'-'9','A'-'F'
@@ -575,6 +580,7 @@ isdigit:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_char input character
 ;;
+#bank rom
 ishexdigit:
     .param8_char = -5
     .init:
@@ -606,7 +612,6 @@ ishexdigit:
     ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 1 if character is a numeral digit '0'-'9', '.', '-', '+', 'e', and 'E'
@@ -620,6 +625,7 @@ ishexdigit:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_char input character
 ;;
+#bank rom
 isjsondigit:
     .param8_char = -5
     .init:
@@ -666,15 +672,12 @@ isjsondigit:
     ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 0 if strings are the same
 ; @section description
 ; takes a 2 string pointers and compares the contents
-;     _______________________
-; -8 |   .param16_str1_in    |
-; -7 |_______________________|
+;     _______________________5
 ; -6 |   .param16_str2_in    |
 ; -5 |_______________________|
 ; -4 |___________?___________| RESERVED
@@ -687,6 +690,7 @@ isjsondigit:
 ;  3 |_______________________| 
 ; @param .param8_char input character
 ;;
+#bank rom
 strcmp:
     .param16_str1_in = -8
     .param16_str2_in = -6
@@ -737,7 +741,6 @@ strcmp:
         ret
 
 
-#bank rom
 ;;
 ; @function
 ; @brief returns 1 if character is a printable ascii character
@@ -751,6 +754,7 @@ strcmp:
 ; -1 |___________?___________| RESERVED
 ; @param .param8_char input character
 ;;
+#bank rom
 isprintable:
     .param8_char = -5
     .init:
@@ -771,7 +775,6 @@ isprintable:
 
 
 
-#bank rom
 ;;
 ; @function
 ; @brief converts string to integer
@@ -793,6 +796,7 @@ isprintable:
 ; @param .param16_result_ptr pointer to result location
 ; @return num_bytes number of bits of return type, negative for error 
 ;;
+#bank rom
 atoi_hex:
     .param16_string_ptr = -8
     .param16_result_ptr = -6
@@ -892,3 +896,117 @@ atoi_hex:
         __epilogue
         ret
 
+
+
+;;
+; @function
+; @brief copy null terminated string
+; @section description
+;
+;     _______________________
+; -8 |   .param16_dst_ptr    |
+; -7 |_______________________|
+; -6 |   .param16_src_ptr    |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param16_dst_ptr destination address
+; @param .param16_src_ptr source address
+;;
+#bank rom
+strcpy:
+    .param16_dst_ptr = -8
+    .param16_src_ptr = -6
+    .init:
+        __prologue
+    
+    .copy:
+        ; load char from string
+        loadw hl, (BP), .param16_src_ptr
+        load a, (hl)
+        addw hl, #1
+        storew hl, (BP), .param16_src_ptr
+        
+        ; copy char
+        loadw hl, (BP), .param16_dst_ptr
+        store a, (hl)
+        addw hl, #1
+        storew hl, (BP), .param16_dst_ptr
+
+        ; fall through if null char, otherwise loop
+        test a
+        jnz .copy
+    .done:
+        __epilogue
+        ret
+
+;;
+; @function
+; @brief split string on token
+; @section description
+; The strtok() function breaks a string into a sequence of zero or
+; more nonempty tokens. On the first call to strtok(), the string
+; to be parsed should be specified in str. String pointer is modified
+; to move pointer forward to token, so recalling strtok will continue
+; to the subsequent token.
+;
+;     _______________________
+; -9 |__.param8_delim_char___|
+; -8 |  .param16_string_ptr  |
+; -7 |_______________________|
+; -6 |  .param16_match_ptr   |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param8_delim_char
+; @return -1=empty string, 0=found last token, 1=found token, more remaining
+;;
+#bank rom
+strtok:
+    .param8_delim_char = -9
+    .param16_string_ptr = -8
+    .param16_match_ptr = -6
+    .init:
+        __prologue
+        ; load delimiter
+        load b, (BP), .param8_delim_char
+        loadw hl, (BP), .param16_string_ptr
+        storew hl, (BP), .param16_match_ptr
+    
+    .check_empty_string:
+        ; load char from string
+        load a, (hl)
+        ; test for null termination
+        test a
+        jmz .empty_string
+    .check_char:
+        ; load char from string
+        load a, (hl)
+        ; test for null termination
+        test a
+        jmz .end_of_string
+        ; compare char with delimiter
+        sub a, b
+        jmz .token_found
+        ; check next char
+        addw hl, #1
+        storew hl, (BP), .param16_string_ptr
+        jmp .check_char
+    .empty_string:
+        load b, #-1
+        jmp .done
+    .end_of_string:
+        load b, #0
+        jmp .done
+    .token_found:
+        store #"\0", (hl)
+        addw hl, #1
+        storew hl, (BP), .param16_string_ptr
+        load b, #1
+    .done:
+        __epilogue
+        ret
