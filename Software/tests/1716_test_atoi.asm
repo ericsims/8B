@@ -184,7 +184,7 @@ main:
     load a, res_ptr+3
     assert a, #0x98
 
-    ; this one should be two many bits!
+    ; this one should be too many bits!
     jmp test15
     test15_str: #d "ABCDEF987\0"
     test15:
