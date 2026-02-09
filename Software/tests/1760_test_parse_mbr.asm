@@ -13,7 +13,7 @@ main:
 
 ; includes
 #include "../src/CPU.asm"
-#include "../src/lib/fs.asm"
+#include "../src/lib/lib_fs.asm"
 
 ; global vars
 #bank ram

@@ -1,6 +1,7 @@
 ; ###
 ; fs.asm begin
 ; ###
+#once
 
 SDCARD_ADDR = SDCARD+0
 SDCARD_DATA = SDCARD+4

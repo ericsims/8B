@@ -26,7 +26,7 @@ fname: #d "HELLO1  BIN \0"
 #bank rom
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
-#include "../src/lib/fs.asm"
+#include "../src/lib/lib_fs.asm"
 
 ; global vars
 #bank ram

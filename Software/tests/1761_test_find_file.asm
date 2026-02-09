@@ -21,7 +21,7 @@ fname: #d "HELLO   TXT \0"
 ; includes
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
-#include "../src/lib/fs.asm"
+#include "../src/lib/lib_fs.asm"
 #include "../src/lib/json_print.asm"
 
 ; global vars

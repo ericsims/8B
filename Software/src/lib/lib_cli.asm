@@ -23,6 +23,10 @@ cli_table:
         ..cmd_str_ptr: #d16 cli_strings.test1_cmd
         ..help_str_ptr: #d16 cli_strings.test1_help
         ..jmp: #d16 cli_parse_cmd.test1
+    .mount:
+        ..cmd_str_ptr: #d16 cli_strings.mount_cmd
+        ..help_str_ptr: #d16 cli_strings.mount_help
+        ..jmp: #d16 fs_read_mbr
     .rtn_code_cmd:
         ..cmd_str_ptr: #d16 cli_strings.rtn_code_cmd
         ..help_str_ptr: #d16 cli_strings.rtn_code_help
@@ -95,6 +99,8 @@ cli_strings:
     .print_help: #d " <ADDR16> prints null terminated string at address\0"
     .call_cmd: #d "CALL\0"
     .call_help: #d " <ADDR16> calls subroutine at address. Preserves return code\0"
+    .mount_cmd: #d "MOUNT\0"
+    .mount_help: #d " mounts SDCARD FAT16 filesystem\0"
 
 
 #bank ram
@@ -817,3 +823,4 @@ cli_parse_cmd:
         ret
 
 #include "./char_utils.asm"
+#include "./lib_fs.asm"

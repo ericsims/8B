@@ -490,20 +490,22 @@ def main():
     window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
     window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
     
+    # register key events for the _UART_ window
     for char in string.printable:
       window['_UART_'].bind(char,ord(char))
     window['_UART_'].bind("<Return>",ord('\n'))
     window['_UART_'].bind("<space>",ord(' '))
+    window['_UART_'].bind("<BackSpace>",ord('\b'))
   else:
     window = None
 
   def update_uart(char):
     if GUI:
-      # global uart_print_buf
-      # # TODO: this leaks memory, trim at some length please
-      # uart_print_buf = f"{uart_print_buf}{char}"
-      # window['_UART_'].update(uart_print_buf)
-      window['_UART_'].print(char, end='')
+      if char == '\b':
+        # TODO: is there a better way to backspace
+        window['_UART_'].update(window['_UART_'].get()[:-1])
+      else:
+        window['_UART_'].print(char, end='')
     else:
       print(f"{bcolors.OKCYAN}{char}{bcolors.ENDC}", end='')
   mems.uart.out_callback = update_uart
