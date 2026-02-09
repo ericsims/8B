@@ -31,6 +31,10 @@ cli_table:
         ..cmd_str_ptr: #d16 cli_strings.help_cmd
         ..help_str_ptr: #d16 cli_strings.help_help
         ..jmp: #d16 cli_parse_cmd.print_help
+    .call_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.call_cmd
+        ..help_str_ptr: #d16 cli_strings.call_help
+        ..jmp: #d16 cli_parse_cmd.call
     .dump_cmd:
         ..cmd_str_ptr: #d16 cli_strings.dump_cmd
         ..help_str_ptr: #d16 cli_strings.dump_help
@@ -89,6 +93,8 @@ cli_strings:
     .dump_help: #d " <ADDR16> <LEN8> dumps memory at addr of LEN8*16\0"
     .print_cmd: #d "PRINT\0"
     .print_help: #d " <ADDR16> prints null terminated string at address\0"
+    .call_cmd: #d "CALL\0"
+    .call_help: #d " <ADDR16> calls subroutine at address. Preserves return code\0"
 
 
 #bank ram
@@ -755,6 +761,55 @@ cli_parse_cmd:
         load b, #0
         jmp ..done
 
+    ..error:
+        load b, #-1
+    ..done:
+        dealloc 9
+        ret
+
+
+;      _________________________
+;   7 |   ..local32_atoi_res    |
+;   8 |                         |
+;   9 |                         |
+;  10 |_________________________|
+;  11 |__..local8_delim_char____|
+;  12 |..local16_next_token_ptr |
+;  13 |_________________________|
+;  14 |  ..local16_token_ptr    |
+;  15 |_________________________|
+.call:
+    ..local32_atoi_res = 7
+    ..init:
+        alloc 4 ; atoi_res
+    
+    ..find_param:
+        push #" "
+        loadw hl, (BP), .local16_next_token_ptr
+        pushw hl        
+        pushw #0
+        call strtok
+        test b
+        jnz ..error ; expect last token, b=0
+
+        ; compute address of atoi_res
+        loadw hl, BP
+        addw hl, #..local32_atoi_res
+        pushw hl
+
+        ; convert addressing string to int
+        call atoi_hex
+        popw hl
+        sub b, #16
+        jnz ..error ; expect 16 bit address
+
+        ; load 16 bit address
+        loadw hl, (BP), ..local32_atoi_res+2
+        
+        ; call subroute at address
+        call hl
+
+        jmp ..done
     ..error:
         load b, #-1
     ..done:

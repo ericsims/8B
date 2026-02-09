@@ -3,7 +3,7 @@
 ; @author Eric Sims
 ;
 ; @section description
-; pseduo random number generator
+; pseudorandom number generator
 ;
 ;;
 
@@ -14,8 +14,8 @@
 ; @function
 ; @brief sets lfsr x value with a random number
 ; @section description
-; updates lfsr x value in pointer with psudeorandom number
-; psudeorandom number must be initialized to non-zero seed
+; updates lfsr x value in pointer with pseudorandom number
+; pseudorandom number must be initialized to non-zero seed
 ; also returns value in b register
 ; @param .param16_inp pointer to lfsr x value
 ; @return lfsr x

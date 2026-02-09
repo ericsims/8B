@@ -157,9 +157,26 @@ test15:
     loadw hl, 0x5002
     assert hl, #0xBEEF
 
+test16:
+    pushw #str
+    pushw #test_str16
+    call strcpy
+    dealloc 4
+    
+    pushw #str
+    call cli_parse_cmd
+    dealloc 2
+    assert b, #0xAB
+
 halt:
     halt
 
+#addr 0x800
+test_prg:
+    load b, #0xAB
+    ret
+
+; constants
 #addr 0x1000
 test_str1: #d "TEST1\0" ; this returns a 1. b = 1
 test_str2: #d "TEST2\0" ; this returns a 2. b = 2
@@ -176,12 +193,11 @@ test_str12: #d "DUMP 1000 04\0" ; this should dump 0x04 lines of memory at addre
 test_str13: #d "WRITE8 5000 AB\0" ; write 0xAB to 0x5000. b = 0
 test_str14: #d "WRITE16 5000 ABCD\0" ; write 0xABCD to 0x5000. b = 0
 test_str15: #d "WRITE32 5000 DEADBEEF\0" ; write 0xDEADBEEF to 0x5000. b = 0
+test_str16: #d "CALL 0800\0" ; Call test subroutine at address 0x0800. return code matches subroutine. b=0xAB
 
-
-; includes
-#bank rom
+; include
 #include "../src/CPU.asm"
-#include "../src/lib/cli.asm"
+#include "../src/lib/lib_cli.asm"
 
 ; global vars
 #bank ram

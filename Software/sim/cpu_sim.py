@@ -5,6 +5,7 @@ import warnings
 import json
 import yaml
 import traceback
+import string
 from enum import Enum
 import FreeSimpleGUI as sg
 from termcolor import colored
@@ -403,25 +404,15 @@ def main():
 
 
   layout_uart = [
-    [
-      sg.Input(
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_UART_IN_',
-        expand_x = True
-      )
-    ],
     [sg.Multiline(
       autoscroll=True,
       font=('courier new',11),
       justification='left',
       text_color='black',
       background_color='white',
-      key='_UART_OUT_',
+      key='_UART_',
       expand_y = True,
       expand_x = True,
-      write_only=True,
       disabled=True
     )]
   ]
@@ -498,19 +489,25 @@ def main():
     window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
     window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
     window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
+    
+    for char in string.printable:
+      window['_UART_'].bind(char,ord(char))
+    window['_UART_'].bind("<Return>",ord('\n'))
+    window['_UART_'].bind("<space>",ord(' '))
   else:
     window = None
 
   def update_uart(char):
     if GUI:
-      global uart_print_buf
-      # TODO: this leaks memory, trim at some length please
-      uart_print_buf = f"{uart_print_buf}{char}"
-      window['_UART_OUT_'].update(uart_print_buf)
+      # global uart_print_buf
+      # # TODO: this leaks memory, trim at some length please
+      # uart_print_buf = f"{uart_print_buf}{char}"
+      # window['_UART_'].update(uart_print_buf)
+      window['_UART_'].print(char, end='')
     else:
       print(f"{bcolors.OKCYAN}{char}{bcolors.ENDC}", end='')
-      pass
-  mems.uart.callback = update_uart
+  mems.uart.out_callback = update_uart
+  
 
   INDC_COLOR = ['gray', 'green']
 
@@ -556,7 +553,7 @@ def main():
               event, _ = window.Read()
             else:
               event, _ = window.Read(timeout=0)
-
+            
             if event == "Pause":
               dbg_state = dbg.BREAK_IMM
               continue
@@ -569,6 +566,9 @@ def main():
               dbg_state = dbg.CONTINUE
             if event == "uSTEP":
               pass
+            if event is not None and '_UART_' in event:
+              mems.uart.rcv_char(int(event[6:]))
+              continue
               
 
         clk_counter += 1

@@ -20,6 +20,16 @@ static_uart_putc:
 #bank ram
     .char: #res 1 ; char to print to uart
 
+;;
+; @function
+; @brief returns character in UART FIFO. returns 0 if no characters available.
+; @section description
+;;
+#bank rom
+uart_getc:
+    load b, UART ; reading UART returns character, otherwise returns zero
+    ret
+
 
 ;;
 ; @function
