@@ -71,7 +71,7 @@ fileinfo: ; 32 bytes
     .file_size: #res 4
     .END:
 
-#addr RAM+0x1000
+#addr DYNAMIC_LOAD_ADDR
 file_handle:
     .buf: #res 0x200
     .name: #res 11

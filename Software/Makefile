@@ -1,23 +1,40 @@
-CC := customasm
-BIN_DIR := bin
-SRC_DIR := src
-TEST_SRC_DIR := tests
-LIB_SRC_DIR := src/lib
+# venv
 VENV_DIR := .venv
 REQ_FILE := requirements_dev
-IR_DOCS_DIR := irdocs
-DOCS_DIR := docs
+# assembler
+CC := customasm
+# source files
+SRC_DIR := src/
+# libs
+LIB_SRC_DIR := src/lib/
+# tests
+TEST_SRC_DIR := tests/
+TEST_BIN_DIR := $(TEST_SRC_DIR)bin/
+# apps
+APPS_SRC_DIR := apps/
+APPS_BIN_DIR := $(APPS_SRC_DIR)bin/
+# documentation
+IR_DOCS_DIR := irdocs/
+DOCS_DIR := docs/
 
-TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)/*.asm))
-LIB_SRCS := $(sort $(wildcard $(LIB_SRC_DIR)/*.asm))
-TEST_BINS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(BIN_DIR)/%.bin,$(TEST_SRCS))
+
+# libs
+LIB_SRCS := $(sort $(wildcard $(LIB_SRC_DIR)*.asm))
+
+# tests
+TEST_SRCS := $(sort $(wildcard $(TEST_SRC_DIR)*.asm))
+TEST_BINS := $(patsubst $(TEST_SRC_DIR)%.asm,$(TEST_BIN_DIR)%.bin,$(TEST_SRCS))
 all_tests  :=  $(addsuffix .test, $(basename $(TEST_BINS)))
 
+# apps
+APPS_SRCS := $(sort $(wildcard $(APPS_SRC_DIR)*.asm))
+STATIC_APPS_BINS := $(patsubst $(APPS_SRC_DIR)%.asm,$(APPS_BIN_DIR)%_static.bin,$(APPS_SRCS))
+DYNAMIC_APPS_BINS := $(patsubst $(APPS_SRC_DIR)%.asm,$(APPS_BIN_DIR)%.bin,$(APPS_SRCS))
 
-IR_DOCS := $(patsubst $(TEST_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(TEST_SRCS))
-IR_DOCS += $(patsubst $(LIB_SRC_DIR)/%.asm,$(IR_DOCS_DIR)/%.yml,$(LIB_SRCS))
+IR_DOCS := $(patsubst $(TEST_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(TEST_SRCS))
+IR_DOCS += $(patsubst $(LIB_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(LIB_SRCS))
 
-LUTS := $(BIN_DIR)/sin_lut.dat
+LUTS := $(TEST_BIN_DIR)/sin_lut.dat
 INST_SET_OUT := $(SRC_DIR)/instructions.asm
 INST_SET_IN := instruction_set.yaml
 MEM_MAP_OUT := $(SRC_DIR)/mems.asm
@@ -30,7 +47,7 @@ coverage_report = $(DOCS_DIR)/inst_coverage.txt
 
 .PHONY: all deps
 
-all: tests docs
+all: tests apps docs
 
 $(VENV_DIR):
 	@echo makeing python venv... 
@@ -48,6 +65,7 @@ deps: $(VENV_DIR)
 		pip install -r $(REQ_FILE).txt \
 	)
 
+# instruction set
 instruction: $(INST_SET_OUT)
 $(INST_SET_OUT): $(MEM_MAP_OUT) $(INST_SET_IN)
 	@echo "builing instruction set..."
@@ -56,46 +74,7 @@ $(INST_SET_OUT): $(MEM_MAP_OUT) $(INST_SET_IN)
 	python parse_instruction_set.py || exit 1
 	@echo ""
 
-luts: $(LUTS)
-$(BIN_DIR)/sin_lut.dat:
-	@mkdir -p bin
-	jupyter nbconvert --execute ./lib_dev/Trig/sin_lut.ipynb --inplace	
-
-tests: $(TEST_BINS)
-$(BIN_DIR)/%.bin: $(TEST_SRC_DIR)/%.asm $(LIB_SRCS)
-	@mkdir -p $(@D)
-	${CC} -f binary -o $@ $<
-	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
-	@echo ""
-$(TEST_SRCS): instruction luts
-
-
-
-bin/1760_test_parse_mbr.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
-bin/1761_test_find_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
-bin/1762_test_load_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
-bin/1770_test_run_file_from_disk.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
-
-test: $(all_tests)
-$(all_tests): %.test : %.bin
-	@echo running test case $<   $(test_flags)
-	@python sim/cpu_sim.py --no-sim --no-gui -f $< $(test_flags) >> /dev/null || exit 1
-
-
-docs: coverage_report memory_map
-$(IR_DOCS_DIR)/%.yml: $(TEST_SRC_DIR)/%.asm
-	@mkdir -p $(IR_DOCS_DIR)
-	@$(parse_docs_script) $< $@
-$(IR_DOCS_DIR)/%.yml: $(LIB_SRC_DIR)/%.asm
-	@mkdir -p $(IR_DOCS_DIR)
-	@$(parse_docs_script) $< $@
-
-coverage_report: $(coverage_report)
-$(coverage_report): $(IR_DOCS)
-	@mkdir -p $(DOCS_DIR)
-	@echo generating instruction test coverage report...
-	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
-
+# memory map
 memory_map: $(MEM_MAP_DOC) 
 $(MEM_MAP_DOC): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
@@ -103,7 +82,6 @@ $(MEM_MAP_DOC): $(MEM_MAP_IN)
 	@yamllint -d "{extends: default, rules: {line-length: disable, new-lines: {type: platform}}}" $(MEM_MAP_IN)
 	@mld --format=svg --output=$(MEM_MAP_DOC) $(MEM_MAP_IN)
 	@echo ""
-
 $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@echo "builing memory map set..."
 	@echo "checking yaml syntax..."
@@ -111,11 +89,66 @@ $(MEM_MAP_OUT): $(MEM_MAP_IN)
 	@python parse_memory_map.py || exit 1
 	@echo ""
 
+# TODO: fix lut generations. make it per lib, and not with jupyter
+luts: $(LUTS)
+$(TEST_BIN_DIR)/sin_lut.dat:
+	@mkdir -p bin
+	jupyter nbconvert --execute ./lib_dev/Trig/sin_lut.ipynb --inplace	
+
+# build tests
+tests: $(TEST_BINS)
+$(TEST_BIN_DIR)%.bin: $(TEST_SRC_DIR)%.asm $(LIB_SRCS)
+	mkdir -p $(@D)
+	${CC} -f binary -o $@ $<
+	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
+	@echo ""
+$(TEST_SRCS): instruction
+
+# run tests
+test: $(all_tests)
+$(all_tests): %.test : %.bin
+	@echo running test case $<   $(test_flags)
+	@python sim/cpu_sim.py --no-sim --no-gui -f $< $(test_flags) >> /dev/null || exit 1
+
+# additional test flags for some unique tests
+$(TEST_BIN_DIR)1760_test_parse_mbr.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1761_test_find_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1762_test_load_file.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --disk=./sim/virt_disk --ignore-uninit-mem
+
+
+# build apps
+apps: $(STATIC_APPS_BINS) $(DYNAMIC_APPS_BINS)
+$(APPS_BIN_DIR)%_static.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) 
+	mkdir -p $(@D)
+	${CC} -f binary -o $@ $<
+	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
+	@echo ""
+$(APPS_BIN_DIR)%.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) 
+	mkdir -p $(@D)
+	${CC} -dDYNAMIC_LOAD=1 -f binary -o $@ $<
+	@${CC} -dDYNAMIC_LOAD=1 -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
+	@echo ""
+
+# documentation
+docs: coverage_report memory_map
+$(IR_DOCS_DIR)%.yml: $(TEST_SRC_DIR)%.asm
+	@mkdir -p $(IR_DOCS_DIR)
+	@$(parse_docs_script) $< $@
+$(IR_DOCS_DIR)%.yml: $(LIB_SRC_DIR)%.asm
+	@mkdir -p $(IR_DOCS_DIR)
+	@$(parse_docs_script) $< $@
+coverage_report: $(coverage_report)
+$(coverage_report): $(IR_DOCS)
+	@mkdir -p $(DOCS_DIR)
+	@echo generating instruction test coverage report...
+	@$(coverage_report_script) $(INST_SET_IN) $(IR_DOCS_DIR) > $(coverage_report)
 
 .PHONY: clean
 clean:
 	@echo "***cleaning up***"
-	@rm -rf $(BIN_DIR)
+	@rm -rf $(TEST_BIN_DIR)
+	@rm -rf $(APPS_BIN_DIR)
 	@rm -rf $(IR_DOCS_DIR)
 	@rm -f $(INST_SET_OUT)
 	@rm -f $(MEM_MAP_OUT)

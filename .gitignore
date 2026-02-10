@@ -1,7 +1,6 @@
 *.log
 **/__Previews
 *.lck
-Software/bin
 **/History
 
 # lock files
@@ -21,3 +20,7 @@ virt_disk
 
 # FreeCAD
 *.FCBak
+
+# bins
+Software/apps/bin
+Software/tests/bin

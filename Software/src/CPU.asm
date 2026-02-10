@@ -159,14 +159,17 @@
 }
 
 DYNAMIC_LOAD = 0
+; locate dynamic file loading at top of ram
+DYNAMIC_LOAD_SIZE = 0x2000
+DYNAMIC_LOAD_ADDR = RAM+RAM_SIZE-DYNAMIC_LOAD_SIZE
 #if DYNAMIC_LOAD == 1 ; set this with command line -dDYNAMIC_LOAD=1
 {
     ; if building an app that gets loaded from disk
     ; change rom address to be in runtime ram
     __RAM = RAM
-    __RAM_SIZE = 0x1000
-    __ROM = RAM+0x1000
-    __ROM_SIZE = RAM_SIZE-0x1000
+    __RAM_SIZE = RAM_SIZE-DYNAMIC_LOAD_SIZE
+    __ROM = DYNAMIC_LOAD_ADDR
+    __ROM_SIZE = DYNAMIC_LOAD_SIZE
 }
 #else
 {
