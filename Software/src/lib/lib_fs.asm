@@ -71,7 +71,7 @@ fileinfo: ; 32 bytes
     .file_size: #res 4
     .END:
 
-#addr DYNAMIC_LOAD_ADDR
+#bank prog
 file_handle:
     .buf: #res 0x200
     .name: #res 11

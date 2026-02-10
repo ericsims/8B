@@ -184,12 +184,18 @@ DYNAMIC_LOAD_ADDR = RAM+RAM_SIZE-DYNAMIC_LOAD_SIZE
     addr = __RAM
     size = __RAM_SIZE
 }
+#bankdef prog
+{
+    bits = 8
+    addr = DYNAMIC_LOAD_ADDR
+    size = DYNAMIC_LOAD_SIZE
+}
 #bankdef rom
 {
-    #bits 8
-    #addr __ROM
-    #size __ROM_SIZE
-    #outp 0x0000
+    bits = 8
+    addr = __ROM
+    size = __ROM_SIZE
+    outp = 0x0000
 }
 
 #bank ram

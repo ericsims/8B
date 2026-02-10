@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import select
 import getopt
 import warnings
 import json
@@ -124,7 +125,7 @@ def main():
 
   clk_counter = 0
 
-  UPDATE_RATE = 10000
+  UPDATE_RATE = 2000
 
   IMG_HEI = 80
   IMG_WID = 101
@@ -404,7 +405,7 @@ def main():
 
 
   layout_uart = [
-    [sg.Multiline(
+    sg.Multiline(
       autoscroll=True,
       font=('courier new',11),
       justification='left',
@@ -413,8 +414,9 @@ def main():
       key='_UART_',
       expand_y = True,
       expand_x = True,
-      disabled=True
-    )]
+      disabled=True,
+      rstrip=False
+    )
   ]
   layout_sdcard = [[
     sg.Column([
@@ -442,17 +444,17 @@ def main():
     ], vertical_alignment='t', expand_y=False, expand_x=False),
   ]]
   
-  tabs_layout = [[
-    sg.TabGroup([[
+  tabs_layout = [
+    [sg.TabGroup([[
       sg.Tab('DEBUG', layout_debug, expand_x=True, expand_y=True),
       sg.Tab('SRAM', layout_sram, expand_x=True, expand_y=True),
       sg.Tab('STACK', layout_stack, expand_x=True, expand_y=True),
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
-      sg.Tab('UART', layout_uart, expand_x=True, expand_y=True),
       sg.Tab('SDCARD', layout_sdcard, expand_x=True, expand_y=True),
-      ]])
-    ]]
+      ]])],
+    layout_uart
+  ]
 
   layout = [[
     sg.Column(layout_regs,  vertical_alignment='t', expand_y=True),
@@ -503,7 +505,7 @@ def main():
     if GUI:
       if char == '\b':
         # TODO: is there a better way to backspace
-        window['_UART_'].update(window['_UART_'].get()[:-1])
+        window['_UART_'].update(window['_UART_'].get()[:-2])
       else:
         window['_UART_'].print(char, end='')
     else:
@@ -521,7 +523,6 @@ def main():
   dbg_state = dbg.CONTINUE
 
   if GUI:
-    event, values = window.Read(timeout=0)
     if not EXIT_ON_HALT: dbg_state = dbg.BREAK_IMM
 
     window['_DEBUG_'].update(values=[f"{line['addr']:08x} {line['data']}" for line in code])
@@ -550,11 +551,12 @@ def main():
 
       while True:
         if GUI:
+          
           if clk_counter % UPDATE_RATE == 0 or ctrl['HT'] or dbg_state == dbg.BREAK_IMM or dbg_state == dbg.BREAK_AFTER_INST:
             if dbg_state == dbg.BREAK_IMM:
               event, _ = window.Read()
             else:
-              event, _ = window.Read(timeout=0)
+              event, _ = window.Read(timeout=1)
             
             if event == "Pause":
               dbg_state = dbg.BREAK_IMM
@@ -571,7 +573,14 @@ def main():
             if event is not None and '_UART_' in event:
               mems.uart.rcv_char(int(event[6:]))
               continue
-              
+        else:
+          while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+            line = sys.stdin.readline()
+            if line:
+              for char in line:
+                mems.uart.rcv_char(ord(char))             
+
+
 
         clk_counter += 1
 
