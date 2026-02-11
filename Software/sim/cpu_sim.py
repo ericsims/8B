@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+print("loading libs...")
 import sys
 import select
 import getopt
@@ -6,13 +7,12 @@ import warnings
 import json
 import yaml
 import traceback
-import string
 from enum import Enum
 import FreeSimpleGUI as sg
 from termcolor import colored
 # import rpyc
 from PIL import Image, ImageTk
-
+from bcolors import bcolors
 from PC import PC
 from II import II
 from MAR import MAR
@@ -23,36 +23,13 @@ from MEMS import MEMS
 from parse_vars import *
 
 # TODO: dead code analysis
-# TODO: call graph to include call/ret/jumps. add subgraph for subroutines
 # TODO: extended memory
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-
-uart_print_buf = ""
 
 class dbg(Enum):
   CONTINUE = 1
   BREAK_IMM = 2
   BREAK_AFTER_INST = 3
   BREAK_AFTER_RET = 4
-
-
-def get_sram_char_pos(addr):
-  row_num = int((addr-0x4000)/32)
-  col_num = ((addr-0x4000)-row_num*32)*3
-  col_num += int(col_num/3/8)
-  col_num += 4
-  return row_num,col_num
 
 def main():
 
@@ -106,8 +83,6 @@ def main():
       warnings.warn("Warning. Sim not connected!")
   else:
     conn = None
-
-  print(f"running ${FILE_NAME}")
   
   pc = PC()
   mar = MAR()
@@ -122,6 +97,38 @@ def main():
   K = REG(16)
   D = REG(16)
   stack = STACK(mems)
+
+
+  # load program
+  print(f"loading program ${FILE_NAME}...")
+  eeprom_usage = 0
+  with open(FILE_NAME, 'rb') as file:
+    eep_ptr = 0
+    while 1:
+      byte = file.read(1)
+      if not byte:
+        break
+      mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
+      eeprom_usage += 1
+      eep_ptr+=1
+  
+  # load annotations
+  print("loading annoations...")
+  vars, labels, symbols, code = parse_vars(FILE_NAME)
+  
+  # load disk
+  print(f"loading disk {DISK}...")
+  if DISK is not None:
+    with open(DISK, 'rb') as file:
+      sd_ptr = 0
+      while 1:
+        byte = file.read(1)
+        if not byte:
+          break
+        mems.sdcard.value[sd_ptr] = ord(byte) & 0xFF
+        sd_ptr+=1
+        if sd_ptr >= 0x200000: break # only load first 2MB for now
+      
 
   clk_counter = 0
 
@@ -297,84 +304,6 @@ def main():
       )]
     ], vertical_alignment='t', expand_y=True, expand_x=True),
   ]]
-  layout_sram = [[
-    sg.Column([
-      [sg.Multiline(
-        size=(138,70),
-        font=('courier new',8),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_SRAM_',
-        expand_y=True,
-        expand_x=True
-      )]
-    ], vertical_alignment='t', expand_y=False, expand_x=False),
-  ]]
-  layout_stack = [[
-    sg.Column([
-      [sg.Multiline(
-        size=(30,70),
-        autoscroll=True,
-        font=('courier new',8),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        write_only = True,
-        disabled = True,
-        key='_STACK_',
-        expand_y=True,
-        expand_x=True
-      )]
-    ], vertical_alignment='t', expand_y=True, expand_x=True),
-    sg.Column([
-      [
-        sg.T('Current Usage   '),
-        sg.T(
-          text='',
-          size=(12,1),
-          justification='left',
-          text_color='black',
-          background_color='white',
-          key='_STACK_USAGE_'
-        )
-      ],
-      [
-        sg.T('Max Stack Usage '),
-        sg.T(
-          text='',
-          size=(12,1),
-          justification='left',
-          text_color='black',
-          background_color='white',
-          key='_STACK_MAX_USAGE_'
-        )
-      ],
-      [
-        sg.T('Current Function '),
-        sg.T(
-          text='',
-          size=(30,1),
-          justification='left',
-          text_color='black',
-          background_color='white',
-          key='_CUR_FUNC_'
-        )
-      ],
-      [sg.Listbox(
-        values=[],
-        select_mode=sg.LISTBOX_SELECT_MODE_SINGLE,
-        size=(90,50),
-        font=('courier new',8),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_LOC_VARS_',
-        expand_y=True,
-        expand_x=True
-      )]
-    ], vertical_alignment='t', expand_y=True, expand_x=True)
-  ]]
   layout_vars = [[
     sg.Multiline(
       size=(100,70),
@@ -403,21 +332,6 @@ def main():
     )
   ]]
 
-
-  layout_uart = [
-    sg.Multiline(
-      autoscroll=True,
-      font=('courier new',11),
-      justification='left',
-      text_color='black',
-      background_color='white',
-      key='_UART_',
-      expand_y = True,
-      expand_x = True,
-      disabled=True,
-      rstrip=False
-    )
-  ]
   layout_sdcard = [[
     sg.Column([
       [
@@ -447,13 +361,13 @@ def main():
   tabs_layout = [
     [sg.TabGroup([[
       sg.Tab('DEBUG', layout_debug, expand_x=True, expand_y=True),
-      sg.Tab('SRAM', layout_sram, expand_x=True, expand_y=True),
-      sg.Tab('STACK', layout_stack, expand_x=True, expand_y=True),
+      sg.Tab('SRAM', mems.sram.gui_get_layout(), expand_x=True, expand_y=True),
+      sg.Tab('STACK', stack.gui_get_layout(), expand_x=True, expand_y=True),
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
       sg.Tab('SDCARD', layout_sdcard, expand_x=True, expand_y=True),
       ]])],
-    layout_uart
+    mems.uart.gui_get_layout()
   ]
 
   layout = [[
@@ -463,59 +377,21 @@ def main():
     sg.Column(tabs_layout,  vertical_alignment='t',expand_x=True, expand_y=True)
   ]]
   
-  eeprom_usage = 0
-  with open(FILE_NAME, 'rb') as file:
-    eep_ptr = 0
-    while 1:
-      byte = file.read(1)
-      if not byte:
-        break
-      mems.eeprom.value[eep_ptr] = ord(byte) & 0xFF
-      eeprom_usage += 1
-      eep_ptr+=1
-  
-  if DISK is not None:
-    with open(DISK, 'rb') as file:
-      sd_ptr = 0
-      while 1:
-        byte = file.read(1)
-        if not byte:
-          break
-        mems.sdcard.value[sd_ptr] = ord(byte) & 0xFF
-        sd_ptr+=1
-        if sd_ptr >= 0x200000: break # only load first 2MB for now
 
 
 
   if GUI:
     window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
-    window['_SRAM_'].Widget.tag_config('WRITES', foreground='red')
-    window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
-    
-    # register key events for the _UART_ window
-    for char in string.printable:
-      window['_UART_'].bind(char,ord(char))
-    window['_UART_'].bind("<Return>",ord('\n'))
-    window['_UART_'].bind("<space>",ord(' '))
-    window['_UART_'].bind("<BackSpace>",ord('\b'))
+    mems.sram.gui_init(window)
+    mems.uart.gui_init(window)
+    stack.gui_init(window)
   else:
     window = None
 
-  def update_uart(char):
-    if GUI:
-      if char == '\b':
-        # TODO: is there a better way to backspace
-        window['_UART_'].update(window['_UART_'].get()[:-2])
-      else:
-        window['_UART_'].print(char, end='')
-    else:
-      print(f"{bcolors.OKCYAN}{char}{bcolors.ENDC}", end='')
-  mems.uart.out_callback = update_uart
-  
+ 
 
   INDC_COLOR = ['gray', 'green']
 
-  vars, labels, symbols, code = parse_vars(FILE_NAME)
   list_addrs = list(enumerate([c['addr'] for c in code]))
   max_var_width = max([len(list(var.keys())[0]) for var in vars])
   debug_code_highlight = []
@@ -882,72 +758,12 @@ def main():
 
             window['_CNT_'].update(f"{clk_counter:,}")
 
-            sram_values = [
-              f"{i:04X} "
-              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i:i+8]])}  "
-              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+8:i+16]])}  "
-              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+16:i+24]])}  "
-              +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in mems.sram.value[i+24:i+32]])}  "
-              +f"{''.join([f'{chr(x)}' if x is not None and x >= 0x20 and x <= 0x7E else '.' for x in mems.sram.value[i:i+32]])}"
-              for i in range(0x4000,0x4000+0x8000,32)]
-
-            # mark stack pointer with '*'
-            row,col = get_sram_char_pos(stack.get_pointer())
-            sram_values[row] = sram_values[row][0:col]+"*"+sram_values[row][col+1:]
-            sram_scroll_pos = window['_SRAM_'].Widget.yview()[0]
-            window['_SRAM_'].update("\n".join(sram_values))
-            window['_SRAM_'].Widget.yview_moveto(sram_scroll_pos)
-
-            for read in mems.sram.reads:
-              row,col = get_sram_char_pos(read)
-              window['_SRAM_'].Widget.tag_add('READS', f'1.0 + {row*138+col} chars', f'1.0 + {row*138+col+3} chars')
-            for write in mems.sram.writes:
-              row,col = get_sram_char_pos(write)
-              window['_SRAM_'].Widget.tag_add('WRITES', f'1.0 + {row*138+col} chars', f'1.0 + {row*138+col+3} chars')
-            mems.sram.clear_read_write_log()
-
-
-
+            # SRAM
+            mems.sram.gui_update(stack_pointer=stack.get_pointer())
 
             # STACK
-            bf = (mems.get(BP_ADDR,ignore_uninit=True)<<8)+mems.get(BP_ADDR+1,ignore_uninit=True)
-
-            stack_values = ""
-            for n in range(stack.starting_addr,stack.starting_addr+stack.pointer):
-              stack_values += f"0x{n:04X}: {mems.get(n,ignore_uninit=True):02X} {n-bf:02X} {' <-- BP' if n==bf else ''}\n"
-
-
-            stack_scroll_pos = window['_STACK_'].Widget.yview()[0]
-            window['_STACK_'].update(stack_values)
-            window['_STACK_'].Widget.yview_moveto(stack_scroll_pos)
-            window['_STACK_USAGE_'].update(stack.pointer)
-            window['_STACK_MAX_USAGE_'].update(stack.max_used)
-            window['_CUR_FUNC_'].update(call_graph[current_call]['symbol'])
-            local_vars = []
-            # print(f'{bf:04X}')
-            for s in symbols:
-              a = [ None, None, None, None ]
-              if s.startswith(call_graph[current_call]['symbol']+'.param') or \
-                    s.startswith(call_graph[current_call]['symbol']+'.local'):
-                a = [ mems.get(bf+symbols[s]+nn,ignore_uninit=True) for nn in range(4)]
-
-              if s.startswith(call_graph[current_call]['symbol']+'.param8') or \
-                    s.startswith(call_graph[current_call]['symbol']+'.local8'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 8, 'value': \
-                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"})
-              elif s.startswith(call_graph[current_call]['symbol']+'.param16') or \
-                    s.startswith(call_graph[current_call]['symbol']+'.local16'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 16, 'value': \
-                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"+\
-                                   f"{'??' if a[1] is None else f'{a[1]:02X}'}"})
-              elif s.startswith(call_graph[current_call]['symbol']+'.param32') or \
-                    s.startswith(call_graph[current_call]['symbol']+'.local32'):
-                local_vars.append({'addr': symbols[s], 'name': s, 'size': 32, 'value': \
-                                   f"{'??' if a[0] is None else f'{a[0]:02X}'}"+\
-                                   f"{'??' if a[1] is None else f'{a[1]:02X}'}"+\
-                                   f"{'??' if a[2] is None else f'{a[2]:02X}'}"+\
-                                   f"{'??' if a[3] is None else f'{a[3]:02X}'}"})
-            window['_LOC_VARS_'].update(values=[f"{v['addr']:04X} {v['name']} {v['value']}" for v in local_vars])
+            base_ptr_val = (mems.get(BP_ADDR,ignore_uninit=True)<<8)+mems.get(BP_ADDR+1,ignore_uninit=True)
+            stack.gui_update(base_ptr_val=base_ptr_val, current_call=call_graph[current_call])
 
 
             # GLOBALS
@@ -989,15 +805,15 @@ def main():
             mp = Image.new('L', [128,128], 255)
             mp_pixels = mp.load()
 
-            for row in range(128):
-              for col in range(128):
-                dr_addr = int(col/4)+row*int(128/4)
-                v = 100
-                if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
-                  v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
-                  #print(row,col,dr_addr,(col%4)*2,v)
-                mp_pixels[col,row] = v
-            window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
+            # for row in range(128):
+            #   for col in range(128):
+            #     dr_addr = int(col/4)+row*int(128/4)
+            #     v = 100
+            #     if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
+            #       v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
+            #       #print(row,col,dr_addr,(col%4)*2,v)
+            #     mp_pixels[col,row] = v
+            # window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
 
             # SD CARD
             window['_SDCARD_ADDR_'].update(f"{mems.sdcard.addr_reg:08X}")
