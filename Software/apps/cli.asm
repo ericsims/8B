@@ -103,6 +103,7 @@ cmd_error_str: #d "CMD ERR\n\0"
 ; global vars
 #bank ram
 line_buf: #res 32
-line_buf.end:
+    .end: #res 0
+
 line_pos: #res 1
 STACK_BASE: #res 0

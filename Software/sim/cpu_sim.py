@@ -35,6 +35,7 @@ def main():
 
   FILE_NAME = 'bin/001_test_a_reg.bin' # default file
   DISK = None
+  DISK_TYPE = None
   EXIT_ON_HALT = False
   SIM = True
   GUI = True
@@ -46,7 +47,7 @@ def main():
   # process flags
 
   OPTIONS = "f:" #TODO: no abbreviated options.
-  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code', 'disk =', 'ignore-uninit-mem']
+  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code', 'diskv1 =','diskv2 =', 'ignore-uninit-mem']
 
   try:
     # grab flags
@@ -65,8 +66,12 @@ def main():
         SIM = False
       elif arg_ in ("--dead-code"):
         DEAD_CODE = True
-      elif arg_ in ("--disk"):
+      elif arg_ in ("--diskv1"):
         DISK = val_
+        DISK_TYPE = 1
+      elif arg_ in ("--diskv2"):
+        DISK = val_
+        DISK_TYPE = 2
       elif arg_ in ("--ignore-uninit-mem"):
         IGNORE_UNINIT = True
 
@@ -117,8 +122,9 @@ def main():
   vars, labels, symbols, code = parse_vars(FILE_NAME)
   
   # load disk
-  print(f"loading disk {DISK}...")
   if DISK is not None:
+    print(f"loading disk {DISK}...")
+    mems.sdcard.set_version(DISK_TYPE)
     with open(DISK, 'rb') as file:
       sd_ptr = 0
       while 1:
@@ -331,32 +337,6 @@ def main():
       expand_y=True,
     )
   ]]
-
-  layout_sdcard = [[
-    sg.Column([
-      [
-        sg.T('ADDR POINTER   '),
-        sg.T(
-          text='',
-          size=(8,1),
-          justification='left',
-          text_color='black',
-          background_color='white',
-          key='_SDCARD_ADDR_'
-        )
-      ],
-      [sg.Multiline(
-        size=(138,70),
-        font=('courier new',8),
-        justification='left',
-        text_color='black',
-        background_color='white',
-        key='_SDCARD_',
-        expand_y=True,
-        expand_x=True
-      )]
-    ], vertical_alignment='t', expand_y=False, expand_x=False),
-  ]]
   
   tabs_layout = [
     [sg.TabGroup([[
@@ -365,7 +345,7 @@ def main():
       sg.Tab('STACK', stack.gui_get_layout(), expand_x=True, expand_y=True),
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
-      sg.Tab('SDCARD', layout_sdcard, expand_x=True, expand_y=True),
+      sg.Tab('SDCARD', mems.sdcard.gui_get_layout(), expand_x=True, expand_y=True),
       ]])],
     mems.uart.gui_get_layout()
   ]
@@ -384,6 +364,7 @@ def main():
     window = sg.Window(f'8B - {FILE_NAME}', layout, font=('courier new',11), resizable=True, finalize=True)
     mems.sram.gui_init(window)
     mems.uart.gui_init(window)
+    mems.sdcard.gui_init(window)
     stack.gui_init(window)
   else:
     window = None
@@ -449,12 +430,12 @@ def main():
             if event is not None and '_UART_' in event:
               mems.uart.rcv_char(int(event[6:]))
               continue
-        else:
-          while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
-            line = sys.stdin.readline()
-            if line:
-              for char in line:
-                mems.uart.rcv_char(ord(char))             
+        # else:
+        #   while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+        #     line = sys.stdin.readline()
+        #     if line:
+        #       for char in line:
+        #         mems.uart.rcv_char(ord(char))             
 
 
 
@@ -706,6 +687,9 @@ def main():
               else:
                 raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\n")
 
+        
+        mems.sdcard.sim()
+
         if GUI:
           if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:
             dbg_state = dbg.BREAK_IMM
@@ -816,7 +800,7 @@ def main():
             # window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
 
             # SD CARD
-            window['_SDCARD_ADDR_'].update(f"{mems.sdcard.addr_reg:08X}")
+            mems.sdcard.gui_update()
 
       print()
       print(f"max stack usage {stack.max_used} bytes")
