@@ -218,15 +218,7 @@ fs_read_mbr:
         storew #(fat16_boot_sector.END-fat16_boot_sector), static_memcpy.len
         call static_memcpy
 
-;         loadw hl, partition_start_addr
-;         pushw hl
-;         loadw hl, partition_start_addr+2
-;         pushw hl
-;         pushw #fat16_boot_sector
-;         pushw #(fat16_boot_sector.END-fat16_boot_sector)
-;         call sd_mem_copy
-;         dealloc 8
-    
+   
         ; debug
         ; pushw #fat16_boot_sector
         ; push #4
@@ -617,106 +609,48 @@ fs_print_boot_sector:
     .str_volume_label: #d "\tvolume label: \0"
     .str_fs_type: #d "\tfile system type: \0"
 
-; #bank rom
-; ;;
-; ; @function
-; ; @brief ?
-; ; @section description
-; ;      _________________________
-; ;  -6 |   .param16_sector_num   |
-; ;  -5 |_________________________|
-; ;  -4 |____________?____________| RESERVED
-; ;  -3 |____________?____________|    .
-; ;  -2 |____________?____________|    .
-; ;  -1 |____________?____________| RESERVED
-; ;
-; ;;
-; seek_to_sector:
-;     .param16_sector_num = -6
-;     .init:
-;         __prologue
-
-;     .seek:
-;         ; addr = partition_start_addr + (sector_number)*bytes_per_sector
-;         store #0x00, static_x_32
-;         load a, (BP), .param16_sector_num
-;         lshift a
-;         store a, static_x_32+1
-;         load a, (BP), .param16_sector_num+1
-;         lshift a
-;         store a, static_x_32+2
-;         jnc ..nocarry
-;         load a, static_x_32+1
-;         add a, #1
-;         store a, static_x_32+1
-;         ..nocarry:
-;         store #0x00, static_x_32+3
-
-;         movew partition_start_addr, static_y_32
-;         movew partition_start_addr+2, static_y_32+2
-;         call static_add32
-;         movew static_z_32, SDCARD_ADDR
-;         movew static_z_32+2, SDCARD_ADDR+2
-;     .done:
-;         __epilogue
-;         ret
-
-
 fs_read_directory_entry:
     .init:
-    __prologue
-    .load:
-        ; loadw hl, SDCARD_ADDR
-        ; pushw hl
-        ; loadw hl, SDCARD_ADDR+2
-        ; pushw hl
-        ; pushw #fileinfo
-        ; pushw #0x0020
-        ; call sd_mem_copy
-        ; dealloc 8
-    
+    .fix_endianenss:
+        load a, fileinfo.creation_time
+        load b, fileinfo.creation_time+1
+        store a, fileinfo.creation_time+1
+        store b, fileinfo.creation_time
 
-        ..fix_endianenss:
-            load a, fileinfo.creation_time
-            load b, fileinfo.creation_time+1
-            store a, fileinfo.creation_time+1
-            store b, fileinfo.creation_time
+        load a, fileinfo.creation_date
+        load b, fileinfo.creation_date+1
+        store a, fileinfo.creation_date+1
+        store b, fileinfo.creation_date
 
-            load a, fileinfo.creation_date
-            load b, fileinfo.creation_date+1
-            store a, fileinfo.creation_date+1
-            store b, fileinfo.creation_date
+        load a, fileinfo.last_access_date
+        load b, fileinfo.last_access_date+1
+        store a, fileinfo.last_access_date+1
+        store b, fileinfo.last_access_date
 
-            load a, fileinfo.last_access_date
-            load b, fileinfo.last_access_date+1
-            store a, fileinfo.last_access_date+1
-            store b, fileinfo.last_access_date
+        load a, fileinfo.last_write_time
+        load b, fileinfo.last_write_time+1
+        store a, fileinfo.last_write_time+1
+        store b, fileinfo.last_write_time
 
-            load a, fileinfo.last_write_time
-            load b, fileinfo.last_write_time+1
-            store a, fileinfo.last_write_time+1
-            store b, fileinfo.last_write_time
+        load a, fileinfo.last_write_date
+        load b, fileinfo.last_write_date+1
+        store a, fileinfo.last_write_date+1
+        store b, fileinfo.last_write_date
 
-            load a, fileinfo.last_write_date
-            load b, fileinfo.last_write_date+1
-            store a, fileinfo.last_write_date+1
-            store b, fileinfo.last_write_date
+        load a, fileinfo.starting_cluser
+        load b, fileinfo.starting_cluser+1
+        store a, fileinfo.starting_cluser+1
+        store b, fileinfo.starting_cluser
 
-            load a, fileinfo.starting_cluser
-            load b, fileinfo.starting_cluser+1
-            store a, fileinfo.starting_cluser+1
-            store b, fileinfo.starting_cluser
-
-            load a, fileinfo.file_size
-            load b, fileinfo.file_size+3
-            store a, fileinfo.file_size+3
-            store b, fileinfo.file_size
-            load a, fileinfo.file_size+1
-            load b, fileinfo.file_size+2
-            store a, fileinfo.file_size+2
-            store b, fileinfo.file_size+1
+        load a, fileinfo.file_size
+        load b, fileinfo.file_size+3
+        store a, fileinfo.file_size+3
+        store b, fileinfo.file_size
+        load a, fileinfo.file_size+1
+        load b, fileinfo.file_size+2
+        store a, fileinfo.file_size+2
+        store b, fileinfo.file_size+1
     .done:
-        __epilogue
         ret
 
 #bank rom
@@ -758,6 +692,7 @@ fs_print_dir_info:
         call fs_read_directory_entry
     
     
+    ; debug
     ; pushw #fileinfo
     ; push #20
     ; call uart_dump_mem
@@ -962,6 +897,8 @@ load_file:
         storew #sd_buf, static_memcpy.src_ptr
         storew #0x200, static_memcpy.len
         call static_memcpy
+
+    ; TODO: handle reads that span more than one sector
 
     .print:
         ; debug
