@@ -104,6 +104,11 @@ $(TEST_BIN_DIR)%.bin: $(TEST_SRC_DIR)%.asm $(LIB_SRCS)
 	@echo ""
 $(TEST_SRCS): instruction
 
+# build RGB565 image for image test
+$(TEST_BIN_DIR)1903_test_ra8876_put_img.bin: $(TEST_SRC_DIR)lenna_64_64_rgb565.img
+$(TEST_SRC_DIR)lenna_64_64_rgb565.img: $(TEST_SRC_DIR)lenna_64_64.jpg
+	ffmpeg -i $(TEST_SRC_DIR)lenna_64_64.jpg -vcodec rawvideo -f rawvideo -pix_fmt rgb565be $(TEST_SRC_DIR)lenna_64_64_rgb565.img -y
+
 # run tests
 test: $(all_tests)
 $(all_tests): %.test : %.bin

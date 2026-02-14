@@ -140,24 +140,24 @@ class RA8876_REG:
     GCC0 = 0x44 # Graphic Cursor Color 0
     GCC1 = 0x44 # Graphic Cursor Color 1
 
-    # # ==========================================
-    # # Canvas and Main Window
-    # # ==========================================
-    # CVSSA0 = 0x50 # Canvas Start Address 0
-    # CVSSA1 = 0x51 # Canvas Start Address 1
-    # CVSSA2 = 0x52 # Canvas Start Address 2
-    # CVSSA3 = 0x53 # Canvas Start Address 3
-    # CVS_CGW0 = 0x54 # Canvas Image Width 0
-    # CVS_CGW1 = 0x55 # Canvas Image Width 1
-    # AW_X0 = 0x56 # Active Window Start X 0
-    # AW_X1 = 0x57 # Active Window Start X 1
-    # AW_Y0 = 0x58 # Active Window Start Y 0
-    # AW_Y1 = 0x59 # Active Window Start Y 1
-    # AW_W0 = 0x5A # Active Window Width 0
-    # AW_W1 = 0x5B # Active Window Width 1
-    # AW_H0 = 0x5C # Active Window Height 0
-    # AW_H1 = 0x5D # Active Window Height 1
-    # AW_COLOR = 0x5E # Active Window Color Depth
+    # ==========================================
+    # Canvas and Main Window
+    # ==========================================
+    CVSSA0 = 0x50 # Canvas Start Address 0 (LSB)
+    CVSSA1 = 0x51 # Canvas Start Address 1
+    CVSSA2 = 0x52 # Canvas Start Address 2
+    CVSSA3 = 0x53 # Canvas Start Address 3 (MSB)
+    CVS_IMWTH0 = 0x54 # Canvas Image Width 0 (LSB)
+    CVS_IMWTH1 = 0x55 # Canvas Image Width 1 (MSB)
+    AWUL_X0 = 0x56 # Active Window Start X 0 (LSB)
+    AWUL_X1 = 0x57 # Active Window Start X 1 (MSB)
+    AWUL_Y0 = 0x58 # Active Window Start Y 0 (LSB)
+    AWUL_Y1 = 0x59 # Active Window Start Y 1 (MSB)
+    AW_WTH0 = 0x5A # Active Window Width 0 (LSB)
+    AW_WTH1 = 0x5B # Active Window Width 1 (MSB)
+    AW_HT0 = 0x5C # Active Window Height 0 (LSB)
+    AW_HT1 = 0x5D # Active Window Height 1 (MSB)
+    AW_COLOR = 0x5E # Active Window Color Depth
 
     # # ==========================================
     # # BTE (Block Transfer Engine) Registers
@@ -234,24 +234,6 @@ class RA8876_REG:
     # # ==========================================
     # SDRST = 0xE0 # SDRAM Status Register
     # SYSRST = 0xE4 # System Reset & Operation Register 
-
-    # # ==========================================
-    # # Geometric Drawing Engine Registers
-    # # ==========================================
-    # DCR0 = 0x76 # Draw Line/Triangle Control Register 0
-    # DCR1 = 0x77 # Draw Line/Triangle Control Register 1
-    # DLHSR0 = 0x68 # Draw Line/Triangle Start X 0
-    # DLHSR1 = 0x69 # Draw Line/Triangle Start X 1
-    # DLVSR0 = 0x6A # Draw Line/Triangle Start Y 0
-    # DLVSR1 = 0x6B # Draw Line/Triangle Start Y 1
-    # DLHER0 = 0x6C # Draw Line/Triangle End X 0
-    # DLHER1 = 0x6D # Draw Line/Triangle End X 1
-    # DLVER0 = 0x6E # Draw Line/Triangle End Y 0
-    # DLVER1 = 0x6F # Draw Line/Triangle End Y 1
-    # DTPH0 = 0x70 # Draw Triangle Point 3 X 0
-    # DTPH1 = 0x71 # Draw Triangle Point 3 X 1
-    # DTPV0 = 0x72 # Draw Triangle Point 3 Y 0
-    # DTPV1 = 0x73 # Draw Triangle Point 3 Y 1
     
     # # Circle / Ellipse Drawing
     # CECR0 = 0x7D # Circle/Ellipse Control Register
@@ -322,7 +304,7 @@ class TFT_RA8876:
 
     def sim(self):
         # simulate the internals of the RA8876
-        if(self.regs[RA8876_REG.ICR] & RA8876_REG.ICR_TEXT_MODE_EN_POS):
+        if (self.regs[RA8876_REG.ICR] & RA8876_REG.ICR_TEXT_MODE_EN_POS):
             # Text Mode
             pass
         else:
@@ -339,6 +321,25 @@ class TFT_RA8876:
                 y = (self.regs[RA8876_REG.GCVP1] << 8) | self.regs[RA8876_REG.GCVP0]
                 # print(x,y,color)
                 self.img.putpixel((x, y), color)
+
+                # increment cursor in active window
+                aw_x = (self.regs[RA8876_REG.AWUL_X1] << 8) | self.regs[RA8876_REG.AWUL_X0]
+                aw_y = (self.regs[RA8876_REG.AWUL_Y1] << 8) | self.regs[RA8876_REG.AWUL_Y0]
+                aw_wd = (self.regs[RA8876_REG.AW_WTH1] << 8) | self.regs[RA8876_REG.AW_WTH0]
+                aw_ht = (self.regs[RA8876_REG.AW_HT1] << 8) | self.regs[RA8876_REG.AW_HT0]
+
+                x += 1
+                if x >= (aw_x+aw_wd):
+                    # wrap row
+                    x = aw_x
+                    y += 1
+                
+                # write back cursor position
+                self.regs[RA8876_REG.GCHP1] = (x >> 8) & 0xFF
+                self.regs[RA8876_REG.GCHP0] = x & 0xFF
+                self.regs[RA8876_REG.GCVP1] = (y >> 8) & 0xFF
+                self.regs[RA8876_REG.GCVP0] = y & 0xFF
+
 
     def gui_get_layout(self):
         return   [[

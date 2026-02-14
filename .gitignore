@@ -9,11 +9,15 @@
 
 # python
 .venv/
+**/__pycache__/
 requirements.txt
 requirements_dev.txt
 
-# autogen
+# autogen docs
 irdocs/
+
+# generated images
+*.img
 
 # virtual sd card
 virt_disk

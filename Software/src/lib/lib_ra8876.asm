@@ -7,6 +7,9 @@ RA8876_STATUS = RA8876+0 ; status is read only
 RA8876_ADDR = RA8876+0 ; address is write only
 RA8876_DATA = RA8876+1 ; data is read/write
 
+TFT_SCREEN_WIDTH = 1024
+TFT_SCREEN_HEIGHT = 600
+
 ; ==========================================
 ; System and Configuration Registers
 ; ==========================================
@@ -95,6 +98,43 @@ RA8876_GCVP0 = 0x42 ; Graphic Cursor Vertical Position Register 0 (LSB)
 RA8876_GCVP1 = 0x43 ; Graphic Cursor Vertical Position Register 1 (MSB)
 RA8876_GCC0 = 0x44 ; Graphic Cursor Color 0
 RA8876_GCC1 = 0x44 ; Graphic Cursor Color 1
+
+; ==========================================
+; Canvas and Main Window
+; ==========================================
+RA8876_CVSSA0 = 0x50 ; Canvas Start Address 0 (LSB)
+RA8876_CVSSA1 = 0x51 ; Canvas Start Address 1
+RA8876_CVSSA2 = 0x52 ; Canvas Start Address 2
+RA8876_CVSSA3 = 0x53 ; Canvas Start Address 3 (MSB)
+RA8876_CVS_IMWTH0 = 0x54 ; Canvas Image Width 0 (LSB)
+RA8876_CVS_IMWTH1 = 0x55 ; Canvas Image Width 1 (MSB)
+RA8876_AWUL_X0 = 0x56 ; Active Window Start X 0 (LSB)
+RA8876_AWUL_X1 = 0x57 ; Active Window Start X 1 (MSB)
+RA8876_AWUL_Y0 = 0x58 ; Active Window Start Y 0 (LSB)
+RA8876_AWUL_Y1 = 0x59 ; Active Window Start Y 1 (MSB)
+RA8876_AW_WTH0 = 0x5A ; Active Window Width 0 (LSB)
+RA8876_AW_WTH1 = 0x5B ; Active Window Width 1 (MSB)
+RA8876_AW_HT0 = 0x5C ; Active Window Height 0 (LSB)
+RA8876_AW_HT1 = 0x5D ; Active Window Height 1 (MSB)
+RA8876_AW_COLOR = 0x5E ; Active Window Color Depth
+
+; ; ==========================================
+; ; Geometric Drawing Engine Registers
+; ; ==========================================
+; RA8876_DCR0 = 0x76 ; Draw Line/Triangle Control Register 0
+; RA8876_DCR1 = 0x77 ; Draw Line/Triangle Control Register 1
+; RA8876_DLHSR0 = 0x68 ; Draw Line/Triangle Start X 0
+; RA8876_DLHSR1 = 0x69 ; Draw Line/Triangle Start X 1
+; RA8876_DLVSR0 = 0x6A ; Draw Line/Triangle Start Y 0
+; RA8876_DLVSR1 = 0x6B ; Draw Line/Triangle Start Y 1
+; RA8876_DLHER0 = 0x6C ; Draw Line/Triangle End X 0
+; RA8876_DLHER1 = 0x6D ; Draw Line/Triangle End X 1
+; RA8876_DLVER0 = 0x6E ; Draw Line/Triangle End Y 0
+; RA8876_DLVER1 = 0x6F ; Draw Line/Triangle End Y 1
+; RA8876_DTPH0 = 0x70 ; Draw Triangle Point 3 X 0
+; RA8876_DTPH1 = 0x71 ; Draw Triangle Point 3 X 1
+; RA8876_DTPV0 = 0x72 ; Draw Triangle Point 3 Y 0
+; RA8876_DTPV1 = 0x73 ; Draw Triangle Point 3 Y 1
 
 ; TODO: the rest of the regs
 
@@ -191,7 +231,6 @@ ra8876_init:
 ;  -2 |___________?___________|    .
 ;  -1 |___________?___________| RESERVED
 ;
-; @return returns 0 for sucess
 ;;
 #bank rom
 ra8876_set_graphic_cursor_pos:
@@ -201,22 +240,74 @@ ra8876_set_graphic_cursor_pos:
         __prologue
 
     .set_pos:
-        ; RA8876_GCHP0 Graphic Cursor Horizontal Position Register 0 (LSB)
-        ; RA8876_GCHP1 Graphic Cursor Horizontal Position Register 1 (MSB)
-        ; RA8876_GCVP0 Graphic Cursor Vertical Position Register 0 (LSB)
-        ; RA8876_GCVP1 Graphic Cursor Vertical Position Register 1 (MSB)
-
         load a, (BP), .param16_cursor_x
         and a, #0x1F ; postition is only 13 bits
-        __store a, RA8876, RA8876_GCHP1
+        __store a, RA8876, RA8876_GCHP1 ; Graphic Cursor Horizontal Position Register 1 (MSB)
         load a, (BP), .param16_cursor_x+1
-        __store a, RA8876, RA8876_GCHP0
+        __store a, RA8876, RA8876_GCHP0 ; Graphic Cursor Horizontal Position Register 0 (LSB)
 
         load a, (BP), .param16_cursor_y
         and a, #0x1F ; postition is only 13 bits
-        __store a, RA8876, RA8876_GCVP1
+        __store a, RA8876, RA8876_GCVP1 ; Graphic Cursor Vertical Position Register 1 (MSB)
         load a, (BP), .param16_cursor_y+1
-        __store a, RA8876, RA8876_GCVP0
+        __store a, RA8876, RA8876_GCVP0 ; Graphic Cursor Vertical Position Register 0 (LSB)
+    
+    .done:
+        __epilogue
+        ret
+    
+;;
+; @function
+; @brief set active window width and height
+; @section description
+;      _______________________
+; -12 |      .param16_x       |
+; -11 |_______________________|
+; -10 |      .param16_y       |
+;  -9 |_______________________|
+;  -8 |    .param16_width     |
+;  -7 |_______________________|
+;  -6 |    .param16_height    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_set_active_window_xywh:
+    .param16_x = -2
+    .param16_y = -10
+    .param16_width = -8
+    .param16_height = -6
+    .init:
+        __prologue
+
+    .set_window:
+        load a, (BP), .param16_x
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_AWUL_X1 ; Active Window X 1 (MSB)
+        load a, (BP), .param16_x + 1
+        __store a, RA8876, RA8876_AWUL_X0 ; Active Window X 0 (LSB)
+
+        load a, (BP), .param16_y
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_AWUL_Y1 ; Active Window Y 1 (MSB)
+        load a, (BP), .param16_y + 1
+        __store a, RA8876, RA8876_AWUL_Y0 ; Active Window Y 0 (LSB)
+
+        load a, (BP), .param16_width
+        and a, #0x1F ; width is only 13 bits
+        __store a, RA8876, RA8876_AW_WTH1 ; Active Window Width 1 (MSB)
+        load a, (BP), .param16_width + 1
+        __store a, RA8876, RA8876_AW_WTH0 ; Active Window Width 0 (LSB)
+
+        load a, (BP), .param16_height
+        and a, #0x1F ; height is only 13 bits
+        __store a, RA8876, RA8876_AW_HT1 ; Active Window Height 1 (MSB)
+        load a, (BP), .param16_height + 1
+        __store a, RA8876, RA8876_AW_HT0 ; Active Window Height 0 (LSB)
     
     .done:
         __epilogue
@@ -239,7 +330,6 @@ ra8876_set_graphic_cursor_pos:
 ;  -2 |___________?___________|    .
 ;  -1 |___________?___________| RESERVED
 ;
-; @return returns 0 for sucess
 ;;
 #bank rom
 ra8876_put_pixel_16bpp:
@@ -273,6 +363,116 @@ ra8876_put_pixel_16bpp:
         __epilogue
         ret
 
+
+;;
+; @function
+; @brief set graphic cursor x,y position
+; @section description
+;      _______________________
+; -14 |      .param16_x       |
+; -13 |_______________________|
+; -12 |      .param16_y       |
+; -11 |_______________________|
+; -10 |    .param16_width     |
+;  -9 |_______________________|
+;  -8 |    .param16_height    |
+;  -7 |_______________________|
+;  -6 |   .param16_img_ptr    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;   0 |      .local16_x       |
+;   1 |_______________________|
+;
+;;
+#bank rom
+ra8876_put_image_16bpp:
+    .param16_x = -14
+    .param16_y = -12
+    .param16_width = -10
+    .param16_height = -8
+    .param16_img_ptr = -6
+    .local16_x = 0
+    .init:
+        __prologue
+        alloc 2
+
+    .init_active_window:
+        load a, (BP), .param16_x
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_AWUL_X1 ; Active Window X 1 (MSB)
+        load a, (BP), .param16_x + 1
+        __store a, RA8876, RA8876_AWUL_X0 ; Active Window X 0 (LSB)
+
+        load a, (BP), .param16_y
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_AWUL_Y1 ; Active Window Y 1 (MSB)
+        load a, (BP), .param16_y + 1
+        __store a, RA8876, RA8876_AWUL_Y0 ; Active Window Y 0 (LSB)
+
+        load a, (BP), .param16_width
+        and a, #0x1F ; width is only 13 bits
+        __store a, RA8876, RA8876_AW_WTH1 ; Active Window Width 1 (MSB)
+        load a, (BP), .param16_width + 1
+        __store a, RA8876, RA8876_AW_WTH0 ; Active Window Width 0 (LSB)
+
+        load a, (BP), .param16_height
+        and a, #0x1F ; height is only 13 bits
+        __store a, RA8876, RA8876_AW_HT1 ; Active Window Height 1 (MSB)
+        load a, (BP), .param16_height + 1
+        __store a, RA8876, RA8876_AW_HT0 ; Active Window Height 0 (LSB)
+
+    .init_cursor_pos:
+        load a, (BP), .param16_x
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_GCHP1 ; Graphic Cursor Horizontal Position Register 1 (MSB)
+        load a, (BP), .param16_x + 1
+        __store a, RA8876, RA8876_GCHP0 ; Graphic Cursor Horizontal Position Register 0 (LSB)
+
+        load a, (BP), .param16_y
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_GCVP1 ; Graphic Cursor Vertical Position Register 1 (MSB)
+        load a, (BP), .param16_y + 1
+        __store a, RA8876, RA8876_GCVP0 ; Graphic Cursor Vertical Position Register 0 (LSB)
+    
+    .load_img:
+        store #RA8876_MRWDP, RA8876_ADDR ; ram access
+        ..next_row:
+            loadw hl, (BP), .param16_height
+            subw hl, #1
+            jmc .done
+            storew hl, (BP), .param16_height
+        
+            loadw hl, (BP), .param16_width
+            storew hl, (BP), .local16_x ; reset x position
+        ..next_col:
+            loadw hl, (BP), .local16_x
+            subw hl, #1
+            jmc ..next_row ; reached end of row
+            storew hl, (BP), .local16_x
+
+        ..load_pixel:
+            loadw hl, (BP), .param16_img_ptr
+            load a, (hl)
+            store a, RA8876_DATA ; MSB
+
+            addw hl, #1
+            load a, (hl)
+            store a, RA8876_DATA ; LSB
+
+            addw hl, #1
+            storew hl, (BP), .param16_img_ptr
+
+            jmp ..next_col
+    
+
+
+    .done:
+        dealloc 2
+        __epilogue
+        ret
 
 
 ; macros for storing or loading data from registers

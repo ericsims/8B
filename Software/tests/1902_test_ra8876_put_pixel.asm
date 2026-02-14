@@ -10,6 +10,13 @@ main:
     call ra8876_init
     assert b, #0
 
+    pushw #0x0000 ; x
+    pushw #0x0000 ; y
+    pushw #TFT_SCREEN_WIDTH ; width
+    pushw #TFT_SCREEN_HEIGHT ; height
+    call ra8876_set_active_window_xywh
+    dealloc 8
+
     pushw #0x0012 ; x
     pushw #0x0034 ; y
     pushw #COLOR65K_LIGHTMAGENTA ; color
