@@ -6,6 +6,10 @@ init_pointers:
     storew #0x0000, BP
 
 main:
+
+    call sd_init
+    assert b, #0x00
+    
     call fs_read_mbr
     assert b, #0
 
@@ -14,6 +18,7 @@ main:
 ; includes
 #include "../src/CPU.asm"
 #include "../src/lib/lib_fs.asm"
+#include "../src/lib/lib_sd.asm"
 
 ; global vars
 #bank ram

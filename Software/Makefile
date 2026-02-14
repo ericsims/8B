@@ -113,10 +113,11 @@ $(all_tests): %.test : %.bin
 # additional test flags for some unique tests
 $(TEST_BIN_DIR)1751_test_sd_card_init_v1.test: test_flags := --diskv1=./sim/virt_disk
 $(TEST_BIN_DIR)1752_test_sd_card_init_v2.test: test_flags := --diskv2=./sim/virt_disk
-$(TEST_BIN_DIR)1760_test_parse_mbr.test: test_flags := --diskv2=./sim/virt_disk --ignore-uninit-mem
-$(TEST_BIN_DIR)1761_test_find_file.test: test_flags := --diskv2=./sim/virt_disk --ignore-uninit-mem
-$(TEST_BIN_DIR)1762_test_load_file.test: test_flags := --diskv2=./sim/virt_disk --ignore-uninit-mem
-$(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --diskv2=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1753_test_sd_card_read_block.test: test_flags := --diskv1=./sim/virt_disk
+$(TEST_BIN_DIR)1760_test_parse_mbr.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1761_test_find_file.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1762_test_load_file.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
+$(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
 
 
 # build apps

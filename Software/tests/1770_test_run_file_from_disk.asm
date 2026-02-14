@@ -6,6 +6,9 @@ init_pointers:
     storew #0x0000, BP
 
 main:
+    call sd_init
+    assert b, #0x00
+
     call fs_read_mbr
     assert b, #0
 
@@ -14,23 +17,26 @@ main:
     dealloc 2
     assert b, #0
 
+    pushw #progspace
     call load_file
+    dealloc 2
     assert b, #0
 
-    storew #file_handle.buf, static_uart_print.data_pointer
-    call static_uart_print
-
+    jmp progspace
+    
     halt
 
-fname: #d "HELLO   TXT \0"
-
+fname: #d "HELLO1  BIN \0"
 
 ; includes
+#bank rom
 #include "../src/CPU.asm"
-#include "../src/lib/char_utils.asm"
 #include "../src/lib/lib_fs.asm"
+#include "../src/lib/lib_sd.asm"
 
 ; global vars
 #bank ram
-token_name: #res 128
 STACK_BASE: #res 1024
+
+#bank prog
+progspace: #res 0

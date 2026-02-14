@@ -162,7 +162,8 @@ class SDCARD:
                             self.busy_timer = 0
                             self.state = SD_STATE.IDLE
                             self.card_internal_output_buffer.append(0xFE) # start token
-                            self.card_internal_output_buffer = self.card_internal_output_buffer+ self.value[(self.block_addr<<9):(self.block_addr<<9)+512]
+                            self.card_internal_output_buffer = self.card_internal_output_buffer + self.value[(self.block_addr<<9):(self.block_addr<<9)+512]
+                            self.card_internal_output_buffer = self.card_internal_output_buffer + [0xFF, 0xFF] # two byte CRC16. dummy for now
         else:
             # sd card i/o is cleared when CS is deaserted
             self.card_internal_input_buffer = []

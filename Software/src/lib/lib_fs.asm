@@ -3,16 +3,17 @@
 ; ###
 #once
 
-SDCARD_ADDR = SDCARD+0
-SDCARD_DATA = SDCARD+4
-SDCARD_CTRL = SDCARD+5
+; SDCARD_ADDR = SDCARD+0
+; SDCARD_DATA = SDCARD+4
+; SDCARD_CTRL = SDCARD+5
 
-MBR_START_ADDR = 0x00000000
-MBR_PART1_ADDR = MBR_START_ADDR + 0x1BE
-MBR_PART2_ADDR = MBR_PART1_ADDR + 0x020
-MBR_PART3_ADDR = MBR_PART2_ADDR + 0x020
-MBR_PART4_ADDR = MBR_PART3_ADDR + 0x020
-MBR_BOOT_SIGNATURE = MBR_START_ADDR + 0x1FE
+MBR_BLOCK_ADDR = 0x00000000
+; MBR_START_ADDR = 0x00000000
+; MBR_PART1_ADDR = MBR_START_ADDR + 0x1BE
+; MBR_PART2_ADDR = MBR_PART1_ADDR + 0x020
+; MBR_PART3_ADDR = MBR_PART2_ADDR + 0x020
+; MBR_PART4_ADDR = MBR_PART3_ADDR + 0x020
+; MBR_BOOT_SIGNATURE = MBR_START_ADDR + 0x1FE
 
 FS_TYPE_EMPTY = 0x00
 FS_TYPE_FAT16 = 0x06
@@ -53,7 +54,6 @@ fat16_boot_sector: ; 62 bytes, stored big-endian
     .END:
 
 root_dir_sector: #res 2
-root_dir_addr: #res 4
 
 fileinfo: ; 32 bytes
     .name: #res 8
@@ -71,80 +71,14 @@ fileinfo: ; 32 bytes
     .file_size: #res 4
     .END:
 
-#bank prog
 file_handle:
-    .buf: #res 0x200
-    .name: #res 11
+    .name: #res 8
+    .ext: #res 3
     .next_cluster: #res 2
     .file_ptr: #res 4
     .file_size: #res 4
     .file_length_remanding: #res 4
     .END:
-
-;;
-; @function
-; @brief copy from sd card to memory
-; @section description
-;      _________________________
-; -12 |   .param32_start_addr   |
-; -11 |                         |
-; -10 |                         |
-;  -9 |_________________________|
-;  -8 |    .param16_dst_ptr     |
-;  -7 |_________________________|
-;  -6 |       .param16_len      |
-;  -5 |_________________________|
-;  -4 |____________?____________| RESERVED
-;  -3 |____________?____________|    .
-;  -2 |____________?____________|    .
-;  -1 |____________?____________| RESERVED
-;
-;;
-#bank rom
-sd_mem_copy:
-    .param32_start_addr = -12
-    .param16_dst_ptr = -8
-    .param16_len = -6
-    .init:
-        __prologue
-
-        ; store 32bit start address in SDCARD ADDR
-        loadw hl, (BP), .param32_start_addr
-        storew hl, SDCARD_ADDR
-        loadw hl, (BP), .param32_start_addr+2
-        storew hl, SDCARD_ADDR+2
-
-    .loop:
-        ; check if len is zero
-        loadw hl, (BP), .param16_len
-        subw hl, #1
-        jmc .done
-        storew hl, (BP), .param16_len
-
-        ; load dst_ptr
-        loadw hl, (BP), .param16_dst_ptr
-        ; copy byte
-        load a, SDCARD_DATA
-        store a, (hl)
-        ; increment dst_ptr
-        addw hl, #1
-        storew hl, (BP), .param16_dst_ptr
-
-        ; increment SDCARD ADDR
-        loadw hl, SDCARD_ADDR+2
-        addw hl, #1
-        storew hl, SDCARD_ADDR+2
-        jnc .loop
-        ; handle carry
-        loadw hl, SDCARD_ADDR
-        addw hl, #1
-        storew hl, SDCARD_ADDR
-
-        jmp .loop
-
-    .done:
-        __epilogue
-        ret
 
 ;;
 ; @function
@@ -162,6 +96,7 @@ sd_mem_copy:
 ;   -1 = general error
 ;   -2 = filesystem type not supported
 ;;
+#bank rom
 fs_read_mbr:
     .init:
         __prologue
@@ -170,11 +105,20 @@ fs_read_mbr:
         storew #.str_loading_mbr, static_uart_print.data_pointer
         call static_uart_print
 
-        __push32 #MBR_PART1_ADDR
-        pushw #mbr_parition_entry
-        pushw #(mbr_parition_entry.END-mbr_parition_entry)
-        call sd_mem_copy
-        dealloc 8
+        ; __push32 #MBR_PART1_ADDR
+        ; pushw #mbr_parition_entry
+        ; pushw #(mbr_parition_entry.END-mbr_parition_entry)
+        ; call sd_mem_copy
+        ; dealloc 8
+
+        __push32 #MBR_BLOCK_ADDR
+        call sd_read_block
+        dealloc 4
+
+        storew #(sd_buf+0x1BE), static_memcpy.src_ptr
+        storew #mbr_parition_entry, static_memcpy.dst_ptr
+        storew #(mbr_parition_entry.END-mbr_parition_entry), static_memcpy.len
+        call static_memcpy
 
         ; debug
         ; pushw #mbr_parition_entry
@@ -246,63 +190,42 @@ fs_read_mbr:
         load b, #-2
         jmp .done
         ..else:
-
-    .compute_partition_address:
+    .fat16_start_block:
         ; print partition address
         storew #.str_found_parition, static_uart_print.data_pointer
         call static_uart_print
-
-        ; compute address
-        ; assume 512 byte sector, i.e. partition start address = lba_start << 9
-        ..byte0:
-            load a, mbr_parition_entry.lba_start+1
-            lshift a
-            store a, partition_start_addr
-
-        ..byte1:
-            load a, mbr_parition_entry.lba_start+2
-            lshift a
-            store a, partition_start_addr+1
-            jnc ..byte2
-            ; handle carry
-            load a, partition_start_addr
-            add a, #1
-            store a, partition_start_addr
-
-        ..byte2:
-            load a, mbr_parition_entry.lba_start+3
-            lshift a
-            store a, partition_start_addr+2
-            jnc ..byte3
-            ; handle carry
-            load a, partition_start_addr+1
-            add a, #1
-            store a, partition_start_addr+1
-
-        ..byte3:
-            store #0x00, partition_start_addr+3
-
-        ..print:
-            loadw hl, partition_start_addr
-            pushw hl
-            loadw hl, partition_start_addr+2
-            pushw hl
-            call uart_print_itoa_hex32
-            dealloc 4
-            call static_uart_print_newline
+        loadw hl, mbr_parition_entry.lba_start
+        pushw hl
+        loadw hl, mbr_parition_entry.lba_start+2
+        pushw hl
+        call uart_print_itoa_hex32
+        dealloc 4
+        call static_uart_print_newline
 
     .read_f16_boot_sector:
         storew #.str_loading_fs, static_uart_print.data_pointer
         call static_uart_print
 
-        loadw hl, partition_start_addr
+        loadw hl, mbr_parition_entry.lba_start
         pushw hl
-        loadw hl, partition_start_addr+2
+        loadw hl, mbr_parition_entry.lba_start+2
         pushw hl
-        pushw #fat16_boot_sector
-        pushw #(fat16_boot_sector.END-fat16_boot_sector)
-        call sd_mem_copy
-        dealloc 8
+        call sd_read_block
+        dealloc 4
+
+        storew #sd_buf, static_memcpy.src_ptr
+        storew #fat16_boot_sector, static_memcpy.dst_ptr
+        storew #(fat16_boot_sector.END-fat16_boot_sector), static_memcpy.len
+        call static_memcpy
+
+;         loadw hl, partition_start_addr
+;         pushw hl
+;         loadw hl, partition_start_addr+2
+;         pushw hl
+;         pushw #fat16_boot_sector
+;         pushw #(fat16_boot_sector.END-fat16_boot_sector)
+;         call sd_mem_copy
+;         dealloc 8
     
         ; debug
         ; pushw #fat16_boot_sector
@@ -375,7 +298,7 @@ fs_read_mbr:
 
         ..print:
             call fs_print_boot_sector
-    
+        
     .check_sector_size:
         ; sector must be 512 bytes
         load a, fat16_boot_sector.bytes_per_sector+1
@@ -442,12 +365,6 @@ fs_read_mbr:
                 add a, b
                 store a, root_dir_sector
 
-            pushw root_dir_sector
-            call seek_to_sector
-            popw hl
-            movew SDCARD_ADDR, root_dir_addr
-            movew SDCARD_ADDR+2, root_dir_addr+2
-
         ..print:
             storew #.str_root_sector_num, static_uart_print.data_pointer
             call static_uart_print
@@ -457,16 +374,7 @@ fs_read_mbr:
             popw hl
 
             call static_uart_print_newline
-            
-            storew #.str_root_addr, static_uart_print.data_pointer
-            call static_uart_print
 
-            pushw root_dir_addr
-            pushw root_dir_addr+2
-            call uart_print_itoa_hex32
-            dealloc 4
-
-            call static_uart_print_newline
         call static_uart_print_newline
     
     .list_root_dir:
@@ -485,7 +393,7 @@ fs_read_mbr:
     .str_error_filesystem_not_supported1: #d "ERROR. FILESYSTEM TYPE \0"
     .str_error_filesystem_not_supported2: #d " IS NOT SUPPORTED!\n\0"
     .str_error_sector_size: #d "ERROR. SECTOR SIZE IS NOT 0x0200!\n\0"
-    .str_found_parition: #d "Found FAT16 partition. Start addr: \0"
+    .str_found_parition: #d "Found FAT16 partition. Start block: \0"
     .str_loading_fs: #d "Loading File System Boot Sector...\n\0"
     .str_root_sector_num: #d "root sector: \0"
     .str_root_addr: #d "root dir start addr: \0"
@@ -709,64 +617,65 @@ fs_print_boot_sector:
     .str_volume_label: #d "\tvolume label: \0"
     .str_fs_type: #d "\tfile system type: \0"
 
-#bank rom
-;;
-; @function
-; @brief ?
-; @section description
-;      _________________________
-;  -6 |   .param16_sector_num   |
-;  -5 |_________________________|
-;  -4 |____________?____________| RESERVED
-;  -3 |____________?____________|    .
-;  -2 |____________?____________|    .
-;  -1 |____________?____________| RESERVED
-;
-;;
-seek_to_sector:
-    .param16_sector_num = -6
-    .init:
-        __prologue
+; #bank rom
+; ;;
+; ; @function
+; ; @brief ?
+; ; @section description
+; ;      _________________________
+; ;  -6 |   .param16_sector_num   |
+; ;  -5 |_________________________|
+; ;  -4 |____________?____________| RESERVED
+; ;  -3 |____________?____________|    .
+; ;  -2 |____________?____________|    .
+; ;  -1 |____________?____________| RESERVED
+; ;
+; ;;
+; seek_to_sector:
+;     .param16_sector_num = -6
+;     .init:
+;         __prologue
 
-    .seek:
-        ; addr = partition_start_addr + (sector_number)*bytes_per_sector
-        store #0x00, static_x_32
-        load a, (BP), .param16_sector_num
-        lshift a
-        store a, static_x_32+1
-        load a, (BP), .param16_sector_num+1
-        lshift a
-        store a, static_x_32+2
-        jnc ..nocarry
-        load a, static_x_32+1
-        add a, #1
-        store a, static_x_32+1
-        ..nocarry:
-        store #0x00, static_x_32+3
+;     .seek:
+;         ; addr = partition_start_addr + (sector_number)*bytes_per_sector
+;         store #0x00, static_x_32
+;         load a, (BP), .param16_sector_num
+;         lshift a
+;         store a, static_x_32+1
+;         load a, (BP), .param16_sector_num+1
+;         lshift a
+;         store a, static_x_32+2
+;         jnc ..nocarry
+;         load a, static_x_32+1
+;         add a, #1
+;         store a, static_x_32+1
+;         ..nocarry:
+;         store #0x00, static_x_32+3
 
-        movew partition_start_addr, static_y_32
-        movew partition_start_addr+2, static_y_32+2
-        call static_add32
-        movew static_z_32, SDCARD_ADDR
-        movew static_z_32+2, SDCARD_ADDR+2
-    .done:
-        __epilogue
-        ret
+;         movew partition_start_addr, static_y_32
+;         movew partition_start_addr+2, static_y_32+2
+;         call static_add32
+;         movew static_z_32, SDCARD_ADDR
+;         movew static_z_32+2, SDCARD_ADDR+2
+;     .done:
+;         __epilogue
+;         ret
 
 
-fs_read_direcorty_entry:
+fs_read_directory_entry:
     .init:
     __prologue
     .load:
-        loadw hl, SDCARD_ADDR
-        pushw hl
-        loadw hl, SDCARD_ADDR+2
-        pushw hl
-        pushw #fileinfo
-        pushw #0x0020
-        call sd_mem_copy
-        dealloc 8
+        ; loadw hl, SDCARD_ADDR
+        ; pushw hl
+        ; loadw hl, SDCARD_ADDR+2
+        ; pushw hl
+        ; pushw #fileinfo
+        ; pushw #0x0020
+        ; call sd_mem_copy
+        ; dealloc 8
     
+
         ..fix_endianenss:
             load a, fileinfo.creation_time
             load b, fileinfo.creation_time+1
@@ -829,13 +738,30 @@ fs_print_dir_info:
     .init:
         __prologue
 
+        movew mbr_parition_entry.lba_start, static_x_32
+        movew mbr_parition_entry.lba_start+2, static_x_32+2
+        storew #0x0000, static_y_32
         loadw hl, (BP), .param16_sector_num 
-        pushw hl
-        call seek_to_sector
-        popw hl
+        storew hl, static_y_32+2
+        call static_add32
 
+        pushw #0x0000
+        pushw static_z_32+2
+        call sd_read_block
+        dealloc 4
+
+        storew #sd_buf, static_memcpy.src_ptr
     .load:
-        call fs_read_direcorty_entry
+        storew #fileinfo, static_memcpy.dst_ptr
+        storew #0x0020, static_memcpy.len
+        call static_memcpy
+        call fs_read_directory_entry
+    
+    
+    ; pushw #fileinfo
+    ; push #20
+    ; call uart_dump_mem
+    ; dealloc 3
 
     .print_file_line:
         load a, fileinfo
@@ -901,11 +827,23 @@ fs_find_file:
     .init:
         __prologue
 
-        movew root_dir_addr, SDCARD_ADDR
-        movew root_dir_addr+2, SDCARD_ADDR+2
+        movew mbr_parition_entry.lba_start, static_x_32
+        movew mbr_parition_entry.lba_start+2, static_x_32+2
+        storew #0x0000, static_y_32
+        movew root_dir_sector, static_y_32+2
+        call static_add32
 
+        pushw #0x0000
+        pushw static_z_32+2
+        call sd_read_block
+        dealloc 4
+
+        storew #sd_buf, static_memcpy.src_ptr
     .load:
-        call fs_read_direcorty_entry
+        storew #fileinfo, static_memcpy.dst_ptr
+        storew #0x0020, static_memcpy.len
+        call static_memcpy
+        call fs_read_directory_entry
 
     .print_file_line:
         load a, fileinfo
@@ -928,12 +866,11 @@ fs_find_file:
         movew fileinfo.file_size, file_handle.file_size
         movew fileinfo.file_size+2, file_handle.file_size+2
         movew fileinfo.starting_cluser, file_handle.next_cluster
-        movew fileinfo.name, file_handle.name
-        movew fileinfo.name+2, file_handle.name+2
-        movew fileinfo.name+4, file_handle.name+4
-        movew fileinfo.name+6, file_handle.name+6
-        movew fileinfo.name+8, file_handle.name+8
-        move fileinfo.name+10, file_handle.name+10
+        
+        storew #fileinfo.name, static_memcpy.src_ptr
+        storew #file_handle.name, static_memcpy.dst_ptr
+        storew #11, static_memcpy.len
+        call static_memcpy
         load b, #0
         __epilogue
         ret
@@ -949,6 +886,8 @@ fs_find_file:
 ; @brief ?
 ; @section description
 ;      _________________________
+;  -6 |    .param16_dst_ptr     |
+;  -5 |_________________________|
 ;  -4 |____________?____________| RESERVED
 ;  -3 |____________?____________|    .
 ;  -2 |____________?____________|    .
@@ -957,20 +896,35 @@ fs_find_file:
 ;;
 #bank rom
 load_file:
+    .param16_dst_ptr = -6
     .init:
     __prologue
 
     storew #.str_loading_file, static_uart_print.data_pointer
     call static_uart_print
 
-    ; data_start_sector = root_dir_sector + 32 (dir size)
+    ; root_dir_sector + lba_start
     storew #0x0000, static_x_32
     movew root_dir_sector, static_x_32+2
+    movew mbr_parition_entry.lba_start, static_y_32
+    movew mbr_parition_entry.lba_start+2, static_y_32+2
+    call static_add32
+
+    ; data_start_sector = root_dir_sector + 32 (dir size)
+    movew static_z_32, static_x_32
+    movew static_z_32+2, static_x_32+2
     storew #0x0000, static_y_32
     storew #0x0020, static_y_32+2
     call static_add32
+    
+    ; debug
+    ; pushw static_z_32
+    ; pushw static_z_32+2
+    ; call uart_print_itoa_hex32
+    ; call static_uart_print_newline
+    ; dealloc 4
 
-    ; data_sector = data_start_sector+(cluster-2)*4
+    ; data_sector = data_start_sector + (cluster-2)*4
     storew #0x0000, static_y_32
     loadw hl, file_handle.next_cluster
     subw hl, #2 ; first two clusters are not used
@@ -989,23 +943,30 @@ load_file:
     movew static_z_32+2, static_x_32+2
     call static_add32
 
-    pushw static_z_32+2
-    call seek_to_sector
-    popw hl
+    ; debug
+    ; pushw static_z_32
+    ; pushw static_z_32+2
+    ; call uart_print_itoa_hex32
+    ; call static_uart_print_newline
+    ; dealloc 4
 
+
+    loadw hl, (BP), .param16_dst_ptr
+    storew hl, static_memcpy.dst_ptr
     .load:
-        loadw hl, SDCARD_ADDR
-        pushw hl
-        loadw hl, SDCARD_ADDR+2
-        pushw hl
-        pushw #file_handle.buf
-        pushw #0x200
-        call sd_mem_copy
-        dealloc 8
+        pushw #0x0000
+        pushw static_z_32+2
+        call sd_read_block
+        dealloc 4
+        
+        storew #sd_buf, static_memcpy.src_ptr
+        storew #0x200, static_memcpy.len
+        call static_memcpy
 
     .print:
         ; debug
-        pushw #file_handle.buf
+        loadw hl, (BP), .param16_dst_ptr
+        pushw hl
         push #10
         call uart_dump_mem
         dealloc 3
@@ -1020,3 +981,4 @@ load_file:
 
 #include "./char_utils.asm"
 #include "./static_math.asm"
+#include "./lib_sd.asm"

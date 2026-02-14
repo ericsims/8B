@@ -7,6 +7,37 @@
 
 ;;
 ; @function
+; @brief static memcpy function
+; @section description
+; static memcpy copies from source to destination
+;;
+#bank rom
+static_memcpy:
+    .copy:
+        loadw hl, .len
+        subw hl, #1
+        jmc .done
+        storew hl, .len
+
+        move (.src_ptr), (.dst_ptr)
+        
+        loadw hl, .src_ptr
+        addw hl, #1
+        storew hl, .src_ptr
+        loadw hl, .dst_ptr
+        addw hl, #1
+        storew hl, .dst_ptr
+        jmp .copy
+    .done:
+        ret
+
+#bank ram
+    .src_ptr: #res 2
+    .dst_ptr: #res 2
+    .len: #res 2
+
+;;
+; @function
 ; @brief print character to UART
 ; @section description
 ; static function

@@ -315,6 +315,14 @@ sd_read_block:
         add b, #1
         jnc .copy_512
 
+    .read_crc:
+        store #0xFF, SDCARD_DATA ; wait
+        load a, SDCARD_DATA
+        store #0xFF, SDCARD_DATA ; wait
+        load a, SDCARD_DATA
+        ; TODO: check crc16?
+    
+    .done_reading:
         store #0x00, SDCARD_CTRL ; deassert CS
         store #0xFF, SDCARD_DATA ; wait
     
