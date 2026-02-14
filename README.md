@@ -4,7 +4,7 @@ a simple 8 bit CISC computer built using TTL logic
 ## SW DEV
 
 ### packages
-`sudo apt-get install python3-tk`
+`sudo apt-get install python3-tk ffmpeg`
 
 ### customasm
 `curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh`
