@@ -66,7 +66,6 @@ class SDCARD:
     def get(self,addr):
         if (addr&0x03) == 0x00:
             return self.input_buf
-            return  input_val
         elif (addr&0x03) == 0x01:
             return (self.ctrl_cd<<2)|(self.ctrl_busy<<1)|self.ctrl_cs
         else:

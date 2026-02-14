@@ -25,10 +25,15 @@ UART_SIZE        = 0x0002
 MOT              = 0xE004
 MOT_SIZE         = 0x0002
 
+; RA8876
+; MEM slot 8
+RA8876           = 0xE006
+RA8876_SIZE      = 0x0002
+
 ; SDCARD
 ; MEM slot 4
 SDCARD           = 0xE010
-SDCARD_SIZE      = 0x0008
+SDCARD_SIZE      = 0x0002
 
 ; ETH
 ; MEM slot 7

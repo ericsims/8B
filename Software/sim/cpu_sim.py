@@ -11,7 +11,6 @@ from enum import Enum
 import FreeSimpleGUI as sg
 from termcolor import colored
 # import rpyc
-from PIL import Image, ImageTk
 from bcolors import bcolors
 from PC import PC
 from II import II
@@ -265,8 +264,7 @@ def main():
       background_color='white',
       font=('courier new',7),
       key='_INST_NAME_')
-    ],
-    [sg.Image(key="-MAP-", size=(128,128))],
+    ]
   ]
 
   layout_ctrl = [
@@ -346,6 +344,7 @@ def main():
       sg.Tab('VARS', layout_vars, expand_x=True, expand_y=True),
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
       sg.Tab('SDCARD', mems.sdcard.gui_get_layout(), expand_x=True, expand_y=True),
+      sg.Tab('RA8876', mems.ra8876.gui_get_layout(), expand_x=True, expand_y=True),
       ]])],
     mems.uart.gui_get_layout()
   ]
@@ -365,6 +364,7 @@ def main():
     mems.sram.gui_init(window)
     mems.uart.gui_init(window)
     mems.sdcard.gui_init(window)
+    mems.ra8876.gui_init(window)
     stack.gui_init(window)
   else:
     window = None
@@ -689,6 +689,7 @@ def main():
 
         
         mems.sdcard.sim()
+        mems.ra8876.sim()
 
         if GUI:
           if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:
@@ -786,21 +787,11 @@ def main():
               inst_stats_str += f"{name:<20} {stats}\n"
             window['_TIME_ANALYSIS_'].update(inst_stats_str)  
 
-            mp = Image.new('L', [128,128], 255)
-            mp_pixels = mp.load()
-
-            # for row in range(128):
-            #   for col in range(128):
-            #     dr_addr = int(col/4)+row*int(128/4)
-            #     v = 100
-            #     if mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] is not None:
-            #       v = ((mems.sram.value[(dr_addr+0xA000)&(mems.sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
-            #       #print(row,col,dr_addr,(col%4)*2,v)
-            #     mp_pixels[col,row] = v
-            # window["-MAP-"].update(data=ImageTk.PhotoImage(image=mp))
-
             # SD CARD
             mems.sdcard.gui_update()
+
+            # TFT
+            mems.ra8876.gui_update()
 
       print()
       print(f"max stack usage {stack.max_used} bytes")

@@ -62,8 +62,12 @@ layout:
     size: 0x0002
     label: "MOT"
     location: 6
+  0xE006:
+    size: 0x0002
+    label: "RA8876"
+    location: 8
   0xE010:
-    size: 0x0008
+    size: 0x0002
     label: "SDCARD"
     location: 4
   0xE400:
