@@ -1,5 +1,5 @@
 from enum import Enum
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageDraw
 import FreeSimpleGUI as sg
 
 
@@ -69,6 +69,7 @@ class RA8876_REG:
     MPLLC2 = 0x08 # MCLK PLL Control Register 2
     SPLLC1 = 0x09 # CCLK PLL Control Register 1
     SPLLC2 = 0x0A # CCLK PLL Control Register 2
+
     # ==========================================
     # Interrupt Control Registers
     # ==========================================
@@ -77,6 +78,7 @@ class RA8876_REG:
     MINTFR = 0x0D # Mask Interrupt Flag Register 
     PUENR = 0x0E # Pull- high control Register
     PSFSR = 0x0F # PDAT for PIO/Key Function Select Register
+
     # # ==========================================
     # # LCD Display Control Registers
     # # ==========================================
@@ -114,18 +116,6 @@ class RA8876_REG:
     # MWCR1 = 0x2C # Memory Window Control Register 1
     # MWCR2 = 0x2D # Memory Window Control Register 2
 
-    # # ==========================================
-    # # Active Window Setup Registers
-    # # ==========================================
-    # AWUL_X0 = 0x30 # Active Window Upper-Left X 0
-    # AWUL_X1 = 0x31 # Active Window Upper-Left X 1
-    # AWUL_Y0 = 0x32 # Active Window Upper-Left Y 0
-    # AWUL_Y1 = 0x33 # Active Window Upper-Left Y 1
-    # AWLR_X0 = 0x34 # Active Window Lower-Right X 0
-    # AWLR_X1 = 0x35 # Active Window Lower-Right X 1
-    # AWLR_Y0 = 0x36 # Active Window Lower-Right Y 0
-    # AWLR_Y1 = 0x37 # Active Window Lower-Right Y 1
-    
     # ==========================================
     # Cursor Setting Registers
     # ==========================================
@@ -158,6 +148,51 @@ class RA8876_REG:
     AW_HT0 = 0x5C # Active Window Height 0 (LSB)
     AW_HT1 = 0x5D # Active Window Height 1 (MSB)
     AW_COLOR = 0x5E # Active Window Color Depth
+
+    # ==========================================
+    # Geometric Drawing Engine Registers
+    # ==========================================
+    DCR0 = 0x67 # Draw Line / Triangle Control Register 0
+    DCR0_DRAW_EN_POS = 7 # Draw Line / Triangle Start Signal. WO Start/Stop Drawing function. RO is Drawing function complete
+    DCR0_FILL_EN_POS = 5 # RW. Enable fill of triangle
+    DCR0_DRAW_MODE_POS = 1 # RW
+    DCR0_DRAW_MODE_LINE = 0 # Draw Line
+    DCR0_DRAW_MODE_TRIANGLE = 1 # Draw Triangle
+
+    DLHSR0 = 0x68 # Draw Line/Square/Triangle Point 1 X-coordinates Register0 (LSB) RW
+    DLHSR1 = 0x69 # Draw Line/Square/Triangle Point 1 X-coordinates Register1 (MSB) RW
+    DLVSR0 = 0x6A # Draw Line/Square/Triangle Point 1 Y-coordinates Register0 (LSB) RW
+    DLVSR1 = 0x6B # Draw Line/Square/Triangle Point 1 Y-coordinates Register1 (MSB) RW
+    DLHER0 = 0x6C # Draw Line/Square/Triangle Point 2 X-coordinates Register0 (LSB) RW
+    DLHER1 = 0x6D # Draw Line/Square/Triangle Point 2 X-coordinates Register1 (MSB) RW
+    DLVER0 = 0x6E # Draw Line/Square/Triangle Point 2 Y-coordinates Register0 (LSB) RW
+    DLVER1 = 0x6F # Draw Line/Square/Triangle Point 2 Y-coordinates Register1 (MSB) RW
+    DTPH0 = 0x70 # Draw Triangle Point 3 X-coordinates Register 0 (LSB) RW
+    DTPH1 = 0x71 # Draw Triangle Point 3 X-coordinates Register 1 (MSB) RW
+    DTPV0 = 0x72 # Draw Triangle Point 3 Y-coordinates Register 0 (LSB) RW
+    DTPV1 = 0x73 # Draw Triangle Point 3 Y-coordinates Register 1 (MSB) RW
+
+    DCR1 = 0x76 # Draw Circle/Ellipse/Ellipse Curve/Circle Square Control Register 1 
+    DCR1_DRAW_EN_POS = 7 # Draw Circle / Ellipse / Square /Circle Square Start Signal. WO Start/Stop Drawing function. RO is Drawing function complete
+    DCR1_FILL_EN_POS = 6 # Enable Fill the Circle / Ellipse / Square / Circle Square. RW
+    DCR1_DRAW_MODE_POS = 4 # 2 bit Draw Circle / Ellipse / Square / Ellipse Curve / Circle Square Select. RW
+    DCR1_DRAW_MODE_ELLIPSE = 0b00 # Draw Circle / Ellipse
+    DCR1_DRAW_MODE_CURVE = 0b01 # Draw Circle / Ellipse Curve
+    DCR1_DRAW_MODE_SQUARE = 0b10 # Draw Square
+    DCR1_DRAW_MODE_CIRCLE_SQUARE = 0b01 # Draw Circle Square
+    DCR1_DECP_POS = 0 # 2 bit Draw Circle / Ellipse Curve Part Select(DECP). RW
+    DCR1_DECP_BL = 0b00 # bottom-left Ellipse Curve
+    DCR1_DECP_UL = 0b01 # upper-left Ellipse Curve
+    DCR1_DECP_UR = 0b10 # upper-right Ellipse Curve
+    DCR1_DECP_BR = 0b11 # bottom-right Ellipse Curve
+
+
+    # ==========================================
+    # Foreground and Background Colors
+    # ==========================================
+    FGCR = 0xD2 # Foreground Color Register - Red. RW. Default = 0xFF
+    FGCG = 0xD3 # Foreground Color Register - Green. RW. Default = 0xFF
+    FGCB = 0xD4 # Foreground Color Register - Blue. RW. Default = 0xFF
 
     # # ==========================================
     # # BTE (Block Transfer Engine) Registers
@@ -214,37 +249,11 @@ class RA8876_REG:
     # ROMCR3 = 0xD3 # CGROM Control Register 3
 
     # # ==========================================
-    # # Foreground and Background Colors
-    # # ==========================================
-    # FGCR0 = 0xD4 # Foreground Color Register 0 (Blue)
-    # FGCR1 = 0xD5 # Foreground Color Register 1 (Green)
-    # FGCR2 = 0xD6 # Foreground Color Register 2 (Red)
-    # BGCR0 = 0xD7 # Background Color Register 0 (Blue)
-    # BGCR1 = 0xD8 # Background Color Register 1 (Green)
-    # BGCR2 = 0xD9 # Background Color Register 2 (Red)
-    # FGTCR0 = 0xDA # Foreground Transparent Color 0
-    # FGTCR1 = 0xDB # Foreground Transparent Color 1
-    # FGTCR2 = 0xDC # Foreground Transparent Color 2
-    # BGTCR0 = 0xDD # Background Transparent Color 0
-    # BGTCR1 = 0xDE # Background Transparent Color 1
-    # BGTCR2 = 0xDF # Background Transparent Color 2
-
-    # # ==========================================
     # # System Control & SDRAM Status
     # # ==========================================
     # SDRST = 0xE0 # SDRAM Status Register
     # SYSRST = 0xE4 # System Reset & Operation Register 
     
-    # # Circle / Ellipse Drawing
-    # CECR0 = 0x7D # Circle/Ellipse Control Register
-    # CENX0 = 0x7E # Circle/Ellipse Center X 0
-    # CENX1 = 0x7F # Circle/Ellipse Center X 1
-    # CENY0 = 0x80 # Circle/Ellipse Center Y 0
-    # CENY1 = 0x81 # Circle/Ellipse Center Y 1
-    # CRAD0 = 0x82 # Circle Radius / Ellipse Semi-Major Axis 0
-    # CRAD1 = 0x83 # Circle Radius / Ellipse Semi-Major Axis 1
-    # ERAD0 = 0x84 # Ellipse Semi-Minor Axis 0
-    # ERAD1 = 0x85 # Ellipse Semi-Minor Axis 1
 
     # # ==========================================
     # # PWM Control Registers
@@ -304,7 +313,7 @@ class TFT_RA8876:
 
     def sim(self):
         # simulate the internals of the RA8876
-        if (self.regs[RA8876_REG.ICR] & RA8876_REG.ICR_TEXT_MODE_EN_POS):
+        if (self.regs[RA8876_REG.ICR] & (1<<RA8876_REG.ICR_TEXT_MODE_EN_POS)):
             # Text Mode
             pass
         else:
@@ -339,6 +348,36 @@ class TFT_RA8876:
                 self.regs[RA8876_REG.GCHP0] = x & 0xFF
                 self.regs[RA8876_REG.GCVP1] = (y >> 8) & 0xFF
                 self.regs[RA8876_REG.GCVP0] = y & 0xFF
+        
+        # geometric drawings
+        # Draw Circle / Ellipse / Square /Circle Square
+        if (self.regs[RA8876_REG.DCR1] & (1<<RA8876_REG.DCR1_DRAW_EN_POS)):            
+            x0 = (self.regs[RA8876_REG.DLHSR1] << 8) | self.regs[RA8876_REG.DLHSR0]
+            y0 = (self.regs[RA8876_REG.DLVSR1] << 8) | self.regs[RA8876_REG.DLVSR0]
+            x1 = (self.regs[RA8876_REG.DLHER1] << 8) | self.regs[RA8876_REG.DLHER0]
+            y1 = (self.regs[RA8876_REG.DLVER1] << 8) | self.regs[RA8876_REG.DLVER0]
+            r, g, b = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
+
+            draw = ImageDraw.Draw(self.img)
+
+            # check draw mode Circle / Ellipse / Square / Circle Square
+            match (self.regs[RA8876_REG.DCR1] >> RA8876_REG.DCR1_DRAW_MODE_POS) & 0b11:
+                case RA8876_REG.DCR1_DRAW_MODE_SQUARE:
+                    if (self.regs[RA8876_REG.DCR1] >> RA8876_REG.DCR1_FILL_EN_POS) & 1 :
+                        # fill
+                        draw.rectangle(((x0, y0), (x1, y1)), fill=(r, g, b))
+                    else:
+                        # no fill
+                        draw.rectangle(((x0, y0), (x1, y1)), outline=(r, g, b), width=1)
+                case RA8876_REG.DCR1_DRAW_MODE_CIRCLE_SQUARE:
+                    pass
+                case RA8876_REG.DCR1_DRAW_MODE_ELLIPSE:
+                    pass
+                case RA8876_REG.DCR1_DRAW_MODE_CURVE:
+                    pass
+
+            # drawing complete. clear draw bit
+            self.regs[RA8876_REG.DCR1] &= ~(1<<RA8876_REG.DCR1_DRAW_EN_POS)
 
 
     def gui_get_layout(self):

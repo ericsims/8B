@@ -63,7 +63,6 @@ RA8876_ICR = 0x03 ; Input Control Register
         RA8876_ICR_MEMORY_SELECT_CURSOR_RAM = 2
         RA8876_ICR_MEMORY_SELECT_PALETTE_RAM = 3
 
-
 RA8876_MRWDP = 0x04 ; Memory Read/Write Data Port
 
 ; ==========================================
@@ -118,23 +117,51 @@ RA8876_AW_HT0 = 0x5C ; Active Window Height 0 (LSB)
 RA8876_AW_HT1 = 0x5D ; Active Window Height 1 (MSB)
 RA8876_AW_COLOR = 0x5E ; Active Window Color Depth
 
-; ; ==========================================
-; ; Geometric Drawing Engine Registers
-; ; ==========================================
-; RA8876_DCR0 = 0x76 ; Draw Line/Triangle Control Register 0
-; RA8876_DCR1 = 0x77 ; Draw Line/Triangle Control Register 1
-; RA8876_DLHSR0 = 0x68 ; Draw Line/Triangle Start X 0
-; RA8876_DLHSR1 = 0x69 ; Draw Line/Triangle Start X 1
-; RA8876_DLVSR0 = 0x6A ; Draw Line/Triangle Start Y 0
-; RA8876_DLVSR1 = 0x6B ; Draw Line/Triangle Start Y 1
-; RA8876_DLHER0 = 0x6C ; Draw Line/Triangle End X 0
-; RA8876_DLHER1 = 0x6D ; Draw Line/Triangle End X 1
-; RA8876_DLVER0 = 0x6E ; Draw Line/Triangle End Y 0
-; RA8876_DLVER1 = 0x6F ; Draw Line/Triangle End Y 1
-; RA8876_DTPH0 = 0x70 ; Draw Triangle Point 3 X 0
-; RA8876_DTPH1 = 0x71 ; Draw Triangle Point 3 X 1
-; RA8876_DTPV0 = 0x72 ; Draw Triangle Point 3 Y 0
-; RA8876_DTPV1 = 0x73 ; Draw Triangle Point 3 Y 1
+; ==========================================
+; Geometric Drawing Engine Registers
+; ==========================================
+RA8876_DCR0 = 0x67 ; Draw Line / Triangle Control Register 0
+    RA8876_DCR0_DRAW_EN_POS = 7 ; Draw Line / Triangle Start Signal. WO Start/Stop Drawing function. RO is Drawing function complete
+    RA8876_DCR0_FILL_EN_POS = 5 ; RW. Enable fill of triangle
+    RA8876_DCR0_DRAW_MODE_POS = 1 ; RW
+        RA8876_DCR0_DRAW_MODE_LINE = 0 ; Draw Line
+        RA8876_DCR0_DRAW_MODE_TRIANGLE = 1 ; Draw Triangle
+RA8876_DLHSR0 = 0x68 ; Draw Line/Square/Triangle Point 1 X-coordinates Register0 (LSB) RW
+RA8876_DLHSR1 = 0x69 ; Draw Line/Square/Triangle Point 1 X-coordinates Register1 (MSB) RW
+RA8876_DLVSR0 = 0x6A ; Draw Line/Square/Triangle Point 1 Y-coordinates Register0 (LSB) RW
+RA8876_DLVSR1 = 0x6B ; Draw Line/Square/Triangle Point 1 Y-coordinates Register1 (MSB) RW
+RA8876_DLHER0 = 0x6C ; Draw Line/Square/Triangle Point 2 X-coordinates Register0 (LSB) RW
+RA8876_DLHER1 = 0x6D ; Draw Line/Square/Triangle Point 2 X-coordinates Register1 (MSB) RW
+RA8876_DLVER0 = 0x6E ; Draw Line/Square/Triangle Point 2 Y-coordinates Register0 (LSB) RW
+RA8876_DLVER1 = 0x6F ; Draw Line/Square/Triangle Point 2 Y-coordinates Register1 (MSB) RW
+RA8876_DTPH0 = 0x70 ; Draw Triangle Point 3 X-coordinates Register 0 (LSB) RW
+RA8876_DTPH1 = 0x71 ; Draw Triangle Point 3 X-coordinates Register 1 (MSB) RW
+RA8876_DTPV0 = 0x72 ; Draw Triangle Point 3 Y-coordinates Register 0 (LSB) RW
+RA8876_DTPV1 = 0x73 ; Draw Triangle Point 3 Y-coordinates Register 1 (MSB) RW
+
+RA8876_DCR1 = 0x76 ; Draw Circle/Ellipse/Ellipse Curve/Circle Square Control Register 1 
+    RA8876_DCR1_DRAW_EN_POS = 7 ; Draw Circle / Ellipse / Square /Circle Square Start Signal. WO Start/Stop Drawing function. RO is Drawing function complete
+    RA8876_DCR1_FILL_EN_POS = 6 ; Enable Fill the Circle / Ellipse / Square / Circle Square. RW
+    RA8876_DCR1_DRAW_MODE_POS = 4 ; 2 bit Draw Circle / Ellipse / Square / Ellipse Curve / Circle Square Select. RW
+        RA8876_DCR1_DRAW_MODE_ELLIPSE = 0b00 ; Draw Circle / Ellipse
+        RA8876_DCR1_DRAW_MODE_CURVE = 0b01 ; Draw Circle / Ellipse Curve
+        RA8876_DCR1_DRAW_MODE_SQUARE = 0b10 ; Draw Square
+        RA8876_DCR1_DRAW_MODE_CIRCLE_SQUARE = 0b01 ; Draw Circle Square
+    RA8876_DCR1_DECP_POS = 0 ; 2 bit Draw Circle / Ellipse Curve Part Select(DECP). RW
+        RA8876_DCR1_DECP_BL = 0b00 ; bottom-left Ellipse Curve
+        RA8876_DCR1_DECP_UL = 0b01 ; upper-left Ellipse Curve
+        RA8876_DCR1_DECP_UR = 0b10 ; upper-right Ellipse Curve
+        RA8876_DCR1_DECP_BR = 0b11 ; bottom-right Ellipse Curve
+
+
+; ==========================================
+; Foreground and Background Colors
+; ==========================================
+RA8876_FGCR = 0xD2 ; Foreground Color Register - Red. RW. Default = 0xFF
+RA8876_FGCG = 0xD3 ; Foreground Color Register - Green. RW. Default = 0xFF
+RA8876_FGCB = 0xD4 ; Foreground Color Register - Blue. RW. Default = 0xFF
+
+
 
 ; TODO: the rest of the regs
 
@@ -466,14 +493,211 @@ ra8876_put_image_16bpp:
             storew hl, (BP), .param16_img_ptr
 
             jmp ..next_col
-    
-
 
     .done:
         dealloc 2
         __epilogue
         ret
 
+
+;;
+; @function
+; @brief set foreground color
+; @section description
+;      _______________________
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_set_foreground_color_16bpp:
+    .param16_color = -6
+    .init:
+        __prologue
+
+    ; ref: https://gist.github.com/companje/11deb82e807f2cf927b3a0da1646e795
+    ; r = (color >> 8) & 0xF8. i.e, MSB & 0xF8
+    ; g = (color >> 3) & 0xFC. i.e. ((LSB >> 3) | (MSB << 5)) & 0xF
+    ; b = (color << 3) & 0xF8. i.e, LSB << 3
+
+    .r:
+        load a, (BP), .param16_color
+        and a, #0xF8
+        __store a, RA8876, RA8876_FGCR ; Foreground Color Register - Red
+    .g:
+        load a, (BP), .param16_color
+        lshift a
+        lshift a
+        lshift a
+        lshift a
+        lshift a
+        load b, (BP), .param16_color + 1
+        rshift b
+        rshift b
+        rshift b
+        or a, b
+        and a, #0xFC
+        __store a, RA8876, RA8876_FGCG ; Foreground Color Register - Green
+    .b:
+        load a, (BP), .param16_color + 1
+        lshift a
+        lshift a
+        lshift a
+        __store a, RA8876, RA8876_FGCB ; Foreground Color Register - Blue
+    
+    .done:
+        __epilogue
+        ret
+
+
+;;
+; @function
+; @brief draw square with fill
+; @section description
+;      _______________________
+; -14 |      .param16_x0      |
+; -13 |_______________________|
+; -12 |      .param16_y1      |
+; -11 |_______________________|
+; -10 |      .param16_x1      |
+;  -9 |_______________________|
+;  -8 |      .param16_y1      |
+;  -7 |_______________________|
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_draw_sqaure_fill:
+    .param16_x0 = -14
+    .param16_y0 = -12
+    .param16_x1 = -10
+    .param16_y1 = -8
+    .param16_color = -6
+    .init:
+        __prologue
+
+    .set_foreground_color:
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_set_foreground_color_16bpp
+        popw hl
+    
+    .set_x0_coord:
+        load a, (BP), .param16_x0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHSR1 ; MSB
+        load a, (BP), .param16_x0 + 1
+        __store a, RA8876, RA8876_DLHSR0 ; LSB
+    
+    .set_y0_coord:
+        load a, (BP), .param16_y0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVSR1 ; MSB
+        load a, (BP), .param16_y0 + 1
+        __store a, RA8876, RA8876_DLVSR0 ; LSB
+
+    .set_x1_coord:
+        load a, (BP), .param16_x1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHER1 ; MSB
+        load a, (BP), .param16_x1 + 1
+        __store a, RA8876, RA8876_DLHER0 ; LSB
+    
+    .set_y1_coord:
+        load a, (BP), .param16_y1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVER1 ; MSB
+        load a, (BP), .param16_y1 + 1
+        __store a, RA8876, RA8876_DLVER0 ; LSB
+
+    .draw:
+        __store #((1 << RA8876_DCR1_DRAW_EN_POS)|(1 << RA8876_DCR1_FILL_EN_POS)|(RA8876_DCR1_DRAW_MODE_SQUARE << RA8876_DCR1_DRAW_MODE_POS)), RA8876, RA8876_DCR1
+    
+    .done:
+        __epilogue
+        ret
+
+
+;;
+; @function
+; @brief draw square with no fill
+; @section description
+;      _______________________
+; -14 |      .param16_x0      |
+; -13 |_______________________|
+; -12 |      .param16_y1      |
+; -11 |_______________________|
+; -10 |      .param16_x1      |
+;  -9 |_______________________|
+;  -8 |      .param16_y1      |
+;  -7 |_______________________|
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_draw_sqaure:
+    .param16_x0 = -14
+    .param16_y0 = -12
+    .param16_x1 = -10
+    .param16_y1 = -8
+    .param16_color = -6
+    .init:
+        __prologue
+
+    .set_foreground_color:
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_set_foreground_color_16bpp
+        popw hl
+    
+    .set_x0_coord:
+        load a, (BP), .param16_x0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHSR1 ; MSB
+        load a, (BP), .param16_x0 + 1
+        __store a, RA8876, RA8876_DLHSR0 ; LSB
+    
+    .set_y0_coord:
+        load a, (BP), .param16_y0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVSR1 ; MSB
+        load a, (BP), .param16_y0 + 1
+        __store a, RA8876, RA8876_DLVSR0 ; LSB
+
+    .set_x1_coord:
+        load a, (BP), .param16_x1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHER1 ; MSB
+        load a, (BP), .param16_x1 + 1
+        __store a, RA8876, RA8876_DLHER0 ; LSB
+    
+    .set_y1_coord:
+        load a, (BP), .param16_y1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVER1 ; MSB
+        load a, (BP), .param16_y1 + 1
+        __store a, RA8876, RA8876_DLVER0 ; LSB
+
+    .draw:
+        __store #((1 << RA8876_DCR1_DRAW_EN_POS)|(RA8876_DCR1_DRAW_MODE_SQUARE << RA8876_DCR1_DRAW_MODE_POS)), RA8876, RA8876_DCR1
+    
+    .done:
+        __epilogue
+        ret
 
 ; macros for storing or loading data from registers
 #ruledef
