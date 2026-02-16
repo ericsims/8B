@@ -286,6 +286,11 @@ class TFT_RA8876:
         self.regs[RA8876_REG.SPLLC2] = 0x2A # addr 0x0A
 
         self.regs[RA8876_REG.CURHS] = 0x07 # addr 0x3E
+        
+        self.regs[RA8876_REG.FGCR] = 0xFF # addr 0xD2
+        self.regs[RA8876_REG.FGCG] = 0xFF # addr 0xD3
+        self.regs[RA8876_REG.FGCB] = 0xFF # addr 0xD4
+
         # TODO: the rest of the regs
 
     def get(self,addr):
@@ -339,7 +344,7 @@ class TFT_RA8876:
 
                 x += 1
                 if x >= (aw_x+aw_wd):
-                    # wrap row
+                    # wrap row at edge of active window
                     x = aw_x
                     y += 1
                 
@@ -349,14 +354,15 @@ class TFT_RA8876:
                 self.regs[RA8876_REG.GCVP1] = (y >> 8) & 0xFF
                 self.regs[RA8876_REG.GCVP0] = y & 0xFF
         
-        # geometric drawings
-        # Draw Circle / Ellipse / Square /Circle Square
-        if (self.regs[RA8876_REG.DCR1] & (1<<RA8876_REG.DCR1_DRAW_EN_POS)):            
+        # Geometric Draw Circle / Ellipse / Square / Circle Square
+        if (self.regs[RA8876_REG.DCR1] >> RA8876_REG.DCR1_DRAW_EN_POS) & 1:
             x0 = (self.regs[RA8876_REG.DLHSR1] << 8) | self.regs[RA8876_REG.DLHSR0]
             y0 = (self.regs[RA8876_REG.DLVSR1] << 8) | self.regs[RA8876_REG.DLVSR0]
             x1 = (self.regs[RA8876_REG.DLHER1] << 8) | self.regs[RA8876_REG.DLHER0]
             y1 = (self.regs[RA8876_REG.DLVER1] << 8) | self.regs[RA8876_REG.DLVER0]
             r, g, b = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
+            if x0 > x1: x0, x1 = x1, x0 # ImageDraw function requires x1 > y0
+            if y0 > y1: y0, y1 = y1, y0 # ImageDraw function requires y1 > y0
 
             draw = ImageDraw.Draw(self.img)
 
@@ -364,20 +370,24 @@ class TFT_RA8876:
             match (self.regs[RA8876_REG.DCR1] >> RA8876_REG.DCR1_DRAW_MODE_POS) & 0b11:
                 case RA8876_REG.DCR1_DRAW_MODE_SQUARE:
                     if (self.regs[RA8876_REG.DCR1] >> RA8876_REG.DCR1_FILL_EN_POS) & 1 :
-                        # fill
-                        draw.rectangle(((x0, y0), (x1, y1)), fill=(r, g, b))
+                        draw.rectangle(((x0, y0), (x1, y1)), fill=(r, g, b)) # fill
                     else:
-                        # no fill
-                        draw.rectangle(((x0, y0), (x1, y1)), outline=(r, g, b), width=1)
+                        draw.rectangle(((x0, y0), (x1, y1)), outline=(r, g, b), width=1)  # no fill
                 case RA8876_REG.DCR1_DRAW_MODE_CIRCLE_SQUARE:
-                    pass
+                    print("SIM DOES NOT SUPPORT CIRCLE SQUARE YET")
                 case RA8876_REG.DCR1_DRAW_MODE_ELLIPSE:
-                    pass
+                    print("SIM DOES NOT SUPPORT ELLIPSE YET")
                 case RA8876_REG.DCR1_DRAW_MODE_CURVE:
-                    pass
+                    print("SIM DOES NOT SUPPORT CURVE YET")
 
             # drawing complete. clear draw bit
             self.regs[RA8876_REG.DCR1] &= ~(1<<RA8876_REG.DCR1_DRAW_EN_POS)
+
+         # Geometric Draw Line / Triangle
+        if (self.regs[RA8876_REG.DCR0] >> RA8876_REG.DCR0_DRAW_EN_POS) & 1:
+            print("SIM DOES NOT SUPPORT LINE / TRIANGLE YET")
+            # drawing complete. clear draw bit
+            self.regs[RA8876_REG.DCR0] &= ~(1<<RA8876_REG.DCR0_DRAW_EN_POS)
 
 
     def gui_get_layout(self):
@@ -437,18 +447,7 @@ class TFT_RA8876:
         self.window['_RA8876_REGS_'].update("\n".join([f"{i:02X}: {x:02X}" for i,x in enumerate(self.regs)]))
         self.window['_RA8876_REGS_'].Widget.yview_moveto(regs_scroll_pos)
 
-
-        # drawing
-        # mp_pixels = mp.load()
-
-        # for row in range(self.resolution[1]):
-        #   for col in range(self.resolution[0]):
-        #     dr_addr = int(col/4)+row*int(128/4)
-        #     v = 100
-        #     if sram.value[(dr_addr+0xA000)&(sram.size-1)] is not None:
-        #       v = ((sram.value[(dr_addr+0xA000)&(sram.size-1)] >> (6-((col%4)*2)) ) & 0b11) * 85
-        #       #print(row,col,dr_addr,(col%4)*2,v)
-        #     mp_pixels[col,row] = v
+        # display screen image
         self.window["_SCREEN_"].update(data=ImageTk.PhotoImage(image=self.img))
 
     @staticmethod

@@ -345,6 +345,7 @@ def main():
       sg.Tab('TIME', layout_time, expand_x=True, expand_y=True),
       sg.Tab('SDCARD', mems.sdcard.gui_get_layout(), expand_x=True, expand_y=True),
       sg.Tab('RA8876', mems.ra8876.gui_get_layout(), expand_x=True, expand_y=True),
+      sg.Tab('W5300', mems.w5300.gui_get_layout(), expand_x=True, expand_y=True),
       ]])],
     mems.uart.gui_get_layout()
   ]
@@ -365,6 +366,7 @@ def main():
     mems.uart.gui_init(window)
     mems.sdcard.gui_init(window)
     mems.ra8876.gui_init(window)
+    mems.w5300.gui_init(window)
     stack.gui_init(window)
   else:
     window = None
@@ -690,6 +692,7 @@ def main():
         
         mems.sdcard.sim()
         mems.ra8876.sim()
+        mems.w5300.sim()
 
         if GUI:
           if UCC == 0 and dbg_state == dbg.BREAK_AFTER_INST:
@@ -792,6 +795,9 @@ def main():
 
             # TFT
             mems.ra8876.gui_update()
+
+            # ETH
+            mems.w5300.gui_update()
 
       print()
       print(f"max stack usage {stack.max_used} bytes")
