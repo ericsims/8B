@@ -190,14 +190,18 @@ class ETH_W5300:
             # soft reset
             print("W5300 soft reset")
             self.reset_regs()
+            for s in enumerate(W5300_REG.SOCKETS):
+                if s: s.close()
 
         for n,s in enumerate(W5300_REG.SOCKETS):
             if self.regs[s + W5300_REG.Sn_CR]:
                 match self.regs[s + W5300_REG.Sn_CR]:
+
                     case W5300_REG.Sn_CR_CLOSE:
                         print(f"socket {n} close")
                         if self.socks[n]: self.socks[n].close()
                         self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+
                     case W5300_REG.Sn_CR_OPEN:
                         match self.regs[s + W5300_REG.Sn_MR1]&0xF:
                             case W5300_REG.Sn_MR1_TCP:
@@ -210,6 +214,7 @@ class ETH_W5300:
                                 self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_UDP
                             case _:
                                 print(f"socket {n} MR mode 0x{self.regs[s + W5300_REG.Sn_MR1]:2X}???")
+
                     case W5300_REG.Sn_CR_CONNECT:
                         if self.socks[n]:
                             ip = f'{self.regs[s + W5300_REG.Sn_DIPR0]}.{self.regs[s + W5300_REG.Sn_DIPR1]}.{self.regs[s + W5300_REG.Sn_DIPR2]}.{self.regs[s + W5300_REG.Sn_DIPR3]}'
@@ -220,11 +225,15 @@ class ETH_W5300:
                                 self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_ESTABLISHED
                             except:
                                 print("socket {n} FAILED to connect!!!")
+
                     case W5300_REG.Sn_CR_SEND:
                         if self.socks[n]:
                             print(f"socket {n} sending...")
+
                     case _:
                         print(f"socket {n} CR mode 0x{self.regs[s + W5300_REG.Sn_CR]:2X}???")
+                
+                # clear CR reg
                 self.regs[s + W5300_REG.Sn_CR] = 0x00
 
 
