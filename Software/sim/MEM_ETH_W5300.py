@@ -1,3 +1,7 @@
+import errno
+import time
+import os
+import traceback
 import socket
 import FreeSimpleGUI as sg
 
@@ -109,6 +113,7 @@ class W5300_REG:
     Sn_SSR1_SOCK_IPRAW = 0x32 # SOCKETn is open as IPRAW mode
     Sn_SSR1_SOCK_MACRAW = 0x42 # SOCKETn is open as MACRAW mode
     Sn_SSR1_SOCK_PPPoE = 0x4F # SOCKETn is open as PPPoE mode
+    Sn_SSR1_SOCK_SYNSENT = 0x15 # connect-request(SYN packet) is transmitted to "TCP SERVER
     Sn_PORTR0 = 0x00A # SOCKET Source Port Register (MSB)
     Sn_PORTR1 = 0x00B # SOCKET Source Port Register (LSB)
     Sn_DHAR0 = 0x00C # SOCKET Destination Hardware Address Register
@@ -144,10 +149,18 @@ class W5300_REG:
     Sn_RX_FIFOR0 = 0x030 # SOCKET RX FIFO Register (MSB)
     Sn_RX_FIFOR1 = 0x031 # SOCKET RX FIFO Register (LSB)
 
+class W5300_socket(socket.socket):
+    
+    def __init__(self, *args, **kwargs):
+        super(W5300_socket,self).__init__(*args, **kwargs)
+        self.TX_FIFOR = []
+        self.RX_FIFOR = []
+
 class ETH_W5300:
-    def __init__(self):
+    def __init__(self,debug=False):
+        self.debug = debug
         self.reset_regs()
-        self.socks = [None]*8
+        self.socks = [W5300_socket() for i in range(8)]
 
     def reset_regs(self):
         self.regs = [0] * 0x400
@@ -177,10 +190,33 @@ class ETH_W5300:
        
 
     def get(self,addr):
+        # special handling of indirect FIFOS
+        for n,s in enumerate(W5300_REG.SOCKETS):
+            if len(self.socks[n].RX_FIFOR):
+                if (addr & 0x3FF) == (s + W5300_REG.Sn_RX_FIFOR0):
+                    data = self.socks[n].RX_FIFOR.pop(0)
+                    self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
+                    self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
+                    self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
+                    return data
+                elif (addr & 0x3FF) == (s + W5300_REG.Sn_RX_FIFOR1):
+                    data = self.socks[n].RX_FIFOR.pop(0)
+                    self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
+                    self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
+                    self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
+                    return data
+
         return self.regs[addr & 0x3FF]
 
     def set(self, addr, V):
         self.regs[addr & 0x3FF] = V & 0xFF
+
+        # special handling of indirect FIFOS
+        for n,s in enumerate(W5300_REG.SOCKETS):
+            if (addr & 0x3FF) == (s + W5300_REG.Sn_TX_FIFOR1):
+                self.socks[n].TX_FIFOR.append(self.regs[s + W5300_REG.Sn_TX_FIFOR0])
+                self.socks[n].TX_FIFOR.append(self.regs[s + W5300_REG.Sn_TX_FIFOR1])
+                # print(f"socket {n} tx fifo write 0x{self.regs[s + W5300_REG.Sn_TX_FIFOR0]:02X}{self.regs[s + W5300_REG.Sn_TX_FIFOR1]:02X}")
 
 
     def sim(self):
@@ -188,53 +224,93 @@ class ETH_W5300:
         # handle soft reset
         if (self.regs[W5300_REG.MR1] >> W5300_REG.MR1_RST_POS) & 1:
             # soft reset
-            print("W5300 soft reset")
+            if self.debug: print("W5300 soft reset")
             self.reset_regs()
-            for s in enumerate(W5300_REG.SOCKETS):
-                if s: s.close()
+            for s in self.socks:
+                s.close()
 
         for n,s in enumerate(W5300_REG.SOCKETS):
             if self.regs[s + W5300_REG.Sn_CR]:
                 match self.regs[s + W5300_REG.Sn_CR]:
 
                     case W5300_REG.Sn_CR_CLOSE:
-                        print(f"socket {n} close")
-                        if self.socks[n]: self.socks[n].close()
+                        if self.debug: print(f"socket {n} close")
+                        self.socks[n].close()
                         self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
 
                     case W5300_REG.Sn_CR_OPEN:
                         match self.regs[s + W5300_REG.Sn_MR1]&0xF:
                             case W5300_REG.Sn_MR1_TCP:
-                                print(f"socket {n} open TCP")
-                                self.socks[n] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                if self.debug: print(f"socket {n} open TCP")
+                                self.socks[n] = W5300_socket(socket.AF_INET, socket.SOCK_STREAM)
+                                self.socks[n].setblocking(0)
                                 self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_INIT
                             case W5300_REG.Sn_MR1_UDP:
-                                print(f"socket {n} open UDP")
-                                self.socks[n] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                                if self.debug: print(f"socket {n} open UDP")
+                                self.socks[n] = W5300_socket(socket.AF_INET, socket.SOCK_DGRAM)
                                 self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_UDP
+                                self.socks[n].setblocking(0)
                             case _:
-                                print(f"socket {n} MR mode 0x{self.regs[s + W5300_REG.Sn_MR1]:2X}???")
+                                if self.debug: print(f"socket {n} MR mode 0x{self.regs[s + W5300_REG.Sn_MR1]:2X}???")
 
                     case W5300_REG.Sn_CR_CONNECT:
-                        if self.socks[n]:
-                            ip = f'{self.regs[s + W5300_REG.Sn_DIPR0]}.{self.regs[s + W5300_REG.Sn_DIPR1]}.{self.regs[s + W5300_REG.Sn_DIPR2]}.{self.regs[s + W5300_REG.Sn_DIPR3]}'
-                            port = (self.regs[s + W5300_REG.Sn_DPORTR0] << 8) | self.regs[s + W5300_REG.Sn_DPORTR1]
-                            print(f"socket {n} connecting to '{ip}' on port '{port}'")
-                            try:
-                                self.socks[n].connect((ip, port))
-                                self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_ESTABLISHED
-                            except:
-                                print("socket {n} FAILED to connect!!!")
+                        ip = f'{self.regs[s + W5300_REG.Sn_DIPR0]}.{self.regs[s + W5300_REG.Sn_DIPR1]}.{self.regs[s + W5300_REG.Sn_DIPR2]}.{self.regs[s + W5300_REG.Sn_DIPR3]}'
+                        port = (self.regs[s + W5300_REG.Sn_DPORTR0] << 8) | self.regs[s + W5300_REG.Sn_DPORTR1]
+                        if self.debug: print(f"socket {n} connecting to '{ip}' on port '{port}'")
+                        self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_SYNSENT
+                        try:
+                            self.socks[n].connect((ip, port))
+                        except BlockingIOError:
+                            pass
 
                     case W5300_REG.Sn_CR_SEND:
-                        if self.socks[n]:
-                            print(f"socket {n} sending...")
+                        data_len = (self.regs[s + W5300_REG.Sn_TX_WRSR1] << 16) | (self.regs[s + W5300_REG.Sn_TX_WRSR2] << 8) | (self.regs[s + W5300_REG.Sn_TX_WRSR3])
+                        if self.debug: print(f"socket {n} sending {data_len} bytes ...")
+                        sent_len = self.socks[n].send(bytes(self.socks[n].TX_FIFOR[:data_len]))
+                        if self.debug: print(f"{sent_len} sent!")
+                        self.regs[s + W5300_REG.Sn_TX_WRSR1] = ((data_len-sent_len) >> 16) & 0xFF
+                        self.regs[s + W5300_REG.Sn_TX_WRSR2] = ((data_len-sent_len) >> 8) & 0xFF
+                        self.regs[s + W5300_REG.Sn_TX_WRSR3] = ((data_len-sent_len)) & 0xFF
+                        self.socks[n].TX_FIFOR = []
 
                     case _:
                         print(f"socket {n} CR mode 0x{self.regs[s + W5300_REG.Sn_CR]:2X}???")
                 
                 # clear CR reg
                 self.regs[s + W5300_REG.Sn_CR] = 0x00
+            
+            if n == 0:
+                try:
+                    self.socks[n].send(b'')
+                    if self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_SYNSENT:
+                        if self.debug: print(f"socket {n} connected!")
+                        self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_ESTABLISHED
+                    
+                    buf = self.socks[n].recv(128)
+                    if len(buf) > 0:
+                        if self.debug: print(f"socket {n} recvd {len(buf)} bytes")
+                        self.socks[n].RX_FIFOR = self.socks[n].RX_FIFOR + list(buf)
+                        
+                        self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
+                        self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
+                        self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
+                    else:
+                        if self.debug: print(f"socket {n} disconnected!")
+                        self.socks[n].close()
+                        self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+
+                except BlockingIOError:
+                    pass
+                except OSError as e:
+                    if e.errno == errno.ENOTCONN or e.errno == errno.EPIPE :
+                        pass
+                        # print(f"socket {n} waiting for conn")
+                    elif e.errno == errno.EBADF:
+                        if self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_SYNSENT or self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_ESTABLISHED:
+                            if self.debug: print(f"socket {n} disconnected!")
+                            self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+                    else:
+                        raise e
 
 
     def gui_get_layout(self):
