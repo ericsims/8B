@@ -21,8 +21,8 @@ class STACK:
 
     def dec(self):
         if self.stack_ptr_initialized:
-            if self.pointer <= 0:
-                raise Exception("dec from stack ptr when empty")
+            # if self.pointer <= 0:
+            #     raise Exception("dec from stack ptr when empty")
             self.pointer -= 1
         else:
             self.stack_ptr_not_init()

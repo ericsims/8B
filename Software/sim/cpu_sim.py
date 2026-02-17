@@ -277,7 +277,6 @@ def main():
       sg.T(**DEFAULT_INDICATOR_LAYOUT, key=f'_{ctrl_sig}_')
     ])
 
-
   layout_debug = [[
     sg.Column([
       [sg.Listbox(
@@ -739,6 +738,8 @@ def main():
             window['_CALLS_'].Widget.itemconfig(current_call, fg='red', bg='light blue')
             window['_CALLS_'].update(scroll_to_index=max([current_call-10,0]))
 
+
+            
             for ctrl_sig,val in ctrl.items():
               window[f'_{ctrl_sig}_'].update(text_color=INDC_COLOR[val>0])
 
@@ -778,6 +779,7 @@ def main():
 
             if  ii.value in inst_names:
               window['_INST_NAME_'].update(inst_names[ii.value])
+              pass
             else:
               window['_INST_NAME_'].update("?")
 

@@ -3518,6 +3518,74 @@ instructions:
         - [MI, DO, RU]        # store data from d scratch register
 
 
+  xfr8_dir_dir_imm:
+    description: 'Transfers bytes from direct source to direct destination. limit 255 bytes'
+    duration: 5  # clock cycles
+    operands: 6  # direct source address, direct destination address, length, next opcode
+    usage: 'xfr8 src[15:0], dst[15:0], #len[7:0]'
+    opcode: 0x70
+    asm_def: |
+      xfr8 {src: i16}, {dst: i16}, #{len: i8} =>
+      {
+        {OPCODE} @ 0x71 @ len`8 @ dst`16 @ src`16 ; 0x71 is hardcoded xfr8_loop opcode
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # save stack pointer
+      - ['NO', JI, LM]       # Save stack pointer MSB in J scrach register
+      - ['NO', JI]           # Save stack pointer LSB in J scrach register
+      # load next intruction into d register
+      - [MC, CE]             # Increment MAR to point to immediate instruction, keep up with program counter
+      - [DI, MO]             # load D scratch register with immediate data
+      # load length into ALU X register
+      - [MC, CE]             # Increment MAR to point to immediate length, keep up with program counter
+      - [XI, MO]             # load ALU X register with immediate data
+      - [YI, ONE]            # load ALU Y register with 1
+      # load destination pointer
+      - [MC, CE]             # Increment MAR to point to immediate MSB, keep up with program counter
+      - [KI, MO, LM]         # load K scratch register with dst pointer MSB
+      - [MC, CE]             # Increment MAR to point to immediate LSB, keep up with program counter
+      - [KI, MO]             # load K scratch register with dst pointer LSB
+      - [KO, NI, LM]         # load stack pointer with K scratch register MSB
+      - [KO, NI]             # load stack pointer with K scratch register LSB
+      # load source pointer
+      - [MC, CE]             # Increment MAR to point to immediate MSB, keep up with program counter
+      - [KI, MO, LM]         # load K scratch register with sr pointer MSB
+      - [MC, CE]             # Increment MAR to point to immediate LSB, keep up with program counter
+      - [KI, MO]             # load K scratch register with src pointer LSB
+      - [KO, MA, LM]         # load MAR with K scratch register MSB
+      - [KO, MA]             # load MAR with K scratch register LSB
+      # call xfr8_loop microcode
+      - [DS, DO, II, RU]     # pre-decrement dst addr. load instruction register with opcode in D scratch register. Microcode reset
+
+  xfr8_loop:
+    description: 'Microcode for byte transfer loop. Do not call directly'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: ""
+    opcode: 0x71
+    asm_def: ""  # do not emmit an asm def, don't call this directly
+    ucode:
+      conditions: [CF]
+      false:
+        # no fetch!
+        # decrement length
+        - [SUB, XI, FI]      # subtract 1 from length in XI reg. Store back to X1, flags update
+        - [MO, DI, IS]       # load byte from memory and store in D screatch reg. incrment dst addr
+        - [DO, SI, MC, RU]   # store D scratch value to stack. increment MAR, and loop
+      true:
+        - [SUB, XI, FI]      # subtract 1 from legnth in XI reg. Store back to X1, flags update
+        # if carry flag, stop transfer
+        - [JO, NI, LM]       # restore stack pointer MSB
+        - [JO, NI]           # restore stack pointer LSB
+        # load next instruction
+        - [PO, MA, LM]       # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]           # Fetch cycle, load MAR with LSB in PC
+        - [MO, II, RU]       # Fetch cycle, increment PC, and load instruction into IR
+
+
   default:  # default keyword. don't change.
     description: 'description'
     duration: 3  # clock cycles

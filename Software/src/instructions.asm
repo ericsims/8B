@@ -965,4 +965,16 @@ store #{imm: i8}, ({addr: i16}), {offset: i8} =>
   0x61 @ addr`16  @ (offset*-1)`8
 }
 
+; xfr8_dir_dir_imm
+; Transfers bytes from direct source to direct destination. limit 255 bytes
+; usage: xfr8 src[15:0], dst[15:0], #len[7:0]
+xfr8 {src: i16}, {dst: i16}, #{len: i8} =>
+{
+  0x70 @ 0x71 @ len`8 @ dst`16 @ src`16 ; 0x71 is hardcoded xfr8_loop opcode
+}
+
+; xfr8_loop
+; Microcode for byte transfer loop. Do not call directly
+; usage: 
+
 }

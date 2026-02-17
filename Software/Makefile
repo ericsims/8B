@@ -34,11 +34,11 @@ DYNAMIC_APPS_BINS := $(patsubst $(APPS_SRC_DIR)%.asm,$(APPS_BIN_DIR)%.bin,$(APPS
 IR_DOCS := $(patsubst $(TEST_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(TEST_SRCS))
 IR_DOCS += $(patsubst $(LIB_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(LIB_SRCS))
 
-LUTS := $(TEST_BIN_DIR)/sin_lut.dat
-INST_SET_OUT := $(SRC_DIR)/instructions.asm
+LUTS := $(TEST_BIN_DIR)sin_lut.dat
+INST_SET_OUT := $(SRC_DIR)instructions.asm
 INST_SET_IN := instruction_set.yaml
-MEM_MAP_OUT := $(SRC_DIR)/mems.asm
-MEM_MAP_DOC := $(DOCS_DIR)/mem_map.svg
+MEM_MAP_OUT := $(SRC_DIR)mems.asm
+MEM_MAP_DOC := $(DOCS_DIR)mem_map.svg
 MEM_MAP_IN := memory_map.yaml
 
 parse_docs_script = ./scripts/parse_docs.py
@@ -97,7 +97,7 @@ $(TEST_BIN_DIR)/sin_lut.dat:
 
 # build tests
 tests: $(TEST_BINS)
-$(TEST_BIN_DIR)%.bin: $(TEST_SRC_DIR)%.asm $(LIB_SRCS)
+$(TEST_BIN_DIR)%.bin: $(TEST_SRC_DIR)%.asm $(LIB_SRCS) $(INST_SET_OUT)
 	mkdir -p $(@D)
 	${CC} -f binary -o $@ $<
 	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
@@ -127,12 +127,12 @@ $(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --diskv1=./sim/v
 
 # build apps
 apps: $(STATIC_APPS_BINS) $(DYNAMIC_APPS_BINS)
-$(APPS_BIN_DIR)%_static.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) 
+$(APPS_BIN_DIR)%_static.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) $(INST_SET_OUT)
 	mkdir -p $(@D)
 	${CC} -f binary -o $@ $<
 	@${CC} -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
 	@echo ""
-$(APPS_BIN_DIR)%.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) 
+$(APPS_BIN_DIR)%.bin: $(APPS_SRC_DIR)%.asm $(INST_SET_OUT) $(LIB_SRCS) $(INST_SET_OUT)
 	mkdir -p $(@D)
 	${CC} -dDYNAMIC_LOAD=1 -f binary -o $@ $<
 	@${CC} -dDYNAMIC_LOAD=1 -f annotated -o $@.annotated -- -f symbols -o $@.symbols $< > /dev/null
