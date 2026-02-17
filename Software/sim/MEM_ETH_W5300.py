@@ -157,7 +157,7 @@ class W5300_socket(socket.socket):
         self.RX_FIFOR = []
 
 class ETH_W5300:
-    def __init__(self,debug=False):
+    def __init__(self,debug=True):
         self.debug = debug
         self.reset_regs()
         self.socks = [W5300_socket() for i in range(8)]
@@ -264,14 +264,30 @@ class ETH_W5300:
                             pass
 
                     case W5300_REG.Sn_CR_SEND:
-                        data_len = (self.regs[s + W5300_REG.Sn_TX_WRSR1] << 16) | (self.regs[s + W5300_REG.Sn_TX_WRSR2] << 8) | (self.regs[s + W5300_REG.Sn_TX_WRSR3])
-                        if self.debug: print(f"socket {n} sending {data_len} bytes ...")
-                        sent_len = self.socks[n].send(bytes(self.socks[n].TX_FIFOR[:data_len]))
-                        if self.debug: print(f"{sent_len} sent!")
-                        self.regs[s + W5300_REG.Sn_TX_WRSR1] = ((data_len-sent_len) >> 16) & 0xFF
-                        self.regs[s + W5300_REG.Sn_TX_WRSR2] = ((data_len-sent_len) >> 8) & 0xFF
-                        self.regs[s + W5300_REG.Sn_TX_WRSR3] = ((data_len-sent_len)) & 0xFF
-                        self.socks[n].TX_FIFOR = []
+                        match self.regs[s + W5300_REG.Sn_MR1]&0xF:
+                            case W5300_REG.Sn_MR1_TCP:
+                                data_len = (self.regs[s + W5300_REG.Sn_TX_WRSR1] << 16) | (self.regs[s + W5300_REG.Sn_TX_WRSR2] << 8) | (self.regs[s + W5300_REG.Sn_TX_WRSR3])
+                                if self.debug: print(f"socket {n} TCP sending {data_len} bytes ...")
+                                sent_len = self.socks[n].send(bytes(self.socks[n].TX_FIFOR[:data_len]))
+                                if self.debug: print(f"{sent_len} sent!")
+                                self.regs[s + W5300_REG.Sn_TX_WRSR1] = ((data_len-sent_len) >> 16) & 0xFF
+                                self.regs[s + W5300_REG.Sn_TX_WRSR2] = ((data_len-sent_len) >> 8) & 0xFF
+                                self.regs[s + W5300_REG.Sn_TX_WRSR3] = ((data_len-sent_len)) & 0xFF
+                                self.socks[n].TX_FIFOR = []
+                            case W5300_REG.Sn_MR1_UDP:
+                                ip = f'{self.regs[s + W5300_REG.Sn_DIPR0]}.{self.regs[s + W5300_REG.Sn_DIPR1]}.{self.regs[s + W5300_REG.Sn_DIPR2]}.{self.regs[s + W5300_REG.Sn_DIPR3]}'
+                                port = (self.regs[s + W5300_REG.Sn_DPORTR0] << 8) | self.regs[s + W5300_REG.Sn_DPORTR1]
+                                data_len = (self.regs[s + W5300_REG.Sn_TX_WRSR1] << 16) | (self.regs[s + W5300_REG.Sn_TX_WRSR2] << 8) | (self.regs[s + W5300_REG.Sn_TX_WRSR3])
+                                if self.debug: print(f"socket {n} UDP sending {data_len} bytes ...")
+                                sent_len = self.socks[n].sendto(bytes(self.socks[n].TX_FIFOR[:data_len]), (ip,port))
+                                if self.debug: print(f"{sent_len} sent!")
+                                self.regs[s + W5300_REG.Sn_TX_WRSR1] = ((data_len-sent_len) >> 16) & 0xFF
+                                self.regs[s + W5300_REG.Sn_TX_WRSR2] = ((data_len-sent_len) >> 8) & 0xFF
+                                self.regs[s + W5300_REG.Sn_TX_WRSR3] = ((data_len-sent_len)) & 0xFF
+                                self.socks[n].TX_FIFOR = []
+                                
+                            case _:
+                                if self.debug: print(f"socket {n} send with invalid MR mode 0x{self.regs[s + W5300_REG.Sn_MR1]:2X}???")
 
                     case _:
                         print(f"socket {n} CR mode 0x{self.regs[s + W5300_REG.Sn_CR]:2X}???")
@@ -302,13 +318,15 @@ class ETH_W5300:
                 except BlockingIOError:
                     pass
                 except OSError as e:
-                    if e.errno == errno.ENOTCONN or e.errno == errno.EPIPE :
+                    if e.errno == errno.ENOTCONN or e.errno == errno.EPIPE:
                         pass
                         # print(f"socket {n} waiting for conn")
                     elif e.errno == errno.EBADF:
                         if self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_SYNSENT or self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_ESTABLISHED:
                             if self.debug: print(f"socket {n} disconnected!")
                             self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+                    elif e.errno == errno.EDESTADDRREQ:
+                        pass
                     else:
                         raise e
 
