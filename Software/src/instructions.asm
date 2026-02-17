@@ -981,7 +981,7 @@ xfr_set_len a =>
   0x81
 }
 
-; xfr_set_dest
+; xfr_set_dest_dir
 ; transfer setup - set destination address to direct addr
 ; usage: xfr_set_dst dst[15:0]
 xfr_set_dst {dst: i16} =>

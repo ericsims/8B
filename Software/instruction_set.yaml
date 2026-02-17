@@ -3556,7 +3556,7 @@ instructions:
       - [XI, AO]             # load ALU X register with length
       - [YI, ONE, RU]        # load ALU Y register with 1
 
-  xfr_set_dest:
+  xfr_set_dest_dir:
     description: 'transfer setup - set destination address to direct addr'
     duration: 11  # clock cycles
     operands: 5  # direct source address, direct destination address, length, next opcode

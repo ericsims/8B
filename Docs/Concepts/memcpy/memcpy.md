@@ -82,19 +82,28 @@ This would be cool, but i would lose the memory address regiser on the next inst
 
 This would still require something to break out of this instruction, but this could be reasonably simple. Load an 8-bit value into the ALU, then keep decerementing, on carry out, update the instrucion register!
 
-For this to work, this will need to be two instructions, one setup instruction, then the actual transfer itself.
-setup instruction
+For this to work, this will need to be setup instructions then the actual transfer itself. These need to all be called in order, with no other instructions in between
+
+setup instruction - set len
 1. instruction fetch, and increment program counter to next instruciotn
+2. load length value into ALU X register
+3. load 1 into ALU Y register
+
+setup instruction - set destination
+1. instruction fetch, and increment program counter to next instruction
 2. load 16-bit stack register into J scrach register (this it to back up stack register, to restore at the end)
-3. load the immediate "value" into the D scartch register. This is the next instruction opcode to execute!
-4. load length value into ALU X register
-5. load 1 into ALU Y register
-6. load 16-bit destination pointer address into K scrach register
-7. Load K scrach register contents into  stack address register
-5. load 16-bit source pointer address into memory address register
-7. load D scratch register value into the instruciton register. This magic here allows the processor to execute transfer without discarding the memory address register!
+3. load 16-bit destination pointer address into K scrach register
+4. Load K scrach register contents into stack address register
+
+
+setup instruction - set source
+1. instruction fetch, and increment program counter to next instruction
+2. load 16-bit source pointer address into memory address register
+3. load the immediate "value" into the D scratch register. This is the next instruction opcode to execute!
+4. load D scratch register value into the instruciton register. This magic here allows the processor to execute transfer without discarding the memory address register!
 
 transfer instruction
+0. skip instruction fetch
 1. ALU subtract, store result in ALU X, if carry out, then restore stack pointer, fetch next instruction, and reset microcode counter. This magic will cause the instruction to end, breaking the loop
 2. otherwise, load memory out into D scratch register
 3. increment memory address register
@@ -102,38 +111,70 @@ transfer instruction
 5. increment stack pointer
 6. microcode counter reset. loop without a fetch cycle!
 
-This should be wayyy faster, since it should only take a few 3 clock cycles per byte!
+This should be wayyy faster, since it should only take a few 4 clock cycles per byte! 
 
 ```yaml
-  xfr_dir_dir_imm:
-    description: 'Transfers bytes from direct source to direct destination. limit 255 bytes'
-    duration: 5  # clock cycles
-    operands: 6  # direct source address, direct destination address, length, next opcode
-    usage: 'xfr src[15:0], dst[15:0], #len[7:0]'
-    opcode: 0x70
+  xfr_set_len_imm:
+    description: 'init transfer. set length to immediate value. limit 255 bytes/words'
+    duration: 6  # clock cycles
+    operands: 1  #  length
+    usage: 'xfr_set_len #len[7:0]'
+    opcode: 0x80
     asm_def: |
-      xfr {src: i16}, {dst: i16}, #{len: i8} =>
+      xfr_set_len #{len: i8} =>
       {
-        {OPCODE} @ len`8 @ dst`16 @ src`16 ; next opcode must be a xfr loop
+        {OPCODE} @ len`8
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+      # load length into ALU X register
+      - [MC, CE]             # Increment MAR to point to immediate length, keep up with program counter
+      - [XI, MO]             # load ALU X register with immediate data
+      - [YI, ONE, RU]        # load ALU Y register with 1
+
+  xfr_set_dest_dir:
+    description: 'transfer setup - set destination address to direct addr'
+    duration: 11  # clock cycles
+    operands: 5  # direct source address, direct destination address, length, next opcode
+    usage: 'xfr_set_dst dst[15:0]'
+    opcode: 0x84
+    asm_def: |
+      xfr_set_dst {dst: i16} =>
+      {
+        {OPCODE} @ dst`16
       }
     ucode:
       - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
       - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
       - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       # save stack pointer
-      - ['NO', JI, LM]       # Save stack pointer MSB in J scrach register
-      - ['NO', JI]           # Save stack pointer LSB in J scrach register
-      # load length into ALU X register
-      - [MC, CE]             # Increment MAR to point to immediate length, keep up with program counter
-      - [XI, MO]             # load ALU X register with immediate data
-      - [YI, ONE]            # load ALU Y register with 1
+      - ['NO', JI, LM]       # Save stack pointer MSB in J scratch register
+      - ['NO', JI]           # Save stack pointer LSB in J scratch register
       # load destination pointer
       - [MC, CE]             # Increment MAR to point to immediate MSB, keep up with program counter
       - [KI, MO, LM]         # load K scratch register with dst pointer MSB
       - [MC, CE]             # Increment MAR to point to immediate LSB, keep up with program counter
       - [KI, MO]             # load K scratch register with dst pointer LSB
       - [KO, NI, LM]         # load stack pointer with K scratch register MSB
-      - [KO, NI]             # load stack pointer with K scratch register LSB
+      - [KO, NI, RU]         # load stack pointer with K scratch register LSB
+
+  xfr_set_src_dir:
+    description: 'transfer setup - set source address to direct addr'
+    duration: 12  # clock cycles
+    operands: 3  # direct source address, next opcode
+    usage: 'xfr src[15:0]'
+    opcode: 0x88
+    asm_def: |
+      xfr_set_src {src: i16} =>
+      {
+        {OPCODE} @ src`16 ; next opcode must be a xfr loop
+      }
+    ucode:
+      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       # load source pointer
       - [MC, CE]             # Increment MAR to point to immediate MSB, keep up with program counter
       - [KI, MO, LM]         # load K scratch register with sr pointer MSB
@@ -153,7 +194,7 @@ This should be wayyy faster, since it should only take a few 3 clock cycles per 
     duration: 4  # clock cycles
     operands: 0
     usage: 'xfr8_loop'
-    opcode: 0x71
+    opcode: 0x8C
     asm_def: |
       xfr8_loop  =>
       {
@@ -184,15 +225,18 @@ This should be wayyy faster, since it should only take a few 3 clock cycles per 
 
 using memcpy copying 228 bytes takes 32,000 clock cycles.
 ```asm
-    storew #test_src, static_memcpy.src_ptr
-    storew #test_dst, static_memcpy.dst_ptr
-    storew #(test_src.end - test_src), static_memcpy.len
-    call static_memcpy
+storew #test_src, static_memcpy.src_ptr
+storew #test_dst, static_memcpy.dst_ptr
+storew #(test_src.end - test_src), static_memcpy.len
+call static_memcpy
 ```
 
 using xfr8_dir_dir_imm, this same copy takes 980 clock cyles! this is about 97% faster!
 
 ```asm
-xfr8 test_src, test_dst, #(test_src.end - test_src)
+xfr_set_len #(test_src.end - test_src)
+xfr_set_dst test_dst
+xfr_set_src test_src
+xfr8_loop
 ```
 

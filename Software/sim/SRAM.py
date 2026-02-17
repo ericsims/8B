@@ -60,8 +60,8 @@ class SRAM:
             +f"{''.join([f'{chr(x)}' if x is not None and x >= 0x20 and x <= 0x7E else '.' for x in self.value[i:i+32]])}"
             for i in range(0x4000,0x4000+0x8000,32)]
 
-        # # mark stack pointer with '*'
-        if stack_pointer is not None:
+        # mark stack pointer with '*'
+        if stack_pointer is not None and stack_pointer >= 0x4000 and stack_pointer < 0x4000+0x8000 :
             row,col = SRAM._get_sram_char_pos(stack_pointer)
             sram_values[row] = sram_values[row][0:col]+"*"+sram_values[row][col+1:]
 

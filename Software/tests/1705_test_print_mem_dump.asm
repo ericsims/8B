@@ -7,7 +7,7 @@ init_pointers:
 
 main:
     pushw #data_test/16*16
-    push #0xFF
+    push #0x10
     call uart_dump_mem
     dealloc 3
 

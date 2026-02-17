@@ -151,10 +151,11 @@ class STACK:
         self.window = window
     
     def gui_update(self, base_ptr_val=None, current_call=None):
-        return
         self.window['_STACK_USAGE_'].update(self.pointer)
         self.window['_STACK_MAX_USAGE_'].update(self.max_used)
         
+        if self.get_pointer() < 0x4000 or self.get_pointer() >= 0x4000+0x8000:
+            return # stack pointer not in sram
 
         # display
         stack_values = ""
