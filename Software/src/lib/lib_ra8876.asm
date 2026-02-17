@@ -466,6 +466,8 @@ ra8876_put_image_16bpp:
     
     .load_img:
         store #RA8876_MRWDP, RA8876_ADDR ; ram access
+        loadw hl, (BP), .param16_img_ptr
+        storew hl, .src_ptr
         ..next_row:
             loadw hl, (BP), .param16_height
             subw hl, #1
@@ -474,31 +476,44 @@ ra8876_put_image_16bpp:
         
             loadw hl, (BP), .param16_width
             storew hl, (BP), .local16_x ; reset x position
-        ..next_col:
-            loadw hl, (BP), .local16_x
-            subw hl, #1
-            jmc ..next_row ; reached end of row
-            storew hl, (BP), .local16_x
 
-        ..load_pixel:
-            loadw hl, (BP), .param16_img_ptr
-            load a, (hl)
-            store a, RA8876_DATA ; MSB
+            xfr_set_len #64
+            xfr_set_dst RA8876_DATA
+            xfr_set_src (.src_ptr)
+            xfr16_loop_no_incr_dst
 
-            addw hl, #1
-            load a, (hl)
-            store a, RA8876_DATA ; LSB
+            loadw hl, .src_ptr
+            addw hl, #(64<<1)
+            storew hl, .src_ptr
 
-            addw hl, #1
-            storew hl, (BP), .param16_img_ptr
+            jmp ..next_row
+        ; ..next_col:
+        ;     loadw hl, (BP), .local16_x
+        ;     subw hl, #1
+        ;     jmc ..next_row ; reached end of row
+        ;     storew hl, (BP), .local16_x
 
-            jmp ..next_col
+        ; ..load_pixel:
+        ;     loadw hl, (BP), .param16_img_ptr
+        ;     load a, (hl)
+        ;     store a, RA8876_DATA ; MSB
+
+        ;     addw hl, #1
+        ;     load a, (hl)
+        ;     store a, RA8876_DATA ; LSB
+
+        ;     addw hl, #1
+        ;     storew hl, (BP), .param16_img_ptr
+
+        ;     jmp ..next_col
 
     .done:
         dealloc 2
         __epilogue
         ret
 
+#bank ram
+.src_ptr: #res 2
 
 ;;
 ; @function

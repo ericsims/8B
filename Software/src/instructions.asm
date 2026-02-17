@@ -732,7 +732,7 @@ test b =>
 ; usage: ret
 ret  =>
 {
-  0x74
+  0x7E
 }
 
 ; assert_a
@@ -965,16 +965,68 @@ store #{imm: i8}, ({addr: i16}), {offset: i8} =>
   0x61 @ addr`16  @ (offset*-1)`8
 }
 
-; xfr8_dir_dir_imm
-; Transfers bytes from direct source to direct destination. limit 255 bytes
-; usage: xfr8 src[15:0], dst[15:0], #len[7:0]
-xfr8 {src: i16}, {dst: i16}, #{len: i8} =>
+; xfr_set_len_imm
+; init transfer. set length to immediate value. limit 255 bytes/words
+; usage: xfr_set_len #len[7:0]
+xfr_set_len #{len: i8} =>
 {
-  0x70 @ 0x71 @ len`8 @ dst`16 @ src`16 ; 0x71 is hardcoded xfr8_loop opcode
+  0x80 @ len`8
+}
+
+; xfr_set_len_a
+; init transfer. set length. limit 255 bytes/words
+; usage: xfr_set_len a
+xfr_set_len a =>
+{
+  0x81
+}
+
+; xfr_set_dest
+; transfer setup - set destination address to direct addr
+; usage: xfr_set_dst dst[15:0]
+xfr_set_dst {dst: i16} =>
+{
+  0x84 @ dst`16
+}
+
+; xfr_set_src_dir
+; transfer setup - set source address to direct addr
+; usage: xfr src[15:0]
+xfr_set_src {src: i16} =>
+{
+  0x88 @ src`16 ; next opcode must be a xfr loop
+}
+
+; xfr_set_src_indir
+; transfer setup - set source address to indirect addr
+; usage: xfr (src[15:0])
+xfr_set_src ({src: i16}) =>
+{
+  0x89 @ src`16 ; next opcode must be a xfr loop
 }
 
 ; xfr8_loop
-; Microcode for byte transfer loop. Do not call directly
-; usage: 
+; Microcode for byte transfer loop. xfr setup instruction must be called immediately before
+; usage: xfr8_loop
+xfr8_loop  =>
+{
+  0x8C
+}
+
+; xfr8_loop_no_incr_dst
+; Microcode for byte transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before
+; usage: xfr8_loop_no_incr_dst
+xfr8_loop_no_incr_dst  =>
+{
+  0x8D
+}
+
+; xfr16_loop_no_incr_dst
+; Microcode for 16-bit word transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before
+; usage: xfr16_loop_no_incr_dst
+xfr16_loop_no_incr_dst  =>
+{
+  0x8E
+}
 
 }

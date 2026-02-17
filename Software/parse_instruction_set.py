@@ -41,8 +41,8 @@ def validate_programcounter(inst):
 
 def validate_opcode(inst):
     """validate that the opcode is in correct range"""
-    if inst['opcode'] < int(0x00) or inst['opcode'] > int(0x7F):
-        raise Exception(f"\t\t***ERROR: opcode 0x{inst['opcode']:02X} is out of range 0x00 - 0x7F")
+    if inst['opcode'] < int(0x00) or inst['opcode'] > int(0xFF):
+        raise Exception(f"\t\t***ERROR: opcode 0x{inst['opcode']:02X} is out of range 0x00 - 0xFF")
 
 def validate_control_signals(ucode):
     """validate that only control signals that make sense are asserted at the sametime"""

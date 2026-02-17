@@ -398,7 +398,7 @@ def main():
   with open('instruction_set.yaml', 'r') as stream:
     try:
       IS = yaml.safe_load(stream)
-      inst = [IS['instructions']['default']['ucode']]*int(0x80)
+      inst = [IS['instructions']['default']['ucode']]*int(0x100)
       for key, value in IS['instructions'].items():
         if key != 'default':
           inst[int(value['opcode'])] = value['ucode']
@@ -600,7 +600,7 @@ def main():
 
         # check if this is a jmp/call/ret instruction
         if ctrl['PI'] and ctrl['RU']:
-          if ii.value == 0x6B or ii.value == 0x63: # call
+          if ii.value == int(IS['instructions']['call']['opcode']) or ii.value == int(IS['instructions']['call_hl']['opcode']) : # calls
             dup = None
             stack_trace = [call_graph[n]['addr'] for n in call_graph[current_call]['stack_trace']]+[pc.value]
             for k in range(len(call_graph)):
@@ -623,7 +623,7 @@ def main():
               call_graph[current_call]['called_from'] = call_addr
             # print(f"called {call_graph[current_call]['symbol']} from {call_addr:04X}")
             # print("call")
-          elif ii.value == 0x74: # return
+          elif ii.value == int(IS['instructions']['ret']['opcode']): # return
             if call_graph[current_call]['bk_on_ret']: 
               call_graph[current_call]['bk_on_ret'] = False
               dbg_state = dbg.BREAK_IMM

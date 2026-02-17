@@ -22,7 +22,7 @@ main:
     halt
 
 ; constants
-test_src: #d "this is some test data made up of characters the total length is pretty long, but it is less than the 255 character limit for the xftr 8 instruction\0"
+test_src: #d "this is some test data made up of characters the total length is pretty long, but it is less than the 255 character limit for the xfr 8 instruction. Here are some more characters to add to the string. Oh and some numbers too 1234!\0"
     .end:
 
 ; includes

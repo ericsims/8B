@@ -105,16 +105,16 @@ transfer instruction
 This should be wayyy faster, since it should only take a few 3 clock cycles per byte!
 
 ```yaml
-  xfr8_dir_dir_imm:
+  xfr_dir_dir_imm:
     description: 'Transfers bytes from direct source to direct destination. limit 255 bytes'
-    duration: 23  # clock cycles
+    duration: 5  # clock cycles
     operands: 6  # direct source address, direct destination address, length, next opcode
-    usage: 'xfr8 src[15:0], dst[15:0], #len[7:0]'
+    usage: 'xfr src[15:0], dst[15:0], #len[7:0]'
     opcode: 0x70
     asm_def: |
-      xfr8 {src: i16}, {dst: i16}, #{len: i8} =>
+      xfr {src: i16}, {dst: i16}, #{len: i8} =>
       {
-        {OPCODE} @ 0x71 @ len`8 @ dst`16 @ src`16 ; 0x71 is hardcoded xfr8_loop opcode
+        {OPCODE} @ len`8 @ dst`16 @ src`16 ; next opcode must be a xfr loop
       }
     ucode:
       - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
@@ -123,9 +123,6 @@ This should be wayyy faster, since it should only take a few 3 clock cycles per 
       # save stack pointer
       - ['NO', JI, LM]       # Save stack pointer MSB in J scrach register
       - ['NO', JI]           # Save stack pointer LSB in J scrach register
-      # load next intruction into d register
-      - [MC, CE]             # Increment MAR to point to immediate instruction, keep up with program counter
-      - [DI, MO]             # load D scratch register with immediate data
       # load length into ALU X register
       - [MC, CE]             # Increment MAR to point to immediate length, keep up with program counter
       - [XI, MO]             # load ALU X register with immediate data
@@ -142,26 +139,36 @@ This should be wayyy faster, since it should only take a few 3 clock cycles per 
       - [KI, MO, LM]         # load K scratch register with sr pointer MSB
       - [MC, CE]             # Increment MAR to point to immediate LSB, keep up with program counter
       - [KI, MO]             # load K scratch register with src pointer LSB
+      # load next intruction into D register
+      - [MC, CE]             # Increment MAR to point to immediate instruction, keep up with program counter
+      - [DI, MO]             # load D scratch register with immediate data
+      # save source pointer
       - [KO, MA, LM]         # load MAR with K scratch register MSB
       - [KO, MA]             # load MAR with K scratch register LSB
-      # call xfr8_loop microcode
-      - [DS, DO, II, RU]     # pre-decrement dst addr. load instruction register with opcode in D scratch register. Microcode reset
+      # call xfr microcode
+      - [DO, II, RU]         # load instruction register with opcode in D scratch register. Microcode reset
 
   xfr8_loop:
-    description: 'Microcode for byte transfer loop. Do not call directly'
+    description: 'Microcode for byte transfer loop. xfr setup instruction must be called immediately before'
     duration: 4  # clock cycles
     operands: 0
-    usage: ""
+    usage: 'xfr8_loop'
     opcode: 0x71
-    asm_def: ""  # do not emmit an asm def, don't call this directly
+    asm_def: |
+      xfr8_loop  =>
+      {
+        {OPCODE}
+      }
     ucode:
       conditions: [CF]
       false:
         # no fetch!
         # decrement length
         - [SUB, XI, FI]      # subtract 1 from length in XI reg. Store back to X1, flags update
-        - [MO, DI, IS]       # load byte from memory and store in D screatch reg. incrment dst addr
-        - [DO, SI, MC, RU]   # store D scratch value to stack. increment MAR, and loop
+        # move byte
+        - [MO, DI]           # load byte from memory and store in D screatch reg.
+        - [DO, SI, MC]       # store D scratch value to stack. increment MAR
+        - [IS, RU]           # incrment dst addr and loop
       true:
         - [SUB, XI, FI]      # subtract 1 from legnth in XI reg. Store back to X1, flags update
         # if carry flag, stop transfer
@@ -173,11 +180,9 @@ This should be wayyy faster, since it should only take a few 3 clock cycles per 
         - [MO, II, RU]       # Fetch cycle, increment PC, and load instruction into IR
 ```
 
-
-
 ## results
 
-using memcpy copying 149 bytes takes 2744 clock cycles.
+using memcpy copying 228 bytes takes 32,000 clock cycles.
 ```asm
     storew #test_src, static_memcpy.src_ptr
     storew #test_dst, static_memcpy.dst_ptr
@@ -185,7 +190,7 @@ using memcpy copying 149 bytes takes 2744 clock cycles.
     call static_memcpy
 ```
 
-using xfr8_dir_dir_imm, this same copy takes 503 clock cyles! this is about 80% faster!
+using xfr8_dir_dir_imm, this same copy takes 980 clock cyles! this is about 97% faster!
 
 ```asm
 xfr8 test_src, test_dst, #(test_src.end - test_src)

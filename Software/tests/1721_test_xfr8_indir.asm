@@ -18,9 +18,10 @@ init_pointers:
     storew #0x0000, BP
 main:
 
+    storew #test_src, src_ptr
     xfr_set_len #(test_src.end - test_src)
     xfr_set_dst test_dst
-    xfr_set_src test_src
+    xfr_set_src (src_ptr)
     xfr8_loop
 
     ; check result
@@ -42,5 +43,6 @@ test_src: #d "this is some test data made up of characters the total length is p
 
 ; global vars
 #bank ram
+src_ptr: #res 2
 test_dst: #res 256
 STACK_BASE: #res 0
