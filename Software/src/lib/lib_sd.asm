@@ -298,7 +298,7 @@ sd_read_block:
         jnz .wait_for_start_token
         ; TODO: include a timeout here
 
-        loadw hl, #sd_buf ; output buffer poiner
+        loadw hl, #sd_buf ; output buffer pointer
         load b, #0x00
     .copy_256:
         store #0xFF, SDCARD_DATA

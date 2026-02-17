@@ -51,7 +51,6 @@ class SRAM:
         self.window['_SRAM_'].Widget.tag_config('READS', foreground='blue')
 
     def gui_update(self,stack_pointer=None):
-        return
         sram_values = [
             f"{i:04X} "
             +f"{' '.join([f'{x:02X}' if x is not None else '--' for x in self.value[i:i+8]])}  "

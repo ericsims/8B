@@ -105,20 +105,15 @@ fs_read_mbr:
         storew #.str_loading_mbr, static_uart_print.data_pointer
         call static_uart_print
 
-        ; __push32 #MBR_PART1_ADDR
-        ; pushw #mbr_parition_entry
-        ; pushw #(mbr_parition_entry.END-mbr_parition_entry)
-        ; call sd_mem_copy
-        ; dealloc 8
-
         __push32 #MBR_BLOCK_ADDR
         call sd_read_block
         dealloc 4
 
-        storew #(sd_buf+0x1BE), static_memcpy.src_ptr
-        storew #mbr_parition_entry, static_memcpy.dst_ptr
-        storew #(mbr_parition_entry.END-mbr_parition_entry), static_memcpy.len
-        call static_memcpy
+        xfr_set_len #(mbr_parition_entry.END-mbr_parition_entry)
+        xfr_set_dst mbr_parition_entry
+        xfr_set_src sd_buf+0x1BE
+        xfr8_loop
+
 
         ; debug
         ; pushw #mbr_parition_entry
@@ -213,12 +208,11 @@ fs_read_mbr:
         call sd_read_block
         dealloc 4
 
-        storew #sd_buf, static_memcpy.src_ptr
-        storew #fat16_boot_sector, static_memcpy.dst_ptr
-        storew #(fat16_boot_sector.END-fat16_boot_sector), static_memcpy.len
-        call static_memcpy
+        xfr_set_len #(fat16_boot_sector.END-fat16_boot_sector)
+        xfr_set_dst fat16_boot_sector
+        xfr_set_src sd_buf
+        xfr8_loop
 
-   
         ; debug
         ; pushw #fat16_boot_sector
         ; push #4
@@ -684,11 +678,17 @@ fs_print_dir_info:
         call sd_read_block
         dealloc 4
 
-        storew #sd_buf, static_memcpy.src_ptr
+        storew #sd_buf, xfr.src_ptr
     .load:
-        storew #fileinfo, static_memcpy.dst_ptr
-        storew #0x0020, static_memcpy.len
-        call static_memcpy
+        xfr_set_len #0x20
+        xfr_set_dst fileinfo
+        xfr_set_src (xfr.src_ptr)
+        xfr8_loop
+
+        loadw hl, xfr.src_ptr
+        addw hl, #0x20
+        storew hl, xfr.src_ptr
+        
         call fs_read_directory_entry
     
     
@@ -773,11 +773,17 @@ fs_find_file:
         call sd_read_block
         dealloc 4
 
-        storew #sd_buf, static_memcpy.src_ptr
+        storew #sd_buf, xfr.src_ptr
     .load:
-        storew #fileinfo, static_memcpy.dst_ptr
-        storew #0x0020, static_memcpy.len
-        call static_memcpy
+        xfr_set_len #0x20
+        xfr_set_dst fileinfo
+        xfr_set_src (xfr.src_ptr)
+        xfr8_loop
+
+        loadw hl, xfr.src_ptr
+        addw hl, #0x20
+        storew hl, xfr.src_ptr
+
         call fs_read_directory_entry
 
     .print_file_line:
@@ -802,10 +808,11 @@ fs_find_file:
         movew fileinfo.file_size+2, file_handle.file_size+2
         movew fileinfo.starting_cluser, file_handle.next_cluster
         
-        storew #fileinfo.name, static_memcpy.src_ptr
-        storew #file_handle.name, static_memcpy.dst_ptr
-        storew #11, static_memcpy.len
-        call static_memcpy
+        xfr_set_len #11
+        xfr_set_dst file_handle.name
+        xfr_set_src fileinfo.name
+        xfr8_loop
+
         load b, #0
         __epilogue
         ret

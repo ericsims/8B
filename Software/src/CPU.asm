@@ -200,3 +200,6 @@ DYNAMIC_LOAD_ADDR = RAM+RAM_SIZE-DYNAMIC_LOAD_SIZE
 
 #bank ram
 BP: #res 2 ; base pointer for function calls
+xfr:
+.src_ptr: #res 2 ; static pointers for transfers
+.dst_ptr: #res 2  ; static pointers for transfers

@@ -732,7 +732,7 @@ test b =>
 ; usage: ret
 ret  =>
 {
-  0x7E
+  0x74
 }
 
 ; assert_a
@@ -1021,10 +1021,10 @@ xfr8_loop_no_incr_dst  =>
   0x8D
 }
 
-; xfr16_loop_no_incr_dst
-; Microcode for 16-bit word transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before
-; usage: xfr16_loop_no_incr_dst
-xfr16_loop_no_incr_dst  =>
+; xfr8_loop_no_incr_src
+; Microcode for byte transfer loop. Will not increment src pointer. xfr setup instruction must be called immediately before
+; usage: xfr8_loop_no_incr_src
+xfr8_loop_no_incr_src  =>
 {
   0x8E
 }

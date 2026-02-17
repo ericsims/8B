@@ -410,8 +410,6 @@ ra8876_put_pixel_16bpp:
 ;  -3 |___________?___________|    .
 ;  -2 |___________?___________|    .
 ;  -1 |___________?___________| RESERVED
-;   0 |      .local16_x       |
-;   1 |_______________________|
 ;
 ;;
 #bank rom
@@ -421,10 +419,9 @@ ra8876_put_image_16bpp:
     .param16_width = -10
     .param16_height = -8
     .param16_img_ptr = -6
-    .local16_x = 0
+    .local16_remaining_row = 0
     .init:
         __prologue
-        alloc 2
 
     .init_active_window:
         load a, (BP), .param16_x
@@ -467,53 +464,34 @@ ra8876_put_image_16bpp:
     .load_img:
         store #RA8876_MRWDP, RA8876_ADDR ; ram access
         loadw hl, (BP), .param16_img_ptr
-        storew hl, .src_ptr
+        storew hl, xfr.src_ptr
         ..next_row:
+            ; TODO: this only supports a row width of 127 pixels or less!
             loadw hl, (BP), .param16_height
             subw hl, #1
             jmc .done
             storew hl, (BP), .param16_height
-        
-            loadw hl, (BP), .param16_width
-            storew hl, (BP), .local16_x ; reset x position
 
-            xfr_set_len #64
+            load a, (BP), .param16_width + 1
+            lshift a
+
+            xfr_set_len a
             xfr_set_dst RA8876_DATA
-            xfr_set_src (.src_ptr)
-            xfr16_loop_no_incr_dst
+            xfr_set_src (xfr.src_ptr)
+            xfr8_loop_no_incr_dst
 
-            loadw hl, .src_ptr
-            addw hl, #(64<<1)
-            storew hl, .src_ptr
+            
+            loadw hl, xfr.src_ptr
+            load a, (BP), .param16_width + 1
+            lshift a
+            addw hl, a
+            storew hl, xfr.src_ptr
 
             jmp ..next_row
-        ; ..next_col:
-        ;     loadw hl, (BP), .local16_x
-        ;     subw hl, #1
-        ;     jmc ..next_row ; reached end of row
-        ;     storew hl, (BP), .local16_x
-
-        ; ..load_pixel:
-        ;     loadw hl, (BP), .param16_img_ptr
-        ;     load a, (hl)
-        ;     store a, RA8876_DATA ; MSB
-
-        ;     addw hl, #1
-        ;     load a, (hl)
-        ;     store a, RA8876_DATA ; LSB
-
-        ;     addw hl, #1
-        ;     storew hl, (BP), .param16_img_ptr
-
-        ;     jmp ..next_col
 
     .done:
-        dealloc 2
         __epilogue
         ret
-
-#bank ram
-.src_ptr: #res 2
 
 ;;
 ; @function

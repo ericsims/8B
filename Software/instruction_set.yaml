@@ -2289,7 +2289,7 @@ instructions:
     duration: 7  # clock cycles
     operands: 0  # bytes
     usage: 'ret'
-    opcode: 0x7E
+    opcode: 0x74
     asm_def: |
       ret  =>
       {
@@ -3681,38 +3681,6 @@ instructions:
         - [PO, MA]           # Fetch cycle, load MAR with LSB in PC
         - [MO, II, RU]       # Fetch cycle, increment PC, and load instruction into IR
 
-  # xfr8_loop_no_incr_src:
-  #   description: 'Microcode for byte transfer loop. Will not increment source pointer. xfr setup instruction must be called immediately before'
-  #   duration: 4  # clock cycles
-  #   operands: 0
-  #   usage: 'xfr8_loop_no_incr_src'
-  #   opcode: 0x74
-  #   asm_def: |
-  #     xfr8_loop_no_incr_src  =>
-  #     {
-  #       {OPCODE}
-  #     }
-  #   ucode:
-  #     conditions: [CF]
-  #     false:
-  #       # no fetch!
-  #       # decrement length
-  #       - [SUB, XI, FI]      # subtract 1 from length in XI reg. Store back to X1, flags update
-  #       # move byte
-  #       - [MO, DI]           # load byte from memory and store in D screatch reg.
-  #       - [DO, SI]           # store D scratch value to stack
-  #       - [IS, RU]           # incrment dst addr and loop
-  #     true:
-  #       # decrement length
-  #       - [SUB, XI, FI]      # subtract 1 from legnth in XI reg. Store back to X1, flags update
-  #       # if carry flag, stop transfer
-  #       - [JO, NI, LM]       # restore stack pointer MSB
-  #       - [JO, NI]           # restore stack pointer LSB
-  #       # load next instruction
-  #       - [PO, MA, LM]       # Fetch cycle, load MAR with MSB in PC
-  #       - [PO, MA]           # Fetch cycle, load MAR with LSB in PC
-  #       - [MO, II, RU]       # Fetch cycle, increment PC, and load instruction into IR
-
   xfr8_loop_no_incr_dst:
     description: 'Microcode for byte transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before'
     duration: 3  # clock cycles
@@ -3744,14 +3712,14 @@ instructions:
         - [PO, MA]           # Fetch cycle, load MAR with LSB in PC
         - [MO, II, RU]       # Fetch cycle, increment PC, and load instruction into IR
 
-  xfr16_loop_no_incr_dst:
-    description: 'Microcode for 16-bit word transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before'
+  xfr8_loop_no_incr_src:
+    description: 'Microcode for byte transfer loop. Will not increment src pointer. xfr setup instruction must be called immediately before'
     duration: 3  # clock cycles
     operands: 0
-    usage: 'xfr16_loop_no_incr_dst'
+    usage: 'xfr8_loop_no_incr_src'
     opcode: 0x8E
     asm_def: |
-      xfr16_loop_no_incr_dst  =>
+      xfr8_loop_no_incr_src  =>
       {
         {OPCODE}
       }
@@ -3762,10 +3730,9 @@ instructions:
         # decrement length
         - [SUB, XI, FI]      # subtract 1 from length in XI reg. Store back to X1, flags update
         # move byte
-        - [MO, DI, LM]       # load MSB byte from memory and store in D scrach reg.
-        - [DO, LM, SI, MC]   # store D scratch value to stack. increment MAR
-        - [MO, DI]           # load LSB byte from memory and store in D scrach reg.
-        - [DO, SI, MC, RU]   # store D scratch value to stack. increment MAR and loop
+        - [MO, DI]           # load byte from memory and store in D scratch reg.
+        - [DO, SI]           # store D scratch value to stack.
+        - [IS, RU]           # increment destination and loop
       true:
         # decrement length
         - [SUB, XI, FI]      # subtract 1 from legnth in XI reg. Store back to X1, flags update
