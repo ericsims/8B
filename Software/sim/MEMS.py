@@ -11,7 +11,7 @@ class MEMS:
     def __init__(self, sim=None):
         self.sim = sim
         self.eeprom = EEPROM()
-        self.sram = SRAM(2**15)
+        self.sram = SRAM(2**16)
         self.uart = UART()
         self.motor = MOTOR(self.sim)
         self.sdcard = SDCARD(2**24)

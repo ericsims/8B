@@ -916,6 +916,7 @@ load_file:
         dealloc 3
 
     .done:
+    load b, #0
     __epilogue
     ret
 

@@ -154,7 +154,7 @@ error_conn_timeout:
 
 #bank rom
 conn_ip: #d8 0, 0, 0, 0 ;  ip addr for example.org
-conn_port: #d16 8080 ;  port 80
+conn_port: #d16 8081 ;  port 80
 conn_string: #d "hi to you\n\0"
 .end:
 

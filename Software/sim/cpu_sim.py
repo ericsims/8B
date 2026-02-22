@@ -199,7 +199,8 @@ def main():
     'IS' : 0, # increment stack pointer
     'DS' : 0, # decrement stack pointer
     'LM' : 0, # bus byte indictor
-    'RU' : 0  # reset ucode counter
+    'RU' : 0, # reset ucode counter
+    'AT' : 0  # Assert Condition
   }
   
   ctrl_zeroed = dict.fromkeys(ctrl, 0)
@@ -655,38 +656,29 @@ def main():
           for u in inst[ii.value][UCC]:
             ctrl[u] = 1
 
-          # handle the assert instructions. Only do anything on the last cycle
-          if ctrl['RU']:
-            if ii.value == int(IS['instructions']['assert_a']['opcode']):
-              if mems.get(addr,log=GUI) == A.value:
-                print(f"pass, a = 0x{A.value:02X}")
-              else:
-                raise Exception(f"test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}\n")
-            elif ii.value == int(IS['instructions']['assert_b']['opcode']):
-              if mems.get(addr,log=GUI) == B.value:
-                print(f"pass, b = 0x{B.value:02X}")
-              else:
-                raise Exception(f"test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}\n")
-            elif ii.value == int(IS['instructions']['assert_hl']['opcode']):
-              if (mems.get(addr-1,log=GUI)<<8)+(mems.get(addr,log=GUI)) == HL.value:
-                print(f"pass, HL = 0x{HL.value:04X}")
-              else:
-                raise Exception(f"test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}\n")
-            elif ii.value == int(IS['instructions']['assert_zf']['opcode']):
-              if mems.get(addr,log=GUI) == flags['ZF']:
-                print(f"pass, ZF = {flags['ZF']}")
-              else:
-                raise Exception(f"test case failed, ZF = {flags['ZF']}, expected {mems.get(addr)}\n")
-            elif ii.value == int(IS['instructions']['assert_cf']['opcode']):
-              if mems.get(addr,log=GUI) == flags['CF']:
-                print(f"pass, CF = {flags['CF']}")
-              else:
-                raise Exception(f"test case failed, CF = {flags['CF']}, expected {mems.get(addr)}\n")
-            elif ii.value == int(IS['instructions']['assert_nf']['opcode']):
-              if mems.get(addr,log=GUI) == flags['NF']:
-                print(f"pass, NF = {flags['NF']}")
-              else:
-                raise Exception(f"test case failed, NF = {flags['NF']}, expected {mems.get(addr)}\n")
+        # additional logging on assert instructions
+        if ctrl['AT'] and ctrl['HT']:
+          if ii.value == int(IS['instructions']['assert_a']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, a = 0x{A.value:02X}, expected 0x{mems.get(addr):02X}{bcolors.ENDC}\n")
+            print_cpu_stack_err(call_graph, current_call, pc.value)
+          elif ii.value == int(IS['instructions']['assert_b']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, b = 0x{B.value:02X}, expected 0x{mems.get(addr):02X}{bcolors.ENDC}\n")
+            print_cpu_stack_err(call_graph, current_call, pc.value)
+          elif ii.value == int(IS['instructions']['assert_hl']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, HL = 0x{HL.value:04X}, expected 0x{((mems.get(addr-1)<<8)+(mems.get(addr))):04X}{bcolors.ENDC}\n")
+            print_cpu_stack_err(call_graph, current_call, pc.value)
+          elif ii.value == int(IS['instructions']['assert_zf_s']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, ZF = 0, expected 1{bcolors.ENDC}\n")
+          elif ii.value == int(IS['instructions']['assert_zf_c']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, ZF = 1, expected 0{bcolors.ENDC}\n")
+          elif ii.value == int(IS['instructions']['assert_cf_s']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, CF = 0, expected 1{bcolors.ENDC}\n")
+          elif ii.value == int(IS['instructions']['assert_cf_c']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, CF = 1, expected 0{bcolors.ENDC}\n")
+          elif ii.value == int(IS['instructions']['assert_nf_s']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, NF = 0, expected 1{bcolors.ENDC}\n")
+          elif ii.value == int(IS['instructions']['assert_nf_c']['opcode']):
+            print(f"{bcolors.FAIL}test case failed, NF = 1, expected 0{bcolors.ENDC}\n")
 
         
         mems.sdcard.sim()
@@ -824,24 +816,27 @@ def main():
           elif l['execs'] > 0: color = 'blue'
           print(colored(f"{l['addr']} | {l['data']}", color))
 
-
       if GUI:
         window.close()
+
+      return ctrl['AT'] # if assert as set during halt, this was an error
 
     except yaml.YAMLError as exc:
       print(exc, file=sys.stderr)
       return 2
     
     except Exception as exc:
-      print(f"{bcolors.FAIL}{traceback.format_exc()}{bcolors.ENDC}", file=sys.stderr)
-      # print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}", file=sys.stderr)
-      print(f"{bcolors.FAIL}stack trace{bcolors.ENDC}", file=sys.stderr)
-      for call in call_graph[current_call]['stack_trace']:
-        print(f"{bcolors.FAIL}  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}{bcolors.ENDC}", file=sys.stderr)
-      print(f"{bcolors.FAIL}  {pc.value:04X} <-- PC{bcolors.ENDC}", file=sys.stderr)
-      print("", file=sys.stderr)
+      print_cpu_stack_err(call_graph, current_call, pc.value)
       return 1
 
+def print_cpu_stack_err(call_graph, current_call, pc):
+  print(f"{bcolors.FAIL}{traceback.format_exc()}{bcolors.ENDC}", file=sys.stderr)
+  # print(f"{bcolors.FAIL}{exc}{bcolors.ENDC}", file=sys.stderr)
+  print(f"{bcolors.FAIL}stack trace{bcolors.ENDC}", file=sys.stderr)
+  for call in call_graph[current_call]['stack_trace']:
+    print(f"{bcolors.FAIL}  {call_graph[call]['called_from']:04X} {call_graph[call]['symbol']}{bcolors.ENDC}", file=sys.stderr)
+  print(f"{bcolors.FAIL}  {pc:04X} <-- PC{bcolors.ENDC}", file=sys.stderr)
+  print("", file=sys.stderr)
 
 
 if __name__ == "__main__":

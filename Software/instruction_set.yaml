@@ -2307,7 +2307,7 @@ instructions:
 
   assert_a:
     description: 'Assert value of A register == imm value'
-    duration: 5  # clock cycles
+    duration: 7  # clock cycles
     operands: 1  # byte (imm data)
     usage: 'assert a, #data[7:0]'
     opcode: 0x78
@@ -2317,11 +2317,23 @@ instructions:
         {OPCODE} @ imm`8
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [ZF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, AO, XI]     # Increment MAR to point to data operand, and load A value into alu X reg
+        - [MO, YI]             # load data into y register
+        - [SUB, FI]            # comparare values
+        - [AT, RU]             # ZF = 1, so values match. assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, AO, XI]     # Increment MAR to point to data operand, and load A value into alu X reg
+        - [MO, YI]             # load data into y register
+        - [SUB, FI]            # comparare values
+        - [AT, HT]             # ZF = 0, so values dont match. assert and halt
 
   assert_b:
     description: 'Assert value of b register == imm value'
@@ -2335,97 +2347,218 @@ instructions:
         {OPCODE} @ imm`8
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [ZF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, BO, XI]     # Increment MAR to point to data operand, and load B value into alu X reg
+        - [MO, YI]             # load data into y register
+        - [SUB, FI]            # comparare values
+        - [AT, RU]             # ZF = 1, so values match. assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, BO, XI]     # Increment MAR to point to data operand, and load B value into alu X reg
+        - [MO, YI]             # load data into y register
+        - [SUB, FI]            # comparare values
+        - [AT, HT]             # ZF = 0, so values dont match. assert and halt
 
   assert_hl:
     description: 'Assert value of hl register == imm value'
     duration: 6  # clock cycles
     operands: 2  # byte (imm data)
     usage: 'assert hl, #data[15:0]'
-    opcode: 0x7A
+    opcode: 0x77
     asm_def: |
       assert hl, #{imm: i16} =>
       {
         {OPCODE} @ imm`16
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [ZF]
+      true:
+        - [PO, MA, LM]          # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]              # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]          # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, HO, XI, LM]  # Incremnt to point to LSB, and load HL MSB value into alu X reg
+        - [MO, YI]              # load MSB imm data into xy register
+        - [SUB, FI, MC, CE]     # comparare values, also increment MAR to point to LSB
+        - [AT]                  # ZF = 0, so values match. assert, and do nothing
+        - [HO, XI]              # laod LSB HL data into X register
+        - [MO, YI]              # load LSB imm data into y register
+        - [SUB, FI]             # comparare values
+        - [AT, RU]              # ZF = 0, so values match. assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]          # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]              # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]          # Fetch cycle, increment PC, and load instruction into IR
+        - [MC, CE, HO, XI, LM]  # Incremnt to point to LSB, and load HL MSB value into alu X reg
+        - [MO, YI]              # load MSB imm data into xy register
+        - [SUB, FI, MC, CE]     # comparare values, also increment MAR to point to LSB
+        - [AT, HT]              # ZF = 0, so values dont match. assert and halt
+        - [HO, XI]              # laod LSB HL data into X register
+        - [MO, YI]              # load LSB imm data into y register
+        - [SUB, FI]             # comparare values
+        - [AT, HT]              # ZF = 0, so values dont match. assert and halt
 
-  assert_cf:
-    description: 'Assert value of CF == imm value'
-    duration: 5  # clock cycles
-    operands: 1  # byte (imm data)
-    usage: 'assert cf, #data[7:0]'
+  assert_cf_s:
+    description: 'Assert CF is set'
+    duration: 4  # clock cycles
+    operands: 1
+    usage: 'assert cf, #1'
+    opcode: 0x7A
+    asm_def: |
+      assert cf, #{imm: i8} =>
+      {
+        assert(imm == 1)
+        {OPCODE}
+      }
+    ucode:
+      conditions: [CF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # CF = 1, assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # CF = 0, assert, and halt
+
+  assert_cf_c:
+    description: 'Assert CF is cleared'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: 'assert cf, #0'
     opcode: 0x7B
     asm_def: |
       assert cf, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
-        {OPCODE} @ imm`8
+        assert(imm == 0)
+        {OPCODE}
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [CF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # CF = 1, assert, and halt
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # CF = 0, assert, and ucode counter reset
 
-  assert_zf:
-    description: 'Assert value of ZF == imm value'
-    duration: 5  # clock cycles
-    operands: 1  # byte (imm data)
-    usage: 'assert zf, #data[7:0]'
+  assert_zf_s:
+    description: 'Assert ZF is set'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: 'assert zf, #1'
     opcode: 0x7C
     asm_def: |
       assert zf, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
-        {OPCODE} @ imm`8
+        assert(imm == 1)
+        {OPCODE}
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [ZF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # ZF = 1, assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # ZF = 0, assert, and halt
 
-  assert_nf:
-    description: 'Assert value of NF == imm value'
-    duration: 5  # clock cycles
-    operands: 1  # byte (imm data)
-    usage: 'assert nf, #data[7:0]'
+  assert_zf_c:
+    description: 'Assert ZF is cleared'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: 'assert zf, #0'
     opcode: 0x7D
+    asm_def: |
+      assert zf, #{imm: i8} =>
+      {
+        assert(imm == 0)
+        {OPCODE}
+      }
+    ucode:
+      conditions: [ZF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # ZF = 1, assert, and halt
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # ZF = 0, assert, and ucode counter reset
+
+  assert_nf_s:
+    description: 'Assert NF is set'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: 'assert nf, #1'
+    opcode: 0x7E
     asm_def: |
       assert nf, #{imm: i8} =>
       {
-        assert(imm >= 0)
-        assert(imm <= 0xff)
-        {OPCODE} @ imm`8
+        assert(imm == 1)
+        {OPCODE}
       }
     ucode:
-      - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
-      - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
-      - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
-      - [MC, CE]             # increment MAR to point to imm daa. increment PC to keep up
-      - [RU]                 # nop cycle for assert to take place
+      conditions: [NF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # NF = 1, assert, and ucode counter reset
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # NF = 0, assert, and halt
+
+  assert_nf_c:
+    description: 'Assert NF is  cleared'
+    duration: 4  # clock cycles
+    operands: 0
+    usage: 'assert nf, #0'
+    opcode: 0x7F
+    asm_def: |
+      assert nf, #{imm: i8} =>
+      {
+        assert(imm == 0)
+        {OPCODE}
+      }
+    ucode:
+      conditions: [NF]
+      true:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, HT]             # NF = 1, assert, and halt
+      false:
+        - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
+        - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
+        - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
+        - [AT, RU]             # NF = 0, assert, and ucode counter reset
 
   halt:
     description: 'Halts execution'
     duration: 4  # clk cycles (can't execute code after this anyways)
     operands: 0  # bytes
     usage: 'halt'
-    opcode: 0x7F
+    opcode: 0x01
     asm_def: |
       halt =>
       {

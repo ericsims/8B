@@ -19,11 +19,11 @@ top:
     assert hl, #0x0000 ; check that hl reg is correct
 
     loadw hl, #0x0001
-    assert hl, #0x001 ; check that hl reg is correct
+    assert hl, #0x0001 ; check that hl reg is correct
 
     loadw hl, #0xAAAA
     assert hl, #0xAAAA ; check that hl reg is correct
-    halt
+
     loadw hl, #0x55
     assert hl, #0x55 ; check that hl reg is correct
 

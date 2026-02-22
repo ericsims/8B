@@ -127,7 +127,7 @@ $(TEST_BIN_DIR)1761_test_find_file.test: test_flags := --diskv1=./sim/virt_disk 
 $(TEST_BIN_DIR)1762_test_load_file.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
 $(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
 $(TEST_BIN_DIR)2002_test_w5300_tcp_client.test: additional_test_prog := printf "hello back\0" | nc -l 8080 &
-$(TEST_BIN_DIR)2003_test_w5300_udp_client.test: additional_test_prog := printf "hello back\0" | nc -u -l 8080 &
+$(TEST_BIN_DIR)2003_test_w5300_udp_client.test: additional_test_prog := printf "hello back\0" | nc -u -l 8081 &
 
 
 # build apps

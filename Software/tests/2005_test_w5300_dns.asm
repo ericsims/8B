@@ -53,7 +53,7 @@ main:
     ; TODO: wait for SSR to go non zero?
 
     load a, W5300_SOCK0+Sn_SSR1
-    assert a, #Sn_SSR1_SOCK_INIT ; SSR should be TCP mode
+    assert a, #Sn_SSR1_SOCK_UDP ; SSR should be UDP mode
 
     ; load ip address
     move conn_ip, W5300_SOCK0+Sn_DIPR0 ; set IP
