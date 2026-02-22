@@ -101,8 +101,8 @@
 - [x] part number/date
 - [x] teardrops
 - [x] polygons
-- [x] run out jobs
-- [x] quote
+- [ ] run out jobs
+- [ ] quote
 - [ ] order
 - [ ] assemble
 
