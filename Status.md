@@ -106,6 +106,18 @@
 - [ ] order
 - [ ] assemble
 
+# EEPROM
+
+- [x] board keep out
+- [x] silkscreen
+- [x] part number/date
+- [x] teardrops
+- [x] polygons
+- [ ] run out jobs
+- [ ] quote
+- [ ] order
+- [ ] assemble
+
 # Clock Proto
 
 - [ ] board keep out
@@ -138,8 +150,8 @@
 - Clock Module - 8 hours
 - Control Module - 24 hours
 - Memory Address Register - 8 hours
-- Memory Decoder - 8 hours
-- EEPROM - 4 hours
+- Memory Decoder - DONE, NEED QUOTE
+- EEPROM - DONE, NEED QUOTE
 - SD card - 8 hours
 - Ethernet - 12 hours
 - Graphics - 12 hours
