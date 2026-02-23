@@ -1,50 +1,22 @@
 # Backplane
 
-- [x] board keep out
-- [x] silkscreen
-- [x] part number/date
-- [x] polygons
-- [x] teardrops
-- [x] run out jobs
-- [x] quote
-- [x] order
-- [x] assemble
+DONE
 
 # ALU Ctrl
 
-- [x] board keep out
-- [x] silkscreen
-- [x] part number/date
-- [x] polygons
-- [x] teardrops
-- [x] run out jobs
-- [x] quote
-- [x] order
-- [x] assemble
+DONE
 
 # ALU Logic
 
-- [x] board keep out
-- [x] silkscreen
-- [x] part number/date
-- [x] polygons
-- [x] teardrops
-- [x] run out jobs
-- [x] quote
-- [x] order
-- [x] assemble
+DONE
 
 # ALU Adder
 
-- [x] board keep out
-- [x] silkscreen
-- [x] part number/date
-- [x] teardrops
-- [x] polygons
-- [x] run out jobs
-- [x] quote
-- [x] order
-- [x] assemble
+DONE
+
+# Memory Proto
+
+DONE
 
 # Registers
 
@@ -81,18 +53,6 @@
 - [x] quote
 - [ ] order
 - [ ] assemble
-
-# Memory Proto
-
-- [x] board keep out
-- [x] silkscreen
-- [x] part number/date
-- [x] teardrops
-- [x] polygons
-- [x] run out jobs
-- [x] quote
-- [x] order
-- [x] assemble
 
 # SRAM
 
@@ -147,7 +107,6 @@
 
 # Remaining Work
 - Power Module - 8 hours
-- Clock Module - 8 hours
 - Control Module - 24 hours
 - Memory Address Register - 8 hours
 - Memory Decoder - DONE, NEED QUOTE
@@ -161,7 +120,7 @@
 - SNES - 4 hours?
 
 pcb assembly: 40 hours
-total pcb design work: 168 hours
+total pcb design work: 160 hours
 
 mechanical design: ~40?
 mechanical assembly 12 hours?
