@@ -61,7 +61,7 @@ Instruction Set Manual
 
 |opcode|||||
 | :--- | :--- | :--- | :--- | :--- |
-|00|nop|-|-|-|
+|00|nop|halt|-|-|
 |04|load_a_imm|load_a_dir|load_a_indir|loadw_hl_sp|
 |08|load_b_imm|load_b_dir|load_b_indir|loadw_hl_hl_indir|
 |0C|loadw_hl_imm|loadw_hl_dir|-|-|
@@ -90,9 +90,9 @@ Instruction Set Manual
 |68|jnc|jmn|jnn|call|
 |6C|test_a|test_b|-|-|
 |70|-|-|-|-|
-|74|ret|-|-|-|
-|78|assert_a|assert_b|assert_hl|assert_cf|
-|7C|assert_zf|assert_nf|-|halt|
+|74|ret|-|-|assert_hl|
+|78|assert_a|assert_b|assert_cf_s|assert_cf_c|
+|7C|assert_zf_s|assert_zf_c|assert_nf_s|assert_nf_c|
 |80|xfr_set_len_imm|xfr_set_len_a|-|-|
 |84|xfr_set_dest_dir|-|-|-|
 |88|xfr_set_src_dir|xfr_set_src_indir|-|-|
@@ -1364,6 +1364,8 @@ Usage: `ret`
 
 Assert value of A register == imm value
 
+This instruction modifies the flags register
+
 short: `assert_a`
 
 opcode: `0x78`
@@ -1373,6 +1375,8 @@ Usage: `assert a, #data[7:0]`
 
 
 Assert value of b register == imm value
+
+This instruction modifies the flags register
 
 short: `assert_b`
 
@@ -1384,41 +1388,73 @@ Usage: `assert b, #data[7:0]`
 
 Assert value of hl register == imm value
 
+This instruction modifies the flags register
+
 short: `assert_hl`
+
+opcode: `0x77`
+
+Usage: `assert hl, #data[15:0]`
+## assert_cf_s
+
+
+Assert CF is set
+
+short: `assert_cf_s`
 
 opcode: `0x7A`
 
-Usage: `assert hl, #data[15:0]`
-## assert_cf
+Usage: `assert cf, #1`
+## assert_cf_c
 
 
-Assert value of CF == imm value
+Assert CF is cleared
 
-short: `assert_cf`
+short: `assert_cf_c`
 
 opcode: `0x7B`
 
-Usage: `assert cf, #data[7:0]`
-## assert_zf
+Usage: `assert cf, #0`
+## assert_zf_s
 
 
-Assert value of ZF == imm value
+Assert ZF is set
 
-short: `assert_zf`
+short: `assert_zf_s`
 
 opcode: `0x7C`
 
-Usage: `assert zf, #data[7:0]`
-## assert_nf
+Usage: `assert zf, #1`
+## assert_zf_c
 
 
-Assert value of NF == imm value
+Assert ZF is cleared
 
-short: `assert_nf`
+short: `assert_zf_c`
 
 opcode: `0x7D`
 
-Usage: `assert nf, #data[7:0]`
+Usage: `assert zf, #0`
+## assert_nf_s
+
+
+Assert NF is set
+
+short: `assert_nf_s`
+
+opcode: `0x7E`
+
+Usage: `assert nf, #1`
+## assert_nf_c
+
+
+Assert NF is  cleared
+
+short: `assert_nf_c`
+
+opcode: `0x7F`
+
+Usage: `assert nf, #0`
 ## Halt
 
 
@@ -1426,7 +1462,7 @@ Halts execution.
 
 short: `halt`
 
-opcode: `0x7F`
+opcode: `0x01`
 
 Usage: `halt`
 ## load_a_indir_poffset

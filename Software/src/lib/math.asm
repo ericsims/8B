@@ -509,3 +509,37 @@ negate32:
 ; ###
 ; math.asm end
 ; ###
+
+;;
+; @function
+; @brief returns modulus (remainder)
+; @section description
+; takes two 8 bit unsigned paramters
+; returns x mod y
+; @param .param8_x dividend
+; @param .param8_y diviser
+; @return remainder
+;
+;     _______________________
+; -6 |_______.param8_x_______|
+; -5 |_______.param8_y_______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;;
+mod8:
+    .param8_x = -6
+    .param8_y = -5
+    .init:
+        __prologue
+        load a, (BP), .param8_x
+        load b, (BP), .param8_y
+
+    .test:
+        sub a, b
+        jmc .done
+        jmp
+    .done:
+        __epilogue
+        ret
