@@ -209,7 +209,7 @@ instructions:
     description: |
       load a register from direct address
 
-      A <-- MEM(IMM)
+      A <-- MEM(ADDR)
     duration: 10  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'load a, addresss[15:0]'
@@ -241,7 +241,7 @@ instructions:
     description: |
       load a register from indirect address
 
-      A <-- MEM(MEM(IMM))
+      A <-- MEM(MEM(ADDR))
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'load a, (address[15:0])'
@@ -277,7 +277,7 @@ instructions:
   loadw_hl_sp:
     title: 'Load HL with Stack Pointer'
     description: |
-      load hl with the address of the stack pointer register
+      load hl with the address of the stack pointer register. This performs a big endian 16-bit load, MSB first.
 
       HL <-- SP
     duration: 5  # clock cycles
@@ -295,8 +295,8 @@ instructions:
       - [PO, MA]             # Fetch cycle, load MAR with LSB in PC
       - [CE, MO, II]         # Fetch cycle, increment PC, and load instruction into IR
       # load indirect address
-      - ['NO', HI]             # save SP LSB
-      - ['NO', HI, LM, RU]     # save SP MSB
+      - ['NO', HI, LM]       # save SP MSB
+      - ['NO', HI, RU]       # save SP LSB
 
   load_b_imm:
     title: 'Load B Immediate'
@@ -322,7 +322,7 @@ instructions:
     description: |
       load b register from direct address
 
-      B <-- MEM(IMM)
+      B <-- MEM(ADDR)
     duration: 10  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'load b, addresss[15:0]'
@@ -354,7 +354,7 @@ instructions:
     description: |
       load a register from indirect address
 
-      A <-- MEM(MEM(IMM))
+      A <-- MEM(MEM(ADDR))
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'load b, (address[15:0])'
@@ -391,7 +391,7 @@ instructions:
   loadw_hl_hl_indir:
     title: 'Load HL Indirect HL'
     description: |
-      load hl register with word from indirect address in hl register
+      load hl register with word from indirect address in hl register.
 
       HL <-- MEM(HL)
     duration: 10  # clock cycles
@@ -450,7 +450,7 @@ instructions:
     description: |
       load hl register from word from direct address
 
-      HL <-- MEM(IMM)
+      HL <-- MEM(ADDR)
     duration: 12  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'loadw hl, address[15:0]'
@@ -506,6 +506,12 @@ instructions:
       add a to hl word and save to hl word
 
       HL <-- HL + A
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 0
     usage: 'addw hl, a'
@@ -546,6 +552,12 @@ instructions:
       add b to hl word and save to hl word
 
       HL <-- HL + B
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 0
     usage: 'addw hl, b'
@@ -586,6 +598,12 @@ instructions:
       add imm byte to hl word and save to hl word
 
       HL <-- HL + IMM
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 1  # byte (immediate value)
     usage: 'addw hl, #data[7:0]'
@@ -626,6 +644,12 @@ instructions:
       subtract a byte from hl word and save to hl word
 
       HL <-- HL - A
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 0
     usage: 'subw hl, a'
@@ -666,6 +690,12 @@ instructions:
       subtract b byte from hl word and save to hl word
 
       HL <-- HL - B
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 0
     usage: 'subw hl, b'
@@ -706,6 +736,12 @@ instructions:
       subtract imm byte to hl word and save to hl word
 
       HL <-- HL - IMM
+
+      ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+
+      NF: set if result bit 15 is set (result is negative)
+
+      CF: set if adder carried out on the upper byte
     duration: 9  # clock cycles
     operands: 1  # byte (immediate value)
     usage: 'subw hl, #data[7:0]'
@@ -793,6 +829,12 @@ instructions:
       add a register to b register and save to a
 
       A <-- A + B
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'add a, b'
@@ -816,6 +858,12 @@ instructions:
       add a register to imm value and save to a
 
       A <-- A + IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'add a, #data[7:0]'
@@ -839,6 +887,12 @@ instructions:
       add b register to imm value and save to b
 
       B <-- B + IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'add b, #data[7:0]'
@@ -862,6 +916,12 @@ instructions:
       Subtract b register from a register and save to a
 
       A <-- A - B
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'sub a, b'
@@ -885,6 +945,12 @@ instructions:
       subtract imm value from a register and save to a
 
       A <-- A - IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'sub a, #data[7:0]'
@@ -908,6 +974,12 @@ instructions:
       subtract imm value from b register and save to b
 
       B <-- B - IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: set if adder carried out
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'sub b, #data[7:0]'
@@ -931,6 +1003,12 @@ instructions:
       Bitwise AND a register with b register and save to a
 
       A <-- A & B
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'and a, b'
@@ -954,6 +1032,12 @@ instructions:
       Bitwise AND a register with imm value and save to a
 
       A <-- A & IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'and a, #data[7:0]'
@@ -977,6 +1061,12 @@ instructions:
       Bitwise AND B register with imm value and save to B
 
       B <-- B & IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'and b, #data[7:0]'
@@ -1000,6 +1090,12 @@ instructions:
       Bitwise OR a register with b register and save to a
 
       A <-- A | B
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'or a, b'
@@ -1023,6 +1119,12 @@ instructions:
       Bitwise OR a register with imm value and save to a
 
       A <-- A | IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'or a, #data[7:0]'
@@ -1046,6 +1148,12 @@ instructions:
       Bitwise OR b register with imm value and save to b
 
       B <-- B | IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'or b, #data[7:0]'
@@ -1069,6 +1177,12 @@ instructions:
       Bitwise XOR a register with b register and save to a
 
       A <-- A ^ B
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'xor a, b'
@@ -1092,6 +1206,12 @@ instructions:
       Bitwise XOR a register with immediate value and save to a register.
 
       A <-- A ^ IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'xor a, #data[7:0]'
@@ -1115,6 +1235,12 @@ instructions:
       Bitwise XOR B register with immediate value and save to B register.
 
       B <-- B ^ IMM
+
+      ZF: set if result is zero
+
+      NF: set if result bit 7 is set
+
+      CF: undefined
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'xor b, #data[7:0]'
@@ -1140,7 +1266,9 @@ instructions:
       A <-- A << 1
 
       ZF: set if result is zero
+
       NF: set if result bit 7 is set
+
       CF: set if bit shifted off of the left was set
     duration: 5  # clk cycles
     operands: 0  # bytes
@@ -1166,7 +1294,9 @@ instructions:
       B <-- B << 1
 
       ZF: set if result is zero
+
       NF: set if result bit 7 is set
+
       CF: set if bit shifted off of the left was set
     duration: 5  # clk cycles
     operands: 0  # bytes
@@ -1192,7 +1322,9 @@ instructions:
       A <-- A >> 1
 
       ZF: set if result is zero
+
       NF: set if result bit 7 is set
+
       CF: set if bit shifted off of the right was set
     duration: 5  # clk cycles
     operands: 0  # bytes
@@ -1218,7 +1350,9 @@ instructions:
       B <-- B >> 1
 
       ZF: set if result is zero
+
       NF: set if result bit 7 is set
+
       CF: set if bit shifted off of the right was set
     duration: 5  # clk cycles
     operands: 0  # bytes
@@ -1241,7 +1375,7 @@ instructions:
     description: |
       Store A register value to direct address.
 
-      MEM(IMM) <-- A
+      MEM(ADDR) <-- A
     duration: 10  # clock cycles
     operands: 2  # byte (direct address)
     usage: 'store a, address[15:0]'
@@ -1273,7 +1407,7 @@ instructions:
     description: |
       Store A register value to indirect address.
 
-      MEM(MEM(IMM)) <-- A
+      MEM(MEM(ADDR)) <-- A
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'store a, (address[15:0])'
@@ -1311,7 +1445,7 @@ instructions:
     description: |
       Store B register value to direct address.
 
-      MEM(IMM) <-- B
+      MEM(ADDR) <-- B
     duration: 10  # clock cycles
     operands: 2  # byte (direct address)
     usage: 'store b, address[15:0]'
@@ -1343,7 +1477,7 @@ instructions:
     description: |
       Store B register value to indirect address.
 
-      MEM(MEM(IMM)) <-- B
+      MEM(MEM(ADDR)) <-- B
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'store b, (address[15:0])'
@@ -1377,7 +1511,11 @@ instructions:
       - [MI, BO, RU]         # store data in B reg to memory. ucode counter reset
 
   storew_hl_dir:
-    description: 'Store hl register value to direct address'
+    title: 'Store HL Direct'
+    description: |
+      Store HL register word to direct address. This performs a big endian 16-bit store, MSB first.
+
+      MEM(ADDR) <-- HL
     duration: 12  # clock cycles
     operands: 2  # byte (direct address)
     usage: 'store hl, address[15:0]'
@@ -1407,7 +1545,11 @@ instructions:
       - [HO, MI, RU]         # store data lsb from HL reg to memory. ucode counter reset
 
   store_imm_dir:
-    description: 'Store imm value to direct address'
+    title: 'Store Immediate Direct'
+    description: |
+      Store imm value to direct address.
+
+      MEM(ADDR) <-- IMM
     duration: 12  # clock cycles
     operands: 3  # bytes (immediate value, direct address)
     usage: 'store #data[7:0], address[15:0]'
@@ -1438,7 +1580,11 @@ instructions:
       - [DO, MI, RU]         # store data from D scratch reg to memory. ucode counter reset
 
   storew_imm_dir:
-    description: 'Store imm word to direct address'
+    title: 'Store Immediate Word Direct'
+    description: |
+      Store imm word to direct address. This performs a big endian 16-bit store, MSB first.
+
+      MEM(ADDR) <-- IMM
     duration: 16  # clock cycles
     operands: 4  # bytes (immediate value, direct address)
     usage: 'storew #data[16:0], address[15:0]'
@@ -1475,7 +1621,13 @@ instructions:
       - [DO, MI, RU]         # store LSB data from D scratch reg to memory. ucode counter reset
 
   push_a:
-    description: 'push a register value to stack'
+    title: 'Stack Push A'
+    description: |
+      Push A register value to stack. Increments stack pointer.
+
+      MEM(SP) <-- A
+
+      SP <-- SP + 1
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'push a'
@@ -1495,7 +1647,13 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_b:
-    description: 'push b register value to stack'
+    title: 'Stack Push B'
+    description: |
+      Push B register value to stack. Increments stack pointer.
+
+      MEM(SP) <-- B
+
+      SP <-- SP + 1
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'push b'
@@ -1515,7 +1673,11 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   store_imm_hl_indir:
-    description: 'store imm value to indirect address in hl register'
+    title: 'Store Immediate HL Indirect'
+    description: |
+      store imm value to indirect address in hl register
+
+      MEM(HL) <-- IMM
     duration: 8  # clock cycles
     operands: 1  # bytes
     usage: 'store #data[7:0], (hl)'
@@ -1540,7 +1702,11 @@ instructions:
       - [MI, DO, RU]         # store D screatch reg data to memory. ucode counter reset
 
   load_a_hl_indir:
-    description: 'load a register from indirect address in hl register'
+    title: 'Load A HL Indirect'
+    description: |
+      Load A register from indirect address in hl register.
+
+      A <-- MEM(HL)
     duration: 6  # clock cycles
     operands: 0  # bytes
     usage: 'load a, (hl)'
@@ -1562,7 +1728,11 @@ instructions:
       - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
 
   load_b_hl_indir:
-    description: 'load b register from indirect address in hl register'
+    title: 'Load B HL Indirect'
+    description: |
+      Load B register from indirect address in hl register.
+
+      B <-- MEM(HL)
     duration: 6  # clock cycles
     operands: 0  # bytes
     usage: 'load b, (hl)'
@@ -1628,7 +1798,13 @@ instructions:
       - [MI, BO, RU]         # store B reg data to memory. ucode counter reset
 
   push_imm:
-    description: 'push immediate value to stack'
+    title: 'Stack Push Immediate'
+    description: |
+      Push immediate value to stack.
+
+      MEM(SP) <-- IMM
+
+      SP <-- SP + 1
     duration: 7  # clock cycles
     operands: 1  # byte (immediate value)
     usage: 'push #data[7:0]'
@@ -1651,7 +1827,13 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_dir:
-    description: 'push byte from source to stack'
+    title: 'Stack Push Direct'
+    description: |
+      Push byte from direct address value to stack.
+
+      MEM(SP) <-- MEM(ADDR)
+
+      SP <-- SP + 1
     duration: 12  # clock cycles
     operands: 2  # bytes (direct source address)
     usage: 'push address[15:0]'
@@ -1682,7 +1864,13 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   push_indir:
-    description: 'push byte from indirect source to stack'
+    title: 'Stack Push Indirect'
+    description: |
+      Push byte from indirect address value to stack.
+
+      MEM(SP) <-- MEM(MEM(ADDR))
+
+      SP <-- SP + 1
     duration: 17  # clock cycles
     operands: 2  # bytes (indirect source address)
     usage: 'push (address[15:0])'
@@ -1719,7 +1907,13 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   pushw_imm:
-    description: 'push immediate word to stack'
+    title: 'Stack Push Word Immediate'
+    description: |
+      Push immediate word to stack. This performs a big endian 16-bit store, MSB first.
+
+      MEM(SP) <-- IMM
+
+      SP <-- SP + 2
     duration: 11  # clock cycles
     operands: 2  # bytes (immediate value)
     usage: 'pushw #data[15:0]'
@@ -1781,7 +1975,11 @@ instructions:
       - [IS, RU]             # decrement stack pointer. ucode counter reset
 
   alloc:
-    description: 'allocate n bytes on stack'
+    title: 'Stack Allocate'
+    description: |
+      Allocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the allocation microcode, but not designed to be used by the user.
+
+      SP <-- SP + IMM
     duration: 9  # clock cycles
     operands: 0
     usage: 'alloc data[7:0]'
@@ -1819,7 +2017,11 @@ instructions:
         - [ADD, FI, NI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   dealloc:
-    description: 'deallocate n bytes from stack'
+    title: 'Stack Allocate'
+    description: |
+      deallocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the deallocation microcode, but not designed to be used by the user.
+
+      SP <-- SP - IMM
     duration: 9  # clock cycles
     operands: 0
     usage: 'dealloc data[7:0]'
@@ -1901,7 +2103,13 @@ instructions:
       - [SO, HI, LM, RU]     # pop MSB byte into hl register. ucode counter reset
 
   pop_a:
-    description: 'pop value off of stack into a register'
+    title: 'Stack Pop A'
+    description: |
+      Pop value off of stack into A register. Decrements stack pointer.
+
+      MEM(SP) <-- A
+
+      SP <-- SP - 1
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'pop a'
@@ -1921,7 +2129,13 @@ instructions:
       - [SO, AI, RU]         # pop byte into a register. ucode counter reset
 
   pop_b:
-    description: 'pop value off of stack into b register'
+    title: 'Stack Pop B'
+    description: |
+      Pop value off of stack into B register. Decrements stack pointer.
+
+      MEM(SP) <-- B
+
+      SP <-- SP - 1
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'pop b'
@@ -2159,7 +2373,11 @@ instructions:
       - [DO, MI, RU]         # move data LSB form D scratch register to memory. ucode counter reset
 
   jmp:
-    description: 'Unconditional Jump'
+    title: 'Jump'
+    description: |
+      Unconditional Jump
+
+      PC <-- ADDR
     duration: 7  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'jmp address[15:0]'
@@ -2181,7 +2399,11 @@ instructions:
       - [PI, MO, RU]         # load PC with LSB of destination address. ucode counter reset
 
   jmp_hl:
-    description: 'Jump to address in hl register'
+    title: 'Jump HL'
+    description: |
+      Jump to address in HL register.
+
+      PC <-- HL
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'jmp hl'
@@ -2403,7 +2625,15 @@ instructions:
         - [CE, RU]         # Increment PC to skip destination address. ucode counter reset
 
   call:
-    description: 'Call Subroutine'
+    titie: 'Call'
+    description: |
+      Call Subroutine. This places the return address on the stack (big-endian) then jumps to the subroutine address. Program can return from Subroutine.
+
+      MEM(SP) <-- PC
+
+      SP <-- SP + 2
+
+      PC <-- IMM
     duration: 12  # clock cycles
     operands: 2  # bytes (destination address)
     usage: 'call address[15:0]'
@@ -2467,7 +2697,13 @@ instructions:
       - [BO, FI, RU]         # b out, update flags. ucode counter reset
 
   ret:
-    description: 'Return from Subroutine'
+    title: 'Return'
+    description: |
+      Return from Subroutine call to the return address saved on the stack.
+
+      PC <-- MEM(SP)
+
+      SP <-- SP - 2
     duration: 7  # clock cycles
     operands: 0  # bytes
     usage: 'ret'
@@ -2603,7 +2839,8 @@ instructions:
       - [RU]                 # nop cycle for assert to take place
 
   halt:
-    description: 'Halts execution'
+    title: 'Halt'
+    description: 'Halts execution.'
     duration: 4  # clk cycles (can't execute code after this anyways)
     operands: 0  # bytes
     usage: 'halt'

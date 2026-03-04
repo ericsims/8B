@@ -245,16 +245,9 @@ def generate_docs(iss, verbose=False):
     ## instruction details
     for inst, details in IS['instructions'].items():
         if inst == 'default': continue
-
         mdFile.new_header(level=2, title=details.get('title', inst))
         mdFile.new_paragraph(details.get('description'))
     
-        if 'opcode' in details.keys():
-            mdFile.new_paragraph(f"opcode: 0x{details['opcode']:02X}")
-        if 'usage' in details.keys():
-            mdFile.new_paragraph('Usage:')
-            mdFile.insert_code(details['usage'], language='asm')
-
         modifies_regs = []
         ucode = details.get('ucode')
         ctrl_sigs_used = []
@@ -268,6 +261,14 @@ def generate_docs(iss, verbose=False):
         
         if 'FI' in modifies_regs:
             mdFile.new_paragraph('This instruction modifies the flags register')
+
+        mdFile.new_paragraph(f"short: `{inst}`")
+        if 'opcode' in details.keys():
+            mdFile.new_paragraph(f"opcode: `0x{details['opcode']:02X}`")
+        if 'usage' in details.keys():
+            mdFile.new_paragraph(f"Usage: `{details['usage']}`")
+            # mdFile.insert_code(, language='asm')
+
 
     mdFile.create_md_file()
 

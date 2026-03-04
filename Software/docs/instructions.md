@@ -131,13 +131,11 @@ Instruction Set Manual
 
 No operation, or "no op" or "nop" command does not perfom any action.
 
-opcode: 0x00
+short: `nop`
 
-Usage:
+opcode: `0x00`
 
-```asm
-nop
-```
+Usage: `nop`
 ## Load A Immediate
 
 
@@ -146,115 +144,99 @@ Load a register with immediate value
 A <-- IMM
 
 
-opcode: 0x04
+short: `load_a_imm`
 
-Usage:
+opcode: `0x04`
 
-```asm
-load a, #data[7:0]
-```
+Usage: `load a, #data[7:0]`
 ## Load A Direct
 
 
 load a register from direct address
 
-A <-- MEM(IMM)
+A <-- MEM(ADDR)
 
 
-opcode: 0x05
+short: `load_a_dir`
 
-Usage:
+opcode: `0x05`
 
-```asm
-load a, addresss[15:0]
-```
+Usage: `load a, addresss[15:0]`
 ## Load A Indirect
 
 
 load a register from indirect address
 
-A <-- MEM(MEM(IMM))
+A <-- MEM(MEM(ADDR))
 
 
-opcode: 0x06
+short: `load_a_indir`
 
-Usage:
+opcode: `0x06`
 
-```asm
-load a, (address[15:0])
-```
+Usage: `load a, (address[15:0])`
 ## Load HL with Stack Pointer
 
 
-load hl with the address of the stack pointer register
+load hl with the address of the stack pointer register. This performs a big endian 16-bit load, MSB first.
 
 HL <-- SP
 
 
-opcode: 0x07
+short: `loadw_hl_sp`
 
-Usage:
+opcode: `0x07`
 
-```asm
-loadw hl, sp
-```
+Usage: `loadw hl, sp`
 ## Load B Immediate
 
 
 load b register with immediate value
 
-opcode: 0x08
+short: `load_b_imm`
 
-Usage:
+opcode: `0x08`
 
-```asm
-load b, #data[7:0]
-```
+Usage: `load b, #data[7:0]`
 ## Load B Direct
 
 
 load b register from direct address
 
-B <-- MEM(IMM)
+B <-- MEM(ADDR)
 
 
-opcode: 0x09
+short: `load_b_dir`
 
-Usage:
+opcode: `0x09`
 
-```asm
-load b, addresss[15:0]
-```
+Usage: `load b, addresss[15:0]`
 ## Load B Indirect
 
 
 load a register from indirect address
 
-A <-- MEM(MEM(IMM))
+A <-- MEM(MEM(ADDR))
 
 
-opcode: 0x0A
+short: `load_b_indir`
 
-Usage:
+opcode: `0x0A`
 
-```asm
-load b, (address[15:0])
-```
+Usage: `load b, (address[15:0])`
 ## Load HL Indirect HL
 
 
-load hl register with word from indirect address in hl register
+load hl register with word from indirect address in hl register.
 
 HL <-- MEM(HL)
 
 
-opcode: 0x0B
+short: `loadw_hl_hl_indir`
 
-Usage:
+opcode: `0x0B`
 
-```asm
-loadw hl, (hl)
-```
+Usage: `loadw hl, (hl)`
 ## Load HL Immediate
 
 
@@ -263,28 +245,24 @@ load hl register with immediate word
 HL <-- IMM
 
 
-opcode: 0x0C
+short: `loadw_hl_imm`
 
-Usage:
+opcode: `0x0C`
 
-```asm
-loadw hl, #data[15:0]
-```
+Usage: `loadw hl, #data[15:0]`
 ## Load HL Direct
 
 
 load hl register from word from direct address
 
-HL <-- MEM(IMM)
+HL <-- MEM(ADDR)
 
 
-opcode: 0x0D
+short: `loadw_hl_dir`
 
-Usage:
+opcode: `0x0D`
 
-```asm
-loadw hl, address[15:0]
-```
+Usage: `loadw hl, address[15:0]`
 ## Load A B
 
 
@@ -293,13 +271,11 @@ Load a register with value in b register
 A <-- B
 
 
-opcode: 0x13
+short: `load_a_b`
 
-Usage:
+opcode: `0x13`
 
-```asm
-load a, b
-```
+Usage: `load a, b`
 ## Add HL A
 
 
@@ -307,16 +283,20 @@ add a to hl word and save to hl word
 
 HL <-- HL + A
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x14
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-addw hl, a
-```
 
 This instruction modifies the flags register
+
+short: `addw_hl_a`
+
+opcode: `0x14`
+
+Usage: `addw hl, a`
 ## Add HL B
 
 
@@ -324,16 +304,20 @@ add b to hl word and save to hl word
 
 HL <-- HL + B
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x15
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-addw hl, b
-```
 
 This instruction modifies the flags register
+
+short: `addw_hl_b`
+
+opcode: `0x15`
+
+Usage: `addw hl, b`
 ## Add HL Immediate
 
 
@@ -341,16 +325,20 @@ add imm byte to hl word and save to hl word
 
 HL <-- HL + IMM
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x16
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-addw hl, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `addw_hl_imm`
+
+opcode: `0x16`
+
+Usage: `addw hl, #data[7:0]`
 ## Subtract HL A
 
 
@@ -358,16 +346,20 @@ subtract a byte from hl word and save to hl word
 
 HL <-- HL - A
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x1C
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-subw hl, a
-```
 
 This instruction modifies the flags register
+
+short: `subw_hl_a`
+
+opcode: `0x1C`
+
+Usage: `subw hl, a`
 ## Subtract HL B
 
 
@@ -375,16 +367,20 @@ subtract b byte from hl word and save to hl word
 
 HL <-- HL - B
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x1D
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-subw hl, b
-```
 
 This instruction modifies the flags register
+
+short: `subw_hl_b`
+
+opcode: `0x1D`
+
+Usage: `subw hl, b`
 ## Subtract HL Immediate
 
 
@@ -392,16 +388,20 @@ subtract imm byte to hl word and save to hl word
 
 HL <-- HL - IMM
 
+ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
 
-opcode: 0x1E
+NF: set if result bit 15 is set (result is negative)
 
-Usage:
+CF: set if adder carried out on the upper byte
 
-```asm
-subw hl, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `subw_hl_imm`
+
+opcode: `0x1E`
+
+Usage: `subw hl, #data[7:0]`
 ## Load B A
 
 
@@ -410,13 +410,11 @@ Load b register with value in a register
 B <-- A
 
 
-opcode: 0x17
+short: `load_b_a`
 
-Usage:
+opcode: `0x17`
 
-```asm
-load b, a
-```
+Usage: `load b, a`
 ## Load SP Immediate
 
 
@@ -425,13 +423,11 @@ load sp register with immediate word
 SP <-- IMM
 
 
-opcode: 0x1B
+short: `loadw_sp_imm`
 
-Usage:
+opcode: `0x1B`
 
-```asm
-loadw sp, #data[15:0]
-```
+Usage: `loadw sp, #data[15:0]`
 ## Add A B
 
 
@@ -439,16 +435,20 @@ add a register to b register and save to a
 
 A <-- A + B
 
+ZF: set if result is zero
 
-opcode: 0x10
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-add a, b
-```
 
 This instruction modifies the flags register
+
+short: `add_a_b`
+
+opcode: `0x10`
+
+Usage: `add a, b`
 ## Add A Immediate
 
 
@@ -456,16 +456,20 @@ add a register to imm value and save to a
 
 A <-- A + IMM
 
+ZF: set if result is zero
 
-opcode: 0x11
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-add a, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `add_a_imm`
+
+opcode: `0x11`
+
+Usage: `add a, #data[7:0]`
 ## Add B Immediate
 
 
@@ -473,16 +477,20 @@ add b register to imm value and save to b
 
 B <-- B + IMM
 
+ZF: set if result is zero
 
-opcode: 0x12
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-add b, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `add_b_imm`
+
+opcode: `0x12`
+
+Usage: `add b, #data[7:0]`
 ## Subtract A B
 
 
@@ -490,16 +498,20 @@ Subtract b register from a register and save to a
 
 A <-- A - B
 
+ZF: set if result is zero
 
-opcode: 0x18
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-sub a, b
-```
 
 This instruction modifies the flags register
+
+short: `sub_a_b`
+
+opcode: `0x18`
+
+Usage: `sub a, b`
 ## Subtract A Immediate
 
 
@@ -507,16 +519,20 @@ subtract imm value from a register and save to a
 
 A <-- A - IMM
 
+ZF: set if result is zero
 
-opcode: 0x19
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-sub a, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `sub_a_imm`
+
+opcode: `0x19`
+
+Usage: `sub a, #data[7:0]`
 ## Subtract B Immediate
 
 
@@ -524,16 +540,20 @@ subtract imm value from b register and save to b
 
 B <-- B - IMM
 
+ZF: set if result is zero
 
-opcode: 0x1A
+NF: set if result bit 7 is set
 
-Usage:
+CF: set if adder carried out
 
-```asm
-sub b, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `sub_b_imm`
+
+opcode: `0x1A`
+
+Usage: `sub b, #data[7:0]`
 ## Bitwise And A B
 
 
@@ -541,16 +561,20 @@ Bitwise AND a register with b register and save to a
 
 A <-- A & B
 
+ZF: set if result is zero
 
-opcode: 0x20
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-and a, b
-```
 
 This instruction modifies the flags register
+
+short: `and_a_b`
+
+opcode: `0x20`
+
+Usage: `and a, b`
 ## Bitwise And A Immediate
 
 
@@ -558,16 +582,20 @@ Bitwise AND a register with imm value and save to a
 
 A <-- A & IMM
 
+ZF: set if result is zero
 
-opcode: 0x21
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-and a, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `and_a_imm`
+
+opcode: `0x21`
+
+Usage: `and a, #data[7:0]`
 ## Bitwise And B Immediate
 
 
@@ -575,16 +603,20 @@ Bitwise AND B register with imm value and save to B
 
 B <-- B & IMM
 
+ZF: set if result is zero
 
-opcode: 0x22
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-and b, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `and_b_imm`
+
+opcode: `0x22`
+
+Usage: `and b, #data[7:0]`
 ## Bitwise Or A B
 
 
@@ -592,16 +624,20 @@ Bitwise OR a register with b register and save to a
 
 A <-- A | B
 
+ZF: set if result is zero
 
-opcode: 0x24
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-or a, b
-```
 
 This instruction modifies the flags register
+
+short: `or_a_b`
+
+opcode: `0x24`
+
+Usage: `or a, b`
 ## Bitwise Or A Immediate
 
 
@@ -609,16 +645,20 @@ Bitwise OR a register with imm value and save to a
 
 A <-- A | IMM
 
+ZF: set if result is zero
 
-opcode: 0x25
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-or a, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `or_a_imm`
+
+opcode: `0x25`
+
+Usage: `or a, #data[7:0]`
 ## Bitwise Or B Immediate
 
 
@@ -626,16 +666,20 @@ Bitwise OR b register with imm value and save to b
 
 B <-- B | IMM
 
+ZF: set if result is zero
 
-opcode: 0x26
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-or b, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `or_b_imm`
+
+opcode: `0x26`
+
+Usage: `or b, #data[7:0]`
 ## Bitwise Xor A B
 
 
@@ -643,16 +687,20 @@ Bitwise XOR a register with b register and save to a
 
 A <-- A ^ B
 
+ZF: set if result is zero
 
-opcode: 0x28
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-xor a, b
-```
 
 This instruction modifies the flags register
+
+short: `xor_a_b`
+
+opcode: `0x28`
+
+Usage: `xor a, b`
 ## Bitwise Xor A Immediate
 
 
@@ -660,16 +708,20 @@ Bitwise XOR a register with immediate value and save to a register.
 
 A <-- A ^ IMM
 
+ZF: set if result is zero
 
-opcode: 0x29
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-xor a, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `xor_a_imm`
+
+opcode: `0x29`
+
+Usage: `xor a, #data[7:0]`
 ## Bitwise Xor B Immediate
 
 
@@ -677,16 +729,20 @@ Bitwise XOR B register with immediate value and save to B register.
 
 B <-- B ^ IMM
 
+ZF: set if result is zero
 
-opcode: 0x2A
+NF: set if result bit 7 is set
 
-Usage:
+CF: undefined
 
-```asm
-xor b, #data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `xor_b_imm`
+
+opcode: `0x2A`
+
+Usage: `xor b, #data[7:0]`
 ## Bitwise Left Shift A
 
 
@@ -695,19 +751,19 @@ Bitwise shift left A register by one and save to A register. Zero is shifted int
 A <-- A << 1
 
 ZF: set if result is zero
+
 NF: set if result bit 7 is set
+
 CF: set if bit shifted off of the left was set
 
 
-opcode: 0x2C
-
-Usage:
-
-```asm
-lshift a
-```
-
 This instruction modifies the flags register
+
+short: `lshift_a`
+
+opcode: `0x2C`
+
+Usage: `lshift a`
 ## Bitwise Left Shift B
 
 
@@ -716,19 +772,19 @@ Bitwise shift left B register by one and save to B. Zero is shifted into LSB.
 B <-- B << 1
 
 ZF: set if result is zero
+
 NF: set if result bit 7 is set
+
 CF: set if bit shifted off of the left was set
 
 
-opcode: 0x2D
-
-Usage:
-
-```asm
-lshift b
-```
-
 This instruction modifies the flags register
+
+short: `lshift_b`
+
+opcode: `0x2D`
+
+Usage: `lshift b`
 ## Bitwise Right Shift A
 
 
@@ -737,19 +793,19 @@ Bitwise shift right A register by one and save to A register. Zero is shifted in
 A <-- A >> 1
 
 ZF: set if result is zero
+
 NF: set if result bit 7 is set
+
 CF: set if bit shifted off of the right was set
 
 
-opcode: 0x2E
-
-Usage:
-
-```asm
-rshift a
-```
-
 This instruction modifies the flags register
+
+short: `rshift_a`
+
+opcode: `0x2E`
+
+Usage: `rshift a`
 ## Bitwise Right Shift B
 
 
@@ -758,934 +814,872 @@ Bitwise shift right B register by one and save to B register. Zero is shifted in
 B <-- B >> 1
 
 ZF: set if result is zero
+
 NF: set if result bit 7 is set
+
 CF: set if bit shifted off of the right was set
 
 
-opcode: 0x2F
-
-Usage:
-
-```asm
-rshift b
-```
-
 This instruction modifies the flags register
+
+short: `rshift_b`
+
+opcode: `0x2F`
+
+Usage: `rshift b`
 ## Store A Direct
 
 
 Store A register value to direct address.
 
-MEM(IMM) <-- A
+MEM(ADDR) <-- A
 
 
-opcode: 0x30
+short: `store_a_dir`
 
-Usage:
+opcode: `0x30`
 
-```asm
-store a, address[15:0]
-```
+Usage: `store a, address[15:0]`
 ## Store A Indirect
 
 
 Store A register value to indirect address.
 
-MEM(MEM(IMM)) <-- A
+MEM(MEM(ADDR)) <-- A
 
 
-opcode: 0x31
+short: `store_a_indir`
 
-Usage:
+opcode: `0x31`
 
-```asm
-store a, (address[15:0])
-```
+Usage: `store a, (address[15:0])`
 ## Store B Direct
 
 
 Store B register value to direct address.
 
-MEM(IMM) <-- B
+MEM(ADDR) <-- B
 
 
-opcode: 0x32
+short: `store_b_dir`
 
-Usage:
+opcode: `0x32`
 
-```asm
-store b, address[15:0]
-```
+Usage: `store b, address[15:0]`
 ## Store B Indirect
 
 
 Store B register value to indirect address.
 
-MEM(MEM(IMM)) <-- B
+MEM(MEM(ADDR)) <-- B
 
 
-opcode: 0x33
+short: `store_b_indir`
 
-Usage:
+opcode: `0x33`
 
-```asm
-store b, (address[15:0])
-```
-## storew_hl_dir
+Usage: `store b, (address[15:0])`
+## Store HL Direct
 
 
-Store hl register value to direct address
+Store HL register word to direct address. This performs a big endian 16-bit store, MSB first.
 
-opcode: 0x34
-
-Usage:
-
-```asm
-store hl, address[15:0]
-```
-## store_imm_dir
+MEM(ADDR) <-- HL
 
 
-Store imm value to direct address
+short: `storew_hl_dir`
 
-opcode: 0x3D
+opcode: `0x34`
 
-Usage:
-
-```asm
-store #data[7:0], address[15:0]
-```
-## storew_imm_dir
+Usage: `store hl, address[15:0]`
+## Store Immediate Direct
 
 
-Store imm word to direct address
+Store imm value to direct address.
 
-opcode: 0x3E
-
-Usage:
-
-```asm
-storew #data[16:0], address[15:0]
-```
-## push_a
+MEM(ADDR) <-- IMM
 
 
-push a register value to stack
+short: `store_imm_dir`
 
-opcode: 0x38
+opcode: `0x3D`
 
-Usage:
-
-```asm
-push a
-```
-## push_b
+Usage: `store #data[7:0], address[15:0]`
+## Store Immediate Word Direct
 
 
-push b register value to stack
+Store imm word to direct address. This performs a big endian 16-bit store, MSB first.
 
-opcode: 0x39
+MEM(ADDR) <-- IMM
 
-Usage:
 
-```asm
-push b
-```
-## store_imm_hl_indir
+short: `storew_imm_dir`
+
+opcode: `0x3E`
+
+Usage: `storew #data[16:0], address[15:0]`
+## Stack Push A
+
+
+Push A register value to stack. Increments stack pointer.
+
+MEM(SP) <-- A
+
+SP <-- SP + 1
+
+
+short: `push_a`
+
+opcode: `0x38`
+
+Usage: `push a`
+## Stack Push B
+
+
+Push B register value to stack. Increments stack pointer.
+
+MEM(SP) <-- B
+
+SP <-- SP + 1
+
+
+short: `push_b`
+
+opcode: `0x39`
+
+Usage: `push b`
+## Store Immediate HL Indirect
 
 
 store imm value to indirect address in hl register
 
-opcode: 0x3F
-
-Usage:
-
-```asm
-store #data[7:0], (hl)
-```
-## load_a_hl_indir
+MEM(HL) <-- IMM
 
 
-load a register from indirect address in hl register
+short: `store_imm_hl_indir`
 
-opcode: 0x40
+opcode: `0x3F`
 
-Usage:
-
-```asm
-load a, (hl)
-```
-## load_b_hl_indir
+Usage: `store #data[7:0], (hl)`
+## Load A HL Indirect
 
 
-load b register from indirect address in hl register
+Load A register from indirect address in hl register.
 
-opcode: 0x41
+A <-- MEM(HL)
 
-Usage:
 
-```asm
-load b, (hl)
-```
+short: `load_a_hl_indir`
+
+opcode: `0x40`
+
+Usage: `load a, (hl)`
+## Load B HL Indirect
+
+
+Load B register from indirect address in hl register.
+
+B <-- MEM(HL)
+
+
+short: `load_b_hl_indir`
+
+opcode: `0x41`
+
+Usage: `load b, (hl)`
 ## store_a_hl_indir
 
 
 store a register to indirect address in hl register
 
-opcode: 0x42
+short: `store_a_hl_indir`
 
-Usage:
+opcode: `0x42`
 
-```asm
-store a, (hl)
-```
+Usage: `store a, (hl)`
 ## store_b_hl_indir
 
 
 store b register to indirect address in hl register
 
-opcode: 0x43
+short: `store_b_hl_indir`
 
-Usage:
+opcode: `0x43`
 
-```asm
-store b, (hl)
-```
-## push_imm
+Usage: `store b, (hl)`
+## Stack Push Immediate
 
 
-push immediate value to stack
+Push immediate value to stack.
 
-opcode: 0x3A
+MEM(SP) <-- IMM
 
-Usage:
-
-```asm
-push #data[7:0]
-```
-## push_dir
+SP <-- SP + 1
 
 
-push byte from source to stack
+short: `push_imm`
 
-opcode: 0x3B
+opcode: `0x3A`
 
-Usage:
-
-```asm
-push address[15:0]
-```
-## push_indir
+Usage: `push #data[7:0]`
+## Stack Push Direct
 
 
-push byte from indirect source to stack
+Push byte from direct address value to stack.
 
-opcode: 0x3C
+MEM(SP) <-- MEM(ADDR)
 
-Usage:
-
-```asm
-push (address[15:0])
-```
-## pushw_imm
+SP <-- SP + 1
 
 
-push immediate word to stack
+short: `push_dir`
 
-opcode: 0x4C
+opcode: `0x3B`
 
-Usage:
+Usage: `push address[15:0]`
+## Stack Push Indirect
 
-```asm
-pushw #data[15:0]
-```
+
+Push byte from indirect address value to stack.
+
+MEM(SP) <-- MEM(MEM(ADDR))
+
+SP <-- SP + 1
+
+
+short: `push_indir`
+
+opcode: `0x3C`
+
+Usage: `push (address[15:0])`
+## Stack Push Word Immediate
+
+
+Push immediate word to stack. This performs a big endian 16-bit store, MSB first.
+
+MEM(SP) <-- IMM
+
+SP <-- SP + 2
+
+
+short: `pushw_imm`
+
+opcode: `0x4C`
+
+Usage: `pushw #data[15:0]`
 ## pushw_dir
 
 
 push word from source to stack
 
-opcode: 0x4D
+short: `pushw_dir`
 
-Usage:
+opcode: `0x4D`
 
-```asm
-pushw address[15:0]
-```
-## alloc
+Usage: `pushw address[15:0]`
+## Stack Allocate
 
 
-allocate n bytes on stack
+Allocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the allocation microcode, but not designed to be used by the user.
 
-opcode: 0x4E
+SP <-- SP + IMM
 
-Usage:
-
-```asm
-alloc data[7:0]
-```
 
 This instruction modifies the flags register
-## dealloc
+
+short: `alloc`
+
+opcode: `0x4E`
+
+Usage: `alloc data[7:0]`
+## Stack Allocate
 
 
-deallocate n bytes from stack
+deallocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the deallocation microcode, but not designed to be used by the user.
 
-opcode: 0x4F
+SP <-- SP - IMM
 
-Usage:
-
-```asm
-dealloc data[7:0]
-```
 
 This instruction modifies the flags register
+
+short: `dealloc`
+
+opcode: `0x4F`
+
+Usage: `dealloc data[7:0]`
 ## pushw_hl
 
 
 push hl register onto stack
 
-opcode: 0x50
+short: `pushw_hl`
 
-Usage:
+opcode: `0x50`
 
-```asm
-push hl
-```
+Usage: `push hl`
 ## popw_hl
 
 
 pop word off of stack into hl register
 
-opcode: 0x51
+short: `popw_hl`
 
-Usage:
+opcode: `0x51`
 
-```asm
-pop hl
-```
-## pop_a
+Usage: `pop hl`
+## Stack Pop A
 
 
-pop value off of stack into a register
+Pop value off of stack into A register. Decrements stack pointer.
 
-opcode: 0x52
+MEM(SP) <-- A
 
-Usage:
-
-```asm
-pop a
-```
-## pop_b
+SP <-- SP - 1
 
 
-pop value off of stack into b register
+short: `pop_a`
 
-opcode: 0x53
+opcode: `0x52`
 
-Usage:
+Usage: `pop a`
+## Stack Pop B
 
-```asm
-pop b
-```
+
+Pop value off of stack into B register. Decrements stack pointer.
+
+MEM(SP) <-- B
+
+SP <-- SP - 1
+
+
+short: `pop_b`
+
+opcode: `0x53`
+
+Usage: `pop b`
 ## move_dir_dir
 
 
 copy byte from source to destination
 
-opcode: 0x44
+short: `move_dir_dir`
 
-Usage:
+opcode: `0x44`
 
-```asm
-move src[15:0], dst[15:0]
-```
+Usage: `move src[15:0], dst[15:0]`
 ## move_dir_indir
 
 
 copy byte from source to indirect destination
 
-opcode: 0x45
+short: `move_dir_indir`
 
-Usage:
+opcode: `0x45`
 
-```asm
-move src[15:0], (dst[15:0])
-```
+Usage: `move src[15:0], (dst[15:0])`
 ## move_indir_dir
 
 
 copy byte from indirect source to destination
 
-opcode: 0x46
+short: `move_indir_dir`
 
-Usage:
+opcode: `0x46`
 
-```asm
-move (src[15:0]), dst[15:0]
-```
+Usage: `move (src[15:0]), dst[15:0]`
 ## move_indir_indir
 
 
 copy byte from indirect source to indirect destination
 
-opcode: 0x47
+short: `move_indir_indir`
 
-Usage:
+opcode: `0x47`
 
-```asm
-move (src[15:0]), (dst[15:0])
-```
+Usage: `move (src[15:0]), (dst[15:0])`
 ## movew_dir_dir
 
 
 copy 2 byte word from source to destination
 
-opcode: 0x48
+short: `movew_dir_dir`
 
-Usage:
+opcode: `0x48`
 
-```asm
-movew src[15:0], dst[15:0]
-```
-## jmp
+Usage: `movew src[15:0], dst[15:0]`
+## Jump
 
 
 Unconditional Jump
 
-opcode: 0x64
-
-Usage:
-
-```asm
-jmp address[15:0]
-```
-## jmp_hl
+PC <-- ADDR
 
 
-Jump to address in hl register
+short: `jmp`
 
-opcode: 0x62
+opcode: `0x64`
 
-Usage:
+Usage: `jmp address[15:0]`
+## Jump HL
 
-```asm
-jmp hl
-```
+
+Jump to address in HL register.
+
+PC <-- HL
+
+
+short: `jmp_hl`
+
+opcode: `0x62`
+
+Usage: `jmp hl`
 ## call_hl
 
 
 Call Subroutine in hl register
 
-opcode: 0x63
+short: `call_hl`
 
-Usage:
+opcode: `0x63`
 
-```asm
-call hl
-```
+Usage: `call hl`
 ## jmz
 
 
 Jump if Zero
 
-opcode: 0x65
+short: `jmz`
 
-Usage:
+opcode: `0x65`
 
-```asm
-jmz address[15:0]
-```
+Usage: `jmz address[15:0]`
 ## jnz
 
 
 Jump if not Zero
 
-opcode: 0x66
+short: `jnz`
 
-Usage:
+opcode: `0x66`
 
-```asm
-jnz address[15:0]
-```
+Usage: `jnz address[15:0]`
 ## jmc
 
 
 Jump if Carry
 
-opcode: 0x67
+short: `jmc`
 
-Usage:
+opcode: `0x67`
 
-```asm
-jmc address[15:0]
-```
+Usage: `jmc address[15:0]`
 ## jnc
 
 
 Jump if not Carry
 
-opcode: 0x68
+short: `jnc`
 
-Usage:
+opcode: `0x68`
 
-```asm
-jnc address[15:0]
-```
+Usage: `jnc address[15:0]`
 ## jmn
 
 
 Jump if Negative
 
-opcode: 0x69
+short: `jmn`
 
-Usage:
+opcode: `0x69`
 
-```asm
-jnc address[15:0]
-```
+Usage: `jnc address[15:0]`
 ## jnn
 
 
 Jump if not Negative
 
-opcode: 0x6A
+short: `jnn`
 
-Usage:
+opcode: `0x6A`
 
-```asm
-jnc address[15:0]
-```
+Usage: `jnc address[15:0]`
 ## call
 
 
-Call Subroutine
+Call Subroutine. This places the return address on the stack (big-endian) then jumps to the subroutine address. Program can return from Subroutine.
 
-opcode: 0x6B
+MEM(SP) <-- PC
 
-Usage:
+SP <-- SP + 2
 
-```asm
-call address[15:0]
-```
+PC <-- IMM
+
+
+short: `call`
+
+opcode: `0x6B`
+
+Usage: `call address[15:0]`
 ## test_a
 
 
 tests value in a register and updates flags
 
-opcode: 0x6C
-
-Usage:
-
-```asm
-test a
-```
-
 This instruction modifies the flags register
+
+short: `test_a`
+
+opcode: `0x6C`
+
+Usage: `test a`
 ## test_b
 
 
 tests value in ab register and updates flags
 
-opcode: 0x6D
-
-Usage:
-
-```asm
-test b
-```
-
 This instruction modifies the flags register
-## ret
+
+short: `test_b`
+
+opcode: `0x6D`
+
+Usage: `test b`
+## Return
 
 
-Return from Subroutine
+Return from Subroutine call to the return address saved on the stack.
 
-opcode: 0x74
+PC <-- MEM(SP)
 
-Usage:
+SP <-- SP - 2
 
-```asm
-ret
-```
+
+short: `ret`
+
+opcode: `0x74`
+
+Usage: `ret`
 ## assert_a
 
 
 Assert value of A register == imm value
 
-opcode: 0x78
+short: `assert_a`
 
-Usage:
+opcode: `0x78`
 
-```asm
-assert a, #data[7:0]
-```
+Usage: `assert a, #data[7:0]`
 ## assert_b
 
 
 Assert value of b register == imm value
 
-opcode: 0x79
+short: `assert_b`
 
-Usage:
+opcode: `0x79`
 
-```asm
-assert b, #data[7:0]
-```
+Usage: `assert b, #data[7:0]`
 ## assert_hl
 
 
 Assert value of hl register == imm value
 
-opcode: 0x7A
+short: `assert_hl`
 
-Usage:
+opcode: `0x7A`
 
-```asm
-assert hl, #data[15:0]
-```
+Usage: `assert hl, #data[15:0]`
 ## assert_cf
 
 
 Assert value of CF == imm value
 
-opcode: 0x7B
+short: `assert_cf`
 
-Usage:
+opcode: `0x7B`
 
-```asm
-assert cf, #data[7:0]
-```
+Usage: `assert cf, #data[7:0]`
 ## assert_zf
 
 
 Assert value of ZF == imm value
 
-opcode: 0x7C
+short: `assert_zf`
 
-Usage:
+opcode: `0x7C`
 
-```asm
-assert zf, #data[7:0]
-```
+Usage: `assert zf, #data[7:0]`
 ## assert_nf
 
 
 Assert value of NF == imm value
 
-opcode: 0x7D
+short: `assert_nf`
 
-Usage:
+opcode: `0x7D`
 
-```asm
-assert nf, #data[7:0]
-```
-## halt
+Usage: `assert nf, #data[7:0]`
+## Halt
 
 
-Halts execution
+Halts execution.
 
-opcode: 0x7F
+short: `halt`
 
-Usage:
+opcode: `0x7F`
 
-```asm
-halt
-```
+Usage: `halt`
 ## load_a_indir_poffset
 
 
 load a register with value in (address) + offset
 
-opcode: 0x54
-
-Usage:
-
-```asm
-load a, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `load_a_indir_poffset`
+
+opcode: `0x54`
+
+Usage: `load a, address[15:0], offset[7:0]`
 ## load_a_indir_noffset
 
 
 load a register with value in (address) - offset
 
-opcode: 0x55
-
-Usage:
-
-```asm
-load a, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `load_a_indir_noffset`
+
+opcode: `0x55`
+
+Usage: `load a, address[15:0], offset[7:0]`
 ## load_b_indir_poffset
 
 
 load b register with value in (address) + offset
 
-opcode: 0x56
-
-Usage:
-
-```asm
-load b, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `load_b_indir_poffset`
+
+opcode: `0x56`
+
+Usage: `load b, address[15:0], offset[7:0]`
 ## load_b_indir_noffset
 
 
 load b register with value in (address) - offset
 
-opcode: 0x57
-
-Usage:
-
-```asm
-load b, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `load_b_indir_noffset`
+
+opcode: `0x57`
+
+Usage: `load b, address[15:0], offset[7:0]`
 ## store_a_indir_poffset
 
 
 store a register to indirect (address) + offset
 
-opcode: 0x58
-
-Usage:
-
-```asm
-store a, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_a_indir_poffset`
+
+opcode: `0x58`
+
+Usage: `store a, address[15:0], offset[7:0]`
 ## store_a_indir_noffset
 
 
 store a register to indirect (address) - offset
 
-opcode: 0x59
-
-Usage:
-
-```asm
-store a, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_a_indir_noffset`
+
+opcode: `0x59`
+
+Usage: `store a, address[15:0], offset[7:0]`
 ## store_b_indir_poffset
 
 
 store b register to indirect (address) + offset
 
-opcode: 0x5A
-
-Usage:
-
-```asm
-store b, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_b_indir_poffset`
+
+opcode: `0x5A`
+
+Usage: `store b, address[15:0], offset[7:0]`
 ## store_b_indir_noffset
 
 
 store b register to indirect (address) - offset
 
-opcode: 0x5B
-
-Usage:
-
-```asm
-store b, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_b_indir_noffset`
+
+opcode: `0x5B`
+
+Usage: `store b, address[15:0], offset[7:0]`
 ## loadw_hl_indir_poffset
 
 
 load hl register with value in (address) + offset
 
-opcode: 0x5C
-
-Usage:
-
-```asm
-loadw hl, address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `loadw_hl_indir_poffset`
+
+opcode: `0x5C`
+
+Usage: `loadw hl, address[15:0], offset[7:0]`
 ## loadw_hl_indir_noffset
 
 
 load hl register with value in (address) - offset
 
-opcode: 0x5D
-
-Usage:
-
-```asm
-loadw hl, addr[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `loadw_hl_indir_noffset`
+
+opcode: `0x5D`
+
+Usage: `loadw hl, addr[15:0], offset[7:0]`
 ## storew_hl_indir_poffset
 
 
 store hl register value in (address) + offset
 
-opcode: 0x5E
-
-Usage:
-
-```asm
-store hl, addr[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `storew_hl_indir_poffset`
+
+opcode: `0x5E`
+
+Usage: `store hl, addr[15:0], offset[7:0]`
 ## storew_hl_indir_noffset
 
 
 store hl register value in (address) - offset
 
-opcode: 0x5F
-
-Usage:
-
-```asm
-storew hl, (address[15:0]), offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `storew_hl_indir_noffset`
+
+opcode: `0x5F`
+
+Usage: `storew hl, (address[15:0]), offset[7:0]`
 ## store_imm_indir_poffset
 
 
 store imm value to indirect (address) + offset
 
-opcode: 0x60
-
-Usage:
-
-```asm
-store #data[7:0], address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_imm_indir_poffset`
+
+opcode: `0x60`
+
+Usage: `store #data[7:0], address[15:0], offset[7:0]`
 ## store_imm_indir_noffset
 
 
 store imm value to indirect (address) - offset
 
-opcode: 0x61
-
-Usage:
-
-```asm
-store #data[7:0], address[15:0], offset[7:0]
-```
-
 This instruction modifies the flags register
+
+short: `store_imm_indir_noffset`
+
+opcode: `0x61`
+
+Usage: `store #data[7:0], address[15:0], offset[7:0]`
 ## xfr_set_len_imm
 
 
 init transfer. set length to immediate value. limit 255 bytes/words
 
-opcode: 0x80
+short: `xfr_set_len_imm`
 
-Usage:
+opcode: `0x80`
 
-```asm
-xfr_set_len #len[7:0]
-```
+Usage: `xfr_set_len #len[7:0]`
 ## xfr_set_len_a
 
 
 init transfer. set length. limit 255 bytes/words
 
-opcode: 0x81
+short: `xfr_set_len_a`
 
-Usage:
+opcode: `0x81`
 
-```asm
-xfr_set_len a
-```
+Usage: `xfr_set_len a`
 ## xfr_set_dest_dir
 
 
 transfer setup - set destination address to direct addr
 
-opcode: 0x84
+short: `xfr_set_dest_dir`
 
-Usage:
+opcode: `0x84`
 
-```asm
-xfr_set_dst dst[15:0]
-```
+Usage: `xfr_set_dst dst[15:0]`
 ## xfr_set_src_dir
 
 
 transfer setup - set source address to direct addr
 
-opcode: 0x88
+short: `xfr_set_src_dir`
 
-Usage:
+opcode: `0x88`
 
-```asm
-xfr src[15:0]
-```
+Usage: `xfr src[15:0]`
 ## xfr_set_src_indir
 
 
 transfer setup - set source address to indirect addr
 
-opcode: 0x89
+short: `xfr_set_src_indir`
 
-Usage:
+opcode: `0x89`
 
-```asm
-xfr (src[15:0])
-```
+Usage: `xfr (src[15:0])`
 ## xfr8_loop
 
 
 Microcode for byte transfer loop. xfr setup instruction must be called immediately before
 
-opcode: 0x8C
-
-Usage:
-
-```asm
-xfr8_loop
-```
-
 This instruction modifies the flags register
+
+short: `xfr8_loop`
+
+opcode: `0x8C`
+
+Usage: `xfr8_loop`
 ## xfr8_loop_no_incr_dst
 
 
 Microcode for byte transfer loop. Will not increment dst pointer. xfr setup instruction must be called immediately before
 
-opcode: 0x8D
-
-Usage:
-
-```asm
-xfr8_loop_no_incr_dst
-```
-
 This instruction modifies the flags register
+
+short: `xfr8_loop_no_incr_dst`
+
+opcode: `0x8D`
+
+Usage: `xfr8_loop_no_incr_dst`
 ## xfr8_loop_no_incr_src
 
 
 Microcode for byte transfer loop. Will not increment src pointer. xfr setup instruction must be called immediately before
 
-opcode: 0x8E
-
-Usage:
-
-```asm
-xfr8_loop_no_incr_src
-```
-
 This instruction modifies the flags register
+
+short: `xfr8_loop_no_incr_src`
+
+opcode: `0x8E`
+
+Usage: `xfr8_loop_no_incr_src`
