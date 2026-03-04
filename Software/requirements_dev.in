@@ -11,3 +11,4 @@ yamllint
 memory_layout
 pip-licenses
 fxpmath
+mdutils

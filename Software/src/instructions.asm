@@ -4,7 +4,7 @@
 {
 
 ; nop
-; no operation
+; No operation, or "no op" or "nop" command does not perfom any action.
 ; usage: nop
 nop =>
 {
@@ -13,6 +13,7 @@ nop =>
 
 ; load_a_imm
 ; Load a register with immediate value
+; A <-- IMM
 ; usage: load a, #data[7:0]
 load a, #{imm: i8} =>
 {
@@ -21,6 +22,7 @@ load a, #{imm: i8} =>
 
 ; load_a_dir
 ; load a register from direct address
+; A <-- MEM(ADDR)
 ; usage: load a, addresss[15:0]
 load a, {addr: i16} =>
 {
@@ -31,6 +33,7 @@ load a, {addr: i16} =>
 
 ; load_a_indir
 ; load a register from indirect address
+; A <-- MEM(MEM(ADDR))
 ; usage: load a, (address[15:0])
 load a, ({addr: i16}) =>
 {
@@ -40,7 +43,8 @@ load a, ({addr: i16}) =>
 }
 
 ; loadw_hl_sp
-; load hl with value in sp
+; load hl with the address of the stack pointer register. This performs a big endian 16-bit load, MSB first.
+; HL <-- SP
 ; usage: loadw hl, sp
 loadw hl, sp =>
 {
@@ -57,6 +61,7 @@ load b, #{imm: i8} =>
 
 ; load_b_dir
 ; load b register from direct address
+; B <-- MEM(ADDR)
 ; usage: load b, addresss[15:0]
 load b, {addr: i16} =>
 {
@@ -67,6 +72,7 @@ load b, {addr: i16} =>
 
 ; load_b_indir
 ; load a register from indirect address
+; A <-- MEM(MEM(ADDR))
 ; usage: load b, (address[15:0])
 load b, ({addr: i16}) =>
 {
@@ -76,7 +82,8 @@ load b, ({addr: i16}) =>
 }
 
 ; loadw_hl_hl_indir
-; load hl register with word from indirect address in hl register
+; load hl register with word from indirect address in hl register.
+; HL <-- MEM(HL)
 ; usage: loadw hl, (hl)
 loadw hl, (hl) =>
 {
@@ -85,6 +92,7 @@ loadw hl, (hl) =>
 
 ; loadw_hl_imm
 ; load hl register with immediate word
+; HL <-- IMM
 ; usage: loadw hl, #data[15:0]
 loadw hl, #{imm: i16} =>
 {
@@ -94,7 +102,8 @@ loadw hl, #{imm: i16} =>
 }
 
 ; loadw_hl_dir
-; load hl register from direct address
+; load hl register from word from direct address
+; HL <-- MEM(ADDR)
 ; usage: loadw hl, address[15:0]
 loadw hl, {addr: i16} =>
 {
@@ -105,6 +114,7 @@ loadw hl, {addr: i16} =>
 
 ; load_a_b
 ; Load a register with value in b register
+; A <-- B
 ; usage: load a, b
 load a, b =>
 {
@@ -113,6 +123,10 @@ load a, b =>
 
 ; addw_hl_a
 ; add a to hl word and save to hl word
+; HL <-- HL + A
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: addw hl, a
 addw hl, a =>
 {
@@ -121,6 +135,10 @@ addw hl, a =>
 
 ; addw_hl_b
 ; add b to hl word and save to hl word
+; HL <-- HL + B
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: addw hl, b
 addw hl, b =>
 {
@@ -129,6 +147,10 @@ addw hl, b =>
 
 ; addw_hl_imm
 ; add imm byte to hl word and save to hl word
+; HL <-- HL + IMM
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: addw hl, #data[7:0]
 addw hl, #{imm: i8} =>
 {
@@ -137,6 +159,10 @@ addw hl, #{imm: i8} =>
 
 ; subw_hl_a
 ; subtract a byte from hl word and save to hl word
+; HL <-- HL - A
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: subw hl, a
 subw hl, a =>
 {
@@ -145,6 +171,10 @@ subw hl, a =>
 
 ; subw_hl_b
 ; subtract b byte from hl word and save to hl word
+; HL <-- HL - B
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: subw hl, b
 subw hl, b =>
 {
@@ -153,6 +183,10 @@ subw hl, b =>
 
 ; subw_hl_imm
 ; subtract imm byte to hl word and save to hl word
+; HL <-- HL - IMM
+; ZF: set if upper byte of result is zero (this does not reflect that the entire word is zero)
+; NF: set if result bit 15 is set (result is negative)
+; CF: set if adder carried out on the upper byte
 ; usage: subw hl, #data[7:0]
 subw hl, #{imm: i8} =>
 {
@@ -161,6 +195,7 @@ subw hl, #{imm: i8} =>
 
 ; load_b_a
 ; Load b register with value in a register
+; B <-- A
 ; usage: load b, a
 load b, a =>
 {
@@ -169,6 +204,7 @@ load b, a =>
 
 ; loadw_sp_imm
 ; load sp register with immediate word
+; SP <-- IMM
 ; usage: loadw sp, #data[15:0]
 loadw sp, #{imm: i16} =>
 {
@@ -179,6 +215,10 @@ loadw sp, #{imm: i16} =>
 
 ; add_a_b
 ; add a register to b register and save to a
+; A <-- A + B
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: add a, b
 add a, b =>
 {
@@ -187,6 +227,10 @@ add a, b =>
 
 ; add_a_imm
 ; add a register to imm value and save to a
+; A <-- A + IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: add a, #data[7:0]
 add a, #{imm: i8} =>
 {
@@ -195,6 +239,10 @@ add a, #{imm: i8} =>
 
 ; add_b_imm
 ; add b register to imm value and save to b
+; B <-- B + IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: add b, #data[7:0]
 add b, #{imm: i8} =>
 {
@@ -203,6 +251,10 @@ add b, #{imm: i8} =>
 
 ; sub_a_b
 ; Subtract b register from a register and save to a
+; A <-- A - B
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: sub a, b
 sub a, b =>
 {
@@ -211,6 +263,10 @@ sub a, b =>
 
 ; sub_a_imm
 ; subtract imm value from a register and save to a
+; A <-- A - IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: sub a, #data[7:0]
 sub a, #{imm: i8} =>
 {
@@ -219,6 +275,10 @@ sub a, #{imm: i8} =>
 
 ; sub_b_imm
 ; subtract imm value from b register and save to b
+; B <-- B - IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if adder carried out
 ; usage: sub b, #data[7:0]
 sub b, #{imm: i8} =>
 {
@@ -226,7 +286,11 @@ sub b, #{imm: i8} =>
 }
 
 ; and_a_b
-; Logical AND a register with b register and save to a
+; Bitwise AND a register with b register and save to a
+; A <-- A & B
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: and a, b
 and a, b =>
 {
@@ -234,7 +298,11 @@ and a, b =>
 }
 
 ; and_a_imm
-; Logical AND a register with imm value and save to a
+; Bitwise AND a register with imm value and save to a
+; A <-- A & IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: and a, #data[7:0]
 and a, #{imm: i8} =>
 {
@@ -242,7 +310,11 @@ and a, #{imm: i8} =>
 }
 
 ; and_b_imm
-; Logical AND b register with imm value and save to b
+; Bitwise AND B register with imm value and save to B
+; B <-- B & IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: and b, #data[7:0]
 and b, #{imm: i8} =>
 {
@@ -250,7 +322,11 @@ and b, #{imm: i8} =>
 }
 
 ; or_a_b
-; Logical OR baregister with b register and save to a
+; Bitwise OR a register with b register and save to a
+; A <-- A | B
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: or a, b
 or a, b =>
 {
@@ -258,7 +334,11 @@ or a, b =>
 }
 
 ; or_a_imm
-; Logical OR a register with imm value and save to a
+; Bitwise OR a register with imm value and save to a
+; A <-- A | IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: or a, #data[7:0]
 or a, #{imm: i8} =>
 {
@@ -266,7 +346,11 @@ or a, #{imm: i8} =>
 }
 
 ; or_b_imm
-; Logical OR b register with imm value and save to b
+; Bitwise OR b register with imm value and save to b
+; B <-- B | IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: or b, #data[7:0]
 or b, #{imm: i8} =>
 {
@@ -274,7 +358,11 @@ or b, #{imm: i8} =>
 }
 
 ; xor_a_b
-; Logical XOR a register with b register and save to a
+; Bitwise XOR a register with b register and save to a
+; A <-- A ^ B
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: xor a, b
 xor a, b =>
 {
@@ -282,7 +370,11 @@ xor a, b =>
 }
 
 ; xor_a_imm
-; Logical XOR a register with imm value and save to a
+; Bitwise XOR a register with immediate value and save to a register.
+; A <-- A ^ IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: xor a, #data[7:0]
 xor a, #{imm: i8} =>
 {
@@ -290,7 +382,11 @@ xor a, #{imm: i8} =>
 }
 
 ; xor_b_imm
-; Logical XOR b register with imm value and save to b
+; Bitwise XOR B register with immediate value and save to B register.
+; B <-- B ^ IMM
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: undefined
 ; usage: xor b, #data[7:0]
 xor b, #{imm: i8} =>
 {
@@ -298,7 +394,11 @@ xor b, #{imm: i8} =>
 }
 
 ; lshift_a
-; Logical shift left a register by one and save to a
+; Bitwise shift left A register by one and save to A register. Zero is shifted into LSB.
+; A <-- A << 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the left was set
 ; usage: lshift a
 lshift a =>
 {
@@ -306,7 +406,11 @@ lshift a =>
 }
 
 ; lshift_b
-; Logical shift left b register by one and save to b
+; Bitwise shift left B register by one and save to B. Zero is shifted into LSB.
+; B <-- B << 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the left was set
 ; usage: lshift b
 lshift b =>
 {
@@ -314,7 +418,11 @@ lshift b =>
 }
 
 ; rshift_a
-; Logical shift right a register by one and save to a
+; Bitwise shift right A register by one and save to A register. Zero is shifted into MSB.
+; A <-- A >> 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the right was set
 ; usage: rshift a
 rshift a =>
 {
@@ -322,7 +430,11 @@ rshift a =>
 }
 
 ; rshift_b
-; Logical shift right b register by one and save to b
+; Bitwise shift right B register by one and save to B register. Zero is shifted into MSB.
+; B <-- B >> 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the right was set
 ; usage: rshift b
 rshift b =>
 {
@@ -330,7 +442,8 @@ rshift b =>
 }
 
 ; store_a_dir
-; Store a register value to direct address
+; Store A register value to direct address.
+; MEM(ADDR) <-- A
 ; usage: store a, address[15:0]
 store a, {addr: i16} =>
 {
@@ -340,7 +453,8 @@ store a, {addr: i16} =>
 }
 
 ; store_a_indir
-; store a register to indirect address
+; Store A register value to indirect address.
+; MEM(MEM(ADDR)) <-- A
 ; usage: store a, (address[15:0])
 store a, ({addr: i16}) =>
 {
@@ -350,7 +464,8 @@ store a, ({addr: i16}) =>
 }
 
 ; store_b_dir
-; Store b register value to direct address
+; Store B register value to direct address.
+; MEM(ADDR) <-- B
 ; usage: store b, address[15:0]
 store b, {addr: i16} =>
 {
@@ -360,7 +475,8 @@ store b, {addr: i16} =>
 }
 
 ; store_b_indir
-; store b register to indirect address
+; Store B register value to indirect address.
+; MEM(MEM(ADDR)) <-- B
 ; usage: store b, (address[15:0])
 store b, ({addr: i16}) =>
 {
@@ -370,7 +486,8 @@ store b, ({addr: i16}) =>
 }
 
 ; storew_hl_dir
-; Store hl register value to direct address
+; Store HL register word to direct address. This performs a big endian 16-bit store, MSB first.
+; MEM(ADDR) <-- HL
 ; usage: store hl, address[15:0]
 storew hl, {addr: i16} =>
 {
@@ -380,7 +497,8 @@ storew hl, {addr: i16} =>
 }
 
 ; store_imm_dir
-; Store imm value to direct address
+; Store imm value to direct address.
+; MEM(ADDR) <-- IMM
 ; usage: store #data[7:0], address[15:0]
 store #{imm: i8}, {addr: i16} =>
 {
@@ -390,7 +508,8 @@ store #{imm: i8}, {addr: i16} =>
 }
 
 ; storew_imm_dir
-; Store imm word to direct address
+; Store imm word to direct address. This performs a big endian 16-bit store, MSB first.
+; MEM(ADDR) <-- IMM
 ; usage: storew #data[16:0], address[15:0]
 storew #{imm: i16}, {addr: i16} =>
 {
@@ -402,7 +521,9 @@ storew #{imm: i16}, {addr: i16} =>
 }
 
 ; push_a
-; push a register value to stack
+; Push A register value to stack. Increments stack pointer.
+; MEM(SP) <-- A
+; SP <-- SP + 1
 ; usage: push a
 push a =>
 {
@@ -410,7 +531,9 @@ push a =>
 }
 
 ; push_b
-; push b register value to stack
+; Push B register value to stack. Increments stack pointer.
+; MEM(SP) <-- B
+; SP <-- SP + 1
 ; usage: push b
 push b =>
 {
@@ -419,6 +542,7 @@ push b =>
 
 ; store_imm_hl_indir
 ; store imm value to indirect address in hl register
+; MEM(HL) <-- IMM
 ; usage: store #data[7:0], (hl)
 store #{imm: i8}, (hl) =>
 {
@@ -426,7 +550,8 @@ store #{imm: i8}, (hl) =>
 }
 
 ; load_a_hl_indir
-; load a register from indirect address in hl register
+; Load A register from indirect address in hl register.
+; A <-- MEM(HL)
 ; usage: load a, (hl)
 load a, (hl) =>
 {
@@ -434,7 +559,8 @@ load a, (hl) =>
 }
 
 ; load_b_hl_indir
-; load b register from indirect address in hl register
+; Load B register from indirect address in hl register.
+; B <-- MEM(HL)
 ; usage: load b, (hl)
 load b, (hl) =>
 {
@@ -458,7 +584,9 @@ store b, (hl) =>
 }
 
 ; push_imm
-; push immediate value to stack
+; Push immediate value to stack.
+; MEM(SP) <-- IMM
+; SP <-- SP + 1
 ; usage: push #data[7:0]
 push #{imm: i8} =>
 {
@@ -466,7 +594,9 @@ push #{imm: i8} =>
 }
 
 ; push_dir
-; push byte from source to stack
+; Push byte from direct address value to stack.
+; MEM(SP) <-- MEM(ADDR)
+; SP <-- SP + 1
 ; usage: push address[15:0]
 push {addr: i16} =>
 {
@@ -476,7 +606,9 @@ push {addr: i16} =>
 }
 
 ; push_indir
-; push byte from indirect source to stack
+; Push byte from indirect address value to stack.
+; MEM(SP) <-- MEM(MEM(ADDR))
+; SP <-- SP + 1
 ; usage: push (address[15:0])
 push ({addr: i16}) =>
 {
@@ -486,7 +618,9 @@ push ({addr: i16}) =>
 }
 
 ; pushw_imm
-; push immediate word to stack
+; Push immediate word to stack. This performs a big endian 16-bit store, MSB first.
+; MEM(SP) <-- IMM
+; SP <-- SP + 2
 ; usage: pushw #data[15:0]
 pushw #{imm: i16} =>
 {
@@ -504,7 +638,8 @@ pushw {addr: i16} =>
 }
 
 ; alloc
-; allocate n bytes on stack
+; Allocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the allocation microcode, but not designed to be used by the user.
+; SP <-- SP + IMM
 ; usage: alloc data[7:0]
 alloc {imm: i8} =>
 {
@@ -514,7 +649,8 @@ alloc {imm: i8} =>
 }
 
 ; dealloc
-; deallocate n bytes from stack
+; deallocate n bytes on stack. Limit of 255 bytes. Flags are updated as part of the deallocation microcode, but not designed to be used by the user.
+; SP <-- SP - IMM
 ; usage: dealloc data[7:0]
 dealloc {imm: i8} =>
 {
@@ -540,7 +676,9 @@ popw hl =>
 }
 
 ; pop_a
-; pop value off of stack into a register
+; Pop value off of stack into A register. Decrements stack pointer.
+; MEM(SP) <-- A
+; SP <-- SP - 1
 ; usage: pop a
 pop a =>
 {
@@ -548,7 +686,9 @@ pop a =>
 }
 
 ; pop_b
-; pop value off of stack into b register
+; Pop value off of stack into B register. Decrements stack pointer.
+; MEM(SP) <-- B
+; SP <-- SP - 1
 ; usage: pop b
 pop b =>
 {
@@ -617,6 +757,7 @@ movew {src: i16}, {dst: i16} =>
 
 ; jmp
 ; Unconditional Jump
+; PC <-- ADDR
 ; usage: jmp address[15:0]
 jmp {addr: i16} =>
 {
@@ -626,7 +767,8 @@ jmp {addr: i16} =>
 }
 
 ; jmp_hl
-; Jump to address in hl register
+; Jump to address in HL register.
+; PC <-- HL
 ; usage: jmp hl
 jmp hl =>
 {
@@ -702,7 +844,10 @@ jnn {addr: i16} =>
 }
 
 ; call
-; Call Subroutine
+; Call Subroutine. This places the return address on the stack (big-endian) then jumps to the subroutine address. Program can return from Subroutine.
+; MEM(SP) <-- PC
+; SP <-- SP + 2
+; PC <-- IMM
 ; usage: call address[15:0]
 call {addr: i16} =>
 {
@@ -728,7 +873,9 @@ test b =>
 }
 
 ; ret
-; Return from Subroutine
+; Return from Subroutine call to the return address saved on the stack.
+; PC <-- MEM(SP)
+; SP <-- SP - 2
 ; usage: ret
 ret  =>
 {
@@ -814,7 +961,7 @@ assert nf, #{imm: i8} =>
 }
 
 ; halt
-; Halts execution
+; Halts execution.
 ; usage: halt
 halt =>
 {
