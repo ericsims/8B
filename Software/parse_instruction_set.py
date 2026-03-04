@@ -7,6 +7,7 @@ import yaml
 from yaml.resolver import Resolver
 from termcolor import colored
 from tabulate import tabulate
+from mdutils.mdutils import MdUtils
 
 
 def validate_length(inst):
@@ -111,9 +112,9 @@ def generate_ucode(iss, verbose=False):
                     ctrl_map[list(inst_name.keys())[0]] = [k, idx]
         else:
             ctrl.append(k)
-            if ct_['active'] == 'high':
+            if ct_[k]['active']== 'high':
                 ctrl_inversion[k] = 0
-            elif ct_['active'] == 'low':
+            elif ct_[k]['active'] == 'low':
                 ctrl_inversion[k] = 1
             else:
                 raise Exception(f"***ERROR: {k} instruction is not active 'high' or 'low'")
@@ -133,8 +134,8 @@ def generate_ucode(iss, verbose=False):
     # append control signals to ROM output
     for in_ in iss['input']:
         k = list(in_.keys())[0]
-        if 'bits' in in_:
-            for n in range(0, in_['bits']):
+        if 'bits' in in_[k]:
+            for n in range(0, in_[k]['bits']):
                 inpt.append(f"{k}{n}")
         else:
             inpt.append(k)
@@ -208,7 +209,67 @@ def generate_ucode(iss, verbose=False):
                 #    print(row[16:24][::-1],row[8:16][::-1],row[0:8][::-1], f"{(8*rr)}:{(8*(rr+1))}", F"{byte_:x}")
 
 
+def generate_docs(iss, verbose=False):
+    print("generating instruction set documentation...")
+    mdFile = MdUtils(file_name='docs/instructions.md', title='Instruction Set Manual')
 
+    # ctrl sigs
+    mdFile.new_header(level=1, title='Control Signals')
+    ctrl_sig_table = ['Signal', 'Description', 'Active High/Low']
+
+    for sig in iss['control_signals']:
+        sig_name = list(sig.keys())[0]
+        if isinstance(sig[sig_name], list):
+            for n, details in enumerate(sig[sig_name]):
+                sub_sig = list(details.keys())[0]
+                ctrl_sig_table.append(f"{sig_name}: {n}<br>{sub_sig}")
+                ctrl_sig_table.append(details[sub_sig].get('description', ' - '))
+                ctrl_sig_table.append(details[sub_sig].get('active', ' - '))
+        else:
+            ctrl_sig_table.append(sig_name)
+            ctrl_sig_table.append(sig[sig_name].get('description',' - '))
+            ctrl_sig_table.append(sig[sig_name].get('active', ' - '))
+    mdFile.new_table(3, int(len(ctrl_sig_table)/3), ctrl_sig_table, text_align = 'left')
+
+    # Instructions
+    mdFile.new_header(level=1, title='Instructions')
+    ## table
+    inst_list = ['-']*int(2**8)
+    for inst, details in IS['instructions'].items():
+        if inst == 'default': continue
+        inst_list[int(details['opcode'])] = f'{inst}'
+
+    inst_table = [ x for i in range(0, len(inst_list), 4) for x in [f'{i:02X}']+inst_list[i:i+4] ]
+    mdFile.new_table(5, int(len(inst_table)/5)+1, ['opcode', '', '', '', '']+inst_table, text_align = 'left')
+    
+    ## instruction details
+    for inst, details in IS['instructions'].items():
+        if inst == 'default': continue
+
+        mdFile.new_header(level=2, title=details.get('title', inst))
+        mdFile.new_paragraph(details.get('description'))
+    
+        if 'opcode' in details.keys():
+            mdFile.new_paragraph(f"opcode: 0x{details['opcode']:02X}")
+        if 'usage' in details.keys():
+            mdFile.new_paragraph('Usage:')
+            mdFile.insert_code(details['usage'], language='asm')
+
+        modifies_regs = []
+        ucode = details.get('ucode')
+        ctrl_sigs_used = []
+        if isinstance(ucode, list):
+            ctrl_sigs_used = set(itertools.chain.from_iterable(ucode))
+        elif isinstance(ucode, dict):
+            ctrl_sigs_used = set(itertools.chain.from_iterable(ucode[True]+ucode[False]))        
+        for sig in ['FI', 'DI', 'JI', 'KI']:
+            if sig in ctrl_sigs_used:
+                modifies_regs.append(sig)
+        
+        if 'FI' in modifies_regs:
+            mdFile.new_paragraph('This instruction modifies the flags register')
+
+    mdFile.create_md_file()
 
 
 with open('instruction_set.yaml', 'r') as stream:
@@ -256,7 +317,9 @@ with open('instruction_set.yaml', 'r') as stream:
             for key, value in IS['instructions'].items():
                 if 'asm_def' in value:
                     asm.write(f"; {key}\n")
-                    asm.write(f"; {value['description']}\n")
+                    for line in value['description'].split('\n'):
+                        if line == '': continue
+                        asm.write(f"; {line}\n")
                     asm.write(f"; usage: {value['usage']}\n")
                     inst_def = value['asm_def'].replace('{OPCODE}', f"0x{value['opcode']:02X}")
                     asm.write(f"{inst_def}\n")
@@ -267,6 +330,7 @@ with open('instruction_set.yaml', 'r') as stream:
         print()
 
         generate_ucode(IS)
+        generate_docs(IS)
 
     except yaml.YAMLError as exc:
         raise Exception(exc)

@@ -2,141 +2,142 @@
 control_signals:
   - OUT:  # 4 bits, 16 options
       - NONE:  # 0
-        description: 'none'
+          description: 'none'
       - HT:  # 1
-        description: 'Halt'
+          description: 'Halt'
       - PO:  # 2
-        description: 'Program Counter Out'
+          description: 'Program Counter Out'
       - AO:  # 3
-        description: 'A Register Out'
+          description: 'A Register Out'
       - BO:  # 4
-        description: 'B Register Out'
+          description: 'B Register Out'
       - MO:  # 5
-        description: 'Memory Out'
+          description: 'Memory Out'
       - NO:  # 6
-        description: 'Stack Pointer Out'
+          description: 'Stack Pointer Out'
       - SO:  # 7
-        description: 'Stack Out'
+          description: 'Stack Out'
       - HO:  # 8
-        description: 'HL Register Out'
+          description: 'HL Register Out'
       - JO:  # 9
-        description: 'J Scratch Register Out'
+          description: 'J Scratch Register Out'
       - KO:  # 10
-        description: 'K Scratch Register Out'
+          description: 'K Scratch Register Out'
       - DO:  # 11
-        description: 'D Scratch Register Out'
+          description: 'D Scratch Register Out'
     bits: 4
   - IN:  # 4 bits, 16 options
       - NONE:  # 0
-        description: 'none'
+          description: 'none'
       - PI:  # 1
-        description: 'Program Counter In'
+          description: 'Program Counter In'
       - II:  # 2
-        description: 'Instruction Register In'
+          description: 'Instruction Register In'
       - XI:  # 3
-        description: 'ALU X Register In'
+          description: 'ALU X Register In'
       - YI:  # 4
-        description: 'ALU Y Register In'
+          description: 'ALU Y Register In'
       - AI:  # 5
-        description: 'A Register In'
+          description: 'A Register In'
       - BI:  # 6
-        description: 'B Register In'
+          description: 'B Register In'
       - HI:  # 7
-        description: 'HL Register In'
+          description: 'HL Register In'
       - MA:  # 8
-        description: 'Memory Address Register In'
+          description: 'Memory Address Register In'
       - MI:  # 9
-        description: 'Memory In'
+          description: 'Memory In'
       - NI:  # 10
-        description: 'Stack Pointer In'
+          description: 'Stack Pointer In'
       - SI:  # 11
-        description: 'Stack In'
+          description: 'Stack In'
       - JI:  # 12
-        description: 'J Scratch Register In'
+          description: 'J Scratch Register In'
       - KI:  # 13
-        description: 'K Scratch Register In'
+          description: 'K Scratch Register In'
       - DI:  # 14
-        description: 'D Scratch Register In'
+          description: 'D Scratch Register In'
     bits: 4
   - ALU:  # 4 bits
       - NONE:  # 0
-        description: 'none'
+          description: 'none'
       - ADD:  # 1
-        description: 'Add'
+          description: 'Add'
       - SUB:  # 2
-        description: 'Subtract'
+          description: 'Subtract'
       - AND:  # 3
-        description: 'Logical AND'
+          description: 'Logical AND'
       - OR:   # 4
-        description: 'Logical OR'
+          description: 'Logical OR'
       - XOR:  # 5
-        description: 'Logical XOR'
+          description: 'Logical XOR'
       - SHL:  # 6
-        description: 'Logical Shift Left'
+          description: 'Logical Shift Left'
       - SHR:  # 7
-        description: 'Logical Shift Right'
+          description: 'Logical Shift Right'
       - ONES:  # 8
-        description: 'Output 0xFF'
+          description: 'Output 0xFF'
       - ZERO:  # 9
-        description: 'Output 0x00'
+          description: 'Output 0x00'
       - ONE:  # 10
-        description: 'Output 0x01'
+          description: 'Output 0x01'
     bits: 4
   - CE:
-    description: 'Program Counter Enable'
-    active: low
+      description: 'Program Counter Enable'
+      active: low
   - FI:
-    description: 'ALU Flag Refresh'
-    active: low
+      description: 'ALU Flag Refresh'
+      active: low
   - LM:
-    description: 'Bus MSB Byte Select'
-    active: low
+      description: 'Bus MSB Byte Select'
+      active: low
   - RU:
-    description: 'Reset Microcode Counter'
-    active: low
+      description: 'Reset Microcode Counter'
+      active: low
   - MC:
-    description: 'Memory Address Increment'
-    active: low
+      description: 'Memory Address Increment'
+      active: low
   - IS:
-    description: 'Increment Stack Pointer'
-    active: low
+      description: 'Increment Stack Pointer'
+      active: low
   - DS:
-    description: 'Decrement Stack Pointer'
-    active: low
+      description: 'Decrement Stack Pointer'
+      active: low
   - AT:
-    description: 'Assert Condition'
-    active: low
+      description: 'Assert Condition'
+      active: low
   - UC20:
-    description: 'RFU20'
-    active: low
+      description: 'RFU20'
+      active: low
   - UC21:
-    description: 'RFU21'
-    active: low
+      description: 'RFU21'
+      active: low
   - UC22:
-    description: 'RFU22'
-    active: low
+      description: 'RFU22'
+      active: low
   - UC23:
-    description: 'RFU23'
-    active: low
+      description: 'RFU23'
+      active: low
 
 input:
   - ucode_count:  # ucode counter keyword. don't change
-    bits: 6
+      bits: 6
   - instruction:  # instruction keyword. don't change
-    bits: 8
+      bits: 8
   - ZF:
-    description: 'Zero Flag'
-    active: high
+      description: 'Zero Flag'
+      active: high
   - CF:
-    description: 'Carry Flag'
-    active: high
+      description: 'Carry Flag'
+      active: high
   - NF:
-    description: 'Negative Flag'
-    active: high
+      description: 'Negative Flag'
+      active: high
 
 instructions:
   nop:
-    description: 'no operation'
+    title: "No Operation"
+    description: 'No operation, or "no op" or "nop" command does not perfom any action.'
     duration: 32  # clock cycles
     operands: 0  # bytes
     usage: nop
@@ -182,7 +183,11 @@ instructions:
       - [RU]                 # Done
 
   load_a_imm:
-    description: 'Load a register with immediate value'
+    title: "Load A Immediate"
+    description: |
+      Load a register with immediate value
+
+      A <-- IMM
     duration: 5  # clock cycles
     operands: 1  # byte (immediate data)
     usage: 'load a, #data[7:0]'
@@ -200,7 +205,11 @@ instructions:
       - [MO, AI, RU]         # load data into a register. ucode counter reset
 
   load_a_dir:
-    description: 'load a register from direct address'
+    title: 'Load A Direct'
+    description: |
+      load a register from direct address
+
+      A <-- MEM(IMM)
     duration: 10  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'load a, addresss[15:0]'
@@ -228,7 +237,11 @@ instructions:
       - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
 
   load_a_indir:
-    description: 'load a register from indirect address'
+    title: 'Load A Indirect'
+    description: |
+      load a register from indirect address
+
+      A <-- MEM(MEM(IMM))
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'load a, (address[15:0])'
@@ -262,7 +275,11 @@ instructions:
       - [MO, AI, RU]         # load data out of memory into A reg. ucode counter reset
 
   loadw_hl_sp:
-    description: 'load hl with value in sp'
+    title: 'Load HL with Stack Pointer'
+    description: |
+      load hl with the address of the stack pointer register
+
+      HL <-- SP
     duration: 5  # clock cycles
     operands: 0  # bytes
     usage: 'loadw hl, sp'
@@ -282,6 +299,7 @@ instructions:
       - ['NO', HI, LM, RU]     # save SP MSB
 
   load_b_imm:
+    title: 'Load B Immediate'
     description: 'load b register with immediate value'
     duration: 5  # clock cycles
     operands: 1  # byte (immediate data)
@@ -300,7 +318,11 @@ instructions:
       - [MO, BI, RU]         # load data into a register. ucode counter reset
 
   load_b_dir:
-    description: 'load b register from direct address'
+    title: 'Load B Direct'
+    description: |
+      load b register from direct address
+
+      B <-- MEM(IMM)
     duration: 10  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'load b, addresss[15:0]'
@@ -328,7 +350,11 @@ instructions:
       - [MO, BI, RU]         # load data out of memory into B reg. ucode counter reset
 
   load_b_indir:
-    description: 'load a register from indirect address'
+    title: 'Load B Indirect'
+    description: |
+      load a register from indirect address
+
+      A <-- MEM(MEM(IMM))
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'load b, (address[15:0])'
@@ -363,7 +389,11 @@ instructions:
 
 
   loadw_hl_hl_indir:
-    description: 'load hl register with word from indirect address in hl register'
+    title: 'Load HL Indirect HL'
+    description: |
+      load hl register with word from indirect address in hl register
+
+      HL <-- MEM(HL)
     duration: 10  # clock cycles
     operands: 0  # bytes
     usage: 'loadw hl, (hl)'
@@ -390,7 +420,11 @@ instructions:
       - [MO, HI, RU]         # Load LSB of data in hl register. ucode counter reset
 
   loadw_hl_imm:
-    description: 'load hl register with immediate word'
+    title: 'Load HL Immediate'
+    description: |
+      load hl register with immediate word
+
+      HL <-- IMM
     duration: 7  # clock cycles
     operands: 2  # bytes (immediate data)
     usage: 'loadw hl, #data[15:0]'
@@ -412,7 +446,11 @@ instructions:
       - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
 
   loadw_hl_dir:
-    description: 'load hl register from direct address'
+    title: 'Load HL Direct'
+    description: |
+      load hl register from word from direct address
+
+      HL <-- MEM(IMM)
     duration: 12  # clock cycles
     operands: 2  # bytes (direct address)
     usage: 'loadw hl, address[15:0]'
@@ -442,7 +480,11 @@ instructions:
       - [MO, HI, RU]         # load data LSB into HL register LSB. ucode counter reset
 
   load_a_b:
-    description: 'Load a register with value in b register'
+    title: "Load A B"
+    description: |
+      Load a register with value in b register
+
+      A <-- B
     duration: 4  # clock cycles
     operands: 0  # bytes
     usage: 'load a, b'
@@ -459,7 +501,11 @@ instructions:
       - [AI, BO, RU]         # load data into a register. ucode counter reset
 
   addw_hl_a:
-    description: 'add a to hl word and save to hl word'
+    title: 'Add HL A'
+    description: |
+      add a to hl word and save to hl word
+
+      HL <-- HL + A
     duration: 9  # clock cycles
     operands: 0
     usage: 'addw hl, a'
@@ -495,7 +541,11 @@ instructions:
         - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   addw_hl_b:
-    description: 'add b to hl word and save to hl word'
+    title: 'Add HL B'
+    description: |
+      add b to hl word and save to hl word
+
+      HL <-- HL + B
     duration: 9  # clock cycles
     operands: 0
     usage: 'addw hl, b'
@@ -531,7 +581,11 @@ instructions:
         - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   addw_hl_imm:
-    description: 'add imm byte to hl word and save to hl word'
+    title: 'Add HL Immediate'
+    description: |
+      add imm byte to hl word and save to hl word
+
+      HL <-- HL + IMM
     duration: 9  # clock cycles
     operands: 1  # byte (immediate value)
     usage: 'addw hl, #data[7:0]'
@@ -567,7 +621,11 @@ instructions:
         - [ADD, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   subw_hl_a:
-    description: 'subtract a byte from hl word and save to hl word'
+    title: 'Subtract HL A'
+    description: |
+      subtract a byte from hl word and save to hl word
+
+      HL <-- HL - A
     duration: 9  # clock cycles
     operands: 0
     usage: 'subw hl, a'
@@ -603,7 +661,11 @@ instructions:
         - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   subw_hl_b:
-    description: 'subtract b byte from hl word and save to hl word'
+    title: 'Subtract HL B'
+    description: |
+      subtract b byte from hl word and save to hl word
+
+      HL <-- HL - B
     duration: 9  # clock cycles
     operands: 0
     usage: 'subw hl, b'
@@ -639,7 +701,11 @@ instructions:
         - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   subw_hl_imm:
-    description: 'subtract imm byte to hl word and save to hl word'
+    title: 'Subtract HL Immediate'
+    description: |
+      subtract imm byte to hl word and save to hl word
+
+      HL <-- HL - IMM
     duration: 9  # clock cycles
     operands: 1  # byte (immediate value)
     usage: 'subw hl, #data[7:0]'
@@ -675,7 +741,11 @@ instructions:
         - [SUB, FI, HI, LM, RU]  # save sum to hl MSB and save flags. ucode counter reset
 
   load_b_a:
-    description: 'Load b register with value in a register'
+    title: "Load B A"
+    description: |
+      Load b register with value in a register
+
+      B <-- A
     duration: 4  # clock cycles
     operands: 0  # bytes
     usage: 'load b, a'
@@ -692,7 +762,11 @@ instructions:
       - [BI, AO, RU]         # load data into b register. ucode counter reset
 
   loadw_sp_imm:
-    description: 'load sp register with immediate word'
+    title: 'Load SP Immediate'
+    description: |
+      load sp register with immediate word
+
+      SP <-- IMM
     duration: 7  # clock cycles
     operands: 2  # bytes (immediate data)
     usage: 'loadw sp, #data[15:0]'
@@ -714,7 +788,11 @@ instructions:
       - [MO, NI, RU]         # load data LSB into SP register LSB. ucode counter reset
 
   add_a_b:
-    description: 'add a register to b register and save to a'
+    title: 'Add A B'
+    description: |
+      add a register to b register and save to a
+
+      A <-- A + B
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'add a, b'
@@ -733,7 +811,11 @@ instructions:
       - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
 
   add_a_imm:
-    description: 'add a register to imm value and save to a'
+    title: 'Add A Immediate'
+    description: |
+      add a register to imm value and save to a
+
+      A <-- A + IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'add a, #data[7:0]'
@@ -752,7 +834,11 @@ instructions:
       - [ADD, AI, FI, RU]    # ADD, save to A reg, update flags. ucode counter reset
 
   add_b_imm:
-    description: 'add b register to imm value and save to b'
+    title: 'Add B Immediate'
+    description: |
+      add b register to imm value and save to b
+
+      B <-- B + IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'add b, #data[7:0]'
@@ -771,7 +857,11 @@ instructions:
       - [ADD, BI, FI, RU]    # ADD, save to B reg, update flags. ucode counter reset
 
   sub_a_b:
-    description: 'Subtract b register from a register and save to a'
+    title: 'Subtract A B'
+    description: |
+      Subtract b register from a register and save to a
+
+      A <-- A - B
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'sub a, b'
@@ -790,7 +880,11 @@ instructions:
       - [SUB, AI, FI, RU]    # SUBTRACT, save to A reg, update flags. ucode counter reset
 
   sub_a_imm:
-    description: 'subtract imm value from a register and save to a'
+    title: 'Subtract A Immediate'
+    description: |
+      subtract imm value from a register and save to a
+
+      A <-- A - IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'sub a, #data[7:0]'
@@ -809,7 +903,11 @@ instructions:
       - [SUB, AI, FI, RU]    # SUBTRACT, save to A reg, update flags. ucode counter reset
 
   sub_b_imm:
-    description: 'subtract imm value from b register and save to b'
+    title: 'Subtract B Immediate'
+    description: |
+      subtract imm value from b register and save to b
+
+      B <-- B - IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'sub b, #data[7:0]'
@@ -828,7 +926,11 @@ instructions:
       - [SUB, BI, FI, RU]    # SUBTRACT, save to B reg, update flags. ucode counter reset
 
   and_a_b:
-    description: 'Logical AND a register with b register and save to a'
+    title: 'Bitwise And A B'
+    description: |
+      Bitwise AND a register with b register and save to a
+
+      A <-- A & B
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'and a, b'
@@ -847,7 +949,11 @@ instructions:
       - [AND, AI, FI, RU]    # AND, save to A reg, update flags. ucode counter reset
 
   and_a_imm:
-    description: 'Logical AND a register with imm value and save to a'
+    title: 'Bitwise And A Immediate'
+    description: |
+      Bitwise AND a register with imm value and save to a
+
+      A <-- A & IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'and a, #data[7:0]'
@@ -866,7 +972,11 @@ instructions:
       - [AND, AI, FI, RU]    # AND, save to A reg, update flags. ucode counter reset
 
   and_b_imm:
-    description: 'Logical AND b register with imm value and save to b'
+    title: 'Bitwise And B Immediate'
+    description: |
+      Bitwise AND B register with imm value and save to B
+
+      B <-- B & IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'and b, #data[7:0]'
@@ -885,7 +995,11 @@ instructions:
       - [AND, BI, FI, RU]    # AND, save to B reg, update flags. ucode counter reset
 
   or_a_b:
-    description: 'Logical OR baregister with b register and save to a'
+    title: 'Bitwise Or A B'
+    description: |
+      Bitwise OR a register with b register and save to a
+
+      A <-- A | B
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'or a, b'
@@ -904,7 +1018,11 @@ instructions:
       - [OR, AI, FI, RU]     # OR, save to A reg, update flags. ucode counter reset
 
   or_a_imm:
-    description: 'Logical OR a register with imm value and save to a'
+    title: 'Bitwise Or A Immediate'
+    description: |
+      Bitwise OR a register with imm value and save to a
+
+      A <-- A | IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'or a, #data[7:0]'
@@ -923,7 +1041,11 @@ instructions:
       - [OR, AI, FI, RU]     # OR, save to A reg, update flags. ucode counter reset
 
   or_b_imm:
-    description: 'Logical OR b register with imm value and save to b'
+    title: 'Bitwise Or B Immediate'
+    description: |
+      Bitwise OR b register with imm value and save to b
+
+      B <-- B | IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'or b, #data[7:0]'
@@ -942,7 +1064,11 @@ instructions:
       - [OR, BI, FI, RU]     # OR, save to B reg, update flags. ucode counter reset
 
   xor_a_b:
-    description: 'Logical XOR a register with b register and save to a'
+    title: 'Bitwise Xor A B'
+    description: |
+      Bitwise XOR a register with b register and save to a
+
+      A <-- A ^ B
     duration: 6  # clk cycles
     operands: 0  # bytes
     usage: 'xor a, b'
@@ -961,7 +1087,11 @@ instructions:
       - [XOR, AI, FI, RU]    # XOR, save to A reg, update flags. ucode counter reset
 
   xor_a_imm:
-    description: 'Logical XOR a register with imm value and save to a'
+    title: 'Bitwise Xor A Immediate'
+    description: |
+      Bitwise XOR a register with immediate value and save to a register.
+
+      A <-- A ^ IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'xor a, #data[7:0]'
@@ -980,7 +1110,11 @@ instructions:
       - [XOR, AI, FI, RU]     # XOR, save to A reg, update flags. ucode counter reset
 
   xor_b_imm:
-    description: 'Logical XOR b register with imm value and save to b'
+    title: 'Bitwise Xor B Immediate'
+    description: |
+      Bitwise XOR B register with immediate value and save to B register.
+
+      B <-- B ^ IMM
     duration: 6  # clk cycles
     operands: 1  # byte (immediate data)
     usage: 'xor b, #data[7:0]'
@@ -999,7 +1133,15 @@ instructions:
       - [XOR, BI, FI, RU]    # XOR, save to B reg, update flags. ucode counter reset
 
   lshift_a:
-    description: 'Logical shift left a register by one and save to a'
+    title: 'Bitwise Left Shift A'
+    description: |
+      Bitwise shift left A register by one and save to A register. Zero is shifted into LSB.
+
+      A <-- A << 1
+
+      ZF: set if result is zero
+      NF: set if result bit 7 is set
+      CF: set if bit shifted off of the left was set
     duration: 5  # clk cycles
     operands: 0  # bytes
     usage: 'lshift a'
@@ -1017,7 +1159,15 @@ instructions:
       - [SHL, AI, FI, RU]    # SHL, save to A reg, update flags. ucode counter reset
 
   lshift_b:
-    description: 'Logical shift left b register by one and save to b'
+    title: 'Bitwise Left Shift B'
+    description: |
+      Bitwise shift left B register by one and save to B. Zero is shifted into LSB.
+
+      B <-- B << 1
+
+      ZF: set if result is zero
+      NF: set if result bit 7 is set
+      CF: set if bit shifted off of the left was set
     duration: 5  # clk cycles
     operands: 0  # bytes
     usage: 'lshift b'
@@ -1035,7 +1185,15 @@ instructions:
       - [SHL, BI, FI, RU]    # SHL, save to B reg, update flags. ucode counter reset
 
   rshift_a:
-    description: 'Logical shift right a register by one and save to a'
+    title: 'Bitwise Right Shift A'
+    description: |
+      Bitwise shift right A register by one and save to A register. Zero is shifted into MSB.
+
+      A <-- A >> 1
+
+      ZF: set if result is zero
+      NF: set if result bit 7 is set
+      CF: set if bit shifted off of the right was set
     duration: 5  # clk cycles
     operands: 0  # bytes
     usage: 'rshift a'
@@ -1053,7 +1211,15 @@ instructions:
       - [SHR, AI, FI, RU]    # SHR, save to A reg, update flags. ucode counter reset
 
   rshift_b:
-    description: 'Logical shift right b register by one and save to b'
+    title: 'Bitwise Right Shift B'
+    description: |
+      Bitwise shift right B register by one and save to B register. Zero is shifted into MSB.
+
+      B <-- B >> 1
+
+      ZF: set if result is zero
+      NF: set if result bit 7 is set
+      CF: set if bit shifted off of the right was set
     duration: 5  # clk cycles
     operands: 0  # bytes
     usage: 'rshift b'
@@ -1071,7 +1237,11 @@ instructions:
       - [SHR, BI, FI, RU]    # SHR, save to B reg, update flags. ucode counter reset
 
   store_a_dir:
-    description: 'Store a register value to direct address'
+    title: 'Store A Direct'
+    description: |
+      Store A register value to direct address.
+
+      MEM(IMM) <-- A
     duration: 10  # clock cycles
     operands: 2  # byte (direct address)
     usage: 'store a, address[15:0]'
@@ -1099,7 +1269,11 @@ instructions:
       - [AO, MI, RU]         # store data from A reg to memory. ucode counter reset
 
   store_a_indir:
-    description: 'store a register to indirect address'
+    title: 'Store A Indirect'
+    description: |
+      Store A register value to indirect address.
+
+      MEM(MEM(IMM)) <-- A
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'store a, (address[15:0])'
@@ -1133,7 +1307,11 @@ instructions:
       - [MI, AO, RU]         # store data in A reg to memory. ucode counter reset
 
   store_b_dir:
-    description: 'Store b register value to direct address'
+    title: 'Store B Direct'
+    description: |
+      Store B register value to direct address.
+
+      MEM(IMM) <-- B
     duration: 10  # clock cycles
     operands: 2  # byte (direct address)
     usage: 'store b, address[15:0]'
@@ -1161,7 +1339,11 @@ instructions:
       - [BO, MI, RU]         # store data from B reg to memory. ucode counter reset
 
   store_b_indir:
-    description: 'store b register to indirect address'
+    title: 'Store B Indirect'
+    description: |
+      Store B register value to indirect address.
+
+      MEM(MEM(IMM)) <-- B
     duration: 15  # clock cycles
     operands: 2  # bytes (indirect address)
     usage: 'store b, (address[15:0])'
@@ -1448,7 +1630,7 @@ instructions:
   push_imm:
     description: 'push immediate value to stack'
     duration: 7  # clock cycles
-    operands: 1  # byte (immedate value)
+    operands: 1  # byte (immediate value)
     usage: 'push #data[7:0]'
     opcode: 0x3A
     asm_def: |
@@ -1539,7 +1721,7 @@ instructions:
   pushw_imm:
     description: 'push immediate word to stack'
     duration: 11  # clock cycles
-    operands: 2  # bytes (immedate value)
+    operands: 2  # bytes (immediate value)
     usage: 'pushw #data[15:0]'
     opcode: 0x4C
     asm_def: |
@@ -3750,7 +3932,7 @@ instructions:
     duration: 3  # clock cycles
     operands: 0  # bytes
     # usage: TBD
-    opcode: ''
+    opcode: null
     ucode:
       - [PO, MA, LM]         # Fetch cycle, load MAR with MSB in PC
       - [PO, MA]             # Fetch cycle, load MAR with LSB in PC

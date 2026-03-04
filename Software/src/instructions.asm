@@ -4,7 +4,7 @@
 {
 
 ; nop
-; no operation
+; No operation, or "no op" or "nop" command does not perfom any action.
 ; usage: nop
 nop =>
 {
@@ -13,6 +13,7 @@ nop =>
 
 ; load_a_imm
 ; Load a register with immediate value
+; A <-- IMM
 ; usage: load a, #data[7:0]
 load a, #{imm: i8} =>
 {
@@ -21,6 +22,7 @@ load a, #{imm: i8} =>
 
 ; load_a_dir
 ; load a register from direct address
+; A <-- MEM(IMM)
 ; usage: load a, addresss[15:0]
 load a, {addr: i16} =>
 {
@@ -31,6 +33,7 @@ load a, {addr: i16} =>
 
 ; load_a_indir
 ; load a register from indirect address
+; A <-- MEM(MEM(IMM))
 ; usage: load a, (address[15:0])
 load a, ({addr: i16}) =>
 {
@@ -40,7 +43,8 @@ load a, ({addr: i16}) =>
 }
 
 ; loadw_hl_sp
-; load hl with value in sp
+; load hl with the address of the stack pointer register
+; HL <-- SP
 ; usage: loadw hl, sp
 loadw hl, sp =>
 {
@@ -57,6 +61,7 @@ load b, #{imm: i8} =>
 
 ; load_b_dir
 ; load b register from direct address
+; B <-- MEM(IMM)
 ; usage: load b, addresss[15:0]
 load b, {addr: i16} =>
 {
@@ -67,6 +72,7 @@ load b, {addr: i16} =>
 
 ; load_b_indir
 ; load a register from indirect address
+; A <-- MEM(MEM(IMM))
 ; usage: load b, (address[15:0])
 load b, ({addr: i16}) =>
 {
@@ -77,6 +83,7 @@ load b, ({addr: i16}) =>
 
 ; loadw_hl_hl_indir
 ; load hl register with word from indirect address in hl register
+; HL <-- MEM(HL)
 ; usage: loadw hl, (hl)
 loadw hl, (hl) =>
 {
@@ -85,6 +92,7 @@ loadw hl, (hl) =>
 
 ; loadw_hl_imm
 ; load hl register with immediate word
+; HL <-- IMM
 ; usage: loadw hl, #data[15:0]
 loadw hl, #{imm: i16} =>
 {
@@ -94,7 +102,8 @@ loadw hl, #{imm: i16} =>
 }
 
 ; loadw_hl_dir
-; load hl register from direct address
+; load hl register from word from direct address
+; HL <-- MEM(IMM)
 ; usage: loadw hl, address[15:0]
 loadw hl, {addr: i16} =>
 {
@@ -105,6 +114,7 @@ loadw hl, {addr: i16} =>
 
 ; load_a_b
 ; Load a register with value in b register
+; A <-- B
 ; usage: load a, b
 load a, b =>
 {
@@ -113,6 +123,7 @@ load a, b =>
 
 ; addw_hl_a
 ; add a to hl word and save to hl word
+; HL <-- HL + A
 ; usage: addw hl, a
 addw hl, a =>
 {
@@ -121,6 +132,7 @@ addw hl, a =>
 
 ; addw_hl_b
 ; add b to hl word and save to hl word
+; HL <-- HL + B
 ; usage: addw hl, b
 addw hl, b =>
 {
@@ -129,6 +141,7 @@ addw hl, b =>
 
 ; addw_hl_imm
 ; add imm byte to hl word and save to hl word
+; HL <-- HL + IMM
 ; usage: addw hl, #data[7:0]
 addw hl, #{imm: i8} =>
 {
@@ -137,6 +150,7 @@ addw hl, #{imm: i8} =>
 
 ; subw_hl_a
 ; subtract a byte from hl word and save to hl word
+; HL <-- HL - A
 ; usage: subw hl, a
 subw hl, a =>
 {
@@ -145,6 +159,7 @@ subw hl, a =>
 
 ; subw_hl_b
 ; subtract b byte from hl word and save to hl word
+; HL <-- HL - B
 ; usage: subw hl, b
 subw hl, b =>
 {
@@ -153,6 +168,7 @@ subw hl, b =>
 
 ; subw_hl_imm
 ; subtract imm byte to hl word and save to hl word
+; HL <-- HL - IMM
 ; usage: subw hl, #data[7:0]
 subw hl, #{imm: i8} =>
 {
@@ -161,6 +177,7 @@ subw hl, #{imm: i8} =>
 
 ; load_b_a
 ; Load b register with value in a register
+; B <-- A
 ; usage: load b, a
 load b, a =>
 {
@@ -169,6 +186,7 @@ load b, a =>
 
 ; loadw_sp_imm
 ; load sp register with immediate word
+; SP <-- IMM
 ; usage: loadw sp, #data[15:0]
 loadw sp, #{imm: i16} =>
 {
@@ -179,6 +197,7 @@ loadw sp, #{imm: i16} =>
 
 ; add_a_b
 ; add a register to b register and save to a
+; A <-- A + B
 ; usage: add a, b
 add a, b =>
 {
@@ -187,6 +206,7 @@ add a, b =>
 
 ; add_a_imm
 ; add a register to imm value and save to a
+; A <-- A + IMM
 ; usage: add a, #data[7:0]
 add a, #{imm: i8} =>
 {
@@ -195,6 +215,7 @@ add a, #{imm: i8} =>
 
 ; add_b_imm
 ; add b register to imm value and save to b
+; B <-- B + IMM
 ; usage: add b, #data[7:0]
 add b, #{imm: i8} =>
 {
@@ -203,6 +224,7 @@ add b, #{imm: i8} =>
 
 ; sub_a_b
 ; Subtract b register from a register and save to a
+; A <-- A - B
 ; usage: sub a, b
 sub a, b =>
 {
@@ -211,6 +233,7 @@ sub a, b =>
 
 ; sub_a_imm
 ; subtract imm value from a register and save to a
+; A <-- A - IMM
 ; usage: sub a, #data[7:0]
 sub a, #{imm: i8} =>
 {
@@ -219,6 +242,7 @@ sub a, #{imm: i8} =>
 
 ; sub_b_imm
 ; subtract imm value from b register and save to b
+; B <-- B - IMM
 ; usage: sub b, #data[7:0]
 sub b, #{imm: i8} =>
 {
@@ -226,7 +250,8 @@ sub b, #{imm: i8} =>
 }
 
 ; and_a_b
-; Logical AND a register with b register and save to a
+; Bitwise AND a register with b register and save to a
+; A <-- A & B
 ; usage: and a, b
 and a, b =>
 {
@@ -234,7 +259,8 @@ and a, b =>
 }
 
 ; and_a_imm
-; Logical AND a register with imm value and save to a
+; Bitwise AND a register with imm value and save to a
+; A <-- A & IMM
 ; usage: and a, #data[7:0]
 and a, #{imm: i8} =>
 {
@@ -242,7 +268,8 @@ and a, #{imm: i8} =>
 }
 
 ; and_b_imm
-; Logical AND b register with imm value and save to b
+; Bitwise AND B register with imm value and save to B
+; B <-- B & IMM
 ; usage: and b, #data[7:0]
 and b, #{imm: i8} =>
 {
@@ -250,7 +277,8 @@ and b, #{imm: i8} =>
 }
 
 ; or_a_b
-; Logical OR baregister with b register and save to a
+; Bitwise OR a register with b register and save to a
+; A <-- A | B
 ; usage: or a, b
 or a, b =>
 {
@@ -258,7 +286,8 @@ or a, b =>
 }
 
 ; or_a_imm
-; Logical OR a register with imm value and save to a
+; Bitwise OR a register with imm value and save to a
+; A <-- A | IMM
 ; usage: or a, #data[7:0]
 or a, #{imm: i8} =>
 {
@@ -266,7 +295,8 @@ or a, #{imm: i8} =>
 }
 
 ; or_b_imm
-; Logical OR b register with imm value and save to b
+; Bitwise OR b register with imm value and save to b
+; B <-- B | IMM
 ; usage: or b, #data[7:0]
 or b, #{imm: i8} =>
 {
@@ -274,7 +304,8 @@ or b, #{imm: i8} =>
 }
 
 ; xor_a_b
-; Logical XOR a register with b register and save to a
+; Bitwise XOR a register with b register and save to a
+; A <-- A ^ B
 ; usage: xor a, b
 xor a, b =>
 {
@@ -282,7 +313,8 @@ xor a, b =>
 }
 
 ; xor_a_imm
-; Logical XOR a register with imm value and save to a
+; Bitwise XOR a register with immediate value and save to a register.
+; A <-- A ^ IMM
 ; usage: xor a, #data[7:0]
 xor a, #{imm: i8} =>
 {
@@ -290,7 +322,8 @@ xor a, #{imm: i8} =>
 }
 
 ; xor_b_imm
-; Logical XOR b register with imm value and save to b
+; Bitwise XOR B register with immediate value and save to B register.
+; B <-- B ^ IMM
 ; usage: xor b, #data[7:0]
 xor b, #{imm: i8} =>
 {
@@ -298,7 +331,11 @@ xor b, #{imm: i8} =>
 }
 
 ; lshift_a
-; Logical shift left a register by one and save to a
+; Bitwise shift left A register by one and save to A register. Zero is shifted into LSB.
+; A <-- A << 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the left was set
 ; usage: lshift a
 lshift a =>
 {
@@ -306,7 +343,11 @@ lshift a =>
 }
 
 ; lshift_b
-; Logical shift left b register by one and save to b
+; Bitwise shift left B register by one and save to B. Zero is shifted into LSB.
+; B <-- B << 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the left was set
 ; usage: lshift b
 lshift b =>
 {
@@ -314,7 +355,11 @@ lshift b =>
 }
 
 ; rshift_a
-; Logical shift right a register by one and save to a
+; Bitwise shift right A register by one and save to A register. Zero is shifted into MSB.
+; A <-- A >> 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the right was set
 ; usage: rshift a
 rshift a =>
 {
@@ -322,7 +367,11 @@ rshift a =>
 }
 
 ; rshift_b
-; Logical shift right b register by one and save to b
+; Bitwise shift right B register by one and save to B register. Zero is shifted into MSB.
+; B <-- B >> 1
+; ZF: set if result is zero
+; NF: set if result bit 7 is set
+; CF: set if bit shifted off of the right was set
 ; usage: rshift b
 rshift b =>
 {
@@ -330,7 +379,8 @@ rshift b =>
 }
 
 ; store_a_dir
-; Store a register value to direct address
+; Store A register value to direct address.
+; MEM(IMM) <-- A
 ; usage: store a, address[15:0]
 store a, {addr: i16} =>
 {
@@ -340,7 +390,8 @@ store a, {addr: i16} =>
 }
 
 ; store_a_indir
-; store a register to indirect address
+; Store A register value to indirect address.
+; MEM(MEM(IMM)) <-- A
 ; usage: store a, (address[15:0])
 store a, ({addr: i16}) =>
 {
@@ -350,7 +401,8 @@ store a, ({addr: i16}) =>
 }
 
 ; store_b_dir
-; Store b register value to direct address
+; Store B register value to direct address.
+; MEM(IMM) <-- B
 ; usage: store b, address[15:0]
 store b, {addr: i16} =>
 {
@@ -360,7 +412,8 @@ store b, {addr: i16} =>
 }
 
 ; store_b_indir
-; store b register to indirect address
+; Store B register value to indirect address.
+; MEM(MEM(IMM)) <-- B
 ; usage: store b, (address[15:0])
 store b, ({addr: i16}) =>
 {
