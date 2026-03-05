@@ -539,7 +539,6 @@ mod8:
     .test:
         sub a, b
         jmc .done
-        jmp
     .done:
         __epilogue
         ret

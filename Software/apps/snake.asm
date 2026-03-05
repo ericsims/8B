@@ -21,36 +21,53 @@ main:
 
     call init_snake
 
-    call draw_snake
 
     .loop:
-    pushw #rand_num
-    call rand_lfsr8
-    and b, #0x0F
-    store b, snake_pos_list ; x
+        call draw_snake
+        ..wait_for_char:
+            call uart_getc
+            test b
+            jmz .loop ; loop if buffer is empty
 
-    call rand_lfsr8
-    call rand_lfsr8
-
-    and b, #0x0F
-    store b, snake_pos_list+1 ; y
+        ..right:
+            load a, b
+            sub a, #"d"
+            jnz ...next
+            load a, snake_pos_list
+            add a, #1
+            store a, snake_pos_list
+            jmp .loop
+            ...next:
+        ..left:
+            load a, b
+            sub a, #"a"
+            jnz ...next
+            load a, snake_pos_list
+            sub a, #1
+            store a, snake_pos_list
+            jmp .loop
+            ...next:
+        ..up:
+            load a, b
+            sub a, #"w"
+            jnz ...next
+            load a, snake_pos_list+1
+            sub a, #1
+            store a, snake_pos_list+1
+            jmp .loop
+            ...next:
+        ..down:
+            load a, b
+            sub a, #"s"
+            jnz ...next
+            load a, snake_pos_list+1
+            add a, #1
+            store a, snake_pos_list+1
+            jmp .loop
+            ...next:
+        
+        jmp .loop
     
-    dealloc 2
-
-    call draw_snake
-
-
-    ; extra random
-    pushw #rand_num
-    call rand_lfsr8
-    dealloc 2
-    jmn .loop
-
-    xor b, #0xAB
-    store b, rand_num
-    
-
-    jmp .loop
 
     halt
 
@@ -102,9 +119,6 @@ init_snake:
     ; set an initial x,y sprite pos
     store #5, snake_pos_list
     store #5, snake_pos_list+1
-
-    ; init random number generator
-    store #1, rand_num
 
     ret
 
@@ -169,7 +183,6 @@ APP_COLOR_YELLOW = 0xDE60
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
 #include "../src/lib/lib_ra8876.asm"
-#include "../src/lib/rand.asm"
 
 ; global vars
 #bank ram
@@ -179,6 +192,5 @@ snake_pos_list: #res 512 ; list of x, y sprite cordinates
 cord_x: #res 2 ; x cord in pixels
 cord_y: #res 2 ; y cord in pixels
 
-rand_num: #res 1
 
 STACK_BASE: #res 0
