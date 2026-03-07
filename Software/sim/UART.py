@@ -7,7 +7,7 @@ class UART:
     def __init__(self):
         self.value = [0]
         self.out_callback=self.print_char
-        self.in_fifo = Queue(maxsize=128) # real FIFO is only 16 deep 
+        self.in_fifo = Queue(maxsize=16) # real FIFO is only 16 deep 
         self.window = None
                
     def get(self,addr):
