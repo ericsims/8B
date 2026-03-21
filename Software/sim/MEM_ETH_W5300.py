@@ -297,23 +297,33 @@ class ETH_W5300:
             
             if n == 0:
                 try:
-                    self.socks[n].send(b'')
-                    if self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_SYNSENT:
-                        if self.debug: print(f"socket {n} connected!")
-                        self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_ESTABLISHED
-                    
-                    buf = self.socks[n].recv(128)
-                    if len(buf) > 0:
-                        if self.debug: print(f"socket {n} recvd {len(buf)} bytes")
-                        self.socks[n].RX_FIFOR = self.socks[n].RX_FIFOR + list(buf)
+                    if self.regs[s + W5300_REG.Sn_MR1]&0xF == W5300_REG.Sn_MR1_TCP:
+                        self.socks[n].send(b'')
+                        if self.regs[s + W5300_REG.Sn_SSR1] == W5300_REG.Sn_SSR1_SOCK_SYNSENT:
+                            if self.debug: print(f"socket {n} connected!")
+                            self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_ESTABLISHED
                         
-                        self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
-                        self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
-                        self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
-                    else:
-                        if self.debug: print(f"socket {n} disconnected!")
-                        self.socks[n].close()
-                        self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+                        buf = self.socks[n].recv(128)
+                        if len(buf) > 0:
+                            if self.debug: print(f"socket {n} recvd {len(buf)} bytes")
+                            self.socks[n].RX_FIFOR = self.socks[n].RX_FIFOR + list(buf)
+                            
+                            self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
+                            self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
+                            self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
+                        else:
+                            if self.debug: print(f"socket {n} disconnected!")
+                            self.socks[n].close()
+                            self.regs[s + W5300_REG.Sn_SSR1] = W5300_REG.Sn_SSR1_SOCK_CLOSED
+                    elif self.regs[s + W5300_REG.Sn_MR1]&0xF == W5300_REG.Sn_MR1_UDP:
+                        buf, address = self.socks[n].recvfrom(128)
+                        if len(buf) > 0:
+                            if self.debug: print(f"socket {n} recvd {len(buf)} bytes")
+                            self.socks[n].RX_FIFOR = self.socks[n].RX_FIFOR + list(buf)
+                            
+                            self.regs[s + W5300_REG.Sn_RX_RSR1] = (len(self.socks[n].RX_FIFOR) >> 16) & 0xFF
+                            self.regs[s + W5300_REG.Sn_RX_RSR2] = (len(self.socks[n].RX_FIFOR) >> 8) & 0xFF
+                            self.regs[s + W5300_REG.Sn_RX_RSR3] = len(self.socks[n].RX_FIFOR) & 0xFF
 
                 except BlockingIOError:
                     pass

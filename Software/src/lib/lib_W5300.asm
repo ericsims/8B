@@ -2,7 +2,7 @@
 ; lib_w5300.asm begin
 ; ###
 #once
-
+#include "char_utils.asm"
 
 ; ==========================================
 ; Mode and Indirect Registers
@@ -154,6 +154,9 @@ DEFAULT_MAC: #d8 0x00, 0x08, 0xDC, 0x12, 0x34, 0x56
 DEFAULT_IP: #d8 192, 168, 11, 111
 DEFAULT_SUBNET: #d8 255, 255, 255, 0
 DEFAULT_GATEWAY: #d8 192, 168, 11, 1
+
+#bank ram
+w5300_buf: #res 512
 
 #bank rom
 w5300_init:
@@ -320,5 +323,72 @@ w5300_socket_begin:
         __epilogue
         ret
 
-#include "char_utils.asm"
 
+;;
+; @function
+; @brief copy byte array into tx fifo
+; @section description
+; copies data into the tx fifo. this handles the somewhat difficult challenge of odd number bytes.
+; caution, uses static memory to speed this up
+;      _________________________
+;  -5 |_________________________|
+;  -4 |____________?____________| RESERVED
+;  -3 |____________?____________|    .
+;  -2 |____________?____________|    .
+;  -1 |____________?____________| RESERVED
+;
+;;
+#bank rom
+w5300_memcpy_into_fifo:
+    .init:
+        __prologue
+    
+    .copy:
+        load a, w5300_memcpy.len
+        test a
+        jmz .done ; if len is zero, done
+        sub a, #2
+        jmc .handle_odd_byte ; if len < 2 (i.e. 1)
+        store a, w5300_memcpy.len
+
+        move (w5300_memcpy.src_ptr), (w5300_memcpy.dst_ptr)
+
+        loadw hl, w5300_memcpy.src_ptr
+        addw hl, #1
+        storew hl, w5300_memcpy.src_ptr
+        loadw hl, w5300_memcpy.dst_ptr
+        addw hl, #1
+        storew hl, w5300_memcpy.dst_ptr
+        
+        move (w5300_memcpy.src_ptr), (w5300_memcpy.dst_ptr)
+
+        loadw hl, w5300_memcpy.src_ptr
+        addw hl, #1
+        storew hl, w5300_memcpy.src_ptr
+        loadw hl, w5300_memcpy.dst_ptr
+        subw hl, #1 ; dst pointer gets moved backwards, since RAM window is only 2 bytes
+        storew hl, w5300_memcpy.dst_ptr
+        
+        jmp .copy
+    
+    .handle_odd_byte:
+        move (w5300_memcpy.src_ptr), (w5300_memcpy.dst_ptr)
+        loadw hl, w5300_memcpy.dst_ptr
+        addw hl, #1
+        storew hl, w5300_memcpy.dst_ptr
+        
+        store #0x00, (w5300_memcpy.dst_ptr) ; store dummy byte in LSB
+
+        loadw hl, w5300_memcpy.dst_ptr
+        subw hl, #1 ; dst pointer gets moved backwards, since RAM window is only 2 bytes
+        storew hl, w5300_memcpy.dst_ptr
+
+    .done:
+        __epilogue
+        ret
+
+#bank ram
+w5300_memcpy:
+    .src_ptr: #res 2
+    .dst_ptr: #res 2
+    .len: # res 1

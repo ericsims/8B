@@ -96,40 +96,40 @@ main:
 
     store #Sn_CR_SEND, W5300_SOCK0+Sn_CR ; send
 
-    ; .wait_for_data:
-    ;     ; check if there is data in RX buffer. Sn_RX_RSR is non-zero
-    ;     load a, #0
-    ;     load b, W5300_SOCK0+Sn_RX_RSR1
-    ;     or a, b
-    ;     load b, W5300_SOCK0+Sn_RX_RSR2
-    ;     or a, b
-    ;     load b, W5300_SOCK0+Sn_RX_RSR3
-    ;     or a, b
-    ;     test a
-    ;     jnz .print_data
+    .wait_for_data:
+        ; check if there is data in RX buffer. Sn_RX_RSR is non-zero
+        load a, #0
+        load b, W5300_SOCK0+Sn_RX_RSR1
+        or a, b
+        load b, W5300_SOCK0+Sn_RX_RSR2
+        or a, b
+        load b, W5300_SOCK0+Sn_RX_RSR3
+        or a, b
+        test a
+        jnz .print_data
         
-    ;     ; check if socket has been terminated
-    ;     load a, W5300_SOCK0+Sn_SSR1
-    ;     sub a, #Sn_SSR1_SOCK_ESTABLISHED
-    ;     jnz .closed
+        ; check if socket has been terminated
+        load a, W5300_SOCK0+Sn_SSR1
+        sub a, #Sn_SSR1_SOCK_ESTABLISHED
+        jnz .closed
 
-    ;     jmp .wait_for_data
+        jmp .wait_for_data
 
-    ; .print_data:
-    ;     ; there is data
-    ;     load a, W5300_SOCK0+Sn_RX_FIFOR0
-    ;     store a, static_uart_putc.char
-    ;     test a
-    ;     jmz .closed ; if received a 0x00
-    ;     call static_uart_putc
+    .print_data:
+        ; there is data
+        load a, W5300_SOCK0+Sn_RX_FIFOR0
+        store a, static_uart_putc.char
+        test a
+        jmz .closed ; if received a 0x00
+        call static_uart_putc
 
-    ;     load a, W5300_SOCK0+Sn_RX_FIFOR1
-    ;     store a, static_uart_putc.char
-    ;     test a
-    ;     jmz .closed ; if received a 0x00
-    ;     call static_uart_putc
+        load a, W5300_SOCK0+Sn_RX_FIFOR1
+        store a, static_uart_putc.char
+        test a
+        jmz .closed ; if received a 0x00
+        call static_uart_putc
 
-    ;     jmp .wait_for_data
+        jmp .wait_for_data
 
     .closed:
         storew #str_done, static_uart_print.data_pointer
