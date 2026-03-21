@@ -939,6 +939,49 @@ atoi_hex:
 
 
 
+
+
+
+;;
+; @function
+; @brief get length of null terminated string, up to 255 characters
+; @section description
+;
+;     _______________________
+; -6 |   .param16_src_ptr    |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param16_src_ptr source address
+; @ return string length, up to 255 characters
+;;
+#bank rom
+strlength:
+    .param16_src_ptr = -6
+    .init:
+        __prologue
+    
+        loadw hl, (BP), .param16_src_ptr
+        load b, #0
+    .copy:
+        load a, (hl)
+        test a
+        jmz .done
+
+        add b, #1
+        jmc .err_overflow
+        addw hl, #1
+        jmp .copy
+    .done:
+        __epilogue
+        ret
+        
+    .err_overflow:
+        load b, #0xFF
+        jmp .done
+
 ;;
 ; @function
 ; @brief copy null terminated string

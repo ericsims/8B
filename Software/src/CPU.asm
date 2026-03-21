@@ -68,7 +68,7 @@
     ;
     __prologue => asm
     {
-        ; prologue 
+        ; prologue
         pushw BP ; save old base pointer to stack
         loadw hl, sp ; save SP to base pointer
         storew hl, BP
@@ -77,7 +77,6 @@
     __epilogue => asm
     {
         ; epilogue
-
         popw hl ; restore old base pointer
         storew hl, BP
     }

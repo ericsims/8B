@@ -3,10 +3,12 @@
 ; ###
 
 #once
+#include "char_utils.asm"
 #include "lib_w5300.asm"
 
 
 DNS_PORT = 53
+DNS_MAX_URI_LEN = 64
 
 #bank ram
     DNS_IP_ADDRESS: #res 4 ; global IP address of DNS server to use
@@ -44,18 +46,32 @@ dns_init:
 ;  -3 |____________?____________|    .
 ;  -2 |____________?____________|    .
 ;  -1 |____________?____________| RESERVED
-;   0 |    .local16_buf_ptr     |
-;   1 |_________________________|
+;   0 |_______.local8_len_______|
+;   1 |_____.local8_lsb_msb______|
+;   2 |________.local_uri_______|
 ;
 ; @param param16_url_ptr pointer to null terminated url string
 ;;
 #bank rom
 dns_lookup:
     .param16_url_ptr = -6
-    .local16_buf_ptr = 0
+    .local8_len = 0
+    .local8_lsb_msb = 1
+    .local_uri = 2
     .init:
         __prologue
-        pushw #w5300_buf ; local16_buf_ptr
+        push #13 ; local8_len = 13 (12byte header plus start bytes of hostname)
+        push #0 ; .local8_lsb_msb = 0 (msb)
+        alloc DNS_MAX_URI_LEN
+
+        ; copy url to local ram
+        loadw hl, BP
+        addw hl, #.local_uri
+        pushw hl ; dst pointer
+        loadw hl, (BP), .param16_url_ptr
+        pushw hl ; src pointer
+        call strcpy
+        dealloc 4
 
     .start_udp_conn:
         ; for now just hard code using socket 0
@@ -76,7 +92,7 @@ dns_lookup:
         storew #DNS_PORT, W5300_SOCK0+Sn_DPORTR0 ; set port
 
 
-    .send_query:
+    .build_header:
         ;    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
         ;    |                      ID                       |
         ;    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
@@ -99,38 +115,65 @@ dns_lookup:
         storew #0x0000, W5300_SOCK0+Sn_TX_FIFOR0 ; ANCOUNT (Number of answer RRs) = 0, since this is a query
         storew #0x0000, W5300_SOCK0+Sn_TX_FIFOR0 ; NSCOUNT (Number of authority RRs) = 0, since this is a query
         storew #0x0000, W5300_SOCK0+Sn_TX_FIFOR0 ; ARCOUNT (Number of additional RRs) = 0, since this is a query
-        
-        ; send query
-        ; TODO: query string is hard coded
-        store #0x07, W5300_SOCK0+Sn_TX_FIFOR0
-        store #"E", W5300_SOCK0+Sn_TX_FIFOR1
-        store #"X", W5300_SOCK0+Sn_TX_FIFOR0
-        store #"A", W5300_SOCK0+Sn_TX_FIFOR1
-        store #"M", W5300_SOCK0+Sn_TX_FIFOR0
-        store #"P", W5300_SOCK0+Sn_TX_FIFOR1
-        store #"L", W5300_SOCK0+Sn_TX_FIFOR0
-        store #"E", W5300_SOCK0+Sn_TX_FIFOR1
-        store #0x03, W5300_SOCK0+Sn_TX_FIFOR0
-        store #"C", W5300_SOCK0+Sn_TX_FIFOR1
-        store #"O", W5300_SOCK0+Sn_TX_FIFOR0
-        store #"M", W5300_SOCK0+Sn_TX_FIFOR1
-        store #0, W5300_SOCK0+Sn_TX_FIFOR0
 
-        store #0, W5300_SOCK0+Sn_TX_FIFOR1
-        store #1, W5300_SOCK0+Sn_TX_FIFOR0
-        store #0, W5300_SOCK0+Sn_TX_FIFOR1
-        store #1, W5300_SOCK0+Sn_TX_FIFOR0
+    .tokenize_uri:
+        ; strtok params
+        push #"." ; delimiter
+        loadw hl, BP
+        addw hl, #.local_uri
+        pushw hl ; uri pointer
+        pushw #0 ; match pointer
 
-        
-        store #0, W5300_SOCK0+Sn_TX_FIFOR1 ; dummy byte!
+        ..next_uri_token:
+            call strtok
+            test b
+            jmn ..done_tokenizing_uri
+            jmz ..done_tokenizing_uri
+            call strlength
+            call .__push_b_to_fifo
 
-        ; storew #0x0001, W5300_SOCK0+Sn_TX_FIFOR0 ; type: TYPE_A
-        ; storew #0x0001, W5300_SOCK0+Sn_TX_FIFOR0 ; class: CLASS_IN 
+            popw hl ; match pointer 
+            pushw hl 
+        ..str_copy_token:
+            load b, (hl)
+            test b
+            jmz ..next_uri_token
 
+            call .__push_b_to_fifo
+            addw hl, #1
 
-        store #0, W5300_SOCK0+Sn_TX_WRSR1 
-        ; TODO: length is hard coded
-        storew #29, W5300_SOCK0+Sn_TX_WRSR2 ; set tx length
+            jmp ..str_copy_token
+
+        ..done_tokenizing_uri:
+            dealloc 5 ; cleanup strtok params
+
+            ; null termination for string
+            load b, #0x00
+            call .__push_b_to_fifo
+
+            ; type: TYPE_A
+            load b, #0x00
+            call .__push_b_to_fifo
+            load b, #0x01
+            call .__push_b_to_fifo
+
+            ; class: CLASS_IN 
+            load b, #0x00
+            call .__push_b_to_fifo
+            load b, #0x01
+            call .__push_b_to_fifo
+
+            load a, (BP), .local8_lsb_msb
+            test a ; was this an odd number of writes?
+            jmz ...skip_dummy_byte
+            store #0, W5300_SOCK0+Sn_TX_FIFOR1 ; dummy byte in lsb to finish writing bytes
+            ...skip_dummy_byte:
+
+    .send_query:
+        ; set tx length
+        store #0, W5300_SOCK0+Sn_TX_WRSR1
+        load a, (BP), .local8_len
+        store a, W5300_SOCK0+Sn_TX_WRSR3
 
         store #Sn_CR_SEND, W5300_SOCK0+Sn_CR ; send
 
@@ -174,7 +217,6 @@ dns_lookup:
             store #"\n", static_uart_putc.char
             call static_uart_putc
 
-
     load b, #0
     .done:
         ; increment global DNS query pointer
@@ -185,6 +227,7 @@ dns_lookup:
         ; close socket - not sure this matters for UDP, but we should clean up
         store #Sn_CR_CLOSE, W5300_SOCK0+Sn_CR ; close
 
+        dealloc DNS_MAX_URI_LEN
         dealloc 2
         __epilogue
         ret
@@ -196,4 +239,24 @@ dns_lookup:
         load b, #-1
         jmp .done
 
+    .__push_b_to_fifo:
+        load a, (BP), .local8_lsb_msb
+        test a
+        jnz ..lsb
+        ..msb:
+            store b, W5300_SOCK0+Sn_TX_FIFOR0
+            load a, #1
+            store a, (BP), .local8_lsb_msb
+            jmp ..incr
+        ..lsb:
+            store b, W5300_SOCK0+Sn_TX_FIFOR1
+            load a, #0
+            store a, (BP), .local8_lsb_msb
+        ..incr:
+            load a, (BP), .local8_len
+            add a, #1
+            store a, (BP), .local8_len
+            ret
+
+    
     .str_query_timeout: #d "query timed out!\n \0"
