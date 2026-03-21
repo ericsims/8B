@@ -113,10 +113,7 @@ $(TEST_SRC_DIR)lenna_64_64_rgb565.img: $(TEST_SRC_DIR)lenna_64_64.jpg
 test: $(all_tests)
 $(all_tests): %.test : %.bin
 	@echo running test case $<   $(test_flags)
-	@${additional_test_prog}
-# 	 > /dev/null 
-	@python sim/cpu_sim.py --no-sim -f $< $(test_flags) --no-gui || { pkill nc && exit 1; }
-	@pkill nc || true
+	@python sim/cpu_sim.py --no-sim -f $< --no-gui $(test_flags)
 
 # additional test flags for some unique tests
 $(TEST_BIN_DIR)1751_test_sd_card_init_v1.test: test_flags := --diskv1=./sim/virt_disk
@@ -126,8 +123,8 @@ $(TEST_BIN_DIR)1760_test_parse_mbr.test: test_flags := --diskv1=./sim/virt_disk 
 $(TEST_BIN_DIR)1761_test_find_file.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
 $(TEST_BIN_DIR)1762_test_load_file.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
 $(TEST_BIN_DIR)1770_test_run_file_from_disk.test: test_flags := --diskv1=./sim/virt_disk --ignore-uninit-mem
-$(TEST_BIN_DIR)2002_test_w5300_tcp_client.test: additional_test_prog := printf "hello back\0" | nc -l 8080 &
-$(TEST_BIN_DIR)2003_test_w5300_udp_client.test: additional_test_prog := printf "hello back\0" | nc -u -l 8081 &
+$(TEST_BIN_DIR)2002_test_w5300_tcp_client.test: test_flags := --subprocess="printf 'hello back\0' | nc -l 8080"
+$(TEST_BIN_DIR)2003_test_w5300_udp_client.test: test_flags := --subprocess="printf 'hello back\0' | nc -u -l 8081"
 
 
 # build apps

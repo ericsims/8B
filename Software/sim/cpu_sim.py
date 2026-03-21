@@ -7,6 +7,7 @@ import warnings
 import json
 import yaml
 import traceback
+import subprocess
 from enum import Enum
 import FreeSimpleGUI as sg
 from termcolor import colored
@@ -40,13 +41,14 @@ def main():
   GUI = True
   DEAD_CODE = False
   IGNORE_UNINIT = False
+  SUBPROCESS = None
 
   BP_ADDR = 0x4000
 
   # process flags
 
   OPTIONS = "f:" #TODO: no abbreviated options.
-  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code', 'diskv1 =','diskv2 =', 'ignore-uninit-mem']
+  OPTIONS_LONG = ['file =', 'exit-on-halt', 'no-gui', 'no-sim', 'dead-code', 'diskv1 =','diskv2 =', 'ignore-uninit-mem', 'subprocess =']
 
   try:
     # grab flags
@@ -73,11 +75,18 @@ def main():
         DISK_TYPE = 2
       elif arg_ in ("--ignore-uninit-mem"):
         IGNORE_UNINIT = True
+      elif arg_ in ("--subprocess"):
+        SUBPROCESS = val_
 
   except getopt.error as err:
     # output error, and return with an error code
     print(str(err), file=sys.stderr)
     return 2
+
+  if(SUBPROCESS):
+    print(SUBPROCESS)
+    process = subprocess.Popen(SUBPROCESS, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
 
   if SIM:
     try:
