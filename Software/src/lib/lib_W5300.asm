@@ -323,4 +323,59 @@ w5300_socket_begin:
         __epilogue
         ret
 
+
+;;
+; @function
+; @brief prints ip address to UART in hex format
+; @section description
+; takes a 4 byte IPv4 address and prints it to UART in hex format
+;     _______________________
+; -8 |      .param32_ip      |
+; -7 |                       |
+; -6 |                       |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+; @param .param32_ip ip address number
+;;
+#bank rom
+print_ip_addr:
+    .param8_c = -8
+    .init:
+        __prologue
+
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c
+    call uart_print_itoa_hex.__lsn
+    store #".", static_uart_putc.char
+    call static_uart_putc
+
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+1
+    call uart_print_itoa_hex.__lsn
+    store #".", static_uart_putc.char
+    call static_uart_putc
+    
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+2
+    call uart_print_itoa_hex.__lsn
+    store #".", static_uart_putc.char
+    call static_uart_putc
+
+    load a, (BP), .param8_c+3
+    call uart_print_itoa_hex.__msn
+    load a, (BP), .param8_c+3
+    call uart_print_itoa_hex.__lsn
+    
+    call static_uart_print_newline
+
+    .done:
+        __epilogue
+        ret
+
 #include "char_utils.asm"

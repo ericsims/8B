@@ -376,7 +376,7 @@ uart_print_itoa_hex24:
 ; @section description
 ; takes a 4 byte unsigned integer and prints it to UART in hex format
 ;     _______________________
-; -8 |       .param16_c      |
+; -8 |      .param32_c       |
 ; -7 |                       |
 ; -6 |                       |
 ; -5 |_______________________|

@@ -233,9 +233,9 @@ cli_parse_cmd:
     test b
     jnz ..done ; check return code
 
-    call uart_print_itoa_hex32
-    call static_uart_print_newline
+    call print_ip_addr
 
+    load b, #0
     ..done:
     dealloc 4
     ret

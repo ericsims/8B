@@ -26,8 +26,7 @@ main:
     dealloc 2
     assert b, #0
 
-    call uart_print_itoa_hex32
-    call static_uart_print_newline
+    call print_ip_addr
     dealloc 4
 
 
@@ -46,7 +45,7 @@ str_init: #d "initializing...\n\0"
 str_query: #d "making dns query...\n \0"
 str_done: #d "done.\n \0"
 
-str_test_query: #d "google.com",0x00
+str_test_query: #d "example.com",0x00
 
 ; global vars
 #bank ram
