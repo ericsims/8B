@@ -20,9 +20,15 @@ main:
     storew #str_query, static_uart_print.data_pointer
     call static_uart_print
 
+    __push32 #0
     pushw #str_test_query
     call dns_lookup
     dealloc 2
+    assert b, #0
+
+    call uart_print_itoa_hex32
+    call static_uart_print_newline
+    dealloc 4
 
 
     halt
@@ -32,6 +38,7 @@ main:
 ; includes
 #include "../src/CPU.asm"
 #include "../src/lib/lib_dns.asm"
+#include "../src/lib/char_utils.asm"
 
 #bank rom
 
@@ -39,7 +46,7 @@ str_init: #d "initializing...\n\0"
 str_query: #d "making dns query...\n \0"
 str_done: #d "done.\n \0"
 
-str_test_query: #d "www.example.com",0x00
+str_test_query: #d "google.com",0x00
 
 ; global vars
 #bank ram

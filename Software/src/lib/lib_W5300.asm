@@ -1,8 +1,8 @@
 ; ###
 ; lib_w5300.asm begin
 ; ###
+
 #once
-#include "char_utils.asm"
 
 ; ==========================================
 ; Mode and Indirect Registers
@@ -322,3 +322,5 @@ w5300_socket_begin:
     .done:
         __epilogue
         ret
+
+#include "char_utils.asm"

@@ -71,6 +71,14 @@ cli_table:
         ..cmd_str_ptr: #d16 cli_strings.read8_cmd
         ..help_str_ptr: #d16 cli_strings.read8_help
         ..jmp: #d16 cli_parse_cmd.read8
+    .dns_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.dns_cmd
+        ..help_str_ptr: #d16 cli_strings.dns_help
+        ..jmp: #d16 cli_parse_cmd.dns
+    .ip_cmd:
+        ..cmd_str_ptr: #d16 cli_strings.ip_cmd
+        ..help_str_ptr: #d16 cli_strings.ip_help
+        ..jmp: #d16 cli_parse_cmd.ip
     ._end:
 cli_strings:
     .test1_cmd: #d "TEST1\0"
@@ -101,6 +109,10 @@ cli_strings:
     .call_help: #d " <ADDR16> calls subroutine at address. Preserves return code\0"
     .mount_cmd: #d "MOUNT\0"
     .mount_help: #d " mounts SDCARD FAT16 filesystem\0"
+    .ip_cmd: #d "IP\0"
+    .ip_help: #d " initializes IP networking\0"
+    .dns_cmd: #d "DNS\0"
+    .dns_help: #d " <STRING> performs a DNS lookup\0"
 
 
 #bank ram
@@ -205,6 +217,30 @@ cli_parse_cmd:
     call static_uart_print_newline
     load b, #0
     ret
+
+.ip:
+    call w5300_init
+    call dns_init
+    call print_net_info
+    ret
+
+.dns:
+    __push32 #0
+    loadw hl, (BP), .local16_next_token_ptr
+    pushw hl
+    call dns_lookup
+    dealloc 2
+    test b
+    jnz ..done ; check return code
+
+    call uart_print_itoa_hex32
+    call static_uart_print_newline
+
+    ..done:
+    dealloc 4
+    ret
+
+..str_test_query: #d "google.com",0x00
 
 ;      _______________________
 ;   7 |___..local8_cmd_num____|
@@ -824,3 +860,5 @@ cli_parse_cmd:
 
 #include "./char_utils.asm"
 #include "./lib_fs.asm"
+#include "./lib_W5300.asm"
+#include "./lib_dns.asm"
