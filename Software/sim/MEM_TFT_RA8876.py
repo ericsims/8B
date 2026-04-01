@@ -1,5 +1,5 @@
 from enum import Enum
-from PIL import Image, ImageTk, ImageDraw
+from PIL import Image, ImageTk, ImageDraw, ImageFont
 import FreeSimpleGUI as sg
 
 
@@ -194,6 +194,10 @@ class RA8876_REG:
     FGCG = 0xD3 # Foreground Color Register - Green. RW. Default = 0xFF
     FGCB = 0xD4 # Foreground Color Register - Blue. RW. Default = 0xFF
 
+    BGCR = 0xD5 # Background Color Register - Red. RW. Default = 0xFF
+    BGCG = 0xD6 # Background Color Register - Green. RW. Default = 0xFF
+    BGCB = 0xD7 # Background Color Register - Blue. RW. Default = 0xFF
+
     # # ==========================================
     # # BTE (Block Transfer Engine) Registers
     # # ==========================================
@@ -239,8 +243,43 @@ class RA8876_REG:
     # # ==========================================
     # # Text and Font Control Registers
     # # ==========================================
-    # CCR0 = 0xCC # Character Control Register 0
-    # CCR1 = 0xCD # Character Control Register 1
+    F_CURX0 = 0x63 # Text Write X-coordinates Register 0 
+    F_CURX1 = 0x64 # Text Write X-coordinates Register 1
+    F_CURY0 = 0x65 # Text Write Y-coordinates Register 0
+    F_CURY1 = 0x66 # Text Write Y-coordinates Register 1
+
+
+    CCR0 = 0xCC # Character Control Register 0
+    CCR0_SOURCE_SELECT_POS = 6 # Character source selection
+    CCR0_SOURCE_SELECT_INTERNAL_ROM = 0b00 # Select internal CGROM Character
+    CCR0_SOURCE_SELECT_EXTERNAL_ROM = 0b01 # Select external CGROM Character (Genitop serial flash)
+    CCR0_SOURCE_SELECT_USER = 0b10 # Select user-defined Character
+    CCR0_CHAR_HEIGHT_POS = 4 # Character Height Setting for external CGROM & user-defined Character
+    CCR0_CHAR_HEIGHT_16 = 0b00 # ex. 8x16 / 16x16 / variable character width x 16
+    CCR0_CHAR_HEIGHT_24 = 0b01 # ex. 12x24 / 24x24 / variable character width x 24
+    CCR0_CHAR_HEIGHT_32 = 0b10 # ex. 16x32 / 32x32 / variable character width x 32
+    CCR0_INT_CHAR_SELECT_POS = 0 # Character Selection for internal CGROM
+    CCR0_INT_CHAR_SELECT_8859_1 = 0b00 # ISO/IEC 8859-1
+    CCR0_INT_CHAR_SELECT_8859_2 = 0b01 # ISO/IEC 8859-2
+    CCR0_INT_CHAR_SELECT_8859_4 = 0b10 # ISO/IEC 8859-4
+    CCR0_INT_CHAR_SELECT_8859_5 = 0b11 # ISO/IEC 8859-5
+
+    CCR1 = 0xCD # Character Control Register 1
+    CCR1_FULL_ALIGNMENT_EN_POS = 7 # Full alignment enable
+    CCR1_CHROMA_KEY_EN_POS = 6 # Chroma keying enable on Text input Character’s background displayed with original canvas’ background.
+    CCR1_CHAR_ROTATE_EN_POS = 4 # Counterclockwise 90 degree & vertical flip
+    CCR1_WIDTH_SCALE_POS = 2 # Character width enlargement factor
+    CCR1_WIDTH_SCALE_X1 = 0b00
+    CCR1_WIDTH_SCALE_X2 = 0b01
+    CCR1_WIDTH_SCALE_X3 = 0b10
+    CCR1_WIDTH_SCALE_X4 = 0b11
+    CCR1_HEIGHT_SCALE_POS = 2 # Character height enlargement factor
+    CCR1_HEIGHT_SCALE_X1 = 0b00
+    CCR1_HEIGHT_SCALE_X2 = 0b01
+    CCR1_HEIGHT_SCALE_X3 = 0b10
+    CCR1_HEIGHT_SCALE_X4 = 0b11
+
+
     # FLDR = 0xCE # Font Line Distance Register
     # FSSR = 0xCF # Font Spacing Register
     # CGROMCR = 0xD0 # CGROM Control Register
@@ -291,6 +330,10 @@ class TFT_RA8876:
         self.regs[RA8876_REG.FGCG] = 0xFF # addr 0xD3
         self.regs[RA8876_REG.FGCB] = 0xFF # addr 0xD4
 
+        self.regs[RA8876_REG.BGCR] = 0xFF # addr 0xD5
+        self.regs[RA8876_REG.BGCG] = 0xFF # addr 0xD6
+        self.regs[RA8876_REG.BGCB] = 0xFF # addr 0xD7
+
         # TODO: the rest of the regs
 
     def get(self,addr):
@@ -320,7 +363,66 @@ class TFT_RA8876:
         # simulate the internals of the RA8876
         if (self.regs[RA8876_REG.ICR] & (1<<RA8876_REG.ICR_TEXT_MODE_EN_POS)):
             # Text Mode
-            pass
+            
+            # cursor position
+            x = (self.regs[RA8876_REG.F_CURX1] << 8) | self.regs[RA8876_REG.F_CURX0]
+            y = (self.regs[RA8876_REG.F_CURY1] << 8) | self.regs[RA8876_REG.F_CURY0]
+
+            # font size
+            match (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR0_CHAR_HEIGHT_POS) & 0x3:
+                case RA8876_REG.CCR0_CHAR_HEIGHT_16:
+                    height = 16
+                    width = 8
+                case RA8876_REG.CCR0_CHAR_HEIGHT_24:
+                    height = 24
+                    width = 12
+                case RA8876_REG.CCR0_CHAR_HEIGHT_32:
+                    height = 32
+                    width = 16
+                case _:
+                    height = 16
+                    width = 8
+
+
+            text_img = Image.new('RGB', [width, height], 0)
+            text_draw = ImageDraw.Draw(text_img)
+            font = None
+
+            
+            # background and foreground colors
+            br, bg, bb = self.regs[RA8876_REG.BGCR], self.regs[RA8876_REG.BGCG], self.regs[RA8876_REG.BGCB]
+            fr, fg, fb = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
+
+            if not (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_CHROMA_KEY_EN_POS) & 0x1:
+                # if chroma keying is disabled, fill with backgroun color
+                text_draw.rectangle(((0, 0), (width, height)), fill=(br, bg, bb)) # fill
+
+            if len(self.ram_writes) >= 1:
+                char_data = bytes([self.ram_writes.pop(0)])
+                char = '?'
+                if (self.regs[RA8876_REG.CCR0] >> RA8876_REG.CCR0_SOURCE_SELECT_POS) & 0x3 == RA8876_REG.CCR0_SOURCE_SELECT_INTERNAL_ROM:
+                    font = ImageFont.truetype("sim/AcPlus_ToshibaSat_8x16.ttf", size=height)
+                    match (self.regs[RA8876_REG.CCR0] >> RA8876_REG.CCR0_INT_CHAR_SELECT_POS) & 0x3:
+                        case RA8876_REG.CCR0_INT_CHAR_SELECT_8859_1:
+                            char = char_data.decode('iso-8859-1')
+                        case RA8876_REG.CCR0_INT_CHAR_SELECT_8859_2:
+                            char = char_data.decode('iso-8859-2')
+                        case RA8876_REG.CCR0_INT_CHAR_SELECT_8859_4:
+                            char = char_data.decode('iso-8859-4')
+                        case RA8876_REG.CCR0_INT_CHAR_SELECT_8859_5:
+                            char = char_data.decode('iso-8859-5')
+                
+                if font:
+                    text_draw.text((0, 0), char, fill=(fr, fg, fb), font=font)
+
+                    # copy character image buffer into image
+                    self.img.paste(text_img, (x, y))
+                
+                # increment cursor
+                x += width
+                self.regs[RA8876_REG.F_CURX1] = x >> 8
+                self.regs[RA8876_REG.F_CURX0] = x & 0xFF
+                
         else:
             # Graphics Mode
             if len(self.ram_writes) >= 2:

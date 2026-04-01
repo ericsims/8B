@@ -6,8 +6,11 @@ init_pointers:
     storew #0x0000, BP
 
 main:
+    pushw #output
     __push32 #59978
     call cordic_sin
+
+    dealloc 6
 
     halt
 
@@ -20,4 +23,5 @@ main:
 
 ; global vars
 #bank ram
+output: #res 2
 STACK_BASE: #res 0

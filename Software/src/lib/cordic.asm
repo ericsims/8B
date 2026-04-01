@@ -225,7 +225,7 @@ cordic_sin:
             jmp .iter
 
     .done:
-        halt
+        ; halt
         dealloc .alloc_top
         __epilogue
         ret

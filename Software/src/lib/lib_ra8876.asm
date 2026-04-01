@@ -161,6 +161,49 @@ RA8876_FGCR = 0xD2 ; Foreground Color Register - Red. RW. Default = 0xFF
 RA8876_FGCG = 0xD3 ; Foreground Color Register - Green. RW. Default = 0xFF
 RA8876_FGCB = 0xD4 ; Foreground Color Register - Blue. RW. Default = 0xFF
 
+RA8876_BGCR = 0xD5 ; Background Color Register - Red. RW. Default = 0xFF
+RA8876_BGCG = 0xD6 ; Background Color Register - Green. RW. Default = 0xFF
+RA8876_BGCB = 0xD7 ; Background Color Register - Blue. RW. Default = 0xFF
+
+
+; ==========================================
+; Text and Font Control Registers
+; ==========================================
+RA8876_F_CURX0 = 0x63 ; Text Write X-coordinates Register 0 (LSB)
+RA8876_F_CURX1 = 0x64 ; Text Write X-coordinates Register 1 (MSB)
+RA8876_F_CURY0 = 0x65 ; Text Write Y-coordinates Register 0 (LSB)
+RA8876_F_CURY1 = 0x66 ; Text Write Y-coordinates Register 1 (MSB)
+
+
+RA8876_CCR0 = 0xCC ; Character Control Register 0
+    RA8876_CCR0_SOURCE_SELECT_POS = 6 ; Character source selection
+        RA8876_CCR0_SOURCE_SELECT_INTERNAL_ROM = 0b00 ; Select internal CGROM Character
+        RA8876_CCR0_SOURCE_SELECT_EXTERNAL_ROM = 0b01 ; Select external CGROM Character (Genitop serial flash)
+        RA8876_CCR0_SOURCE_SELECT_USER = 0b10 ; Select user-defined Character
+    RA8876_CCR0_CHAR_HEIGHT_POS = 4 ; Character Height Setting for external CGROM & user-defined Character
+        RA8876_CCR0_CHAR_HEIGHT_16 = 0b00 ; ex. 8x16 / 16x16 / variable character width x 16
+        RA8876_CCR0_CHAR_HEIGHT_24 = 0b01 ; ex. 12x24 / 24x24 / variable character width x 24
+        RA8876_CCR0_CHAR_HEIGHT_32 = 0b10 ; ex. 16x32 / 32x32 / variable character width x 32
+    RA8876_CCR0_INT_CHAR_SELECT_POS = 0 ; Character Selection for internal CGROM
+        RA8876_CCR0_INT_CHAR_SELECT_8859_1 = 0b00 ; ISO/IEC 8859-1
+        RA8876_CCR0_INT_CHAR_SELECT_8859_2 = 0b01 ; ISO/IEC 8859-2
+        RA8876_CCR0_INT_CHAR_SELECT_8859_4 = 0b10 ; ISO/IEC 8859-4
+        RA8876_CCR0_INT_CHAR_SELECT_8859_5 = 0b11 ; ISO/IEC 8859-5
+
+RA8876_CCR1 = 0xCD ; Character Control Register 1
+    RA8876_CCR1_FULL_ALIGNMENT_EN_POS = 7 ; Full alignment enable
+    RA8876_CCR1_CHROMA_KEY_EN_POS = 6 ; Chroma keying enable on Text input Character’s background displayed with original canvas’ background.
+    RA8876_CCR1_CHAR_ROTATE_EN_POS = 4 ; Counterclockwise 90 degree & vertical flip
+    RA8876_CCR1_WIDTH_SCALE_POS = 2 ; Character width enlargement factor
+        RA8876_CCR1_WIDTH_SCALE_X1 = 0b00
+        RA8876_CCR1_WIDTH_SCALE_X2 = 0b01
+        RA8876_CCR1_WIDTH_SCALE_X3 = 0b10
+        RA8876_CCR1_WIDTH_SCALE_X4 = 0b11
+    RA8876_CCR1_HEIGHT_SCALE_POS = 2 ; Character height enlargement factor
+        RA8876_CCR1_HEIGHT_SCALE_X1 = 0b00
+        RA8876_CCR1_HEIGHT_SCALE_X2 = 0b01
+        RA8876_CCR1_HEIGHT_SCALE_X3 = 0b10
+        RA8876_CCR1_HEIGHT_SCALE_X4 = 0b11
 
 
 ; TODO: the rest of the regs
@@ -282,7 +325,74 @@ ra8876_set_graphic_cursor_pos:
     .done:
         __epilogue
         ret
+
+
+;;
+; @function
+; @brief set text cursor x,y position
+; @section description
+;      _______________________
+;  -8 |   .param16_cursor_x   |
+;  -7 |_______________________|
+;  -6 |   .param16_cursor_y   |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_set_text_cursor_pos:
+    .param16_cursor_x = -8
+    .param16_cursor_y = -6
+    .init:
+        __prologue
+
+    .set_pos:
+        load a, (BP), .param16_cursor_x
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_F_CURX1 ; Text Write X-coordinates Register 1 (MSB)
+        load a, (BP), .param16_cursor_x+1
+        __store a, RA8876, RA8876_F_CURX0 ; Text Write X-coordinates Register 0 (MSB)
+
+        load a, (BP), .param16_cursor_y
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_F_CURY1 ; Text Write Y-coordinates Register 1 (MSB)
+        load a, (BP), .param16_cursor_y+1
+        __store a, RA8876, RA8876_F_CURY0 ; Text Write Y-coordinates Register 0 (LSB)
     
+    .done:
+        __epilogue
+        ret
+
+;;
+; @function
+; @brief set RA8876 to text mode
+;
+;;
+#bank rom
+ra8876_enable_text_mode:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_ICR ; Input Control Register
+    or a, #(1<<RA8876_ICR_TEXT_MODE_EN_POS)
+    __store a, RA8876, RA8876_ICR
+    ret
+
+
+;;
+; @function
+; @brief set RA8876 to graphics mode
+;
+;;
+#bank rom
+ra8876_enable_graphics_mode:
+    ; clear the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_ICR ; Input Control Register
+    and a, #!(1<<RA8876_ICR_TEXT_MODE_EN_POS)
+    __store a, RA8876, RA8876_ICR
+    ret
+
 ;;
 ; @function
 ; @brief set active window width and height
@@ -546,6 +656,59 @@ ra8876_set_foreground_color_16bpp:
         __epilogue
         ret
 
+
+;;
+; @function
+; @brief set background color
+; @section description
+;      _______________________
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_set_background_color_16bpp:
+    .param16_color = -6
+    .init:
+        __prologue
+
+    ; ref: https://gist.github.com/companje/11deb82e807f2cf927b3a0da1646e795
+    ; r = (color >> 8) & 0xF8. i.e, MSB & 0xF8
+    ; g = (color >> 3) & 0xFC. i.e. ((LSB >> 3) | (MSB << 5)) & 0xF
+    ; b = (color << 3) & 0xF8. i.e, LSB << 3
+
+    .r:
+        load a, (BP), .param16_color
+        and a, #0xF8
+        __store a, RA8876, RA8876_BGCR ; Background Color Register - Red
+    .g:
+        load a, (BP), .param16_color
+        lshift a
+        lshift a
+        lshift a
+        lshift a
+        lshift a
+        load b, (BP), .param16_color + 1
+        rshift b
+        rshift b
+        rshift b
+        or a, b
+        and a, #0xFC
+        __store a, RA8876, RA8876_BGCG ; Background Color Register - Green
+    .b:
+        load a, (BP), .param16_color + 1
+        lshift a
+        lshift a
+        lshift a
+        __store a, RA8876, RA8876_BGCB ; ForegrBackgroundound Color Register - Blue
+    
+    .done:
+        __epilogue
+        ret
 
 ;;
 ; @function
