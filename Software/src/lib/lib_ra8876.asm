@@ -366,7 +366,37 @@ ra8876_set_text_cursor_pos:
         __epilogue
         ret
 
-
+;;
+; @function
+; @brief writes string into RA8876 in text mode
+; @section description
+;      _______________________
+;  -6 |   .param16_str_ptr    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_put_string:
+    .param16_str_ptr = -6
+    .init:
+        __prologue
+        loadw hl, (BP), .param16_str_ptr
+        store #RA8876_MRWDP, RA8876_ADDR ; ram access
+    .next_char:
+        load a, (hl)
+        test a
+        jmz .done
+        store a, RA8876_DATA
+        addw hl, #1
+        jmp .next_char
+    
+    .done:
+        __epilogue
+        ret
 
 ;;
 ; @function

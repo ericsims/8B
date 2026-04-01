@@ -36,6 +36,7 @@ init_graphics:
     call draw_footer_border2
 
     call draw_header_text
+    call draw_footer_text
 
     ret
 
@@ -84,34 +85,45 @@ draw_header_border2:
     push #(TFT_SCREEN_WIDTH/BORDER_PIXEL_WIDTH)-1 ; paste count
 
     pushw #1 ; x0
-    pushw #(9*BORDER_PIXEL_HEIGHT+1) ; y0
+    pushw #(8*BORDER_PIXEL_HEIGHT+1) ; y0
     pushw #(BORDER_PIXEL_WIDTH-2) ; x1
-    pushw #(9*BORDER_PIXEL_HEIGHT+BORDER_PIXEL_HEIGHT-2) ; y1
+    pushw #(8*BORDER_PIXEL_HEIGHT+BORDER_PIXEL_HEIGHT-2) ; y1
     pushw #APP_COLOR_YELLOW
 
     jmp draw_header_border1.draw_dots ; carefully reusing the rest of the draw dot label!
 
 
 draw_header_text:
-    ; TODO: actual text of course
-    pushw #(15*BORDER_PIXEL_WIDTH) ; x0
-    pushw #(3*BORDER_PIXEL_HEIGHT) ; y0
-    pushw #(15*BORDER_PIXEL_HEIGHT+16-1) ; x1
-    pushw #(3*BORDER_PIXEL_HEIGHT+32-1) ; y1
+    pushw #(48*BORDER_PIXEL_WIDTH)
+    pushw #(3*BORDER_PIXEL_HEIGHT)
+    call ra8876_set_text_cursor_pos
+    dealloc 4
+
     pushw #APP_COLOR_GREEN
-    call ra8876_draw_sqaure_fill
-    dealloc 10
+    call ra8876_set_foreground_color_16bpp
+    dealloc 2
+    
+    call ra8876_enable_text_mode
+    call ra8876_text_chroma_key_enable
+    call ra8876_set_text_size_32
+
+    pushw #.header_text
+    call ra8876_put_string
+    dealloc 2
+
+    call ra8876_enable_graphics_mode
 
     ret
+    .header_text: #d "WEATHER REPORT\0"
 
 draw_footer_border1:
     __prologue
     push #(TFT_SCREEN_WIDTH/BORDER_PIXEL_WIDTH)-1 ; paste count
 
     pushw #1 ; x0
-    pushw #(67*BORDER_PIXEL_HEIGHT+1) ; y0
+    pushw #(68*BORDER_PIXEL_HEIGHT+1) ; y0
     pushw #(BORDER_PIXEL_WIDTH-2) ; x1
-    pushw #(67*BORDER_PIXEL_HEIGHT+BORDER_PIXEL_HEIGHT-2) ; y1
+    pushw #(68*BORDER_PIXEL_HEIGHT+BORDER_PIXEL_HEIGHT-2) ; y1
     pushw #APP_COLOR_GREEN
 
     jmp draw_header_border1.draw_dots ; carefully reusing the rest of the draw dot label!
@@ -128,17 +140,28 @@ draw_footer_border2:
 
     jmp draw_header_border1.draw_dots ; carefully reusing the rest of the draw dot label!
 
-; draw_border4:
-;     __prologue
-;     push #10 ; paste count
+draw_footer_text:
+    pushw #(20*BORDER_PIXEL_WIDTH)
+    pushw #(70*BORDER_PIXEL_HEIGHT)
+    call ra8876_set_text_cursor_pos
+    dealloc 4
 
-;     pushw #(50*BORDER_PIXEL_WIDTH+1) ; x0
-;     pushw #(20*BORDER_PIXEL_HEIGHT+1) ; y0
-;     pushw #(50*BORDER_PIXEL_WIDTH+BORDER_PIXEL_WIDTH-2) ; x1
-;     pushw #(20*BORDER_PIXEL_HEIGHT+BORDER_PIXEL_HEIGHT-2) ; y1
-;     pushw #APP_COLOR_YELLOW
+    pushw #APP_COLOR_GREEN
+    call ra8876_set_foreground_color_16bpp
+    dealloc 2
+    
+    call ra8876_enable_text_mode
+    call ra8876_text_chroma_key_enable
+    call ra8876_set_text_size_24
+    
+    pushw #.footer_text
+    call ra8876_put_string
+    dealloc 2
 
-;     jmp draw_header_border1.draw_dots ; carefully reusing the rest of the draw dot label!
+    call ra8876_enable_graphics_mode
+
+    ret
+    .footer_text: #d "Footer text goes here...\0"
 
 ; constants
 APP_COLOR_GREEN = 0x4669

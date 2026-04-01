@@ -396,9 +396,6 @@ class TFT_RA8876:
                 if not ((self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_CHROMA_KEY_EN_POS) & 0x1):
                     # if chroma keying is disabled, fill with background color
                     text_draw.rectangle(((0, 0), (width, height)), fill=(br, bg, bb, 255)) # fill
-                    print("NO chroma key")
-                else:                    
-                    print("chroma key")
 
 
                 char_data = bytes([self.ram_writes.pop(0)])
