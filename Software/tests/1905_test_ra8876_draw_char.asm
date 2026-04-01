@@ -43,9 +43,19 @@ main:
     call ra8876_set_text_cursor_pos
     dealloc 4
     
+
+    call ra8876_set_text_size_16
     store #RA8876_MRWDP, RA8876_ADDR ; ram access
     store #"a", RA8876_DATA
+    
+    call ra8876_set_text_size_24
+    store #RA8876_MRWDP, RA8876_ADDR ; ram access
     store #"b", RA8876_DATA
+
+    call ra8876_text_chroma_key_enable
+    call ra8876_set_text_size_32
+    store #RA8876_MRWDP, RA8876_ADDR ; ram access
+    store #"c", RA8876_DATA
 
     halt
 

@@ -363,41 +363,44 @@ class TFT_RA8876:
         # simulate the internals of the RA8876
         if (self.regs[RA8876_REG.ICR] & (1<<RA8876_REG.ICR_TEXT_MODE_EN_POS)):
             # Text Mode
-            
-            # cursor position
-            x = (self.regs[RA8876_REG.F_CURX1] << 8) | self.regs[RA8876_REG.F_CURX0]
-            y = (self.regs[RA8876_REG.F_CURY1] << 8) | self.regs[RA8876_REG.F_CURY0]
-
-            # font size
-            match (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR0_CHAR_HEIGHT_POS) & 0x3:
-                case RA8876_REG.CCR0_CHAR_HEIGHT_16:
-                    height = 16
-                    width = 8
-                case RA8876_REG.CCR0_CHAR_HEIGHT_24:
-                    height = 24
-                    width = 12
-                case RA8876_REG.CCR0_CHAR_HEIGHT_32:
-                    height = 32
-                    width = 16
-                case _:
-                    height = 16
-                    width = 8
-
-
-            text_img = Image.new('RGB', [width, height], 0)
-            text_draw = ImageDraw.Draw(text_img)
-            font = None
-
-            
-            # background and foreground colors
-            br, bg, bb = self.regs[RA8876_REG.BGCR], self.regs[RA8876_REG.BGCG], self.regs[RA8876_REG.BGCB]
-            fr, fg, fb = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
-
-            if not (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_CHROMA_KEY_EN_POS) & 0x1:
-                # if chroma keying is disabled, fill with backgroun color
-                text_draw.rectangle(((0, 0), (width, height)), fill=(br, bg, bb)) # fill
-
             if len(self.ram_writes) >= 1:
+                # cursor position
+                x = (self.regs[RA8876_REG.F_CURX1] << 8) | self.regs[RA8876_REG.F_CURX0]
+                y = (self.regs[RA8876_REG.F_CURY1] << 8) | self.regs[RA8876_REG.F_CURY0]
+
+                # font size
+                match (self.regs[RA8876_REG.CCR0] >> RA8876_REG.CCR0_CHAR_HEIGHT_POS) & 0x3:
+                    case RA8876_REG.CCR0_CHAR_HEIGHT_16:
+                        height = 16
+                        width = 8
+                    case RA8876_REG.CCR0_CHAR_HEIGHT_24:
+                        height = 24
+                        width = 12
+                    case RA8876_REG.CCR0_CHAR_HEIGHT_32:
+                        height = 32
+                        width = 16
+                    case _:
+                        height = 16
+                        width = 8
+
+
+                text_img = Image.new('RGBA', [width, height], (0, 0, 0, 0))
+                text_draw = ImageDraw.Draw(text_img)
+                font = None
+
+                
+                # background and foreground colors
+                br, bg, bb = self.regs[RA8876_REG.BGCR], self.regs[RA8876_REG.BGCG], self.regs[RA8876_REG.BGCB]
+                fr, fg, fb = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
+
+                if not ((self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_CHROMA_KEY_EN_POS) & 0x1):
+                    # if chroma keying is disabled, fill with background color
+                    text_draw.rectangle(((0, 0), (width, height)), fill=(br, bg, bb, 255)) # fill
+                    print("NO chroma key")
+                else:                    
+                    print("chroma key")
+
+
                 char_data = bytes([self.ram_writes.pop(0)])
                 char = '?'
                 if (self.regs[RA8876_REG.CCR0] >> RA8876_REG.CCR0_SOURCE_SELECT_POS) & 0x3 == RA8876_REG.CCR0_SOURCE_SELECT_INTERNAL_ROM:
@@ -413,10 +416,10 @@ class TFT_RA8876:
                             char = char_data.decode('iso-8859-5')
                 
                 if font:
-                    text_draw.text((0, 0), char, fill=(fr, fg, fb), font=font)
+                    text_draw.text((0, 0), char, fill=(fr, fg, fb, 255), font=font)
 
                     # copy character image buffer into image
-                    self.img.paste(text_img, (x, y))
+                    self.img.paste(text_img, (x, y), mask=text_img)
                 
                 # increment cursor
                 x += width

@@ -366,6 +366,76 @@ ra8876_set_text_cursor_pos:
         __epilogue
         ret
 
+
+
+;;
+; @function
+; @brief set RA8876 to 16 px font
+;
+;;
+#bank rom
+ra8876_set_text_size_16:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_CCR0 ; Input Control Register
+    and a, #!(3<<RA8876_CCR0_CHAR_HEIGHT_POS) ; clear bits
+    or a, #(RA8876_CCR0_CHAR_HEIGHT_16 << RA8876_CCR0_CHAR_HEIGHT_POS) ; set size bits
+    __store a, RA8876, RA8876_CCR0
+    ret
+
+;;
+; @function
+; @brief set RA8876 to 24 px font
+;
+;;
+#bank rom
+ra8876_set_text_size_24:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_CCR0 ; Input Control Register
+    and a, #!(3<<RA8876_CCR0_CHAR_HEIGHT_POS) ; clear bits
+    or a, #(RA8876_CCR0_CHAR_HEIGHT_24 << RA8876_CCR0_CHAR_HEIGHT_POS) ; set size bits
+    __store a, RA8876, RA8876_CCR0
+    ret
+
+;;
+; @function
+; @brief set RA8876 to 32 px font
+;
+;;
+#bank rom
+ra8876_set_text_size_32:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_CCR0 ; Input Control Register
+    and a, #!(3<<RA8876_CCR0_CHAR_HEIGHT_POS) ; clear bits
+    or a, #(RA8876_CCR0_CHAR_HEIGHT_32 << RA8876_CCR0_CHAR_HEIGHT_POS) ; set size bits
+    __store a, RA8876, RA8876_CCR0
+    ret
+
+;;
+; @function
+; @brief enable RA8876 to text mode choma keying
+;
+;;
+#bank rom
+ra8876_text_chroma_key_enable:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_CCR1 ; Input Control Register
+    or a, #(1<<RA8876_CCR1_CHROMA_KEY_EN_POS)
+    __store a, RA8876, RA8876_CCR1
+    ret
+
+;;
+; @function
+; @brief enable RA8876 to text mode choma keying
+;
+;;
+#bank rom
+ra8876_text_chroma_key_disable:
+    ; set the TEXT MODE ENABLE bit in ICR register
+    __load a, RA8876, RA8876_CCR1 ; Input Control Register
+    and a, #!(1<<RA8876_CCR1_CHROMA_KEY_EN_POS)
+    __store a, RA8876, RA8876_CCR1
+    ret
+
 ;;
 ; @function
 ; @brief set RA8876 to text mode
