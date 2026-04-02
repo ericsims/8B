@@ -415,6 +415,29 @@ class TFT_RA8876:
                 if font:
                     text_draw.text((0, 0), char, fill=(fr, fg, fb, 255), font=font)
 
+                    width_scale = 1
+                    height_scale = 1
+
+                    # scaling
+                    match (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_WIDTH_SCALE_POS) & 0x3:
+                        case RA8876_REG.CCR1_WIDTH_SCALE_X2:
+                            width_scale = 2
+                        case RA8876_REG.CCR1_WIDTH_SCALE_X3:
+                            width_scale = 3
+                        case RA8876_REG.CCR1_WIDTH_SCALE_X4:
+                            width_scale = 4
+                    match (self.regs[RA8876_REG.CCR1] >> RA8876_REG.CCR1_HEIGHT_SCALE_POS) & 0x3:
+                        case RA8876_REG.CCR1_HEIGHT_SCALE_X2:
+                            width_scale = 2
+                        case RA8876_REG.CCR1_HEIGHT_SCALE_X3:
+                            width_scale = 3
+                        case RA8876_REG.CCR1_HEIGHT_SCALE_X4:
+                            width_scale = 4
+
+                    print(width_scale, height_scale)
+
+                    text_img = text_img.resize((width*width_scale, height*height_scale), Image.Resampling.LANCZOS)
+
                     # copy character image buffer into image
                     self.img.paste(text_img, (x, y), mask=text_img)
                 

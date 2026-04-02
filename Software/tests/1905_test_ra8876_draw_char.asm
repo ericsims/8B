@@ -57,6 +57,15 @@ main:
     store #RA8876_MRWDP, RA8876_ADDR ; ram access
     store #"c", RA8876_DATA
 
+    __load a, RA8876, RA8876_CCR1 ; Input Control Register
+    and a, #!(3<<RA8876_CCR1_HEIGHT_SCALE_POS) ; clear bits
+    or a, #(RA8876_CCR1_HEIGHT_SCALE_X2 << RA8876_CCR1_HEIGHT_SCALE_POS) ; set size bits
+    __store a, RA8876, RA8876_CCR1
+
+    store #RA8876_MRWDP, RA8876_ADDR ; ram access
+    store #"d", RA8876_DATA
+
+
     halt
 
 ; includes

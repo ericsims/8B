@@ -34,7 +34,7 @@ DYNAMIC_APPS_BINS := $(patsubst $(APPS_SRC_DIR)%.asm,$(APPS_BIN_DIR)%.bin,$(APPS
 IR_DOCS := $(patsubst $(TEST_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(TEST_SRCS))
 IR_DOCS += $(patsubst $(LIB_SRC_DIR)%.asm,$(IR_DOCS_DIR)%.yml,$(LIB_SRCS))
 
-LUTS := $(TEST_BIN_DIR)sin_lut.dat
+LUTS := $(LIB_SRC_DIR)_cos_lut.dat
 INST_SET_OUT := $(SRC_DIR)instructions.asm
 INST_SET_IN := instruction_set.yaml
 MEM_MAP_OUT := $(SRC_DIR)mems.asm
@@ -91,9 +91,9 @@ $(MEM_MAP_OUT): $(MEM_MAP_IN)
 
 # TODO: fix lut generations. make it per lib, and not with jupyter
 luts: $(LUTS)
-$(TEST_BIN_DIR)/sin_lut.dat:
-	@mkdir -p bin
-	jupyter nbconvert --execute ./lib_dev/Trig/sin_lut.ipynb --inplace	
+$(LIB_SRC_DIR)_cos_lut.dat:
+	echo creating lut for cosine
+	python ./lib_dev/Trig/cos_lut.py > $@
 
 # build tests
 tests: $(TEST_BINS)
