@@ -29,6 +29,7 @@ cos:
 
     .check_quadrant:
         load a, (BP), .param8_val
+        push a
         test a
         jnn .q_12
     .q_34:
@@ -36,7 +37,6 @@ cos:
         jmn .quadrant_3
         jmp .quadrant_4
     .q_12:
-        load a, (BP), .param8_val
         sub a, #64
         jmn .quadrant_1
         sub a, #64
@@ -44,84 +44,67 @@ cos:
 
     
     .quadrant_4:
-        ; compute position in lut based on input value
+        ; q2 is reverse of q1
+        pop b
         load a, #0
-        load b, (BP), .param8_val
         sub a, b
-        loadw hl, #.lut
-        addw hl, a
-        addw hl, a ; lut is 16 bits per result, so add offset twice
 
-        ; store result
-        loadw hl, (hl)
-        storew hl, (BP), .param16_res
-
+        call ._load_result
         jmp .done
 
     .quadrant_3:
-        ; compute position in lut based on input value
-        load a, (BP), .param8_val
+        ; q3 is negative version of q1
+        pop a
         sub a, #128
-        loadw hl, #.lut
-        addw hl, a
-        addw hl, a ; lut is 16 bits per result, so add offset twice
 
-        ; store result
-        loadw hl, (hl)
-        storew hl, (BP), .param16_res
-
-        ; two's compliment of results
-        load a, (BP), .param16_res
-        xor a, #0xFF
-        store a, (BP), .param16_res
-        load a, (BP), .param16_res+1
-        xor a, #0xFF
-        store a, (BP), .param16_res+1
-        loadw hl, (BP), .param16_res
-        addw hl, #1
-        storew hl, (BP), .param16_res
-        
+        call ._load_result
+        call ._twos_compliment
         jmp .done
 
     .quadrant_2:
-        ; compute position in lut based on input value
+        ; q2 is reverse and negative version of q1
+        pop b
         load a, #128
-        load b, (BP), .param8_val
         sub a, b
-        loadw hl, #.lut
-        addw hl, a
-        addw hl, a ; lut is 16 bits per result, so add offset twice
 
-        ; store result
-        loadw hl, (hl)
-        storew hl, (BP), .param16_res
-
-        ; two's compliment of results
-        load a, (BP), .param16_res
-        xor a, #0xFF
-        store a, (BP), .param16_res
-        load a, (BP), .param16_res+1
-        xor a, #0xFF
-        store a, (BP), .param16_res+1
-        loadw hl, (BP), .param16_res
-        addw hl, #1
-        storew hl, (BP), .param16_res
-
+        call ._load_result
+        call ._twos_compliment
         jmp .done
 
     .quadrant_1:
-        ; compute position in lut based on input value
-        load a, (BP), .param8_val
-        loadw hl, #.lut
-        addw hl, a
-        addw hl, a ; lut is 16 bits per result, so add offset twice
-
-        ; store result
-        loadw hl, (hl)
-        storew hl, (BP), .param16_res
+        pop a
+        call ._load_result
 
     .done:
         __epilogue
         ret
 
+    ; helper functions
+    ._load_result:
+        loadw hl, #.lut
+        lshift a ; multiply offset value by two, since output is 16 bits
+        addw hl, a
+
+        ; load result from lut
+        loadw hl, (hl)
+
+        ; store result
+        storew hl, (BP), .param16_res
+        ret
+
+    ._twos_compliment:
+        ; two's compliment of result
+        load a, (BP), .param16_res
+        xor a, #0xFF
+        store a, (BP), .param16_res
+        load a, (BP), .param16_res+1
+        xor a, #0xFF
+        store a, (BP), .param16_res+1
+        loadw hl, (BP), .param16_res
+        addw hl, #1
+        storew hl, (BP), .param16_res
+        ret
+
     .lut: #d inchexstr("_cos_lut.dat")
+
+
