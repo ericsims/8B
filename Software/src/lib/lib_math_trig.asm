@@ -17,7 +17,6 @@
 ; -3 |___________?___________|    .
 ; -2 |___________?___________|    .
 ; -1 |___________?___________| RESERVED
-;  0 |           ~           | additional ephemeral  stack usage for subcalls
 
 ;;
 cos:
@@ -33,13 +32,13 @@ cos:
         test a
         jnn .q_12
     .q_34:
-        sub a, #192
+        sub a, #0xC0
         jmn .quadrant_3
         jmp .quadrant_4
     .q_12:
-        sub a, #64
+        sub a, #0x40
         jmn .quadrant_1
-        sub a, #64
+        sub a, #0x40
         jmn .quadrant_2
 
     
@@ -55,7 +54,7 @@ cos:
     .quadrant_3:
         ; q3 is negative version of q1
         pop a
-        sub a, #128
+        sub a, #0x80
 
         call ._load_result
         call ._twos_compliment
@@ -64,7 +63,7 @@ cos:
     .quadrant_2:
         ; q2 is reverse and negative version of q1
         pop b
-        load a, #128
+        load a, #0x80
         sub a, b
 
         call ._load_result
@@ -108,3 +107,44 @@ cos:
     .lut: #d inchexstr("_cos_lut.dat")
 
 
+
+#bank rom
+;
+; @function
+; @brief cos lookup using binary radians
+; @section description
+; @param param16_res return
+; @param param8_val input
+; @return void
+;
+;     _______________________
+; -7 |     .param16_res      |
+; -6 |_______________________|
+; -5 |______.param8_val______|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+
+;;
+sin:
+    .param16_res = -7
+    .param8_val = -5
+
+    .init:
+        __prologue
+
+        alloc 2
+        load a, (BP), .param8_val
+        sub a, #0x40 ; phase shift sin by pi/2 to get cos
+        push a
+    
+    .subcall:
+        call cos
+        pop a
+        popw hl
+        storew hl, (BP), .param16_res
+    
+    .done:
+        __epilogue
+        ret

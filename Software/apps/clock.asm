@@ -258,8 +258,6 @@ print_time:
 ; constants
 APP_COLOR_GREEN = 0x4669
 APP_COLOR_YELLOW = 0xDE60
-BORDER_PIXEL_WIDTH = 8
-BORDER_PIXEL_HEIGHT = 8
 TIME_API_SERVER: #d "worldclockapi.com\0"
 
 ; includes
