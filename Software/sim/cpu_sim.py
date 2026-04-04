@@ -128,6 +128,7 @@ def main():
   # load annotations
   print("loading annoations...")
   vars, labels, symbols, code = parse_vars(FILE_NAME)
+  stack.symbols = symbols
   
   # load disk
   if DISK is not None:

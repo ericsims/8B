@@ -167,6 +167,7 @@ class STACK:
         self.window['_STACK_'].Widget.yview_moveto(stack_scroll_pos)
 
         
+        # print(f"{base_ptr_val:04X} {current_call}")
         # dont bother computing local vars if not in a function
         if base_ptr_val is None or current_call is None:
             return
