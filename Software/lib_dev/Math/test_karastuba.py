@@ -31,4 +31,5 @@ def karastuba(x, y, bits):
 # karastuba(0xF8, 0x0F, 8)
 # karastuba(10, 100, 16)
 # karastuba(0xDEAD, 0xBEEF, 16)
-karastuba(0xF000, 0xF000, 16)
+# karastuba(0xF000, 0xF000, 16)
+karastuba(0x8000, 0x1, 16)

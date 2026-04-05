@@ -17,6 +17,26 @@ test:
     assert hl, #0x0000
     
     alloc 4 ; res
+    pushw #0x0001 ; x
+    pushw #0x0002 ; y
+    call umult16
+    dealloc 4 ; x,y
+    popw hl
+    assert hl, #(0x0001*0x0002)&0xFFFF
+    popw hl
+    assert hl, #(0x0001*0x0002)>>16
+
+    alloc 4 ; res
+    pushw #0x0100 ; x
+    pushw #0x0100 ; y
+    call umult16
+    dealloc 4 ; x,y
+    popw hl
+    assert hl, #(0x0100*0x0100)&0xFFFF
+    popw hl
+    assert hl, #(0x0100*0x0100)>>16
+
+    alloc 4 ; res
     pushw #0xDEAD ; x
     pushw #0xBEEF ; y
     call umult16
@@ -278,6 +298,16 @@ test:
     assert hl, #(0x5555*0x5555)&0xFFFF
     popw hl
     assert hl, #(0x5555*0x5555)>>16
+
+    alloc 4
+    pushw #0x8000
+    pushw #0x0001
+    call umult16
+    dealloc 4
+    popw hl
+    assert hl, #(0x8000*0x0001)&0xFFFF
+    popw hl
+    assert hl, #(0x8000*0x0001)>>16
 
     alloc 4
     pushw #0x8000

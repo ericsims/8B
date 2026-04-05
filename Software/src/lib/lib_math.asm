@@ -343,7 +343,7 @@ mult8:
 
 ;;
 ; @function
-; @brief unsigned multiply of 8 bit numbers using karatsuba
+; @brief multiply two 16 bit unsigned numbers using divide-and-conquer
 ; @section description
 ;
 ;     _______________________
@@ -474,8 +474,116 @@ umult16:
         dealloc 10
         __epilogue
         ret
-    ._incr_z2_msb:
-        load b, (BP), .local16_z2
-        add b, #1
-        store b, (BP), .local16_z2
+
+
+
+;;
+; @function
+; @brief multiply two 16 bit unsigned numbers using divide-and-conquer
+; @section description
+;
+;     _______________________
+;-12 |     .param32_res      |
+;-11 |                       |
+;-10 |                       |
+; -9 |_______________________|
+; -8 |      .param16_x       |
+; -7 |_______________________|
+; -6 |      .param16_y       |
+; -5 |_______________________|
+; -4 |___________?___________| RESERVED
+; -3 |___________?___________|    .
+; -2 |___________?___________|    .
+; -1 |___________?___________| RESERVED
+;  0 |______.local8_neg______|
+
+;;
+mult16:
+    .param32_res = -12
+    .param16_x = -8
+    .param16_y = -6
+    .local8_neg = 0
+
+    .init:
+        __prologue
+        push #0 ; .local8_neg = 0
+
+        alloc 4 ; res for umult16
+    
+    .x_sign:
+        ; invert x if negative
+        loadw hl, (BP), .param16_x
+        load a, (BP), .param16_x
+        test a
+        jnn ..positive
+        ; x is negative, take two's compliment
+        xor a, #0xFF ; invert msb
+        push a
+        load a, (BP), .param16_x+1
+        xor a, #0xFF ; invert lsb
+        push a
+        popw hl
+        addw hl, #1 ; and add 1
+        store #1, (BP), .local8_neg ; result is negative
+        ..positive:
+        pushw hl
+    .y_sign:
+        ; invert y if negative
+        loadw hl, (BP), .param16_y
+        load a, (BP), .param16_y
+        test a
+        jnn ..positive
+        ; y is negative, take two's compliment
+        xor a, #0xFF ; invert msb
+        push a
+        load a, (BP), .param16_y+1
+        xor a, #0xFF ; invert lsb
+        push a
+        popw hl
+        addw hl, #1 ; and add 1
+        load b, (BP), .local8_neg
+        xor b, #1
+        store b, (BP), .local8_neg ; flip sign of result
+        ..positive:
+        pushw hl
+    .multiply:
+        call umult16
+        dealloc 4
+        popw hl ; result bytes 1-0
+        storew hl, (BP), .param32_res+2
+        popw hl ; result bytes 3-2
+        storew hl, (BP), .param32_res
+    .check_sign:
+        load a, (BP), .local8_neg
+        test a
+        jmz .done ; result should be postive
+    .flip_sign:
+        ; invert result
+        load a, (BP), .param32_res
+        xor a, #0xFF
+        store a, (BP), .param32_res
+        load a, (BP), .param32_res+1
+        xor a, #0xFF
+        store a, (BP), .param32_res+1
+        load a, (BP), .param32_res+2
+        xor a, #0xFF
+        store a, (BP), .param32_res+2
+        load a, (BP), .param32_res+3
+        xor a, #0xFF
+        store a, (BP), .param32_res+3
+        
+        loadw hl, (BP), .param32_res+2
+        addw hl, #1 ; and add 1
+        jnc ..dont_increment_upper_word
+        storew hl, (BP), .param32_res+2
+        loadw hl, (BP), .param32_res
+        addw hl, #1 ; carry
+        storew hl, (BP), .param32_res
+        jmp .done
+        ..dont_increment_upper_word:
+        storew hl, (BP), .param32_res+2
+
+    .done:
+        dealloc 1
+        __epilogue
         ret
