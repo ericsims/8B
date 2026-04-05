@@ -113,7 +113,7 @@ def main():
 
 
   # load program
-  print(f"loading program ${FILE_NAME}...")
+  print(f"loading program {FILE_NAME}...")
   eeprom_usage = 0
   with open(FILE_NAME, 'rb') as file:
     eep_ptr = 0

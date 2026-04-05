@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 
-x = 0x78
-y = 0x9A
+def karastuba(x, y, bits):
+    print(F"{x:0{bits>>2}X} * {y:0{bits>>2}X} = {x*y:0{bits>>1}X}")
 
-print(F"{x:02X} * {y:02X} = {x*y:04X}")
+    x1 = (x >> (bits >> 1)) & (2**(bits>>1)-1)
+    x0 = x & (2**(bits>>1)-1)
 
-x1 = (x >> 4) & 0xF
-x0 = x & 0xF
+    y1 = (y >> (bits >> 1)) & (2**(bits>>1)-1)
+    y0 = y & (2**(bits>>1)-1)
 
-y1 = (y >> 4) & 0xF
-y0 = y & 0xF
-
-z2 = x1*y1
-z1 = x1*y0 + x0*y1
-z0 = x0*y0
+    z2 = x1*y1
+    z1 = x1*y0 + x0*y1
+    z0 = x0*y0
 
 
-print(F"z0:{z0:02X} z1:{z1:02X} z2:{z2:02X} ")
+    print(F"z0:{z0:0{bits>>2}X} z1:{z1:0{bits>>2}X} z2:{z2:0{bits>>2}X} ")
 
-xy = (z2<<8) + (z1<<4) + z0
+    xy = (z2 << bits) + (z1 << (bits >> 1)) + z0
 
-print(F"xy:{xy:04X}")
+    print(F"xy:{xy:0{bits>>1}X}")
+    print()
+
+karastuba(0x78, 0x9A, 8)
+karastuba(0xFF, 0xFF, 8)
+karastuba(0x1234, 0x5678, 16)
