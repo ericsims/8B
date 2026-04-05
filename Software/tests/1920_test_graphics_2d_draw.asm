@@ -1,0 +1,65 @@
+; program entry
+#bank rom
+top:
+init_pointers:
+    loadw sp, #STACK_BASE
+    storew #0x0000, BP
+
+main:
+    call ra8876_init
+    assert b, #0
+    
+    ; set active window
+    pushw #0x0000 ; x
+    pushw #0x0000 ; y
+    pushw #TFT_SCREEN_WIDTH ; width
+    pushw #TFT_SCREEN_HEIGHT ; height
+    call ra8876_set_active_window_xywh
+    dealloc 8
+
+    ; clear screen
+    pushw #0x0000 ; x0
+    pushw #0x0000 ; y0
+    pushw #TFT_SCREEN_WIDTH ; x1
+    pushw #TFT_SCREEN_HEIGHT ; y1
+    pushw #COLOR65K_BLACK
+    call ra8876_draw_sqaure_fill
+    dealloc 10
+
+
+    store #0, angle
+
+    .loop:
+    pushw #APP_COLOR_GREEN
+    pushw #point_list
+    push #4
+    push angle
+    call draw_2d_points
+    dealloc 6
+
+    load a, angle
+    add a, #5
+    store a, angle
+
+    jmp .loop
+
+    halt
+
+; constants
+APP_COLOR_GREEN = 0x4669
+
+; includes
+#include "../src/CPU.asm"
+#include "../src/lib/lib_ra8876.asm"
+#include "../src/lib/lib_graphics.asm"
+
+point_list:
+#d16 0x0070, 0x0070
+#d16 -0x0070, 0x0070
+#d16 -0x0070, -0x0070
+#d16 0x0070, -0x0070
+
+; global vars
+#bank ram
+angle: #res 1
+STACK_BASE: #res 1024

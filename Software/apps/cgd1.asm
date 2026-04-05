@@ -7,7 +7,7 @@ init_pointers:
 
 main:
     call init_graphics
-    
+
 
     store #5, iterations
     store #0x00, angle
@@ -96,7 +96,6 @@ draw_point:
     popw hl
     storew hl, point.y
     dealloc 1
-
 
 
     ; draw in center of screen
