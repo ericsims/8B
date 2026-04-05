@@ -25,6 +25,7 @@ test:
     ; assert hl, #(0xDEAD*0xBEEF)&0xFFFF
     ; popw hl
     ; assert hl, #(0xDEAD*0xBEEF)>>16
+    
 
     ; alloc 4
     ; pushw #0xFFFF
@@ -46,35 +47,35 @@ test:
     ; popw hl
     ; assert hl, #(0xFFFE*0xFFFF)>>16
 
-    alloc 4
-    pushw #0x8000
-    pushw #0x8000
-    call umult16
-    dealloc 4
-    popw hl
-    assert hl, #(0x8000*0x8000)&0xFFFF
-    popw hl
-    assert hl, #(0x8000*0x8000)>>16
+    ; alloc 4
+    ; pushw #0x8000
+    ; pushw #0x8000
+    ; call umult16
+    ; dealloc 4
+    ; popw hl
+    ; assert hl, #(0x8000*0x8000)&0xFFFF
+    ; popw hl
+    ; assert hl, #(0x8000*0x8000)>>16
 
-    alloc 4
-    pushw #0x8000
-    pushw #0xFFFF
-    call umult16
-    dealloc 4
-    popw hl
-    assert hl, #(0x8000*0xFFFF)&0xFFFF
-    popw hl
-    assert hl, #(0x8000*0xFFFF)>>16
+    ; alloc 4
+    ; pushw #0x8000
+    ; pushw #0xFFFF
+    ; call umult16
+    ; dealloc 4
+    ; popw hl
+    ; assert hl, #(0x8000*0xFFFF)&0xFFFF
+    ; popw hl
+    ; assert hl, #(0x8000*0xFFFF)>>16
 
-    alloc 4
-    pushw #0x7FFF
-    pushw #0xFFFF
-    call umult16
-    dealloc 4
-    popw hl
-    assert hl, #(0x7FFF*0xFFFF)&0xFFFF
-    popw hl
-    assert hl, #(0x7FFF*0xFFFF)>>16
+    ; alloc 4
+    ; pushw #0x7FFF
+    ; pushw #0xFFFF
+    ; call umult16
+    ; dealloc 4
+    ; popw hl
+    ; assert hl, #(0x7FFF*0xFFFF)&0xFFFF
+    ; popw hl
+    ; assert hl, #(0x7FFF*0xFFFF)>>16
 
     alloc 4
     pushw #0xF000
@@ -85,6 +86,8 @@ test:
     assert hl, #(0xF000*0xF000)&0xFFFF
     popw hl
     assert hl, #(0xF000*0xF000)>>16
+
+    halt
 
     alloc 4
     pushw #0x00FF

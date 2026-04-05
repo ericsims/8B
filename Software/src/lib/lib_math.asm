@@ -430,39 +430,58 @@ umult16:
         storew hl, (BP), .local16_z4
     .z1:
         ; z1 = z2 + z0 - z4
-        ..sub_z0_z4:
-        load a, (BP), .local16_z0
-        load b, (BP), .local16_z4
-        sub a, b ; z0 - z4 MSB
+        ..add_z2_z0:
+        load a, (BP), .local16_z2
+        load b, (BP), .local16_z0
+        add a, b ; z2 + z0 MSB
+        jnc ..no_msb_overflow1
+        call ._incr_z2_msb
+        ..no_msb_overflow1:
         push a
-        load a, (BP), .local16_z0+1
+        load a, (BP), .local16_z2+1
+        push a
+        popw hl ; load z2 into hl
+        load b, (BP), .local16_z0+1
+        addw hl, b ; z2 + z0 LSB
+        jnc ..no_msb_overflow2
+        call ._incr_z2_msb
+        ..no_msb_overflow2:
+        storew hl, (BP), .local16_z1
+        ..test_z4_sign:
+        load a, (BP), .local16_z4
+        test a
+        jmn ..z4_negative
+        ..z4_positive:
+        ; z4 is postive, overflow cannot occur
+        load a, (BP), .local16_z1
+        load b, (BP), .local16_z4
+        sub a, b ; z1-z4 (MSB), ignore carry out
+        push a
+        load a, (BP), .local16_z1+1
         push a
         popw hl
         load b, (BP), .local16_z4+1
-        subw hl, b ; z0 - z4 LSB
+        subw hl, b ; z1-z4 (LSB), ignore carry out
         storew hl, (BP), .local16_z1
-
-        ..add_z2_lsb:
-        load a, (BP), .local16_z2+1
-        addw hl, a ; + z2 lsb
-        jnc ..save_lsb
-        ; handle overflow of 16 bit z1
-        load b, (BP), .local16_z2
-        add b, #1
-        store b, (BP), .local16_z2
-        ..save_lsb:
+        jmp .sum
+        ..z4_negative:
+        ; z4 is negative, overflow can occur
+        load a, (BP), .local16_z1
+        load b, (BP), .local16_z4
+        sub a, b ; z1-z4 (MSB)
+        jnc ..no_msb_overflow3
+        ; call ._incr_z2_msb
+        ..no_msb_overflow3:
+        push a
+        load a, (BP), .local16_z1+1
+        push a
+        popw hl
+        load b, (BP), .local16_z4+1
+        subw hl, b ; z1-z4 (LSB)
+        jnc ..no_msb_overflow4
+        call ._incr_z2_msb
+        ..no_msb_overflow4:
         storew hl, (BP), .local16_z1
-        ..add_z2_msb:
-        load a, (BP), .local16_z2
-        load b, (BP), .local16_z1
-        add a, b
-        jnc ..save_msb
-        ; handle overflow of 16 bit z1
-        load b, (BP), .local16_z2
-        add b, #1
-        store b, (BP), .local16_z2
-        ..save_msb:
-        store a, (BP), .local16_z1
     .sum:
         ; xy = z2 << 16 + z1 << 8 + z0
         load a, (BP), .local16_z0+1
@@ -480,4 +499,9 @@ umult16:
     .done:
         dealloc 8
         __epilogue
+        ret
+    ._incr_z2_msb:
+        load b, (BP), .local16_z2
+        add b, #1
+        store b, (BP), .local16_z2
         ret
