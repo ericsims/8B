@@ -38,6 +38,14 @@ test:
     popw hl
     assert hl, #-123*-109
 
+    pushw #0
+    push #49
+    push #-49
+    call mult8
+    dealloc 2
+    popw hl
+    assert hl, #49*-49
+
     halt
 
 
