@@ -135,7 +135,8 @@ mult4:
 ;  4 |_______.local8_z0______|
 ;  5 |_______.local8_z1______|
 ;  6 |_______.local8_z2______|
-;  7 |_______.local8_z4______|
+;  7 |______.local8_z1a______|
+;  9 |______.local8_z1b______|
 ;;
 umult8:
     .param16_res = -8
@@ -148,11 +149,12 @@ umult8:
     .local8_z0 = 4
     .local8_z1 = 5
     .local8_z2 = 6
-    .local8_z4 = 7
+    .local8_z1a = 7
+    .local8_z1b = 8
 
     .init:
         __prologue
-        alloc 8
+        alloc 9
 
     ; first split the 8 bit input into two 4 bit numbers
     .x0:
@@ -197,40 +199,34 @@ umult8:
         call umult4
         dealloc 2
         store b, (BP), .local8_z2
-    .z4:
-        ; z4 = (x1 - x0)*(y1 - y0)
+    .z1a:
+        ; z1a = x1*y0
         load a, (BP), .local8_x1
-        load b, (BP), .local8_x0
-        sub a, b ; x1 - x0
+        push a
+        load a, (BP), .local8_y0
+        push a
+        call umult4
+        dealloc 2
+        store b, (BP), .local8_z1a
+    .z1b:
+        ; z1b = x0*y1
+        load a, (BP), .local8_x0
         push a
         load a, (BP), .local8_y1
-        load b, (BP), .local8_y0
-        sub a, b ; y1 - y0
         push a
-        call mult4
+        call umult4
         dealloc 2
-        store b, (BP), .local8_z4
+        store b, (BP), .local8_z1b
     .z1:
-        ; z1 = z2 + z0 - z4
-        load b, (BP), .local8_z2
-        load a, (BP), .local8_z0
+        ; z1 = z1a + z1b = x1*y0 + x0*y1
+        load a, (BP), .local8_z1a
+        load b, (BP), .local8_z1b
         add a, b ; z2 + z0
         jnc ..skip_z1_overflow
+        load b, (BP), .local8_z2
         add b, #(1<<4) ; carry out z1 into z2
         store b, (BP), .local8_z2
         ..skip_z1_overflow:
-        load b, (BP), .local8_z4
-        test b
-        jmn ..z4_neg
-        sub a, b ; z2 + z0 - z4
-        jnc ..skip_z1_overflow_2
-        add b, #(1<<4) ; carry out z1 into z2
-        store b, (BP), .local8_z2
-        ..skip_z1_overflow_2:
-        store a, (BP), .local8_z1
-        jmp .sum
-        ..z4_neg:
-        sub a, b ; z2 + z0 - z4
         store a, (BP), .local8_z1
     .sum:
         ; xy = z2 << 8 + z1 << 4 + z0
@@ -260,7 +256,7 @@ umult8:
             storew hl, (BP), .param16_res    
     
     .done:
-        dealloc 8
+        dealloc 9
         __epilogue
         ret
 
@@ -369,8 +365,10 @@ mult8:
 ;  3 |_______________________|
 ;  4 |      .local16_z2      |
 ;  5 |_______________________|
-;  6 |      .local16_z4      |
+;  6 |     .local16_z1a      |
 ;  7 |_______________________|
+;  8 |     .local16_z1b      |
+;  9 |_______________________|
 
 ;;
 umult16:
@@ -384,11 +382,12 @@ umult16:
     .local16_z0 = 0
     .local16_z1 = 2
     .local16_z2 = 4
-    .local16_z4 = 6
+    .local16_z1a = 6
+    .local16_z1b = 8
 
     .init:
         __prologue
-        alloc 8
+        alloc 10
     
     ; compute the partials
     .z0:
@@ -413,74 +412,49 @@ umult16:
         dealloc 2
         popw hl
         storew hl, (BP), .local16_z2
-    .z4:
-        ; z4 = (x1 - x0)*(y1 - y0)
-        pushw #0 ; result
+    .z1a:
+        ; z1a = x1*y0
+        alloc 2 ; res
         load a, (BP), .param8_x1
-        load b, (BP), .param8_x0
-        sub a, b ; x1 - x0
-        push a
-        load a, (BP), .param8_y1
-        load b, (BP), .param8_y0
-        sub a, b ; y1 - y0
-        push a
-        call mult8
+        push a ; x
+        load a, (BP), .param8_y0
+        push a ; y
+        call umult8
         dealloc 2
-        popw hl
-        storew hl, (BP), .local16_z4
+        popw hl ; res
+        storew hl, (BP), .local16_z1a
+    .z1b:
+        ; z1a = x0*yq
+        alloc 2 ; res
+        load a, (BP), .param8_x0
+        push a ; x
+        load a, (BP), .param8_y1
+        push a ; y
+        call umult8
+        dealloc 2
+        popw hl ; res
+        storew hl, (BP), .local16_z1b
     .z1:
-        ; z1 = z2 + z0 - z4
-        ..add_z2_z0:
-        load a, (BP), .local16_z2
-        load b, (BP), .local16_z0
-        add a, b ; z2 + z0 MSB
-        jnc ..no_msb_overflow1
-        call ._incr_z2_msb
-        ..no_msb_overflow1:
+        ; z1 = z1a + z1b = x1*y0 + x0*y1
+        load a, (BP), .local16_z1a
+        load b, (BP), .local16_z1b
+        add a, b ; z2 + z0 (MSB)
+        jnc ..skip_z1_overflow1
+        load b, (BP), .local16_z2
+        add b, #1 ; carry out z1 into z2
+        store b, (BP), .local16_z2
+        ..skip_z1_overflow1:
         push a
-        load a, (BP), .local16_z2+1
-        push a
-        popw hl ; load z2 into hl
-        load b, (BP), .local16_z0+1
-        addw hl, b ; z2 + z0 LSB
-        jnc ..no_msb_overflow2
-        call ._incr_z2_msb
-        ..no_msb_overflow2:
-        storew hl, (BP), .local16_z1
-        ..test_z4_sign:
-        load a, (BP), .local16_z4
-        test a
-        jmn ..z4_negative
-        ..z4_positive:
-        ; z4 is postive, overflow cannot occur
-        load a, (BP), .local16_z1
-        load b, (BP), .local16_z4
-        sub a, b ; z1-z4 (MSB), ignore carry out
-        push a
-        load a, (BP), .local16_z1+1
+        load a, (BP), .local16_z1a+1
         push a
         popw hl
-        load b, (BP), .local16_z4+1
-        subw hl, b ; z1-z4 (LSB), ignore carry out
-        storew hl, (BP), .local16_z1
-        jmp .sum
-        ..z4_negative:
-        ; z4 is negative, overflow can occur
-        load a, (BP), .local16_z1
-        load b, (BP), .local16_z4
-        sub a, b ; z1-z4 (MSB)
-        jnc ..no_msb_overflow3
-        ; call ._incr_z2_msb
-        ..no_msb_overflow3:
-        push a
-        load a, (BP), .local16_z1+1
-        push a
-        popw hl
-        load b, (BP), .local16_z4+1
-        subw hl, b ; z1-z4 (LSB)
-        jnc ..no_msb_overflow4
-        call ._incr_z2_msb
-        ..no_msb_overflow4:
+        load b, (BP), .local16_z1b+1
+        addw hl, b ; z2 + z0 (LSB)
+        jnc ..skip_z1_overflow2
+        load b, (BP), .local16_z2
+        add b, #1 ; carry out z1 into z2
+        store b, (BP), .local16_z2
+        ..skip_z1_overflow2:
         storew hl, (BP), .local16_z1
     .sum:
         ; xy = z2 << 16 + z1 << 8 + z0
@@ -497,7 +471,7 @@ umult16:
         addw hl, a ; z2 + z1 (msb)
         storew hl, (BP), .param32_res ; store z2 << 16 + z1 <<8 + z0    
     .done:
-        dealloc 8
+        dealloc 10
         __epilogue
         ret
     ._incr_z2_msb:
