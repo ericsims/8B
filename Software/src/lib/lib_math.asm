@@ -24,7 +24,7 @@ umult4:
 
     
     .load_result:        
-        ; offset = (x << 8) | (y & 0xF)
+        ; offset = (x << 4) | (y & 0xF)
         load a, (BP), .param8_x
         lshift a
         lshift a
@@ -100,7 +100,7 @@ mult4:
         push a
     .multiply:
         call umult4
-        dealloc 2
+        popw hl ; dealloc 2
     .check_sign:
         load a, (BP), .local8_neg
         test a
@@ -110,7 +110,7 @@ mult4:
         add b, #1 ; and add 1
 
     .done:
-        dealloc 1
+        pop a; dealloc 1
         __epilogue
         ret
 
@@ -188,7 +188,7 @@ umult8:
         load a, (BP), .local8_y0
         push a
         call umult4
-        dealloc 2
+        popw hl ; dealloc 2
         store b, (BP), .local8_z0
     .z2:
         ; z2 = x1 * y1
@@ -197,7 +197,7 @@ umult8:
         load a, (BP), .local8_y1
         push a
         call umult4
-        dealloc 2
+        popw hl ; dealloc 2
         store b, (BP), .local8_z2
     .z1a:
         ; z1a = x1*y0
@@ -206,7 +206,7 @@ umult8:
         load a, (BP), .local8_y0
         push a
         call umult4
-        dealloc 2
+        popw hl ; dealloc 2
         store b, (BP), .local8_z1a
     .z1b:
         ; z1b = x0*y1
@@ -215,7 +215,7 @@ umult8:
         load a, (BP), .local8_y1
         push a
         call umult4
-        dealloc 2
+        popw hl ; dealloc 2
         store b, (BP), .local8_z1b
     .z1:
         ; z1 = z1a + z1b = x1*y0 + x0*y1
@@ -285,8 +285,7 @@ mult8:
 
     .init:
         __prologue
-        push #0
-
+        push #0 ; .local8_neg = 0
         pushw #0 ; res for umult8
     
     .x_sign:
@@ -315,7 +314,7 @@ mult8:
         push a
     .multiply:
         call umult8
-        dealloc 2
+        popw hl ; dealloc 2
         popw hl ; result
         storew hl, (BP), .param16_res
     .check_sign:
@@ -398,7 +397,7 @@ umult16:
         load a, (BP), .param8_y0
         push a
         call umult8
-        dealloc 2
+        popw hl ; dealloc 2
         popw hl
         storew hl, (BP), .local16_z0
     .z2:
@@ -409,7 +408,7 @@ umult16:
         load a, (BP), .param8_y1
         push a
         call umult8
-        dealloc 2
+        popw hl ; dealloc 2
         popw hl
         storew hl, (BP), .local16_z2
     .z1a:
@@ -420,7 +419,7 @@ umult16:
         load a, (BP), .param8_y0
         push a ; y
         call umult8
-        dealloc 2
+        popw hl ; dealloc 2
         popw hl ; res
         storew hl, (BP), .local16_z1a
     .z1b:
@@ -431,7 +430,7 @@ umult16:
         load a, (BP), .param8_y1
         push a ; y
         call umult8
-        dealloc 2
+        popw hl ; dealloc 2
         popw hl ; res
         storew hl, (BP), .local16_z1b
     .z1:
