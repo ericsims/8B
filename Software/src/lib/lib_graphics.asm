@@ -15,7 +15,10 @@
 ;  -3 |___________?___________|    .
 ;  -2 |___________?___________|    .
 ;  -1 |___________?___________| RESERVED
-;
+;   0 |   .local32_line_arr   |
+;   1 |                       |
+;   2 |                       |
+;   4 |_______________________|
 ;;
 #bank rom
 draw_2d_points:
@@ -23,6 +26,7 @@ draw_2d_points:
     .param16_list_ptr = -8
     .param8_list_len = -6
     .param8_angle = -5
+    .local32_line_arr = 0 
     .init:
         __prologue
         
@@ -59,37 +63,37 @@ draw_2d_points:
 
         ; copy point from list to ram buffer
         load a, (hl)
-        store a, point.x
+        store a, point_a.x
         addw hl, #1
         load a, (hl)
-        store a, point.x+1
+        store a, point_a.x+1
         addw hl, #1
         load a, (hl)
-        store a, point.y
+        store a, point_a.y
         addw hl, #1
         load a, (hl)
-        store a, point.y+1
+        store a, point_a.y+1
 
         addw hl, #1
         storew hl, point_list_ptr
         
         ; invert y
-        load a, point.y
+        load a, point_a.y
         xor a, #0xFF
-        store a, point.y
-        load a, point.y+1
+        store a, point_a.y
+        load a, point_a.y+1
         xor a, #0xFF
-        store a, point.y+1
-        loadw hl, point.y
+        store a, point_a.y+1
+        loadw hl, point_a.y
         addw hl, #1
-        storew hl, point.y
+        storew hl, point_a.y
 
     .rotate_x_point:
-        ; x' = point.x * cos(theta) - point.y * sin(theta)
+        ; x' = point_a.x * cos(theta) - point_a.y * sin(theta)
         
-        ; point.x * cos(theta)
+        ; point_a.x * cos(theta)
         alloc 4
-        pushw point.x
+        pushw point_a.x
         pushw cosx
         call mult16
         dealloc 5
@@ -97,9 +101,9 @@ draw_2d_points:
         storew hl, temp1
         dealloc 1
         
-        ; point.y * sin(theta)
+        ; point_a.y * sin(theta)
         alloc 4
-        pushw point.y
+        pushw point_a.y
         pushw sinx
         call mult16
         dealloc 5
@@ -107,7 +111,7 @@ draw_2d_points:
         storew hl, temp2
         dealloc 1
 
-        ; invert point.y * sin(theta)
+        ; invert point_a.y * sin(theta)
         load a, temp2
         xor a, #0xFF
         store a, temp2
@@ -127,15 +131,15 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point_t.x
+        storew hl, point_b.x
 
 
     .rotate_y_point:
-        ; x' = point.x * sin(theta) + point.y * cos(theta)
+        ; x' = point_a.x * sin(theta) + point_a.y * cos(theta)
         
-        ; point.x * sin(theta)
+        ; point_a.x * sin(theta)
         alloc 4
-        pushw point.x
+        pushw point_a.x
         pushw sinx
         call mult16
         dealloc 5
@@ -143,9 +147,9 @@ draw_2d_points:
         storew hl, temp1
         dealloc 1
         
-        ; point.y * cos(theta)
+        ; point_a.y * cos(theta)
         alloc 4
-        pushw point.y
+        pushw point_a.y
         pushw cosx
         call mult16
         dealloc 5
@@ -162,17 +166,17 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point_t.y
+        storew hl, point_b.y
 
     .push_point:
         ; center on screen
-        loadw hl, point_t.x
+        loadw hl, point_b.x
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #2
         pushw hl
 
-        loadw hl, point_t.y
+        loadw hl, point_b.y
         addw hl, #TFT_SCREEN_HEIGHT/4
         addw hl, #TFT_SCREEN_HEIGHT/4
         pushw hl
@@ -192,6 +196,11 @@ draw_2d_points:
         load a, (BP), .param8_list_len
         store a, point_list_len
 
+        loadw hl, (BP), .local32_line_arr
+        storew hl, point_a.x
+        loadw hl, (BP), .local32_line_arr+2
+        storew hl, point_a.y
+
     .draw_point:
         load a, point_list_len
         sub a, #1
@@ -199,24 +208,24 @@ draw_2d_points:
         store a, point_list_len
 
         popw hl
-        storew hl, point_t.y
+        storew hl, point_b.y
         popw hl
-        storew hl, point_t.x
+        storew hl, point_b.x
 
         ; draw point, with width 4px
-        loadw hl, point_t.x 
+        loadw hl, point_b.x 
         subw hl, #2
         pushw hl ; x0
 
-        loadw hl, point_t.y
+        loadw hl, point_b.y
         subw hl, #2
         pushw hl ; y0
 
-        loadw hl, point_t.x 
+        loadw hl, point_b.x 
         addw hl, #2
         pushw hl ; x1
 
-        loadw hl, point_t.y
+        loadw hl, point_b.y
         addw hl, #2
         pushw hl ; y1
 
@@ -224,6 +233,19 @@ draw_2d_points:
         pushw hl
         call ra8876_draw_sqaure_fill
         dealloc 10
+
+
+        pushw point_b.x
+        pushw point_b.y
+        pushw point_a.x
+        pushw point_a.y
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_draw_line
+        dealloc 10
+
+        movew point_b.x, point_a.x
+        movew point_b.y, point_a.y
 
         jmp .draw_point
 
@@ -234,11 +256,11 @@ draw_2d_points:
 #bank ram
 point_list_ptr: #res 2
 point_list_len: #res 1
-point:
+point_a:
     .x: #res 2
     .y: #res 2
     .z: #res 2
-point_t:
+point_b:
     .x: #res 2
     .y: #res 2
     .z: #res 2
