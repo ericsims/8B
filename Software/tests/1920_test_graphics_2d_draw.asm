@@ -17,16 +17,6 @@ main:
     call ra8876_set_active_window_xywh
     dealloc 8
 
-    ; clear screen
-    pushw #0x0000 ; x0
-    pushw #0x0000 ; y0
-    pushw #TFT_SCREEN_WIDTH ; x1
-    pushw #TFT_SCREEN_HEIGHT ; y1
-    pushw #COLOR65K_BLACK
-    call ra8876_draw_sqaure_fill
-    dealloc 10
-
-
     store #0, angle
 
     .loop:

@@ -52,7 +52,7 @@ draw_2d_points:
     .load_point:
         load a, point_list_len
         sub a, #1
-        jmc .done
+        jmc .display_points
         store a, point_list_len
 
         loadw hl, point_list_ptr
@@ -164,27 +164,60 @@ draw_2d_points:
         addw hl, a ; add lsb
         storew hl, point_t.y
 
-    .draw_point:
-        ; draw in center of screen
-        loadw hl, point_t.x 
-        addw hl, #TFT_SCREEN_WIDTH/4 - 1
-        addw hl, #TFT_SCREEN_WIDTH/4 + 1 - 2
-        pushw hl ; x0
-
-        loadw hl, point_t.y
-        addw hl, #TFT_SCREEN_HEIGHT/4
-        addw hl, #TFT_SCREEN_HEIGHT/4 - 2
-        pushw hl ; y0
-
+    .push_point:
+        ; center on screen
         loadw hl, point_t.x
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
-        addw hl, #2 + 2
-        pushw hl ; x1
+        addw hl, #2
+        pushw hl
 
         loadw hl, point_t.y
         addw hl, #TFT_SCREEN_HEIGHT/4
-        addw hl, #TFT_SCREEN_HEIGHT/4 + 2
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        pushw hl
+
+        jmp .load_point
+
+    .display_points:
+        ; clear screen
+        pushw #0x0000 ; x0
+        pushw #0x0000 ; y0
+        pushw #TFT_SCREEN_WIDTH ; x1
+        pushw #TFT_SCREEN_HEIGHT ; y1
+        pushw #COLOR65K_BLACK
+        call ra8876_draw_sqaure_fill
+        dealloc 10
+
+        load a, (BP), .param8_list_len
+        store a, point_list_len
+
+    .draw_point:
+        load a, point_list_len
+        sub a, #1
+        jmc .done
+        store a, point_list_len
+
+        popw hl
+        storew hl, point_t.y
+        popw hl
+        storew hl, point_t.x
+
+        ; draw point, with width 4px
+        loadw hl, point_t.x 
+        subw hl, #2
+        pushw hl ; x0
+
+        loadw hl, point_t.y
+        subw hl, #2
+        pushw hl ; y0
+
+        loadw hl, point_t.x 
+        addw hl, #2
+        pushw hl ; x1
+
+        loadw hl, point_t.y
+        addw hl, #2
         pushw hl ; y1
 
         loadw hl, (BP), .param16_color
@@ -192,7 +225,7 @@ draw_2d_points:
         call ra8876_draw_sqaure_fill
         dealloc 10
 
-        jmp .load_point
+        jmp .draw_point
 
     .done:
         __epilogue

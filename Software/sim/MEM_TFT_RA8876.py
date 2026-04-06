@@ -510,7 +510,18 @@ class TFT_RA8876:
 
          # Geometric Draw Line / Triangle
         if (self.regs[RA8876_REG.DCR0] >> RA8876_REG.DCR0_DRAW_EN_POS) & 1:
-            print("SIM DOES NOT SUPPORT LINE / TRIANGLE YET")
+            x0 = (self.regs[RA8876_REG.DLHSR1] << 8) | self.regs[RA8876_REG.DLHSR0]
+            y0 = (self.regs[RA8876_REG.DLVSR1] << 8) | self.regs[RA8876_REG.DLVSR0]
+            x1 = (self.regs[RA8876_REG.DLHER1] << 8) | self.regs[RA8876_REG.DLHER0]
+            y1 = (self.regs[RA8876_REG.DLVER1] << 8) | self.regs[RA8876_REG.DLVER0]
+            r, g, b = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
+
+            draw = ImageDraw.Draw(self.img)
+
+            if (self.regs[RA8876_REG.DCR0] >> RA8876_REG.DCR0_DRAW_MODE_POS) & 0b1 == RA8876_REG.DCR0_DRAW_MODE_LINE:
+                draw.line(((x0, y0), (x1, y1)), fill=(r, g, b))
+            else:
+                print("SIM DOES NOT SUPPORT LINE / TRIANGLE YET")
             # drawing complete. clear draw bit
             self.regs[RA8876_REG.DCR0] &= ~(1<<RA8876_REG.DCR0_DRAW_EN_POS)
 
