@@ -127,7 +127,7 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point.x
+        storew hl, point_t.x
 
 
     .rotate_y_point:
@@ -162,27 +162,27 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point.y
+        storew hl, point_t.y
 
     .draw_point:
         ; draw in center of screen
-        loadw hl, point.x 
+        loadw hl, point_t.x 
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #TFT_SCREEN_WIDTH/4 + 1 - 2
         pushw hl ; x0
 
-        loadw hl, point.y
+        loadw hl, point_t.y
         addw hl, #TFT_SCREEN_HEIGHT/4
         addw hl, #TFT_SCREEN_HEIGHT/4 - 2
         pushw hl ; y0
 
-        loadw hl, point.x
+        loadw hl, point_t.x
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #TFT_SCREEN_WIDTH/4 - 1
         addw hl, #2 + 2
         pushw hl ; x1
 
-        loadw hl, point.y
+        loadw hl, point_t.y
         addw hl, #TFT_SCREEN_HEIGHT/4
         addw hl, #TFT_SCREEN_HEIGHT/4 + 2
         pushw hl ; y1
@@ -202,6 +202,10 @@ draw_2d_points:
 point_list_ptr: #res 2
 point_list_len: #res 1
 point:
+    .x: #res 2
+    .y: #res 2
+    .z: #res 2
+point_t:
     .x: #res 2
     .y: #res 2
     .z: #res 2
