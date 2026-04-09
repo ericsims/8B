@@ -21,8 +21,8 @@ main:
 
     .loop:
     pushw #APP_COLOR_GREEN
-    pushw #point_list
-    push #4
+    pushw #face_list
+    push #2
     push angle
     call draw_2d_points
     dealloc 6
@@ -31,7 +31,7 @@ main:
     add a, #5
     store a, angle
 
-    jmp .loop
+    jnc .loop
 
     halt
 
@@ -43,11 +43,10 @@ APP_COLOR_GREEN = 0x4669
 #include "../src/lib/lib_ra8876.asm"
 #include "../src/lib/lib_graphics.asm"
 
-point_list:
-#d16 0x0070, 0x0070
-#d16 -0x0070, 0x0070
-#d16 -0x0070, -0x0070
-#d16 0x0070, -0x0070
+face_list:
+#d16 0x0070, 0x0070, -0x0070, 0x0070, -0x0070, -0x0070
+#d16 0x0070, 0x0070, 0x0070, -0x0070, -0x0070, -0x0070
+
 
 ; global vars
 #bank ram

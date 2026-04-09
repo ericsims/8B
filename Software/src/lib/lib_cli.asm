@@ -860,5 +860,5 @@ cli_parse_cmd:
 
 #include "./char_utils.asm"
 #include "./lib_fs.asm"
-#include "./lib_W5300.asm"
+#include "./lib_w5300.asm"
 #include "./lib_dns.asm"

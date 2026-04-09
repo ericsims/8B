@@ -53,6 +53,10 @@ $(VENV_DIR):
 	@echo makeing python venv... 
 	@python3 -m venv .venv
 
+install_rust:
+	cargo -v &> /dev/null || curl https://sh.rustup.rs -sSf | sh
+
+
 deps: $(VENV_DIR)
 	@( \
 		echo activating venv... && \
@@ -96,6 +100,8 @@ $(LIB_SRC_DIR)_cos_lut.dat:
 $(LIB_SRC_DIR)_umult4_lut.dat:
 	echo creating lut for unsigned multiplcation
 	python ./lib_dev/Math/umult8_lut.py > $@
+$(LIB_SRC_DIR)_dns_server.dat:
+	cat /etc/resolv.conf|grep -im 1 '^nameserver' |cut -d ' ' -f2
 
 # build tests
 tests: $(TEST_BINS)

@@ -903,6 +903,111 @@ ra8876_draw_sqaure:
         __epilogue
         ret
 
+
+;;
+; @function
+; @brief draw triangle with fill
+; @section description
+;      _______________________
+; -18 |      .param16_x0      |
+; -17 |_______________________|
+; -16 |      .param16_y1      |
+; -15 |_______________________|
+; -14 |      .param16_x0      |
+; -13 |_______________________|
+; -12 |      .param16_y1      |
+; -11 |_______________________|
+; -10 |      .param16_x1      |
+;  -9 |_______________________|
+;  -8 |      .param16_y1      |
+;  -7 |_______________________|
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_draw_triangle_fill:
+    .param16_x0 = -18
+    .param16_y0 = -16
+    .param16_x1 = -14
+    .param16_y1 = -12
+    .param16_x2 = -10
+    .param16_y2 = -8
+    .param16_color = -6
+    .init:
+        __prologue
+
+    .set_foreground_color:
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_set_foreground_color_16bpp
+        popw hl
+    
+    call _set_triangle_coords
+
+    .draw:
+        __store #((1 << RA8876_DCR0_DRAW_EN_POS) | (RA8876_DCR0_DRAW_MODE_TRIANGLE << RA8876_DCR0_DRAW_MODE_POS) | (1<<RA8876_DCR0_FILL_EN_POS)), RA8876, RA8876_DCR0
+
+    .done:
+        __epilogue
+        ret
+
+;;
+; @function
+; @brief draw triangle without fill
+; @section description
+;      _______________________
+; -18 |      .param16_x0      |
+; -17 |_______________________|
+; -16 |      .param16_y1      |
+; -15 |_______________________|
+; -14 |      .param16_x0      |
+; -13 |_______________________|
+; -12 |      .param16_y1      |
+; -11 |_______________________|
+; -10 |      .param16_x1      |
+;  -9 |_______________________|
+;  -8 |      .param16_y1      |
+;  -7 |_______________________|
+;  -6 |     .param16_color    |
+;  -5 |_______________________|
+;  -4 |___________?___________| RESERVED
+;  -3 |___________?___________|    .
+;  -2 |___________?___________|    .
+;  -1 |___________?___________| RESERVED
+;
+;;
+#bank rom
+ra8876_draw_triangle:
+    .param16_x0 = -18
+    .param16_y0 = -16
+    .param16_x1 = -14
+    .param16_y1 = -12
+    .param16_x2 = -10
+    .param16_y2 = -8
+    .param16_color = -6
+    .init:
+        __prologue
+
+    .set_foreground_color:
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_set_foreground_color_16bpp
+        popw hl
+    
+    call _set_triangle_coords
+
+    .draw:
+        __store #((1 << RA8876_DCR0_DRAW_EN_POS) | (RA8876_DCR0_DRAW_MODE_TRIANGLE << RA8876_DCR0_DRAW_MODE_POS)), RA8876, RA8876_DCR0
+
+    .done:
+        __epilogue
+        ret
+
 ;;
 ; @function
 ; @brief draw line
@@ -988,6 +1093,61 @@ _set_start_end_coords:
     .done:
         ret
 
+
+; no calling convetion. Helper function to load start and end coordinates into DLHSR, DLVSR, DLHER, and DLVER
+; x and y must have correct positional args
+_set_triangle_coords:
+    .param16_x0 = -18
+    .param16_y0 = -16
+    .param16_x1 = -14
+    .param16_y1 = -12
+    .param16_x2 = -10
+    .param16_y2 = -8
+    
+    .set_x0_coord:
+        load a, (BP), .param16_x0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHSR1 ; MSB
+        load a, (BP), .param16_x0 + 1
+        __store a, RA8876, RA8876_DLHSR0 ; LSB
+    
+    .set_y0_coord:
+        load a, (BP), .param16_y0
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVSR1 ; MSB
+        load a, (BP), .param16_y0 + 1
+        __store a, RA8876, RA8876_DLVSR0 ; LSB
+
+    .set_x1_coord:
+        load a, (BP), .param16_x1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLHER1 ; MSB
+        load a, (BP), .param16_x1 + 1
+        __store a, RA8876, RA8876_DLHER0 ; LSB
+    
+    .set_y1_coord:
+        load a, (BP), .param16_y1
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DLVER1 ; MSB
+        load a, (BP), .param16_y1 + 1
+        __store a, RA8876, RA8876_DLVER0 ; LSB
+
+    .set_x2_coord:
+        load a, (BP), .param16_x2
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DTPH1 ; MSB
+        load a, (BP), .param16_x2 + 1
+        __store a, RA8876, RA8876_DTPH0 ; LSB
+    
+    .set_y2_coord:
+        load a, (BP), .param16_y2
+        and a, #0x1F ; postition is only 13 bits
+        __store a, RA8876, RA8876_DTPV1 ; MSB
+        load a, (BP), .param16_y2 + 1
+        __store a, RA8876, RA8876_DTPV0 ; LSB
+
+    .done:
+        ret
 
 
 ; macros for storing or loading data from registers

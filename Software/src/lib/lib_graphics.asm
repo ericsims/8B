@@ -53,47 +53,132 @@ draw_2d_points:
         popw hl
         storew hl, sinx
     
-    .load_point:
+    .process_points:
         load a, point_list_len
         sub a, #1
         jmc .display_points
         store a, point_list_len
 
+        call ._load_point_temp ; corner 1
+        call ._rotate_x_point
+        call ._rotate_y_point
+
+        ; center on screen, push point to stack
+        loadw hl, point_temp_rotated.x
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #2
+        pushw hl
+
+        loadw hl, point_temp_rotated.y
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        pushw hl
+
+        call ._load_point_temp ; corner 2
+        call ._rotate_x_point
+        call ._rotate_y_point
+
+        ; center on screen, push point to stack
+        loadw hl, point_temp_rotated.x
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #2
+        pushw hl
+
+        loadw hl, point_temp_rotated.y
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        pushw hl
+
+        call ._load_point_temp ; corner 3
+        call ._rotate_x_point
+        call ._rotate_y_point
+
+        ; center on screen, push point to stack
+        loadw hl, point_temp_rotated.x
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #TFT_SCREEN_WIDTH/4 - 1
+        addw hl, #2
+        pushw hl
+
+        loadw hl, point_temp_rotated.y
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        addw hl, #TFT_SCREEN_HEIGHT/4
+        pushw hl
+
+        jmp .process_points
+
+    .display_points:
+        ; clear screen
+        pushw #0x0000 ; x0
+        pushw #0x0000 ; y0
+        pushw #TFT_SCREEN_WIDTH ; x1
+        pushw #TFT_SCREEN_HEIGHT ; y1
+        pushw #COLOR65K_BLACK
+        call ra8876_draw_sqaure_fill
+        dealloc 10
+
+        load a, (BP), .param8_list_len
+        store a, point_list_len
+
+    .draw_point:
+        load a, point_list_len
+        sub a, #1
+        jmc .done
+        store a, point_list_len
+
+        ; all three corners still on stack
+
+        loadw hl, (BP), .param16_color
+        pushw hl
+        call ra8876_draw_triangle
+        dealloc 14
+
+        jmp .draw_point
+
+    .done:
+        __epilogue
+        ret
+
+    ._load_point_temp: ; helper function to load next point from input array to static structure
         loadw hl, point_list_ptr
 
         ; copy point from list to ram buffer
         load a, (hl)
-        store a, point_a.x
+        store a, point_temp.x
         addw hl, #1
         load a, (hl)
-        store a, point_a.x+1
+        store a, point_temp.x+1
         addw hl, #1
         load a, (hl)
-        store a, point_a.y
+        store a, point_temp.y
         addw hl, #1
         load a, (hl)
-        store a, point_a.y+1
+        store a, point_temp.y+1
 
         addw hl, #1
         storew hl, point_list_ptr
         
         ; invert y
-        load a, point_a.y
+        load a, point_temp.y
         xor a, #0xFF
-        store a, point_a.y
-        load a, point_a.y+1
+        store a, point_temp.y
+        load a, point_temp.y+1
         xor a, #0xFF
-        store a, point_a.y+1
-        loadw hl, point_a.y
+        store a, point_temp.y+1
+        loadw hl, point_temp.y
         addw hl, #1
-        storew hl, point_a.y
+        storew hl, point_temp.y
 
-    .rotate_x_point:
-        ; x' = point_a.x * cos(theta) - point_a.y * sin(theta)
+        ret
+
+    ._rotate_x_point:
+        ; x' = point_temp.x * cos(theta) - point_temp.y * sin(theta)
         
-        ; point_a.x * cos(theta)
+        ; point_temp.x * cos(theta)
         alloc 4
-        pushw point_a.x
+        pushw point_temp.x
         pushw cosx
         call mult16
         dealloc 5
@@ -101,9 +186,9 @@ draw_2d_points:
         storew hl, temp1
         dealloc 1
         
-        ; point_a.y * sin(theta)
+        ; point_temp.y * sin(theta)
         alloc 4
-        pushw point_a.y
+        pushw point_temp.y
         pushw sinx
         call mult16
         dealloc 5
@@ -111,7 +196,7 @@ draw_2d_points:
         storew hl, temp2
         dealloc 1
 
-        ; invert point_a.y * sin(theta)
+        ; invert point_temp.y * sin(theta)
         load a, temp2
         xor a, #0xFF
         store a, temp2
@@ -131,15 +216,16 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point_b.x
+        storew hl, point_temp_rotated.x
 
+        ret
 
-    .rotate_y_point:
-        ; x' = point_a.x * sin(theta) + point_a.y * cos(theta)
+    ._rotate_y_point:
+        ; x' = point_temp.x * sin(theta) + point_temp.y * cos(theta)
         
-        ; point_a.x * sin(theta)
+        ; point_temp.x * sin(theta)
         alloc 4
-        pushw point_a.x
+        pushw point_temp.x
         pushw sinx
         call mult16
         dealloc 5
@@ -147,9 +233,9 @@ draw_2d_points:
         storew hl, temp1
         dealloc 1
         
-        ; point_a.y * cos(theta)
+        ; point_temp.y * cos(theta)
         alloc 4
-        pushw point_a.y
+        pushw point_temp.y
         pushw cosx
         call mult16
         dealloc 5
@@ -166,106 +252,24 @@ draw_2d_points:
         loadw hl, temp1
         load a, temp2 + 1 ; lsb
         addw hl, a ; add lsb
-        storew hl, point_b.y
+        storew hl, point_temp_rotated.y
 
-    .push_point:
-        ; center on screen
-        loadw hl, point_b.x
-        addw hl, #TFT_SCREEN_WIDTH/4 - 1
-        addw hl, #TFT_SCREEN_WIDTH/4 - 1
-        addw hl, #2
-        pushw hl
-
-        loadw hl, point_b.y
-        addw hl, #TFT_SCREEN_HEIGHT/4
-        addw hl, #TFT_SCREEN_HEIGHT/4
-        pushw hl
-
-        jmp .load_point
-
-    .display_points:
-        ; clear screen
-        pushw #0x0000 ; x0
-        pushw #0x0000 ; y0
-        pushw #TFT_SCREEN_WIDTH ; x1
-        pushw #TFT_SCREEN_HEIGHT ; y1
-        pushw #COLOR65K_BLACK
-        call ra8876_draw_sqaure_fill
-        dealloc 10
-
-        load a, (BP), .param8_list_len
-        store a, point_list_len
-
-        loadw hl, (BP), .local32_line_arr
-        storew hl, point_a.x
-        loadw hl, (BP), .local32_line_arr+2
-        storew hl, point_a.y
-
-    .draw_point:
-        load a, point_list_len
-        sub a, #1
-        jmc .done
-        store a, point_list_len
-
-        popw hl
-        storew hl, point_b.y
-        popw hl
-        storew hl, point_b.x
-
-        ; draw point, with width 4px
-        loadw hl, point_b.x 
-        subw hl, #2
-        pushw hl ; x0
-
-        loadw hl, point_b.y
-        subw hl, #2
-        pushw hl ; y0
-
-        loadw hl, point_b.x 
-        addw hl, #2
-        pushw hl ; x1
-
-        loadw hl, point_b.y
-        addw hl, #2
-        pushw hl ; y1
-
-        loadw hl, (BP), .param16_color
-        pushw hl
-        call ra8876_draw_sqaure_fill
-        dealloc 10
-
-
-        pushw point_b.x
-        pushw point_b.y
-        pushw point_a.x
-        pushw point_a.y
-        loadw hl, (BP), .param16_color
-        pushw hl
-        call ra8876_draw_line
-        dealloc 10
-
-        movew point_b.x, point_a.x
-        movew point_b.y, point_a.y
-
-        jmp .draw_point
-
-    .done:
-        __epilogue
         ret
+
 
 #bank ram
 point_list_ptr: #res 2
 point_list_len: #res 1
-point_a:
-    .x: #res 2
-    .y: #res 2
-    .z: #res 2
-point_b:
-    .x: #res 2
-    .y: #res 2
-    .z: #res 2
 sinx: #res 2
 cosx: #res 2
+point_temp:
+    .x: #res 2
+    .y: #res 2
+    .z: #res 2
+point_temp_rotated:
+    .x: #res 2
+    .y: #res 2
+    .z: #res 2
 temp1: #res 2
 temp2: #res 2
 

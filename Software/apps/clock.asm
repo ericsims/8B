@@ -264,7 +264,7 @@ TIME_API_SERVER: #d "worldclockapi.com\0"
 #include "../src/CPU.asm"
 #include "../src/lib/char_utils.asm"
 #include "../src/lib/lib_ra8876.asm"
-#include "../src/lib/lib_W5300.asm"
+#include "../src/lib/lib_w5300.asm"
 #include "../src/lib/lib_dns.asm"
 #include "../src/lib/json_parse.asm"
 

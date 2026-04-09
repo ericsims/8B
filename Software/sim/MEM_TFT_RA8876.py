@@ -514,6 +514,8 @@ class TFT_RA8876:
             y0 = (self.regs[RA8876_REG.DLVSR1] << 8) | self.regs[RA8876_REG.DLVSR0]
             x1 = (self.regs[RA8876_REG.DLHER1] << 8) | self.regs[RA8876_REG.DLHER0]
             y1 = (self.regs[RA8876_REG.DLVER1] << 8) | self.regs[RA8876_REG.DLVER0]
+            x2 = (self.regs[RA8876_REG.DTPH1] << 8) | self.regs[RA8876_REG.DTPH0]
+            y2 = (self.regs[RA8876_REG.DTPV1] << 8) | self.regs[RA8876_REG.DTPV0]
             r, g, b = self.regs[RA8876_REG.FGCR], self.regs[RA8876_REG.FGCG], self.regs[RA8876_REG.FGCB]
 
             draw = ImageDraw.Draw(self.img)
@@ -521,7 +523,10 @@ class TFT_RA8876:
             if (self.regs[RA8876_REG.DCR0] >> RA8876_REG.DCR0_DRAW_MODE_POS) & 0b1 == RA8876_REG.DCR0_DRAW_MODE_LINE:
                 draw.line(((x0, y0), (x1, y1)), fill=(r, g, b))
             else:
-                print("SIM DOES NOT SUPPORT LINE / TRIANGLE YET")
+                if (self.regs[RA8876_REG.DCR0] >> RA8876_REG.DCR0_FILL_EN_POS) & 1 :
+                    draw.polygon([(x0, y0), (x1, y1), (x2, y2)], fill=(r, g, b)) # fill
+                else:
+                    draw.polygon([(x0, y0), (x1, y1), (x2, y2)], outline=(r, g, b), width=1)  # no fill
             # drawing complete. clear draw bit
             self.regs[RA8876_REG.DCR0] &= ~(1<<RA8876_REG.DCR0_DRAW_EN_POS)
 
